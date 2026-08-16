@@ -1,4 +1,6 @@
-/* Requested mobile PDP typography and control sizing. */
+/* Responsive PDP typography scaled from the <=900px mobile baseline. */
+
+/* Mobile / compact tablet: user-provided baseline. */
 @media (max-width: 900px) {
   .pdp-accordion-trigger {
     min-height: 46px;
@@ -20,13 +22,13 @@
     font-size: 12px;
   }
 
-  .quantity-sizes .size-row > button {
+  .quantity-sizes .size-row > button,
+  .quantity-sizes .size-row > button b {
     font-size: 12px;
   }
 
   .quantity-sizes .size-row > button b {
     white-space: nowrap;
-    font-size: 12px;
     font-weight: 400;
   }
 
@@ -57,5 +59,182 @@
 
   .post-rich-recommendations > .section-head h2 {
     font-size: 16px;
+  }
+}
+
+/* Small desktop / landscape tablet. */
+@media (min-width: 901px) and (max-width: 1199px) {
+  .pdp-accordion-trigger {
+    min-height: 48px;
+    font-size: 13px;
+  }
+
+  .pdp-price del,
+  .pdp-price mark,
+  .pdp-info > p,
+  .pdp-accordion-panel {
+    font-size: 13px;
+  }
+
+  .primary {
+    min-height: 48px;
+    font-size: 13px;
+  }
+
+  .quantity-sizes .size-row > button,
+  .quantity-sizes .size-row > button b {
+    font-size: 13px;
+  }
+
+  .quantity-sizes .size-row > button b {
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  .quantity-control span {
+    min-width: 22px;
+    font-size: 13px;
+  }
+
+  .sheet-head {
+    font-size: 13px;
+  }
+
+  .stock-actions > button:first-child {
+    font-size: 10px;
+  }
+
+  button,
+  input,
+  select {
+    line-height: 1.2;
+    font-size: 11px;
+  }
+
+  .stores {
+    padding: 15px 0;
+    font-size: 13px;
+  }
+
+  .post-rich-recommendations > .section-head h2 {
+    font-size: 20px;
+  }
+}
+
+/* Standard desktop / laptop. */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .pdp-accordion-trigger {
+    min-height: 50px;
+    font-size: 14px;
+  }
+
+  .pdp-price del,
+  .pdp-price mark,
+  .pdp-info > p,
+  .pdp-accordion-panel {
+    font-size: 14px;
+  }
+
+  .primary {
+    min-height: 50px;
+    font-size: 14px;
+  }
+
+  .quantity-sizes .size-row > button,
+  .quantity-sizes .size-row > button b {
+    font-size: 14px;
+  }
+
+  .quantity-sizes .size-row > button b {
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  .quantity-control span {
+    min-width: 24px;
+    font-size: 14px;
+  }
+
+  .sheet-head {
+    font-size: 14px;
+  }
+
+  .stock-actions > button:first-child {
+    font-size: 10px;
+  }
+
+  button,
+  input,
+  select {
+    line-height: 1.2;
+    font-size: 12px;
+  }
+
+  .stores {
+    padding: 16px 0;
+    font-size: 14px;
+  }
+
+  .post-rich-recommendations > .section-head h2 {
+    font-size: 24px;
+  }
+}
+
+/* Large desktop. */
+@media (min-width: 1600px) {
+  .pdp-accordion-trigger {
+    min-height: 52px;
+    font-size: 15px;
+  }
+
+  .pdp-price del,
+  .pdp-price mark,
+  .pdp-info > p,
+  .pdp-accordion-panel {
+    font-size: 15px;
+  }
+
+  .primary {
+    min-height: 52px;
+    font-size: 15px;
+  }
+
+  .quantity-sizes .size-row > button,
+  .quantity-sizes .size-row > button b {
+    font-size: 15px;
+  }
+
+  .quantity-sizes .size-row > button b {
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  .quantity-control span {
+    min-width: 26px;
+    font-size: 15px;
+  }
+
+  .sheet-head {
+    font-size: 15px;
+  }
+
+  .stock-actions > button:first-child {
+    font-size: 11px;
+  }
+
+  button,
+  input,
+  select {
+    line-height: 1.2;
+    font-size: 13px;
+  }
+
+  .stores {
+    padding: 18px 0;
+    font-size: 15px;
+  }
+
+  .post-rich-recommendations > .section-head h2 {
+    font-size: 28px;
   }
 }
