@@ -1,0 +1,14 @@
+/* Keep the quick-add action easy to tap while making the visible icon lighter on mobile. */
+@media (max-width: 900px) {
+  .product-card .quick .cart-add-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .product-card .quick .cart-add-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
