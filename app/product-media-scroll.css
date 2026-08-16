@@ -52,7 +52,7 @@
   min-height:100%;
 }
 
-/* No nested scrolling in PDP content. Only the image gallery and recommendation rows scroll. */
+/* No nested scrolling in PDP content. Only image gallery and product recommendation rails scroll. */
 .product-page .pdp-info,
 .product-page .pdp-grid,
 .product-page .pdp-accordions,
@@ -61,23 +61,63 @@
   max-height:none!important;
 }
 
-/* PLP / recommendation cards keep horizontal media. */
+/* Product media inside cards and forms. */
 .product-image .product-media-scroll{height:auto}
 .product-image .product-media-scroll>img{height:auto;aspect-ratio:1/1.08}
-
-/* Quick-add sheet keeps horizontal media. */
 .plp-modal-media .product-media-scroll{height:100%}
 .plp-modal-media .product-media-scroll>img{height:100%}
-
-/* Compact product rows inherit their surrounding layout dimensions. */
 .added-product-media,
 .cart-item-media,
 .checkout-item-media,
 .favorite-item-media,
 .search-item-media,
-.recent-item-media{
+.recent-item-media{min-width:0}
+
+/* Reusable horizontal merchandising rail. On desktop four cards fit exactly. */
+.product-rail-shell{
+  position:relative;
+  width:100%;
   min-width:0;
 }
+.product-rail{
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:calc((100% - 72px)/4);
+  gap:24px;
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  overscroll-behavior-inline:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.product-rail::-webkit-scrollbar{display:none}
+.product-rail>.product-card{
+  width:auto;
+  min-width:0;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+}
+.product-rail-arrow{
+  position:absolute;
+  top:38%;
+  z-index:8;
+  width:42px;
+  height:42px;
+  border:1px solid rgba(24,26,25,.18);
+  border-radius:50%;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(8px);
+  display:grid;
+  place-items:center;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+.product-rail-arrow svg{width:19px;height:19px}
+.product-rail-arrow.prev{left:10px;transform:rotate(180deg)}
+.product-rail-arrow.next{right:10px}
+.product-rail-arrow:disabled{opacity:.28;cursor:default}
 
 @media(max-width:900px){
   .pdp-main .pdp-product-media.vertical-media{
@@ -89,53 +129,44 @@
     min-height:390px;
   }
 
-  /* Mobile merchandising shelves: exactly 2 full cards + half of the third.
-     With a 12px gap, 2.5 cards + 2 visible gaps fill the row width. */
-  .products-section .product-row,
-  .post-rich-recommendations>div:last-child{
-    display:grid!important;
-    grid-template-columns:none!important;
-    grid-auto-flow:column;
-    grid-auto-columns:calc(40% - 9.6px);
-    gap:12px!important;
-    overflow-x:auto;
-    overflow-y:hidden;
-    scroll-snap-type:x proximity;
-    overscroll-behavior-inline:contain;
-    padding-bottom:4px;
-    scrollbar-width:none;
+  /* Exactly two complete cards are visible; every next card stays in horizontal scroll. */
+  .product-rail{
+    grid-auto-columns:calc((100% - 12px)/2);
+    gap:12px;
   }
-  .products-section .product-row::-webkit-scrollbar,
-  .post-rich-recommendations>div:last-child::-webkit-scrollbar{display:none}
-  .products-section .product-card,
-  .post-rich-recommendations .product-card{
-    width:auto;
-    min-width:0;
-    scroll-snap-align:start;
+  .product-rail-arrow{
+    top:34%;
+    width:34px;
+    height:34px;
   }
-  .products-section .product-copy,
-  .post-rich-recommendations .product-copy{
+  .product-rail-arrow svg{width:16px;height:16px}
+  .product-rail-arrow.prev{left:5px}
+  .product-rail-arrow.next{right:5px}
+
+  /* Only main-page and recommendation cards use the compact mobile treatment. */
+  .home-product-rail .product-copy,
+  .recommendation-product-rail .product-copy{
     width:calc(100% - 30px);
     padding:9px 0 7px;
   }
-  .products-section .product-copy strong,
-  .post-rich-recommendations .product-copy strong{
+  .home-product-rail .product-copy strong,
+  .recommendation-product-rail .product-copy strong{
     font-size:14px;
     line-height:1.2;
   }
-  .products-section .product-copy small,
-  .post-rich-recommendations .product-copy small{
+  .home-product-rail .product-copy small,
+  .recommendation-product-rail .product-copy small{
     font-size:10px;
     line-height:1.25;
   }
-  .products-section .price,
-  .post-rich-recommendations .price{font-size:14px}
-  .products-section .price del,
-  .post-rich-recommendations .price del{font-size:10px}
-  .products-section .heart,
-  .post-rich-recommendations .heart{right:7px;top:7px}
-  .products-section .heart svg,
-  .post-rich-recommendations .heart svg{width:24px;height:24px}
-  .products-section .quick,
-  .post-rich-recommendations .quick{right:1px;bottom:7px;width:28px;height:28px}
+  .home-product-rail .price,
+  .recommendation-product-rail .price{font-size:14px}
+  .home-product-rail .price del,
+  .recommendation-product-rail .price del{font-size:10px}
+  .home-product-rail .heart,
+  .recommendation-product-rail .heart{right:7px;top:7px}
+  .home-product-rail .heart svg,
+  .recommendation-product-rail .heart svg{width:24px;height:24px}
+  .home-product-rail .quick,
+  .recommendation-product-rail .quick{right:1px;bottom:7px;width:28px;height:28px}
 }
