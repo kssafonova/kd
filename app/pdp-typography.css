@@ -11,14 +11,21 @@
   line-height: 1.55;
 }
 
-.product-page .pdp-accordion-trigger > span,
+/* Section headings inside opened product information */
 .product-page .pdp-accordion-panel h2,
 .product-page .pdp-accordion-panel h3,
-.product-page .accordion > button,
 .product-info-drawer h2,
 .product-info-drawer h3 {
   font-size: 32px !important;
   line-height: 1.2;
+}
+
+/* Accordion controls and recommendation block names */
+.product-page .pdp-accordion-trigger > span,
+.product-page .accordion > button,
+.product-page .post-rich-recommendations > .section-head h2 {
+  font-size: 16px !important;
+  line-height: 1.3;
 }
 
 .product-info-drawer p,
@@ -48,13 +55,18 @@
     line-height: 1.55;
   }
 
-  .product-page .pdp-accordion-trigger > span,
   .product-page .pdp-accordion-panel h2,
   .product-page .pdp-accordion-panel h3,
-  .product-page .accordion > button,
   .product-info-drawer h2,
   .product-info-drawer h3 {
     font-size: 20px !important;
     line-height: 1.25;
+  }
+
+  .product-page .pdp-accordion-trigger > span,
+  .product-page .accordion > button,
+  .product-page .post-rich-recommendations > .section-head h2 {
+    font-size: 14px !important;
+    line-height: 1.35;
   }
 }
