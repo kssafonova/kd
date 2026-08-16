@@ -101,6 +101,40 @@
   scroll-snap-stop:always;
 }
 
+/* Desktop recommendation blocks: neutralize the legacy direct-child grid rule.
+   The shell must span the full recommendation width; the actual product rail owns the columns. */
+@media(min-width:901px){
+  .post-rich-recommendations>.product-rail-shell{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+  .post-rich-recommendations .recommendation-product-rail .product-rail{
+    display:grid!important;
+    grid-template-columns:none!important;
+    grid-auto-flow:column!important;
+    grid-auto-columns:calc((100% - 60px)/4)!important;
+    gap:20px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .post-rich-recommendations .recommendation-product-rail .product-card{
+    width:auto!important;
+    min-width:0!important;
+  }
+  .post-rich-recommendations .recommendation-product-rail .product-image,
+  .post-rich-recommendations .recommendation-product-rail .product-media-scroll{
+    width:100%;
+    min-width:0;
+  }
+  .post-rich-recommendations .recommendation-product-rail .product-media-scroll>img{
+    width:100%;
+    aspect-ratio:1/1.08;
+    object-fit:cover;
+  }
+}
+
 @media(max-width:900px){
   /* Mobile PDP gallery: left / right only. */
   .pdp-main .pdp-product-media.vertical-media{
