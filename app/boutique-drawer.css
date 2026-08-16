@@ -1,0 +1,158 @@
+/* Store availability opens as a right-side drawer, consistent with the other storefront panels. */
+.boutique-map-overlay{
+  padding:0!important;
+  align-items:stretch!important;
+  justify-content:flex-end!important;
+}
+
+.boutique-map-modal{
+  width:min(620px,100vw)!important;
+  height:100dvh!important;
+  max-height:none!important;
+  margin-left:auto;
+  border-radius:0!important;
+  box-shadow:-18px 0 55px rgba(0,0,0,.18)!important;
+  animation:boutiqueDrawerIn .26s ease both;
+}
+
+@keyframes boutiqueDrawerIn{
+  from{transform:translateX(100%)}
+  to{transform:translateX(0)}
+}
+
+.boutique-map-modal>header{
+  height:78px!important;
+  flex:0 0 78px!important;
+  padding:0 22px!important;
+}
+
+.boutique-map-body{
+  grid-template-columns:220px minmax(0,1fr)!important;
+}
+
+.boutique-map-body>aside{
+  min-width:0;
+}
+
+.boutique-map-body>aside>button{
+  padding:18px 16px!important;
+}
+
+.boutique-map-body>aside strong{
+  font-size:16px!important;
+}
+
+.boutique-map-canvas{
+  min-width:0;
+  min-height:0;
+}
+
+.boutique-map-caption{
+  left:12px!important;
+  right:12px!important;
+  bottom:12px!important;
+  padding:12px 13px!important;
+}
+
+@media(max-width:900px){
+  .boutique-map-modal{
+    width:100vw!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+    border-radius:0!important;
+  }
+
+  .boutique-map-modal>header{
+    height:64px!important;
+    flex:0 0 64px!important;
+    padding:0 14px!important;
+  }
+
+  .boutique-map-modal>header small{
+    font-size:7px!important;
+    margin-bottom:5px!important;
+  }
+
+  .boutique-map-modal>header h2{
+    font-size:18px!important;
+  }
+
+  .boutique-map-close{
+    width:40px!important;
+    height:40px!important;
+    flex:0 0 40px;
+  }
+
+  .boutique-map-body{
+    display:flex!important;
+    flex-direction:column!important;
+    min-height:0;
+  }
+
+  .boutique-map-body>aside{
+    display:flex!important;
+    flex:0 0 auto!important;
+    width:100%;
+    max-height:none;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    border-right:0!important;
+    border-bottom:1px solid var(--line)!important;
+    padding:0!important;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .boutique-map-body>aside::-webkit-scrollbar{display:none}
+
+  .boutique-map-body>aside>button{
+    flex:0 0 72vw;
+    min-width:72vw!important;
+    padding:13px 14px!important;
+    border-right:1px solid #eee!important;
+    border-bottom:0!important;
+    scroll-snap-align:start;
+  }
+
+  .boutique-map-body>aside strong{
+    font-size:14px!important;
+  }
+
+  .boutique-map-body>aside small,
+  .boutique-map-body>aside i{
+    font-size:8px!important;
+  }
+
+  .boutique-map-canvas{
+    flex:1 1 auto!important;
+    min-height:0!important;
+  }
+
+  .boutique-map-canvas iframe{
+    min-height:100%;
+  }
+
+  .boutique-map-caption{
+    left:9px!important;
+    right:9px!important;
+    bottom:9px!important;
+    padding:10px 11px!important;
+    gap:8px!important;
+  }
+
+  .boutique-map-caption b{font-size:9px!important}
+  .boutique-map-caption span,
+  .boutique-map-caption small{font-size:8px!important}
+}
+
+@media(max-width:380px){
+  .boutique-map-body>aside>button{
+    flex-basis:80vw;
+    min-width:80vw!important;
+  }
+
+  .boutique-map-modal>header h2{
+    font-size:17px!important;
+  }
+}
