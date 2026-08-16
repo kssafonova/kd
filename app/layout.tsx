@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./pdp-typography.css";
 import "./mobile-quick-add.css";
 
 export const metadata: Metadata = {
