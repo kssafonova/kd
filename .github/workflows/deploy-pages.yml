@@ -44,12 +44,6 @@ jobs:
       - name: Remove product rail arrows
         run: python scripts/remove-product-rail-arrows.py
 
-      - name: Upgrade rich and editorial storytelling
-        run: python scripts/upgrade-zara-editorial.py
-
-      - name: Refine collection capsule and lookbook flow
-        run: python scripts/refine-story-flow.py
-
       - name: Apply table product data and images
         run: python scripts/apply-table-product-data.py
 
