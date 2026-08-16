@@ -1,0 +1,38 @@
+name: Sync PDP store button
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sync-pdp-stores-button.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reuse PLP store button style on PDP
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('app/page.tsx')
+          text = path.read_text()
+          old = '<button className="pdp-stores-button" onClick={()=>setStoresOpen(true)} aria-label="Показать наличие в бутиках"><span><Icon name="pin"/>НАЛИЧИЕ В МАГАЗИНАХ</span><Icon name="chevron"/></button>'
+          new = '<button className="stores" onClick={()=>setStoresOpen(true)} aria-label="Показать наличие в бутиках"><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button>'
+          if old not in text:
+              raise SystemExit('PDP store button marker not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit change
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/page.tsx
+          git commit -m "Match PDP store button to PLP style"
+          git push
