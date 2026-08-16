@@ -1,17 +1,34 @@
-/* Unified typography for text action labels across the storefront */
+/* Responsive storefront control system.
+   Action labels: 16px desktop, 15px tablet, 14px mobile.
+   Mobile touch targets stay at least 44px high. */
+:root {
+  --action-font-size: 16px;
+  --action-line-height: 1.25;
+  --action-icon-size: 24px;
+  --action-icon-small: 20px;
+  --action-control-height: 48px;
+  --action-primary-height: 52px;
+  --action-gap: 10px;
+}
+
+/* Text labels for interactive actions. Keep brand logo, product names and
+   content typography outside this rule. */
 button.primary,
 button.secondary,
 button.link,
 button.stores,
 button.quick-info-link,
 button[class*="cta"],
-.promo button,
 .boutiques,
 .catalog-tools button,
 .hero-copy button,
 .editorial button,
 .manifest button,
 .section-head.row > button,
+.tabs button,
+.center-tabs button,
+.menu-first button,
+.menu-second button,
 .pdp-info > label button,
 .stock-actions button,
 .sheet-head button,
@@ -21,40 +38,188 @@ button[class*="cta"],
 .added-sticky button,
 .menu-picture button,
 .summary-title button,
-.category-card b,
-.collection-grid button span,
 .product-selector b,
-.post-rich-recommendations > .section-head h2 {
-  font-size: 16px !important;
+.checkout-options label,
+.checkout-section button,
+.checkout-cta,
+.recent-cart > button,
+.empty > button {
+  font-size: var(--action-font-size) !important;
+  line-height: var(--action-line-height);
 }
 
-@media (max-width: 900px) {
+/* Recommendation block names use the same scale as actions, not editorial H2. */
+.post-rich-recommendations > .section-head h2,
+.recommend-title,
+.added-recommendations > p,
+.recent-cart > div:first-child > p {
+  font-size: var(--action-font-size) !important;
+  line-height: 1.3;
+}
+
+/* Main controls: predictable rhythm and comfortable click area. */
+button.primary,
+button.secondary,
+button[class*="cta"] {
+  min-height: var(--action-primary-height);
+  padding-block: 14px;
+}
+
+button.stores,
+button.quick-info-link,
+.catalog-tools button,
+.tabs button,
+.center-tabs button,
+.pdp-accordion-trigger,
+.accordion > button,
+.stock-actions button,
+.sheet-head button,
+.selection-help button,
+.added-sticky button,
+.summary-title button,
+.recent-cart > button,
+.empty > button {
+  min-height: var(--action-control-height);
+}
+
+/* Icon-only controls keep a usable hit area without visually inflating icons. */
+.header-actions button,
+.icon-btn,
+.close,
+.pdp-title button,
+.quick,
+.heart,
+.quantity-control button,
+.boutique-map-close {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Shared icon scale. */
+.header-actions button svg,
+.icon-btn svg,
+.close svg,
+.pdp-title button svg,
+.catalog-tools button svg,
+.quantity-control button svg,
+.boutique-map-close svg {
+  width: var(--action-icon-size) !important;
+  height: var(--action-icon-size) !important;
+}
+
+.stores svg,
+.pdp-accordion-trigger svg,
+.accordion > button svg,
+.stock-actions svg,
+.sheet-head svg,
+.collection-grid button span svg,
+.product-selector svg {
+  width: var(--action-icon-small) !important;
+  height: var(--action-icon-small) !important;
+  flex: 0 0 auto;
+}
+
+/* Keep the custom quick-add basket prominent but proportional. */
+.quick .cart-add-icon {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/* Accordion and store actions should read like controls, not body copy. */
+.pdp-accordion-trigger,
+.accordion > button,
+.stores,
+.quick-info-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--action-gap);
+}
+
+.pdp-accordion-trigger,
+.accordion > button {
+  justify-content: space-between;
+}
+
+/* Keyboard accessibility for all storefront controls. */
+button:focus-visible,
+[role="button"]:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid #1d1d1f;
+  outline-offset: 3px;
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+  :root {
+    --action-font-size: 15px;
+    --action-icon-size: 22px;
+    --action-icon-small: 18px;
+    --action-control-height: 46px;
+    --action-primary-height: 50px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --action-font-size: 14px;
+    --action-icon-size: 22px;
+    --action-icon-small: 18px;
+    --action-control-height: 44px;
+    --action-primary-height: 48px;
+    --action-gap: 8px;
+  }
+
   button.primary,
   button.secondary,
-  button.link,
-  button.stores,
-  button.quick-info-link,
-  button[class*="cta"],
-  .promo button,
-  .boutiques,
-  .catalog-tools button,
-  .hero-copy button,
-  .editorial button,
-  .manifest button,
-  .section-head.row > button,
-  .pdp-info > label button,
-  .stock-actions button,
-  .sheet-head button,
-  .selection-help button,
-  .pdp-accordion-trigger > span,
+  button[class*="cta"] {
+    padding-block: 12px;
+  }
+
+  .header-actions button,
+  .icon-btn,
+  .close,
+  .pdp-title button,
+  .quick,
+  .heart,
+  .quantity-control button,
+  .boutique-map-close,
+  .plp-swatches button,
+  .product-swatches button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .header-actions button svg,
+  .icon-btn svg,
+  .close svg,
+  .pdp-title button svg,
+  .catalog-tools button svg,
+  .quantity-control button svg,
+  .boutique-map-close svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .quick .cart-add-icon {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .pdp-accordion-trigger,
   .accordion > button,
-  .added-sticky button,
-  .menu-picture button,
-  .summary-title button,
-  .category-card b,
-  .collection-grid button span,
-  .product-selector b,
-  .post-rich-recommendations > .section-head h2 {
-    font-size: 14px !important;
+  .stores,
+  .quick-info-link {
+    min-height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  [role="button"] {
+    transition: none !important;
   }
 }
