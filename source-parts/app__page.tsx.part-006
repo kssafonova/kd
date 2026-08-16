@@ -1,0 +1,32 @@
+ria-label={label}><button onClick={(event)=>{event.stopPropagation();setQuantity(Math.max(1,quantity-1))}} aria-label="Уменьшить количество"><Icon name="minus"/></button><span>{quantity}</span><button onClick={(event)=>{event.stopPropagation();setQuantity(quantity+1)}} aria-label="Увеличить количество"><Icon name="plus"/></button></div>;
+}
+
+function ProductSizeRows({sizes,selectedSize,setSelectedSize,quantity,setQuantity,notify}:{sizes:readonly (readonly [string,number])[];selectedSize:string;setSelectedSize:(size:string)=>void;quantity:number;setQuantity:(quantity:number)=>void;notify:(size:string)=>void}){
+  return <div className="sizes quantity-sizes">{sizes.map(([name,price],index)=>{const unavailable=index===sizes.length-1;return <div key={name} className={`size-row ${selectedSize===name&&!unavailable?"active":""} ${unavailable?"unavailable":""}`}><button onClick={()=>{if(!unavailable){setSelectedSize(name);setQuantity(1)}}}><span>{name}</span>{selectedSize!==name&&!unavailable&&<b>{fmt(price)}</b>}</button>{unavailable?<div className="stock-actions"><button onClick={()=>document.querySelector(".post-rich-recommendations")?.scrollIntoView({behavior:"smooth"})}>СМОТРЕТЬ ПОХОЖИЕ</button><button onClick={()=>notify(name)} aria-label={`Сообщить о поступлении размера ${name}`}><Icon name="mail"/></button></div>:selectedSize===name?<QuantityControl quantity={quantity} setQuantity={setQuantity}/>:null}</div>})}</div>;
+}
+
+function ProductView({ product, favorite, liked, chooseSize, add, buyBundle, selectProduct }: { product:Product; favorite:(n:number)=>void; liked:boolean; chooseSize:()=>void; add:(p:Product)=>void; buyBundle:(items:Product[])=>void; selectProduct:(p:Product)=>void }) {
+  const [open,setOpen]=useState("");
+  const [colorIndex,setColorIndex]=useState(0);
+  const [activeImage,setActiveImage]=useState(0);
+  const [selectedSize,setSelectedSize]=useState("Евро 200×220");
+  const [quantity,setQuantity]=useState(1);
+  const [bundleSelecting,setBundleSelecting]=useState(false);
+  const variants=product.colorVariants??[{name:"Молочный",hex:"#eee",image:product.image}];
+  useEffect(()=>{const initial=variants.findIndex(variant=>variant.name===product.selectedColor);setColorIndex(initial>=0?initial:0);setActiveImage(0);setSelectedSize("Евро 200×220");setQuantity(1)},[product.id,product.selectedColor]);
+  const color=variants[colorIndex];
+  const gallery=product.hasRichContent?[color.image]:(product.gallery??[color.image,...variants.map(x=>x.image)]).filter((x,i,a)=>a.indexOf(x)===i);
+  const image=gallery[activeImage]??color.image;
+  const sizes=[["Евро 200×220",product.price],["Семейный 150×200",product.price+2000],["Кинг Сайз 220×240",product.price+2000]] as const;
+  const unitPrice=sizes.find(([name])=>name===selectedSize)?.[1]??product.price;
+  const selectedProduct={...product,price:unitPrice,image,selectedColor:color.name,selectedSize,quantity};
+  const bundleExtras=products.filter(item=>item.id!==product.id).slice(0,2);
+  const bundleItems=[selectedProduct,...bundleExtras];
+  const [bundleSelectedIds,setBundleSelectedIds]=useState<number[]>(bundleItems.map(item=>item.id));
+  useEffect(()=>{setBundleSelecting(false);setBundleSelectedIds(bundleItems.map(item=>item.id))},[product.id]);
+  const selectedBundleItems=bundleItems.filter(item=>bundleSelectedIds.includes(item.id));
+  const bundleTotal=selectedBundleItems.reduce((sum,item)=>sum+item.price*(item.quantity??1),0);
+  const handlePurchase=()=>window.matchMedia("(max-width: 900px)").matches?chooseSize():add(selectedProduct);
+  const toggleBundleItem=(id:number)=>setBundleSelectedIds(current=>current.includes(id)?current.filter(itemId=>itemId!==id):[...current,id]);
+  const handleBundle=()=>{if(!bundleSelecting){setBundleSelecting(true);return}if(selectedBundleItems.length)buyBundle(selectedBundleItems)};
+  return <div className={`product-page page ${product.hasRichContent?"has-rich":"standard-pdp"}`}><div className="crumbs">Главная / Домашний текстиль / {product.name}</div><div className={`pdp-grid ${product.hasRichContent?"without-thumbs":""}`}>{!product.hasRichContent&&<div className="thumbs">{gallery.map((src,n)=><button key={src} className={n===activeImage?"active":""} onClick={()=>setActiveImage(n)} aria-label={`Фото товара ${n+1}`}><img src={assetUrl(src)} alt=""/></button>)}</div>}<div className="pdp-main"><img key={image} src={assetUrl(image)} alt={`${product.name}, ${color.name}`}/></div><div className="pdp-info">{product.badge&&<small className="badge">{product.badge}</small>}<div className="pdp-title"><h1>{product.name}</h1><div><button onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button onClick={()=>navigator.clipboard?.writeText(location.href)} aria-label="Поделиться"><Icon name="share"/></button></div></div><div className={`pdp-price ${product.oldPrice?"sale":""}`}><strong>{fmt(unitPrice)}</strong>{product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discountOf(product)}%</mark></>}</div><small className="pdp-code">АРТИКУЛ: KD-PD-{1020+product.id}</small><label>Цвет: {color.name}</label><div className="swatches product-swatches">{variants.map((variant,index)=><button key={variant.name} className={index===colorIndex?"active":""} onClick={()=>{setColorIndex(index);setActiveImage(0)}} style={{background:variant.hex}} aria-label={`Цвет ${variant.name}`}/>)}</div><p className="pdp-description">Предмет создан в традиции русского гостеприимства: благоро

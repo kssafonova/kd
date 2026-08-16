@@ -1,0 +1,49 @@
+note: "фарфор, ручная роспись", price: 4990, oldPrice: 6990, image: "/images/moon-plate.png", position: "center", colorVariants: [
+    { name: "Ночной синий", hex: "#0c2340", image: "/images/moon-plate.png" }, { name: "Молочный", hex: "#eee8db", image: "/images/zip-hero-summer.png" },
+  ] },
+  { id: 6, name: "Плед из льна и хлопка", note: "140×200 см", price: 9990, oldPrice: 13990, image: "/images/beige-bedroom.png", position: "65% 80%", gallery: ["/images/beige-bedroom.png","/images/classic-bedroom.png","/images/zip-product-bed.png"], colorVariants: [
+    { name: "Песочный", hex: "#b69a78", image: "/images/beige-bedroom.png" }, { name: "Белый", hex: "#f4f2ec", image: "/images/zip-product-bed.png" }, { name: "Синий", hex: "#203753", image: "/images/zip-collection-night.png" },
+  ] },
+  { id: 7, name: "Стёганое покрывало «Бархатный ритм»", note: "бархат, 220×240 см", price: 12990, image: "/images/beige-quilt.jpg", colorVariants: [
+    { name: "Песочный", hex: "#c9a982", image: "/images/beige-quilt.jpg" }, { name: "Пудровый", hex: "#e7bca5", image: "/images/peach-sheet.jpg" },
+  ] },
+  { id: 8, name: "Натяжная простыня из сатина", note: "сатин, 160×200 см", price: 4990, image: "/images/peach-sheet.jpg", colorVariants: [
+    { name: "Пудровый", hex: "#e6bca8", image: "/images/peach-sheet.jpg" }, { name: "Молочный", hex: "#efeae1", image: "/images/zip-product-bed.png" },
+  ] },
+  { id: 9, name: "Сервиз «Северное сияние»", note: "костяной фарфор, 6 персон", price: 24990, image: "/images/russian-service-blue.png", hasBundle: true, colorVariants:[{name:"Бело-голубой",hex:"#d9edf0",image:"/images/russian-service-blue.png"},{name:"Ночной синий",hex:"#10233e",image:"/images/time-table.png"}] },
+  { id: 10, name: "Чайная пара «Нити времени»", note: "костяной фарфор, 250 мл", price: 4490, image: "/images/time-tea-pair.png", gallery:["/images/time-tea-pair.png","/images/time-mug.png","/images/time-table.png"], colorVariants:[{name:"Ночной синий",hex:"#10233e",image:"/images/time-tea-pair.png"}] },
+  { id: 11, name: "Подушка «Небесная гладь»", note: "бархат, 25×60 см", price: 4990, image: "/images/sky-bolster.png", colorVariants:[{name:"Небесный",hex:"#9fc2d3",image:"/images/sky-bolster.png"},{name:"Ночной синий",hex:"#203753",image:"/images/time-hero.png"}] },
+  { id: 12, name: "Комплект «Голубая светлица»", note: "сатин, вышивка гладью", price: 21990, image: "/images/blue-bedding-vertical.png", hasRichContent: true, colorVariants:[{name:"Ледяной голубой",hex:"#afcbd1",image:"/images/blue-bedding-vertical.png"},{name:"Белый",hex:"#f4f2ec",image:"/images/zip-product-bed.png"}] },
+];
+
+const slides:Slide[] = [
+  { category: "НОВИНКИ", eyebrow: "НОВАЯ ГЛАВА", title: "Дом в цвету", subtitle: "Авторские вазы и сервировка для долгих летних встреч", image: "/images/editorial-vases.webp", secondaryImage: "/images/editorial-table.webp", mobileVideo: "/images/kultura-home-mobile.mp4", align: "left", destination: "catalog" as View },
+  { category: "СПАЛЬНЯ", eyebrow: "СПАЛЬНЯ", title: "Белая глава", subtitle: "Постельное бельё с деликатной вышивкой", image: "/images/russian-bedroom.png", align: "left", destination: "catalog" as View },
+  { category: "КУХНЯ И СТОЛОВАЯ", eyebrow: "СЕРВИРОВКА", title: "Тайна острова Буяна", subtitle: "Фарфор, сотканный из моря и русского орнамента", image: "/images/buyan-editorial.png", align: "right", destination: "catalog" as View },
+  { category: "ДЕКОР ДЛЯ ДОМА", eyebrow: "ТИХИЕ ДЕТАЛИ", title: "Естественные оттенки", subtitle: "Тактильный декор для спокойного интерьера", image: "/images/beige-bedroom.png", align: "left", destination: "catalog" as View },
+  { category: "КАПСУЛЫ И КОЛЛЕКЦИИ", eyebrow: "КАПСУЛА", title: "Нити времени", subtitle: "Тишина, свет и вечные истории", image: "/images/time-hero.png", align: "right", destination: "collections" as View },
+];
+
+const discountOf = (product: Product) => product.oldPrice ? Math.round((1-product.price/product.oldPrice)*100) : 0;
+
+const categories = [
+  ["Спальня", "/images/classic-bedroom.png"],
+  ["Кухня и столовая", "/images/moon-plate.png"],
+  ["Капсулы и коллекции", "/images/time-collection.png"],
+  ["Домашний текстиль", "/images/russian-bedroom.png"],
+  ["Ванная", "/images/zip-product-bed.png"],
+];
+
+const slideProductIds = [
+  [9,10,11,12],
+  [1,2,7,12],
+  [9,10,5,3],
+  [3,6,2,4],
+  [4,5,1,2],
+];
+
+type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦИЯ"; lead:string; detail:string; description:string; images:string[]; productIds:number[] };
+const editorials:Editorial[] = [
+  { id:"time", name:"Нити времени", kind:"КАПСУЛА", lead:"Вдохновлена движением звёзд и бесконечной красотой ночного неба.", detail:"Каждая деталь — как напоминание о чём-то важном. Нежные оттенки, благородные материалы и вышивка, созданная с вниманием к вечному.", description:"Капсула о тишине, свете и вечных историях.", images:["/images/time-hero.png","/images/night-editorial.png","/images/blue-bedroom.png","/images/moon-plate.png"], productIds:[4,5,3,6] },
+  { id:"buyan", name:"Тайна острова Буяна", kind:"КАПСУЛА", lead:"Солнце, ветер и солёный воздух в узорах русского фарфора.", detail:"Кобальтовые цветы и чистые линии сервировки переносят к морю, где каждый предмет становится частью общего пейзажа.", description:"Сервировка, созданная для долгих летних встреч.", images:["/images/buyan-editorial.png","/images/zip-hero-summer.png","/images/moon-plate.png","/images/poetry-editorial.png"], productIds:[5,3,1,6] },
+  { id:"poetry", name:"Стихи", kind:"К

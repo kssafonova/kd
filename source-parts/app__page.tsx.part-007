@@ -1,0 +1,27 @@
+дная палитра, точная отделка и материалы, которые красиво живут в доме годами.</p><label>Размер <button onClick={()=>alert("Евро: 200×220 · Семейный: 150×200 · Кинг Сайз: 220×240")}>Размерная сетка</button></label><ProductSizeRows sizes={sizes} selectedSize={selectedSize} setSelectedSize={setSelectedSize} quantity={quantity} setQuantity={setQuantity} notify={(name)=>alert(`Подписка оформлена. Сообщим, когда размер «${name}» появится в наличии.`)}/><button className="primary purchase-cta total-cta" onClick={handlePurchase}><span className="purchase-label desktop-label">ДОБАВИТЬ В КОРЗИНУ</span><span className="purchase-label mobile-label">ВЫБЕРИТЕ РАЗМЕР</span><b>{fmt(unitPrice*quantity)}</b></button><div className="pdp-service-links">{["ИНФОРМАЦИЯ О ТОВАРЕ","ДОСТАВКА И ВОЗВРАТ"].map(item=><button key={item} onClick={()=>setOpen(open===item?"":item)}>{item}</button>)}<button onClick={()=>alert("В наличии: Москва, Петровка · Санкт-Петербург, Невский")}>НАЛИЧИЕ В МАГАЗИНАХ</button></div>{open&&<p className="service-copy">Натуральный хлопок. Деликатная стирка при 30°C. Бесплатная доставка от 15 000 ₽, возврат в течение 14 дней.</p>}{product.hasBundle&&<section className={`bundle ${bundleSelecting?"selection-mode":""}`}><div className="bundle-heading"><div><p>ГОТОВОЕ РЕШЕНИЕ</p><h3>СОБЕРИТЕ КОМПЛЕКТ</h3>{bundleSelecting&&<span className="selection-caption">Можно убрать лишние предметы</span>}</div><span>{selectedBundleItems.length} из {bundleItems.length}</span></div><div className="bundle-products">{bundleItems.map((item,index)=><article className={bundleSelectedIds.includes(item.id)?"selected":""} key={`${item.id}-${index}`}><div><img src={assetUrl(item.image)} alt={item.name}/>{bundleSelecting?<label className="product-selector compact"><input type="checkbox" checked={bundleSelectedIds.includes(item.id)} onChange={()=>toggleBundleItem(item.id)}/><span><Icon name="plus"/></span></label>:<i>✓</i>}</div><span>{item.name}</span><small>{index===0?`${selectedSize} · ${color.name}`:item.note}</small><b>{fmt(item.price*(item.quantity??1))}</b></article>)}</div><button className="primary bundle-buy total-cta" disabled={bundleSelecting&&!selectedBundleItems.length} onClick={handleBundle}><span>{bundleSelecting?"ДОБАВИТЬ В КОРЗИНУ":"ВЫКУПИТЬ ВЕСЬ КОМПЛЕКТ"}</span><b>{fmt(bundleTotal)}</b></button></section>}</div></div>{product.hasRichContent&&<RichContent product={product}/>}<ProductRecommendations product={product} selectProduct={selectProduct} favorite={favorite}/></div>;
+}
+
+function RichContent({product}:{product:Product}){
+  const night=product.id===4;
+  return <section className={`rich-content ${night?"night-story":"russian-story"}`}><div className="rich-intro"><p>{night?"КАПСУЛА · НИТИ ВРЕМЕНИ":"КОЛЛЕКЦИЯ · РУССКИЙ УЗОР"}</p><h2>{night?"Тишина, свет и вечные истории":"Вышивка, в которой живёт память"}</h2><span>{night?"Вдохновлена движением звёзд и бесконечной красотой ночного неба.":"Современное прочтение орнаментов, передававшихся из поколения в поколение."}</span></div><img className="rich-wide" src={assetUrl(night?"/images/time-hero.png":"/images/russian-bedroom.png")} alt="История коллекции"/><div className="rich-pair"><img src={assetUrl(night?"/images/night-editorial.png":"/images/poetry-editorial.png")} alt="Детали коллекции"/><div><p>СДЕЛАНО В РОССИИ</p><h3>{night?"Каждая деталь — как напоминание о чём-то важном.":"Натуральные ткани и тонкая ручная работа."}</h3><span>Нежные оттенки, благородные материалы и вышивка, созданная с вниманием к вечному.</span></div></div></section>;
+}
+
+function ProductRecommendations({product,selectProduct,favorite}:{product:Product;selectProduct:(product:Product)=>void;favorite:(id:number)=>void}){
+  const recommendations=products.filter(item=>item.id!==product.id).slice(0,4);
+  return <section className="post-rich-recommendations"><div className="section-head"><p>ПРОДОЛЖИТЬ ВЫБОР</p><h2>Вам может понравиться</h2></div><div>{recommendations.map(item=><ProductCard key={`recommendation-${item.id}`} product={item} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={false}/>)}</div></section>;
+}
+
+function Menu({ current, setCurrent, close, go, openCatalog }: { current:string; setCurrent:(s:string)=>void; close:()=>void; go:(v:View)=>void; openCatalog:(category?:string)=>void }) {
+  const level1=["РАСПРОДАЖА","Спальня","Кухня и столовая","Декор","Ванная","Одежда для дома","Идеи подарков","Аутлет"];
+  const subs:Record<string,string[]>={
+    "РАСПРОДАЖА":["Смотреть все","Летнее предложение","До −35% на текстиль","До −30% на сервировку"],
+    "Спальня":["Смотреть все","Комплекты постельного белья","Одеяла и подушки","Пледы и покрывала","Наволочки","Пододеяльники","Простыни","Наматрасники"],
+    "Кухня и столовая":["Смотреть все","Блюда и тарелки","Салатники","Стаканы и бокалы","Графины","Чашки","Столовые приборы","Вазы и этажерки","Прочие предметы сервировки"],
+    "Декор":["Смотреть все","Вазы","Свечи и ароматы","Декоративные подушки","Предметы интерьера"],
+    "Ванная":["Смотреть все","Полотенца","Халаты","Коврики","Аксессуары для ванной"],
+    "Одежда для дома":["Смотреть все","Сорочки","Пижамы","Халаты","Домашние костюмы"],
+    "Идеи подарков":["Смотреть все","Для неё","Для него","Новоселье","Подарочный сертификат"],
+    "Аутлет":["Смотреть все","Последний размер","Архив коллекций","До −50%"],
+  };
+  const list=subs[current]||[];
+  const catalogMap:Record<string,string>={"Спальня":"Постельное бельё","Кухня и столовая":"Посуда и сервировка","Декор
