@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -28,6 +28,21 @@ jobs:
 
       - name: Apply PDP recommendation logic
         run: python scripts/patch-pdp-recommendations.py
+
+      - name: Remove bundle purchase and cart upsell flows
+        run: python scripts/remove-bundle-upsell.py
+
+      - name: Persist storefront cleanup
+        run: |
+          if git diff --quiet -- app/page.tsx; then
+            echo "No storefront source changes to persist"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/page.tsx
+          git commit -m "Remove bundle purchase and cart upsell flows"
+          git push origin HEAD:main
 
       - name: Install dependencies
         run: npm install
