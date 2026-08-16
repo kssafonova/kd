@@ -75,7 +75,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 
 @media(max-width:520px){
   .header-actions{gap:5px}
-  .product-grid{gap-left:8px;gap-right:8px}
+  .product-grid{column-gap:8px}
   .bundle-config{grid-template-columns:1fr}
   .bundle-config .quantity-control{justify-self:start}
   .checkout-options>label{min-height:58px}
