@@ -1,0 +1,42 @@
+/* Unified typography for text action labels across the storefront */
+button.primary,
+button.secondary,
+button.stores,
+button.quick-info-link,
+button[class*="cta"],
+.hero-copy button,
+.editorial button,
+.manifest button,
+.section-head.row > button,
+.selection-help button,
+.pdp-accordion-trigger > span,
+.accordion > button,
+.added-sticky button,
+.category-card b,
+.collection-grid button span,
+.product-selector b,
+.post-rich-recommendations > .section-head h2 {
+  font-size: 16px !important;
+}
+
+@media (max-width: 900px) {
+  button.primary,
+  button.secondary,
+  button.stores,
+  button.quick-info-link,
+  button[class*="cta"],
+  .hero-copy button,
+  .editorial button,
+  .manifest button,
+  .section-head.row > button,
+  .selection-help button,
+  .pdp-accordion-trigger > span,
+  .accordion > button,
+  .added-sticky button,
+  .category-card b,
+  .collection-grid button span,
+  .product-selector b,
+  .post-rich-recommendations > .section-head h2 {
+    font-size: 14px !important;
+  }
+}
