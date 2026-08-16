@@ -44,6 +44,11 @@ jobs:
       - name: Remove product rail arrows
         run: python scripts/remove-product-rail-arrows.py
 
+      - name: Extract local product media
+        run: |
+          mkdir -p public/images/table-products
+          tar -xzf scripts/product-media.tar.gz -C public/images/table-products
+
       - name: Apply table product data and images
         run: python scripts/apply-table-product-data.py
 
