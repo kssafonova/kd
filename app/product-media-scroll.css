@@ -19,7 +19,7 @@
 }
 .product-media-scroll:not(.is-scrollable){overflow:hidden}
 
-/* Everywhere except PDP: left / right. */
+/* Everywhere except desktop PDP: left / right. */
 .product-media-scroll.horizontal-media{
   flex-direction:row;
   overflow-x:auto;
@@ -33,7 +33,7 @@
   min-width:100%;
 }
 
-/* PDP product gallery only: up / down. */
+/* Desktop PDP product gallery: up / down. */
 .pdp-main .pdp-product-media.vertical-media{
   flex-direction:column;
   overflow-x:hidden;
@@ -73,7 +73,7 @@
 .search-item-media,
 .recent-item-media{min-width:0}
 
-/* Reusable horizontal merchandising rail. On desktop four cards fit exactly. */
+/* Reusable horizontal merchandising rail. Desktop keeps four cards visible when space allows. */
 .product-rail-shell{
   position:relative;
   width:100%;
@@ -100,48 +100,32 @@
   scroll-snap-align:start;
   scroll-snap-stop:always;
 }
-.product-rail-arrow{
-  position:absolute;
-  top:38%;
-  z-index:8;
-  width:42px;
-  height:42px;
-  border:1px solid rgba(24,26,25,.18);
-  border-radius:50%;
-  background:rgba(255,255,255,.94);
-  backdrop-filter:blur(8px);
-  display:grid;
-  place-items:center;
-  box-shadow:0 2px 12px rgba(0,0,0,.08);
-}
-.product-rail-arrow svg{width:19px;height:19px}
-.product-rail-arrow.prev{left:10px;transform:rotate(180deg)}
-.product-rail-arrow.next{right:10px}
-.product-rail-arrow:disabled{opacity:.28;cursor:default}
 
 @media(max-width:900px){
+  /* Mobile PDP gallery: left / right only. */
   .pdp-main .pdp-product-media.vertical-media{
+    flex-direction:row;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    overscroll-behavior-x:contain;
+    touch-action:pan-x pan-y;
     height:53vh;
     min-height:390px;
   }
   .pdp-main .pdp-product-media.vertical-media>img{
+    flex:0 0 100%;
+    width:100%;
+    min-width:100%;
     height:53vh;
     min-height:390px;
   }
 
-  /* Exactly two complete cards are visible; every next card stays in horizontal scroll. */
+  /* One complete card + half of the next card are visible; the rest stay in horizontal scroll. */
   .product-rail{
-    grid-auto-columns:calc((100% - 12px)/2);
+    grid-auto-columns:calc((100% - 12px)/1.5);
     gap:12px;
   }
-  .product-rail-arrow{
-    top:34%;
-    width:34px;
-    height:34px;
-  }
-  .product-rail-arrow svg{width:16px;height:16px}
-  .product-rail-arrow.prev{left:5px}
-  .product-rail-arrow.next{right:5px}
 
   /* Only main-page and recommendation cards use the compact mobile treatment. */
   .home-product-rail .product-copy,
