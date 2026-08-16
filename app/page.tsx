@@ -1,6 +1,9 @@
 "use client";
 
 import { assetUrl } from "./assets";
+import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
+
+// CATALOG_SKU_MODEL_V1
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -20,9 +23,12 @@ type Product = {
   colorVariants?: ColorVariant[];
   hasRichContent?: boolean;
   gallery?: string[];
+  article?: string;
+  skus?: CatalogSku[];
+  selectedSkuId?: string;
 };
 
-type ColorVariant = { name: string; hex: string; image: string; position?: string };
+type ColorVariant = { name: string; hex: string; image: string; gallery?: string[]; position?: string };
 type CartItem = Product & { selectedSize: string; selectedColor: string; quantity: number };
 type Slide = { category:string; eyebrow:string; title:string; subtitle:string; image:string; secondaryImage?:string; mobileVideo?:string; align:string; destination:View };
 type Profile = { name:string; surname:string; email:string; phone:string; city:string; address:string };
@@ -48,8 +54,27 @@ function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}><path d="m8 4 8 8-8 8"/></svg>;
 }
 
+function findProductSku(product:Product,color?:string,size?:string){
+  if(!product.skus?.length)return undefined;
+  return product.skus.find(item=>item.id===product.selectedSkuId)
+    ??product.skus.find(item=>(!color||item.color===color)&&(!size||item.size===size))
+    ??product.skus.find(item=>!color||item.color===color)
+    ??product.skus[0];
+}
+
+function getProductSizeOptions(product:Product,color?:string){
+  if(product.skus?.length){
+    const rows=product.skus.filter(item=>!color||item.color===color);
+    return Array.from(new Map(rows.map(item=>[item.size,[item.size,item.price] as const])).values());
+  }
+  return [["Евро 200×220",product.price],["Семейный 150×200",product.price+2000],["Кинг Сайз 220×240",product.price+2000]] as const;
+}
+
 function getProductImages(product:Product){
-  const sources=[product.image,...(product.gallery??[]),...(product.colorVariants??[]).map(variant=>variant.image)];
+  const sku=findProductSku(product,product.selectedColor,product.selectedSize);
+  if(sku)return Array.from(new Set([sku.image,...sku.gallery].filter(Boolean)));
+  const variant=product.selectedColor?product.colorVariants?.find(item=>item.name===product.selectedColor):undefined;
+  const sources=variant?[variant.image,...(variant.gallery??product.gallery??[])]:[product.image,...(product.gallery??[])];
   return Array.from(new Set(sources.filter(Boolean)));
 }
 
@@ -80,7 +105,7 @@ function ProductRail({items,onProduct,onQuick,favorite,favorites,className=""}:{
   </div>;
 }
 
-const products: Product[] = [
+const baseProducts: Product[] = [
   { id: 1, name: "Постельное бельё «Русский узор»", note: "лён и хлопок, вышивка", price: 18990, oldPrice: 25990, image: "/images/russian-bedroom.png", position: "center", hasRichContent: true, colorVariants: [
     { name: "Молочный", hex: "#f1eee7", image: "/images/russian-bedroom.png" }, { name: "Песочный", hex: "#c5ad8e", image: "/images/beige-bedroom.png" }, { name: "Ночной синий", hex: "#12243e", image: "/images/zip-collection-night.png" },
   ] },
@@ -110,6 +135,24 @@ const products: Product[] = [
   { id: 11, name: "Подушка «Небесная гладь»", note: "бархат, 25×60 см", price: 4990, image: "/images/sky-bolster.png", colorVariants:[{name:"Небесный",hex:"#9fc2d3",image:"/images/sky-bolster.png"},{name:"Ночной синий",hex:"#203753",image:"/images/time-hero.png"}] },
   { id: 12, name: "Комплект «Голубая светлица»", note: "сатин, вышивка гладью", price: 21990, image: "/images/blue-bedding-vertical.png", hasRichContent: true, colorVariants:[{name:"Ледяной голубой",hex:"#afcbd1",image:"/images/blue-bedding-vertical.png"},{name:"Белый",hex:"#f4f2ec",image:"/images/zip-product-bed.png"}] },
 ];
+
+const products: Product[] = baseProducts.map(base=>{
+  const override=catalogProductOverrides[base.id];
+  if(!override)return base;
+  const first=override.skus[0];
+  const colors=Array.from(new Map(override.skus.map(item=>[item.color,item])).values());
+  return {
+    ...base,
+    name:override.name,
+    note:override.note,
+    article:override.article,
+    skus:override.skus,
+    price:Math.min(...override.skus.map(item=>item.price)),
+    image:first.image,
+    gallery:first.gallery,
+    colorVariants:colors.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))
+  };
+});
 
 const slides:Slide[] = [
   { category: "НОВИНКИ", eyebrow: "НОВАЯ ГЛАВА", title: "Дом в цвету", subtitle: "Авторские вазы и сервировка для долгих летних встреч", image: "/images/editorial-vases.webp", secondaryImage: "/images/editorial-table.webp", mobileVideo: "/images/kultura-home-mobile.mp4", align: "left", destination: "catalog" as View },
@@ -184,13 +227,15 @@ export default function Home() {
   const openCatalog=(category="Все товары")=>{setCatalogCategory(category);go("catalog")};
   const add = (product: Product, chosenSize = size, quantity = product.quantity ?? 1) => {
     const selectedVariant = product.colorVariants?.find((variant) => variant.name === product.selectedColor) ?? product.colorVariants?.[0];
-    const item: CartItem = { ...product, image: selectedVariant?.image ?? product.image, position: selectedVariant?.position ?? product.position, selectedSize: chosenSize, selectedColor: selectedVariant?.name ?? "Молочный", quantity };
+    const selectedSku=findProductSku(product,product.selectedColor,chosenSize);
+    const item: CartItem = { ...product, price:selectedSku?.price??product.price, image:selectedSku?.image??selectedVariant?.image??product.image, gallery:selectedSku?.gallery??product.gallery, position:selectedVariant?.position??product.position, selectedSize:chosenSize, selectedColor:selectedSku?.color??selectedVariant?.name??"Молочный", selectedSkuId:selectedSku?.id, quantity };
     setCart((current) => [...current, item]);
     setPlpSize(null); setSizeSheet(false); setCartOpen(true);
   };
   const addFromPLP = (product: Product, chosenSize: string, quantity: number, unitPrice: number) => {
     const selectedVariant = product.colorVariants?.find((variant) => variant.name === product.selectedColor) ?? product.colorVariants?.[0];
-    const item: CartItem = { ...product, price: unitPrice, image: selectedVariant?.image ?? product.image, position: selectedVariant?.position ?? product.position, selectedSize: chosenSize, selectedColor: selectedVariant?.name ?? "Молочный", quantity };
+    const selectedSku=findProductSku(product,product.selectedColor,chosenSize);
+    const item: CartItem = { ...product, price:selectedSku?.price??unitPrice, image:selectedSku?.image??selectedVariant?.image??product.image, gallery:selectedSku?.gallery??product.gallery, position:selectedVariant?.position??product.position, selectedSize:chosenSize, selectedColor:selectedSku?.color??selectedVariant?.name??"Молочный", selectedSkuId:selectedSku?.id, quantity };
     setCart((current)=>[...current,item]); setPlpSize(null); setPlpAdded(item);
   };
   const favorite = (id: number) => setFavorites((old) => old.includes(id) ? old.filter((x) => x !== id) : [...old, id]);
@@ -296,7 +341,8 @@ function ProductCard({ product, onClick, onQuick, favorite, liked }: { product:P
   const variants = product.colorVariants ?? [{ name: "Молочный", hex: "#eee", image: product.image, position: product.position }];
   const [colorIndex, setColorIndex] = useState(0);
   const chosen = variants[colorIndex];
-  const chosenProduct = { ...product, image: chosen.image, position: chosen.position ?? product.position, selectedColor: chosen.name };
+  const chosenSku=findProductSku(product,chosen.name);
+  const chosenProduct = { ...product, image: chosenSku?.image??chosen.image, gallery:chosenSku?.gallery??chosen.gallery??product.gallery, position: chosen.position ?? product.position, selectedColor: chosen.name, selectedSize:chosenSku?.size, selectedSkuId:chosenSku?.id };
   const discount=discountOf(product);
   return <article className="product-card"><button className={`heart ${liked?"liked":""}`} onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button className="product-image" onClick={()=>onClick(chosenProduct)}><ScrollableProductMedia key={`${product.id}-${chosen.name}`} product={chosenProduct} alt={`${product.name}, цвет ${chosen.name}`} position={chosen.position||product.position}/>{product.badge&&<span>{product.badge}</span>}</button><div className="product-copy"><button className="product-link" onClick={()=>onClick(chosenProduct)}><strong>{product.name}</strong><small>{chosen.name.toLowerCase()}, {product.note}</small></button><div className="plp-swatches" role="group" aria-label={`Цвет товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(i)} aria-label={`Выбрать цвет ${variant.name}`} title={variant.name}/>)}</div><span className={`price ${discount?"sale-price":""}`}>{fmt(product.price)} {product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</span></div><button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button></article>;
 }
@@ -421,8 +467,8 @@ function QuantityControl({ quantity, setQuantity, label = "Количество"
   return <div className="quantity-control" aria-label={label}><button onClick={(event)=>{event.stopPropagation();setQuantity(Math.max(1,quantity-1))}} aria-label="Уменьшить количество"><Icon name="minus"/></button><span>{quantity}</span><button onClick={(event)=>{event.stopPropagation();setQuantity(quantity+1)}} aria-label="Увеличить количество"><Icon name="plus"/></button></div>;
 }
 
-function ProductSizeRows({sizes,selectedSize,setSelectedSize,quantity,setQuantity,notify}:{sizes:readonly (readonly [string,number])[];selectedSize:string;setSelectedSize:(size:string)=>void;quantity:number;setQuantity:(quantity:number)=>void;notify:(size:string)=>void}){
-  return <div className="sizes quantity-sizes">{sizes.map(([name,price],index)=>{const unavailable=index===sizes.length-1;return <div key={name} className={`size-row ${selectedSize===name&&!unavailable?"active":""} ${unavailable?"unavailable":""}`}><button onClick={()=>{if(!unavailable){setSelectedSize(name);setQuantity(1)}}}><span>{name}</span>{selectedSize!==name&&!unavailable&&<b>{fmt(price)}</b>}</button>{unavailable?<div className="stock-actions"><button onClick={()=>document.querySelector(".post-rich-recommendations")?.scrollIntoView({behavior:"smooth"})}>СМОТРЕТЬ ПОХОЖИЕ</button><button onClick={()=>notify(name)} aria-label={`Сообщить о поступлении размера ${name}`}><Icon name="mail"/></button></div>:selectedSize===name?<QuantityControl quantity={quantity} setQuantity={setQuantity}/>:null}</div>})}</div>;
+function ProductSizeRows({sizes,selectedSize,setSelectedSize,quantity,setQuantity,notify,unavailableLast=true}:{sizes:readonly (readonly [string,number])[];selectedSize:string;setSelectedSize:(size:string)=>void;quantity:number;setQuantity:(quantity:number)=>void;notify:(size:string)=>void;unavailableLast?:boolean}){
+  return <div className="sizes quantity-sizes">{sizes.map(([name,price],index)=>{const unavailable=unavailableLast&&index===sizes.length-1;return <div key={name} className={`size-row ${selectedSize===name&&!unavailable?"active":""} ${unavailable?"unavailable":""}`}><button onClick={()=>{if(!unavailable){setSelectedSize(name);setQuantity(1)}}}><span>{name}</span>{selectedSize!==name&&!unavailable&&<b>{fmt(price)}</b>}</button>{unavailable?<div className="stock-actions"><button onClick={()=>document.querySelector(".post-rich-recommendations")?.scrollIntoView({behavior:"smooth"})}>СМОТРЕТЬ ПОХОЖИЕ</button><button onClick={()=>notify(name)} aria-label={`Сообщить о поступлении размера ${name}`}><Icon name="mail"/></button></div>:selectedSize===name?<QuantityControl quantity={quantity} setQuantity={setQuantity}/>:null}</div>})}</div>;
 }
 
 function ProductView({ product, favorite, liked, chooseSize, add, selectProduct, recentlyViewed }: { product:Product; favorite:(n:number)=>void; liked:boolean; chooseSize:()=>void; add:(p:Product)=>void; selectProduct:(p:Product)=>void; recentlyViewed:number[] }) {
@@ -430,19 +476,21 @@ function ProductView({ product, favorite, liked, chooseSize, add, selectProduct,
   const [storesOpen,setStoresOpen]=useState(false);
   const [colorIndex,setColorIndex]=useState(0);
   const [activeImage,setActiveImage]=useState(0);
-  const [selectedSize,setSelectedSize]=useState("Евро 200×220");
+  const [selectedSize,setSelectedSize]=useState(product.skus?.[0]?.size??"Евро 200×220");
   const [quantity,setQuantity]=useState(1);
   const variants=product.colorVariants??[{name:"Молочный",hex:"#eee",image:product.image}];
-  useEffect(()=>{const initial=variants.findIndex(variant=>variant.name===product.selectedColor);setColorIndex(initial>=0?initial:0);setActiveImage(0);setSelectedSize("Евро 200×220");setQuantity(1)},[product.id,product.selectedColor]);
+  useEffect(()=>{const initial=variants.findIndex(variant=>variant.name===product.selectedColor);const nextIndex=initial>=0?initial:0;const nextColor=variants[nextIndex]?.name;setColorIndex(nextIndex);setActiveImage(0);setSelectedSize(findProductSku(product,nextColor)?.size??"Евро 200×220");setQuantity(1)},[product.id,product.selectedColor]);
   const color=variants[colorIndex];
-  const gallery=product.hasRichContent?[color.image]:(product.gallery??[color.image,...variants.map(x=>x.image)]).filter((x,i,a)=>a.indexOf(x)===i);
-  const image=gallery[activeImage]??color.image;
-  const sizes=[["Евро 200×220",product.price],["Семейный 150×200",product.price+2000],["Кинг Сайз 220×240",product.price+2000]] as const;
-  const unitPrice=sizes.find(([name])=>name===selectedSize)?.[1]??product.price;
-  const selectedProduct={...product,price:unitPrice,image,selectedColor:color.name,selectedSize,quantity};
-  const handlePurchase=()=>window.matchMedia("(max-width: 900px)").matches?chooseSize():add(selectedProduct);
-  return <div className={`product-page page ${product.hasRichContent?"has-rich":"standard-pdp"}`}><div className="crumbs">Главная / Домашний текстиль / {product.name}</div><div className={`pdp-grid ${product.hasRichContent?"without-thumbs":""}`}>{!product.hasRichContent&&<div className="thumbs">{gallery.map((src,n)=><button key={src} className={n===activeImage?"active":""} onClick={()=>setActiveImage(n)} aria-label={`Фото товара ${n+1}`}><img src={assetUrl(src)} alt=""/></button>)}</div>}<div className="pdp-main"><ScrollableProductMedia key={`${product.id}-${color.name}-${image}`} product={selectedProduct} alt={`${product.name}, ${color.name}`} className="pdp-product-media"/></div><div className="pdp-info">{product.badge&&<small className="badge">{product.badge}</small>}<div className="pdp-title"><h1>{product.name}</h1><div><button onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button onClick={()=>navigator.clipboard?.writeText(location.href)} aria-label="Поделиться"><Icon name="share"/></button></div></div><div className={`pdp-price ${product.oldPrice?"sale":""}`}><strong>{fmt(unitPrice)}</strong>{product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discountOf(product)}%</mark></>}</div><small className="pdp-code">АРТИКУЛ: KD-PD-{1020+product.id}</small><label>Цвет: {color.name}</label><div className="swatches product-swatches">{variants.map((variant,index)=><button key={variant.name} className={index===colorIndex?"active":""} onClick={()=>{setColorIndex(index);setActiveImage(0)}} style={{background:variant.hex}} aria-label={`Цвет ${variant.name}`}/>)}</div><p className="pdp-description">Предмет создан в традиции русского гостеприимства: благородная палитра, точная отделка и материалы, которые красиво живут в доме годами.</p><label>Размер <button onClick={()=>alert("Евро: 200×220 · Семейный: 150×200 · Кинг Сайз: 220×240")}>Размерная сетка</button></label><ProductSizeRows sizes={sizes} selectedSize={selectedSize} setSelectedSize={setSelectedSize} quantity={quantity} setQuantity={setQuantity} notify={(name)=>alert(`Подписка оформлена. Сообщим, когда размер «${name}» появится в наличии.`)}/><button className="primary purchase-cta total-cta" onClick={handlePurchase}><span className="purchase-label desktop-label">ДОБАВИТЬ В КОРЗИНУ</span><span className="purchase-label mobile-label">ВЫБЕРИТЕ РАЗМЕР</span><b>{fmt(unitPrice*quantity)}</b></button><button className="stores" onClick={()=>setStoresOpen(true)} aria-label="Показать наличие в бутиках"><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button><div className="pdp-accordions">{[
-  {title:"ХАРАКТЕРИСТИКИ",content:<><p>Натуральные материалы, деликатная отделка и производство с вниманием к деталям.</p><dl><div><dt>Состав</dt><dd>Хлопок / лён</dd></div><div><dt>Уход</dt><dd>Деликатная стирка 30°C</dd></div><div><dt>Производство</dt><dd>Россия</dd></div></dl></>},
+  const sizes=getProductSizeOptions(product,color.name);
+  const sku=findProductSku(product,color.name,selectedSize);
+  const gallery=sku?[sku.image,...sku.gallery]:product.hasRichContent?[color.image]:(product.gallery??[color.image,...variants.map(x=>x.image)]).filter((x,i,a)=>a.indexOf(x)===i);
+  const image=gallery[activeImage]??sku?.image??color.image;
+  const unitPrice=sku?.price??sizes.find(([name])=>name===selectedSize)?.[1]??product.price;
+  const selectedProduct={...product,price:unitPrice,image,gallery:sku?.gallery??product.gallery,selectedColor:color.name,selectedSize,selectedSkuId:sku?.id,quantity};
+  const specs=sku??product.skus?.[0];
+  const handlePurchase=()=>product.skus?.length?add(selectedProduct):(window.matchMedia("(max-width: 900px)").matches?chooseSize():add(selectedProduct));
+  return <div className={`product-page page ${product.hasRichContent?"has-rich":"standard-pdp"}`}><div className="crumbs">Главная / Домашний текстиль / {product.name}</div><div className={`pdp-grid ${product.hasRichContent?"without-thumbs":""}`}>{!product.hasRichContent&&<div className="thumbs">{gallery.map((src,n)=><button key={src} className={n===activeImage?"active":""} onClick={()=>setActiveImage(n)} aria-label={`Фото товара ${n+1}`}><img src={assetUrl(src)} alt=""/></button>)}</div>}<div className="pdp-main"><ScrollableProductMedia key={`${product.id}-${color.name}-${image}`} product={selectedProduct} alt={`${product.name}, ${color.name}`} className="pdp-product-media"/></div><div className="pdp-info">{product.badge&&<small className="badge">{product.badge}</small>}<div className="pdp-title"><h1>{product.name}</h1><div><button onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button onClick={()=>navigator.clipboard?.writeText(location.href)} aria-label="Поделиться"><Icon name="share"/></button></div></div><div className={`pdp-price ${product.oldPrice?"sale":""}`}><strong>{fmt(unitPrice)}</strong>{product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discountOf(product)}%</mark></>}</div><small className="pdp-code">АРТИКУЛ: {sku?.id??product.article??`KD-PD-${1020+product.id}`}</small><label>Цвет: {color.name}</label><div className="swatches product-swatches">{variants.map((variant,index)=><button key={variant.name} className={index===colorIndex?"active":""} onClick={()=>{setColorIndex(index);setActiveImage(0);setSelectedSize(findProductSku(product,variant.name)?.size??selectedSize);setQuantity(1)}} style={{background:variant.hex}} aria-label={`Цвет ${variant.name}`}/>)}</div><p className="pdp-description">Предмет создан в традиции русского гостеприимства: благородная палитра, точная отделка и материалы, которые красиво живут в доме годами.</p><label>Размер <button onClick={()=>alert(sizes.map(([name])=>name).join(" · "))}>Размерная сетка</button></label><ProductSizeRows sizes={sizes} selectedSize={selectedSize} setSelectedSize={setSelectedSize} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} notify={(name)=>alert(`Подписка оформлена. Сообщим, когда размер «${name}» появится в наличии.`)}/><button className="primary purchase-cta total-cta" onClick={handlePurchase}><span className="purchase-label desktop-label">ДОБАВИТЬ В КОРЗИНУ</span><span className="purchase-label mobile-label">ВЫБЕРИТЕ РАЗМЕР</span><b>{fmt(unitPrice*quantity)}</b></button><button className="stores" onClick={()=>setStoresOpen(true)} aria-label="Показать наличие в бутиках"><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button><div className="pdp-accordions">{[
+  {title:"ХАРАКТЕРИСТИКИ",content:<><p>{specs?`${specs.material}. ${specs.size}.`:"Натуральные материалы, деликатная отделка и производство с вниманием к деталям."}</p><dl>{specs&&<><div><dt>Материал</dt><dd>{specs.material}</dd></div><div><dt>Состав</dt><dd>{specs.composition}</dd></div><div><dt>Высота</dt><dd>{specs.height}</dd></div><div><dt>Ширина</dt><dd>{specs.width}</dd></div></>}<div><dt>Уход</dt><dd>Деликатная стирка 30°C</dd></div><div><dt>Производство</dt><dd>Россия</dd></div></dl></>},
   {title:"ДОСТАВКА И ВОЗВРАТ",content:<><p>Бесплатная доставка при заказе от 15 000 ₽. Доступны курьерская доставка и самовывоз из бутика.</p><small>Срок и доступные способы рассчитываются при оформлении заказа.</small></>}
 ].map(section=><section className={`pdp-accordion-item ${open===section.title?"open":""}`} key={section.title}><button className="pdp-accordion-trigger" onClick={()=>setOpen(open===section.title?"":section.title)} aria-expanded={open===section.title}><span>{section.title}</span><Icon name="chevron"/></button>{open===section.title&&<div className="pdp-accordion-panel">{section.content}</div>}</section>)}</div></div></div>{product.hasRichContent&&<RichContent product={product} selectProduct={selectProduct}/>}<ProductRecommendations product={product} selectProduct={selectProduct} favorite={favorite} recentlyViewed={recentlyViewed}/>{storesOpen&&<BoutiqueMap close={()=>setStoresOpen(false)}/>}</div>;
 }
@@ -531,17 +579,20 @@ function Favorites({ids,close,remove,choose,quickAdd}:{ids:number[];close:()=>vo
 function Filters({ close, apply }: { close:()=>void; apply:()=>void }) { return <div className="overlay"><button className="overlay-bg" onClick={close}/><aside className="side-panel filters"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>ФИЛЬТРЫ</p>{["Категория","Материал","Цвет","Размер","Цена"].map((x,i)=><details key={x} open={i===0}><summary>{x}<Icon name="plus"/></summary><label><input type="checkbox"/> Постельное бельё</label><label><input type="checkbox"/> Домашний текстиль</label><label><input type="checkbox"/> Посуда и сервировка</label></details>)}<button className="primary" onClick={apply}>ПОКАЗАТЬ 24 ТОВАРА</button><button className="link" onClick={()=>location.reload()}>СБРОСИТЬ</button></aside></div> }
 
 function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void; add:(size:string,quantity:number,unitPrice:number)=>void }) {
-  const [chosenSize,setChosenSize]=useState("Евро 200×220");
+  const selectedColor=product.selectedColor??product.colorVariants?.[0]?.name;
+  const [chosenSize,setChosenSize]=useState(findProductSku(product,selectedColor)?.size??"Евро 200×220");
   const [quantity,setQuantity]=useState(1);
   const [infoOpen,setInfoOpen]=useState(false);
-  const sizes=[["Евро 200×220",product.price],["Семейный 150×200",product.price+2000],["Кинг Сайз 220×240",product.price+2000]] as const;
-  const unitPrice=sizes.find(([item])=>item===chosenSize)?.[1]??product.price;
+  const sizes=getProductSizeOptions(product,selectedColor);
+  const selectedSku=findProductSku(product,selectedColor,chosenSize);
+  const unitPrice=selectedSku?.price??sizes.find(([item])=>item===chosenSize)?.[1]??product.price;
   const discount=discountOf(product);
-  return <div className="overlay plp-flow"><button className="overlay-bg" onClick={close} aria-label="Закрыть выбор размера"/><section className="plp-modal" role="dialog" aria-modal="true" aria-label={`Добавить ${product.name}`}><div className="flow-handle"/><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><div className="plp-modal-media"><ScrollableProductMedia product={product} alt={product.name}/></div><div className="plp-modal-info"><small>{product.badge||"КУЛЬТУРА ДОМА"}</small><h2>{product.name}</h2><p className="modal-note">{product.note}</p><div className="modal-price"><b>{fmt(product.price)}</b>{product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</div><p>Цвет: <b>{product.selectedColor ?? product.colorVariants?.[0]?.name}</b></p><p className="quick-description">Предмет создан в русской декоративной традиции: ясная форма, благородный цвет и точная отделка.</p><button className="quick-info-link" onClick={()=>setInfoOpen(true)}>ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ <Icon name="chevron"/></button><div className="sheet-head"><span>Размер и количество</span><button onClick={()=>setInfoOpen(true)}>Размерная сетка</button></div><ProductSizeRows sizes={sizes} selectedSize={chosenSize} setSelectedSize={setChosenSize} quantity={quantity} setQuantity={setQuantity} notify={(name)=>alert(`Сообщим, когда размер «${name}» появится в наличии.`)}/><button className="primary total-cta" onClick={()=>add(chosenSize,quantity,unitPrice)}><span>ДОБАВИТЬ В КОРЗИНУ</span><b>{fmt(unitPrice*quantity)}</b></button><button className="stores" onClick={()=>alert("В наличии: Москва, Петровка · Санкт-Петербург, Невский")}><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button></div></section>{infoOpen&&<ProductInfoDrawer product={product} close={()=>setInfoOpen(false)}/>}</div>
+  return <div className="overlay plp-flow"><button className="overlay-bg" onClick={close} aria-label="Закрыть выбор размера"/><section className="plp-modal" role="dialog" aria-modal="true" aria-label={`Добавить ${product.name}`}><div className="flow-handle"/><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><div className="plp-modal-media"><ScrollableProductMedia product={product} alt={product.name}/></div><div className="plp-modal-info"><small>{product.badge||"КУЛЬТУРА ДОМА"}</small><h2>{product.name}</h2><p className="modal-note">{product.note}</p><div className="modal-price"><b>{fmt(product.price)}</b>{product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</div><p>Цвет: <b>{product.selectedColor ?? product.colorVariants?.[0]?.name}</b></p><p className="quick-description">Предмет создан в русской декоративной традиции: ясная форма, благородный цвет и точная отделка.</p><button className="quick-info-link" onClick={()=>setInfoOpen(true)}>ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ <Icon name="chevron"/></button><div className="sheet-head"><span>Размер и количество</span><button onClick={()=>setInfoOpen(true)}>Размерная сетка</button></div><ProductSizeRows sizes={sizes} selectedSize={chosenSize} setSelectedSize={setChosenSize} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} notify={(name)=>alert(`Сообщим, когда размер «${name}» появится в наличии.`)}/><button className="primary total-cta" onClick={()=>add(chosenSize,quantity,unitPrice)}><span>ДОБАВИТЬ В КОРЗИНУ</span><b>{fmt(unitPrice*quantity)}</b></button><button className="stores" onClick={()=>alert("В наличии: Москва, Петровка · Санкт-Петербург, Невский")}><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button></div></section>{infoOpen&&<ProductInfoDrawer product={product} close={()=>setInfoOpen(false)}/>}</div>
 }
 
 function ProductInfoDrawer({product,close}:{product:Product;close:()=>void}){
-  return <aside className="product-info-drawer" role="dialog" aria-modal="true" aria-label="Информация о товаре"><header><span>ИНФОРМАЦИЯ О ТОВАРЕ</span><button onClick={close} aria-label="Закрыть информацию"><Icon name="close"/></button></header><div><section><h2>РАЗМЕРЫ</h2><dl><div><dt>Высота</dt><dd>0,5 см</dd></div><div><dt>Ширина</dt><dd>{product.id===7?"220":"160"} см</dd></div><div><dt>Длина</dt><dd>{product.id===7?"240":"200"} см</dd></div><div><dt>Вес</dt><dd>1,2 кг</dd></div></dl></section><section><h2>СОСТАВ</h2><h3>ВНЕШНЯЯ ЧАСТЬ</h3><p>100% натуральный хлопок</p><h3>НАПОЛНИТЕЛЬ</h3><p>100% переработанный полиэстер</p></section><section><h2>СЕРТИФИЦИРОВАННЫЕ МАТЕРИАЛЫ</h2><h3>ХЛОПОК, СЕРТИФИЦИРОВАННЫЙ ПО OEKO-TEX®</h3><p>Материал проверен на отсутствие вредных веществ и подходит для ежедневного домашнего использования.</p></section><section><h2>УХОД</h2><ul><li>Деликатная стирка при 30°C</li><li>Не отбеливать</li><li>Гладить при низкой температуре</li><li>Не использовать машинную сушку</li></ul></section><section><h2>ПРОИСХОЖДЕНИЕ</h2><p>Сделано в России</p></section></div></aside>;
+  const sku=findProductSku(product,product.selectedColor,product.selectedSize)??product.skus?.[0];
+  return <aside className="product-info-drawer" role="dialog" aria-modal="true" aria-label="Информация о товаре"><header><span>ИНФОРМАЦИЯ О ТОВАРЕ</span><button onClick={close} aria-label="Закрыть информацию"><Icon name="close"/></button></header><div><section><h2>РАЗМЕРЫ</h2><dl><div><dt>Размер</dt><dd>{sku?.size??product.note}</dd></div>{sku&&<><div><dt>Высота</dt><dd>{sku.height}</dd></div><div><dt>Ширина</dt><dd>{sku.width}</dd></div></>}</dl></section><section><h2>МАТЕРИАЛ И СОСТАВ</h2><h3>{sku?.material??"Материал"}</h3><p>{sku?.composition??"Информация указана в характеристиках товара."}</p></section><section><h2>УХОД</h2><ul><li>Деликатная стирка при 30°C</li><li>Не отбеливать</li><li>Гладить при низкой температуре</li><li>Не использовать машинную сушку</li></ul></section><section><h2>ПРОИСХОЖДЕНИЕ</h2><p>Сделано в России</p></section></div></aside>;
 }
 
 function PLPAdded({product,close,openCart}:{product:CartItem;close:()=>void;openCart:()=>void}){
@@ -556,9 +607,8 @@ function SizeSheet({ size, setSize, close, add, price }: { size:string; setSize:
 }
 
 function Cart({ cart, recentlyViewed, close, total, remove, update, checkout, go, choose }: { cart:CartItem[]; recentlyViewed:Product[]; close:()=>void; total:number; remove:(i:number)=>void; update:(index:number,patch:Partial<CartItem>)=>void; checkout:()=>void; go:()=>void; choose:(product:Product)=>void }) {
-  const sizeOptions=["Евро 200×220","Семейный 150×200","Кинг Сайз 220×240"];
   const recentItems=recentlyViewed.slice(0,6);
-  return <div className="overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть корзину"/><aside className="side-panel cart"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>{cart.length?`КОРЗИНА · ${cart.reduce((sum,item)=>sum+item.quantity,0)}`:"КОРЗИНА"}</p>{cart.length===0?<>{recentItems.length?<section className="recent-cart"><div><p>НЕДАВНО ПРОСМОТРЕННЫЕ</p><span>Предметы, к которым вы возвращались</span></div><div>{recentItems.map(product=><button key={product.id} onClick={()=>choose(product)}><ScrollableProductMedia product={product} alt={product.name} className="recent-item-media"/><strong>{product.name}</strong><small>{product.note}</small><b>{fmt(product.price)}</b></button>)}</div><button className="secondary" onClick={go}>ПРОДОЛЖИТЬ ПОКУПКИ</button></section>:<div className="empty"><h2>Здесь пока пусто</h2><span>Добавьте предметы, которые сделают дом вашим.</span><button className="primary" onClick={go}>ПЕРЕЙТИ В КАТАЛОГ</button></div>}</>:<><div className="cart-items">{cart.map((p,i)=><article key={`${p.id}-${i}`}><ScrollableProductMedia product={p} alt={`${p.name}, ${p.selectedColor}`} className="cart-item-media"/><div className="cart-item-copy"><strong>{p.name}</strong><span>Цвет: {p.selectedColor}</span><label>Размер<select value={p.selectedSize} onChange={event=>update(i,{selectedSize:event.target.value})}>{sizeOptions.map(option=><option key={option}>{option}</option>)}</select></label><div className="cart-item-bottom"><QuantityControl quantity={p.quantity} setQuantity={quantity=>update(i,{quantity})}/><b>{fmt(p.price*p.quantity)}</b></div></div><button onClick={()=>remove(i)} aria-label="Удалить товар"><Icon name="close"/></button></article>)}</div><div className="delivery">{total>=15000?"Бесплатная доставка включена":`До бесплатной доставки ${fmt(15000-total)}`}</div><div className="cart-total"><span>ИТОГО</span><b>{fmt(total)}</b></div><button className="primary checkout-cta" onClick={checkout}>ОФОРМИТЬ ЗАКАЗ</button></>}</aside></div>;
+  return <div className="overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть корзину"/><aside className="side-panel cart"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>{cart.length?`КОРЗИНА · ${cart.reduce((sum,item)=>sum+item.quantity,0)}`:"КОРЗИНА"}</p>{cart.length===0?<>{recentItems.length?<section className="recent-cart"><div><p>НЕДАВНО ПРОСМОТРЕННЫЕ</p><span>Предметы, к которым вы возвращались</span></div><div>{recentItems.map(product=><button key={product.id} onClick={()=>choose(product)}><ScrollableProductMedia product={product} alt={product.name} className="recent-item-media"/><strong>{product.name}</strong><small>{product.note}</small><b>{fmt(product.price)}</b></button>)}</div><button className="secondary" onClick={go}>ПРОДОЛЖИТЬ ПОКУПКИ</button></section>:<div className="empty"><h2>Здесь пока пусто</h2><span>Добавьте предметы, которые сделают дом вашим.</span><button className="primary" onClick={go}>ПЕРЕЙТИ В КАТАЛОГ</button></div>}</>:<><div className="cart-items">{cart.map((p,i)=><article key={`${p.id}-${i}`}><ScrollableProductMedia product={p} alt={`${p.name}, ${p.selectedColor}`} className="cart-item-media"/><div className="cart-item-copy"><strong>{p.name}</strong><span>Цвет: {p.selectedColor}</span><label>Размер<select value={p.selectedSize} onChange={event=>{const nextSize=event.target.value;const nextSku=findProductSku(p,p.selectedColor,nextSize);update(i,{selectedSize:nextSize,selectedSkuId:nextSku?.id,price:nextSku?.price??p.price,image:nextSku?.image??p.image,gallery:nextSku?.gallery??p.gallery})}}>{getProductSizeOptions(p,p.selectedColor).map(([option])=><option key={option}>{option}</option>)}</select></label><div className="cart-item-bottom"><QuantityControl quantity={p.quantity} setQuantity={quantity=>update(i,{quantity})}/><b>{fmt(p.price*p.quantity)}</b></div></div><button onClick={()=>remove(i)} aria-label="Удалить товар"><Icon name="close"/></button></article>)}</div><div className="delivery">{total>=15000?"Бесплатная доставка включена":`До бесплатной доставки ${fmt(15000-total)}`}</div><div className="cart-total"><span>ИТОГО</span><b>{fmt(total)}</b></div><button className="primary checkout-cta" onClick={checkout}>ОФОРМИТЬ ЗАКАЗ</button></>}</aside></div>;
 }
 
 function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];total:number;profile:Profile|null;close:()=>void;editCart:()=>void;submit:()=>void}){
