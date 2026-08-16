@@ -89,13 +89,14 @@
     min-height:390px;
   }
 
-  /* Smaller cards only on the home shelf and PDP recommendation sections. */
+  /* Mobile merchandising shelves: exactly 2 full cards + half of the third.
+     With a 12px gap, 2.5 cards + 2 visible gaps fill the row width. */
   .products-section .product-row,
   .post-rich-recommendations>div:last-child{
     display:grid!important;
     grid-template-columns:none!important;
     grid-auto-flow:column;
-    grid-auto-columns:minmax(132px,40vw);
+    grid-auto-columns:calc(40% - 9.6px);
     gap:12px!important;
     overflow-x:auto;
     overflow-y:hidden;
@@ -137,11 +138,4 @@
   .post-rich-recommendations .heart svg{width:24px;height:24px}
   .products-section .quick,
   .post-rich-recommendations .quick{right:1px;bottom:7px;width:28px;height:28px}
-}
-
-@media(max-width:380px){
-  .products-section .product-row,
-  .post-rich-recommendations>div:last-child{
-    grid-auto-columns:minmax(124px,39vw);
-  }
 }
