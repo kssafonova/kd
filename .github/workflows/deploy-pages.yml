@@ -26,6 +26,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Apply PDP recommendation logic
+        run: python scripts/patch-pdp-recommendations.py
+
       - name: Install dependencies
         run: npm install
 
