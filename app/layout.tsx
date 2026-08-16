@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./ux-system.css";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
