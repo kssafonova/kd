@@ -1,70 +1,147 @@
-/* Unified product media scroller: swipe on touch devices, horizontal scroll on desktop. */
+/* Product media: no labels or visual scroll markers. */
 .product-media-scroll{
   position:relative;
   width:100%;
   min-width:0;
   display:flex;
-  overflow-x:auto;
-  overflow-y:hidden;
-  scroll-snap-type:x mandatory;
   scroll-behavior:smooth;
-  overscroll-behavior-inline:contain;
   -webkit-overflow-scrolling:touch;
-  scrollbar-width:thin;
-  scrollbar-color:#a9aaa6 transparent;
+  scrollbar-width:none;
 }
+.product-media-scroll::-webkit-scrollbar{display:none}
 .product-media-scroll>img{
-  flex:0 0 100%;
   width:100%;
-  min-width:100%;
   object-fit:cover;
   scroll-snap-align:start;
   scroll-snap-stop:always;
   user-select:none;
   -webkit-user-drag:none;
 }
-.product-media-scroll::-webkit-scrollbar{height:3px}
-.product-media-scroll::-webkit-scrollbar-track{background:transparent}
-.product-media-scroll::-webkit-scrollbar-thumb{background:#a9aaa6;border-radius:10px}
-.product-media-scroll:not(.is-scrollable){overflow:hidden;scrollbar-width:none}
-.product-media-scroll:not(.is-scrollable)::-webkit-scrollbar{display:none}
-.product-media-hint{
-  position:absolute;
-  right:9px;
-  bottom:8px;
-  z-index:2;
-  padding:4px 7px;
-  background:rgba(255,255,255,.88);
-  backdrop-filter:blur(6px);
-  font-size:8px;
-  line-height:1;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  pointer-events:none;
+.product-media-scroll:not(.is-scrollable){overflow:hidden}
+
+/* Everywhere except PDP: left / right. */
+.product-media-scroll.horizontal-media{
+  flex-direction:row;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  overscroll-behavior-inline:contain;
+  touch-action:pan-x pan-y;
+}
+.product-media-scroll.horizontal-media>img{
+  flex:0 0 100%;
+  min-width:100%;
 }
 
-/* PLP / recommendation cards */
+/* PDP product gallery only: up / down. */
+.pdp-main .pdp-product-media.vertical-media{
+  flex-direction:column;
+  overflow-x:hidden;
+  overflow-y:auto;
+  scroll-snap-type:y mandatory;
+  overscroll-behavior-y:auto;
+  touch-action:pan-y;
+  height:calc(100vh - 170px);
+  min-height:620px;
+}
+.pdp-main .pdp-product-media.vertical-media>img{
+  flex:0 0 100%;
+  width:100%;
+  min-width:100%;
+  height:100%;
+  min-height:100%;
+}
+
+/* No nested scrolling in PDP content. Only the image gallery and recommendation rows scroll. */
+.product-page .pdp-info,
+.product-page .pdp-grid,
+.product-page .pdp-accordions,
+.product-page .pdp-accordion-panel{
+  overflow:visible!important;
+  max-height:none!important;
+}
+
+/* PLP / recommendation cards keep horizontal media. */
 .product-image .product-media-scroll{height:auto}
 .product-image .product-media-scroll>img{height:auto;aspect-ratio:1/1.08}
-.product-image .product-media-hint{left:auto;top:auto;right:8px;bottom:8px;font-size:7px;padding:4px 6px}
 
-/* PDP */
-.pdp-main .pdp-product-media{height:calc(100vh - 170px);min-height:620px}
-.pdp-main .pdp-product-media>img{height:100%;min-height:620px}
-
-/* Quick-add sheet */
+/* Quick-add sheet keeps horizontal media. */
 .plp-modal-media .product-media-scroll{height:100%}
 .plp-modal-media .product-media-scroll>img{height:100%}
 
-/* Compact product rows keep the existing dimensions from globals.css. */
-.added-product-media,.cart-item-media,.checkout-item-media,.favorite-item-media,.search-item-media,.recent-item-media{min-width:0;overflow:hidden auto;overflow-y:hidden}
-.added-product-media .product-media-hint,.cart-item-media .product-media-hint,.checkout-item-media .product-media-hint,.favorite-item-media .product-media-hint,.search-item-media .product-media-hint,.recent-item-media .product-media-hint{display:none}
+/* Compact product rows inherit their surrounding layout dimensions. */
+.added-product-media,
+.cart-item-media,
+.checkout-item-media,
+.favorite-item-media,
+.search-item-media,
+.recent-item-media{
+  min-width:0;
+}
 
 @media(max-width:900px){
-  .product-media-scroll{scrollbar-width:none;touch-action:pan-x pan-y}
-  .product-media-scroll::-webkit-scrollbar{display:none}
-  .product-media-hint{right:7px;bottom:7px;font-size:7px;padding:4px 6px}
-  .product-image .product-media-hint{left:auto;top:auto;right:6px;bottom:6px}
-  .pdp-main .pdp-product-media{height:53vh;min-height:390px}
-  .pdp-main .pdp-product-media>img{height:53vh;min-height:390px}
+  .pdp-main .pdp-product-media.vertical-media{
+    height:53vh;
+    min-height:390px;
+  }
+  .pdp-main .pdp-product-media.vertical-media>img{
+    height:53vh;
+    min-height:390px;
+  }
+
+  /* Smaller cards only on the home shelf and PDP recommendation sections. */
+  .products-section .product-row,
+  .post-rich-recommendations>div:last-child{
+    display:grid!important;
+    grid-template-columns:none!important;
+    grid-auto-flow:column;
+    grid-auto-columns:minmax(132px,40vw);
+    gap:12px!important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scroll-snap-type:x proximity;
+    overscroll-behavior-inline:contain;
+    padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .products-section .product-row::-webkit-scrollbar,
+  .post-rich-recommendations>div:last-child::-webkit-scrollbar{display:none}
+  .products-section .product-card,
+  .post-rich-recommendations .product-card{
+    width:auto;
+    min-width:0;
+    scroll-snap-align:start;
+  }
+  .products-section .product-copy,
+  .post-rich-recommendations .product-copy{
+    width:calc(100% - 30px);
+    padding:9px 0 7px;
+  }
+  .products-section .product-copy strong,
+  .post-rich-recommendations .product-copy strong{
+    font-size:14px;
+    line-height:1.2;
+  }
+  .products-section .product-copy small,
+  .post-rich-recommendations .product-copy small{
+    font-size:10px;
+    line-height:1.25;
+  }
+  .products-section .price,
+  .post-rich-recommendations .price{font-size:14px}
+  .products-section .price del,
+  .post-rich-recommendations .price del{font-size:10px}
+  .products-section .heart,
+  .post-rich-recommendations .heart{right:7px;top:7px}
+  .products-section .heart svg,
+  .post-rich-recommendations .heart svg{width:24px;height:24px}
+  .products-section .quick,
+  .post-rich-recommendations .quick{right:1px;bottom:7px;width:28px;height:28px}
+}
+
+@media(max-width:380px){
+  .products-section .product-row,
+  .post-rich-recommendations>div:last-child{
+    grid-auto-columns:minmax(124px,39vw);
+  }
 }
