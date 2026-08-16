@@ -2,7 +2,7 @@
 
 import { assetUrl } from "./assets";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type View = "home" | "catalog" | "collections" | "editorial" | "product";
 type Product = {
@@ -72,6 +72,44 @@ function ScrollableProductMedia({product,alt,className="",position}:{product:Pro
       if(!atStart&&!atEnd){node.scrollLeft+=event.deltaY;event.preventDefault()}
     }
   }}>{images.map((src,index)=><img key={`${src}-${index}`} src={assetUrl(src)} alt={index===0?alt:`${alt}, фото ${index+1}`} style={{objectPosition:position||product.position||"center"}} draggable={false}/>)}</div>;
+}
+
+function ProductRail({items,onProduct,onQuick,favorite,favorites,className=""}:{items:Product[];onProduct:(product:Product)=>void;onQuick:(product:Product)=>void;favorite:(id:number)=>void;favorites:number[];className?:string}){
+  const railRef=useRef<HTMLDivElement>(null);
+  const [hasOverflow,setHasOverflow]=useState(false);
+  const [atStart,setAtStart]=useState(true);
+  const [atEnd,setAtEnd]=useState(false);
+
+  useEffect(()=>{
+    const node=railRef.current;
+    if(!node)return;
+    const sync=()=>{
+      const max=node.scrollWidth-node.clientWidth;
+      setHasOverflow(max>2);
+      setAtStart(node.scrollLeft<=2);
+      setAtEnd(node.scrollLeft>=max-2);
+    };
+    sync();
+    const observer=new ResizeObserver(sync);
+    observer.observe(node);
+    node.addEventListener("scroll",sync,{passive:true});
+    return ()=>{observer.disconnect();node.removeEventListener("scroll",sync)};
+  },[items.length]);
+
+  const move=(direction:number)=>{
+    const node=railRef.current;
+    if(!node)return;
+    const card=node.querySelector<HTMLElement>(".product-card");
+    const gap=parseFloat(getComputedStyle(node).columnGap||getComputedStyle(node).gap||"0")||0;
+    const step=(card?.getBoundingClientRect().width??node.clientWidth)+gap;
+    node.scrollBy({left:direction*step,behavior:"smooth"});
+  };
+
+  return <div className={`product-rail-shell ${className}`.trim()}>
+    {hasOverflow&&<button className="product-rail-arrow prev" onClick={()=>move(-1)} disabled={atStart} aria-label="Предыдущие товары"><Icon name="chevron"/></button>}
+    <div className="product-rail" ref={railRef}>{items.map(item=><ProductCard key={`${className}-${item.id}`} product={item} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
+    {hasOverflow&&<button className="product-rail-arrow next" onClick={()=>move(1)} disabled={atEnd} aria-label="Следующие товары"><Icon name="chevron"/></button>}
+  </div>;
 }
 
 const products: Product[] = [
@@ -247,7 +285,7 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }
 
     <section className="editorial"><img src={assetUrl("/images/time-hero.png")} alt="Капсула Нити времени"/><div><p>НОВАЯ КАПСУЛА</p><h2>Нити времени</h2><span>Вдохновлена движением звёзд<br/>и бесконечной красотой ночного неба.</span><button onClick={() => go("collections")}>ОТКРЫТЬ ИСТОРИЮ →</button></div></section>
 
-    <section className="section products-section"><div className="section-head row"><div><p>ВЫБОР РЕДАКЦИИ · {current.category}</p><h2>{slide===0?"Современное русское лето":slide===1?"Для спокойной спальни":slide===2?"Искусство сервировки":slide===3?"Детали интерьера":"Предметы из коллекций"}</h2></div><button onClick={()=>go(current.destination)}>СМОТРЕТЬ ВСЕ →</button></div><div className="product-row" key={`featured-${slide}`}>{featuredProducts.map(p=><ProductCard key={`${slide}-${p.id}`} product={p} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(p.id)}/>)}</div></section>
+    <section className="section products-section"><div className="section-head row"><div><p>ВЫБОР РЕДАКЦИИ · {current.category}</p><h2>{slide===0?"Современное русское лето":slide===1?"Для спокойной спальни":slide===2?"Искусство сервировки":slide===3?"Детали интерьера":"Предметы из коллекций"}</h2></div><button onClick={()=>go(current.destination)}>СМОТРЕТЬ ВСЕ →</button></div><ProductRail key={`featured-${slide}`} className="home-product-rail" items={featuredProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></section>
 
     <section className="manifest"><p>КУЛЬТУРА ДОМА</p><h2>Предметы, с которыми остаётся вечное</h2><span>Натуральные материалы, ручная работа и образы русской культуры —<br/>для современного дома и личных семейных историй.</span><button onClick={()=>go("collections")}>УЗНАТЬ О БРЕНДЕ →</button></section>
   </>;
@@ -355,8 +393,8 @@ function ProductRecommendations({product,selectProduct,favorite,recentlyViewed}:
     .filter((item): item is Product=>Boolean(item))
     .slice(0,4);
   return <>
-    <section className="post-rich-recommendations category-recommendations"><div className="section-head"><p>ПРОДОЛЖИТЬ ВЫБОР</p><h2>Товары из этой категории</h2></div><div>{categoryProducts.map(item=><ProductCard key={`category-${item.id}`} product={item} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={false}/>)}</div></section>
-    {viewedProducts.length>0&&<section className="post-rich-recommendations recently-viewed-recommendations" style={{marginTop:0,paddingTop:42}}><div className="section-head"><p>ИСТОРИЯ ПРОСМОТРОВ</p><h2>Вы недавно смотрели</h2></div><div>{viewedProducts.map(item=><ProductCard key={`recent-${item.id}`} product={item} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={false}/>)}</div></section>}
+    <section className="post-rich-recommendations category-recommendations"><div className="section-head"><p>ПРОДОЛЖИТЬ ВЫБОР</p><h2>Товары из этой категории</h2></div><ProductRail className="recommendation-product-rail" items={categoryProducts} onProduct={selectProduct} onQuick={selectProduct} favorite={favorite} favorites={[]}/></section>
+    {viewedProducts.length>0&&<section className="post-rich-recommendations recently-viewed-recommendations" style={{marginTop:0,paddingTop:42}}><div className="section-head"><p>ИСТОРИЯ ПРОСМОТРОВ</p><h2>Вы недавно смотрели</h2></div><ProductRail className="recommendation-product-rail" items={viewedProducts} onProduct={selectProduct} onQuick={selectProduct} favorite={favorite} favorites={[]}/></section>}
   </>;
 }
 
@@ -426,7 +464,8 @@ function SizeSheet({ size, setSize, close, add, price }: { size:string; setSize:
 
 function Cart({ cart, recentlyViewed, close, total, remove, update, checkout, go, choose }: { cart:CartItem[]; recentlyViewed:Product[]; close:()=>void; total:number; remove:(i:number)=>void; update:(index:number,patch:Partial<CartItem>)=>void; checkout:()=>void; go:()=>void; choose:(product:Product)=>void }) {
   const sizeOptions=["Евро 200×220","Семейный 150×200","Кинг Сайз 220×240"];
-  return <div className="overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть корзину"/><aside className="side-panel cart"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>{cart.length?`КОРЗИНА · ${cart.reduce((sum,item)=>sum+item.quantity,0)}`:"КОРЗИНА"}</p>{cart.length===0?<>{recentlyViewed.length?<section className="recent-cart"><div><p>НЕДАВНО ПРОСМОТРЕННЫЕ</p><span>Предметы, к которым вы возвращались</span></div><div>{recentlyViewed.map(product=><button key={product.id} onClick={()=>choose(product)}><ScrollableProductMedia product={product} alt={product.name} className="recent-item-media"/><strong>{product.name}</strong><small>{product.note}</small><b>{fmt(product.price)}</b></button>)}</div><button className="secondary" onClick={go}>ПРОДОЛЖИТЬ ПОКУПКИ</button></section>:<div className="empty"><h2>Здесь пока пусто</h2><span>Добавьте предметы, которые сделают дом вашим.</span><button className="primary" onClick={go}>ПЕРЕЙТИ В КАТАЛОГ</button></div>}</>:<><div className="cart-items">{cart.map((p,i)=><article key={`${p.id}-${i}`}><ScrollableProductMedia product={p} alt={`${p.name}, ${p.selectedColor}`} className="cart-item-media"/><div className="cart-item-copy"><strong>{p.name}</strong><span>Цвет: {p.selectedColor}</span><label>Размер<select value={p.selectedSize} onChange={event=>update(i,{selectedSize:event.target.value})}>{sizeOptions.map(option=><option key={option}>{option}</option>)}</select></label><div className="cart-item-bottom"><QuantityControl quantity={p.quantity} setQuantity={quantity=>update(i,{quantity})}/><b>{fmt(p.price*p.quantity)}</b></div></div><button onClick={()=>remove(i)} aria-label="Удалить товар"><Icon name="close"/></button></article>)}</div><div className="delivery">{total>=15000?"Бесплатная доставка включена":`До бесплатной доставки ${fmt(15000-total)}`}</div><div className="cart-total"><span>ИТОГО</span><b>{fmt(total)}</b></div><button className="primary checkout-cta" onClick={checkout}>ОФОРМИТЬ ЗАКАЗ</button></>}</aside></div>;
+  const recentItems=recentlyViewed.slice(0,6);
+  return <div className="overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть корзину"/><aside className="side-panel cart"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>{cart.length?`КОРЗИНА · ${cart.reduce((sum,item)=>sum+item.quantity,0)}`:"КОРЗИНА"}</p>{cart.length===0?<>{recentItems.length?<section className="recent-cart"><div><p>НЕДАВНО ПРОСМОТРЕННЫЕ</p><span>Предметы, к которым вы возвращались</span></div><div>{recentItems.map(product=><button key={product.id} onClick={()=>choose(product)}><ScrollableProductMedia product={product} alt={product.name} className="recent-item-media"/><strong>{product.name}</strong><small>{product.note}</small><b>{fmt(product.price)}</b></button>)}</div><button className="secondary" onClick={go}>ПРОДОЛЖИТЬ ПОКУПКИ</button></section>:<div className="empty"><h2>Здесь пока пусто</h2><span>Добавьте предметы, которые сделают дом вашим.</span><button className="primary" onClick={go}>ПЕРЕЙТИ В КАТАЛОГ</button></div>}</>:<><div className="cart-items">{cart.map((p,i)=><article key={`${p.id}-${i}`}><ScrollableProductMedia product={p} alt={`${p.name}, ${p.selectedColor}`} className="cart-item-media"/><div className="cart-item-copy"><strong>{p.name}</strong><span>Цвет: {p.selectedColor}</span><label>Размер<select value={p.selectedSize} onChange={event=>update(i,{selectedSize:event.target.value})}>{sizeOptions.map(option=><option key={option}>{option}</option>)}</select></label><div className="cart-item-bottom"><QuantityControl quantity={p.quantity} setQuantity={quantity=>update(i,{quantity})}/><b>{fmt(p.price*p.quantity)}</b></div></div><button onClick={()=>remove(i)} aria-label="Удалить товар"><Icon name="close"/></button></article>)}</div><div className="delivery">{total>=15000?"Бесплатная доставка включена":`До бесплатной доставки ${fmt(15000-total)}`}</div><div className="cart-total"><span>ИТОГО</span><b>{fmt(total)}</b></div><button className="primary checkout-cta" onClick={checkout}>ОФОРМИТЬ ЗАКАЗ</button></>}</aside></div>;
 }
 
 function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];total:number;profile:Profile|null;close:()=>void;editCart:()=>void;submit:()=>void}){
