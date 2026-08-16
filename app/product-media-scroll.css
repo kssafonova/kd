@@ -1,0 +1,69 @@
+/* Unified product media scroller: swipe on touch devices, horizontal scroll on desktop. */
+.product-media-scroll{
+  position:relative;
+  width:100%;
+  min-width:0;
+  display:flex;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  overscroll-behavior-inline:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:#a9aaa6 transparent;
+}
+.product-media-scroll>img{
+  flex:0 0 100%;
+  width:100%;
+  min-width:100%;
+  height:100%;
+  object-fit:cover;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.product-media-scroll::-webkit-scrollbar{height:3px}
+.product-media-scroll::-webkit-scrollbar-track{background:transparent}
+.product-media-scroll::-webkit-scrollbar-thumb{background:#a9aaa6;border-radius:10px}
+.product-media-scroll:not(.is-scrollable){overflow:hidden;scrollbar-width:none}
+.product-media-scroll:not(.is-scrollable)::-webkit-scrollbar{display:none}
+.product-media-hint{
+  position:absolute;
+  right:9px;
+  bottom:8px;
+  z-index:2;
+  padding:4px 7px;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(6px);
+  font-size:8px;
+  line-height:1;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  pointer-events:none;
+}
+
+/* PLP / recommendation cards */
+.product-image .product-media-scroll{height:auto}
+.product-image .product-media-scroll>img{height:auto;aspect-ratio:1/1.08}
+
+/* PDP */
+.pdp-main .pdp-product-media{height:calc(100vh - 170px);min-height:620px}
+.pdp-main .pdp-product-media>img{height:100%;min-height:620px}
+
+/* Quick-add sheet */
+.plp-modal-media .product-media-scroll{height:100%}
+.plp-modal-media .product-media-scroll>img{height:100%}
+
+/* Compact product rows */
+.added-product-media,.cart-item-media,.checkout-item-media,.favorite-item-media,.search-item-media,.recent-item-media{height:100%}
+.added-product-media .product-media-hint,.cart-item-media .product-media-hint,.checkout-item-media .product-media-hint,.favorite-item-media .product-media-hint,.search-item-media .product-media-hint,.recent-item-media .product-media-hint{display:none}
+
+@media(max-width:900px){
+  .product-media-scroll{scrollbar-width:none;touch-action:pan-x pan-y}
+  .product-media-scroll::-webkit-scrollbar{display:none}
+  .product-media-hint{right:7px;bottom:7px;font-size:7px;padding:4px 6px}
+  .pdp-main .pdp-product-media{height:53vh;min-height:390px}
+  .pdp-main .pdp-product-media>img{height:53vh;min-height:390px}
+}
