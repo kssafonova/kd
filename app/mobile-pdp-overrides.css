@@ -2,6 +2,16 @@
 
 /* Mobile / compact tablet: user-provided baseline. */
 @media (max-width: 900px) {
+  .crumbs {
+    margin-bottom: 17px;
+    font-size: 10px;
+  }
+
+  .tabs button {
+    padding: 11px 0 13px;
+    font-size: 12px;
+  }
+
   .pdp-accordion-trigger {
     min-height: 46px;
     font-size: 12px;
@@ -64,6 +74,16 @@
 
 /* Small desktop / landscape tablet. */
 @media (min-width: 901px) and (max-width: 1199px) {
+  .crumbs {
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+
+  .tabs button {
+    padding: 12px 0 14px;
+    font-size: 13px;
+  }
+
   .pdp-accordion-trigger {
     min-height: 48px;
     font-size: 13px;
@@ -123,6 +143,16 @@
 
 /* Standard desktop / laptop. */
 @media (min-width: 1200px) and (max-width: 1599px) {
+  .crumbs {
+    margin-bottom: 24px;
+    font-size: 12px;
+  }
+
+  .tabs button {
+    padding: 13px 0 16px;
+    font-size: 14px;
+  }
+
   .pdp-accordion-trigger {
     min-height: 50px;
     font-size: 14px;
@@ -182,6 +212,16 @@
 
 /* Large desktop. */
 @media (min-width: 1600px) {
+  .crumbs {
+    margin-bottom: 28px;
+    font-size: 13px;
+  }
+
+  .tabs button {
+    padding: 14px 0 17px;
+    font-size: 15px;
+  }
+
   .pdp-accordion-trigger {
     min-height: 52px;
     font-size: 15px;
