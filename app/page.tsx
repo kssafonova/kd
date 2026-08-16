@@ -2,7 +2,7 @@
 
 import { assetUrl } from "./assets";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type View = "home" | "catalog" | "collections" | "editorial" | "product";
 type Product = {
@@ -75,40 +75,8 @@ function ScrollableProductMedia({product,alt,className="",position}:{product:Pro
 }
 
 function ProductRail({items,onProduct,onQuick,favorite,favorites,className=""}:{items:Product[];onProduct:(product:Product)=>void;onQuick:(product:Product)=>void;favorite:(id:number)=>void;favorites:number[];className?:string}){
-  const railRef=useRef<HTMLDivElement>(null);
-  const [hasOverflow,setHasOverflow]=useState(false);
-  const [atStart,setAtStart]=useState(true);
-  const [atEnd,setAtEnd]=useState(false);
-
-  useEffect(()=>{
-    const node=railRef.current;
-    if(!node)return;
-    const sync=()=>{
-      const max=node.scrollWidth-node.clientWidth;
-      setHasOverflow(max>2);
-      setAtStart(node.scrollLeft<=2);
-      setAtEnd(node.scrollLeft>=max-2);
-    };
-    sync();
-    const observer=new ResizeObserver(sync);
-    observer.observe(node);
-    node.addEventListener("scroll",sync,{passive:true});
-    return ()=>{observer.disconnect();node.removeEventListener("scroll",sync)};
-  },[items.length]);
-
-  const move=(direction:number)=>{
-    const node=railRef.current;
-    if(!node)return;
-    const card=node.querySelector<HTMLElement>(".product-card");
-    const gap=parseFloat(getComputedStyle(node).columnGap||getComputedStyle(node).gap||"0")||0;
-    const step=(card?.getBoundingClientRect().width??node.clientWidth)+gap;
-    node.scrollBy({left:direction*step,behavior:"smooth"});
-  };
-
   return <div className={`product-rail-shell ${className}`.trim()}>
-    {hasOverflow&&<button className="product-rail-arrow prev" onClick={()=>move(-1)} disabled={atStart} aria-label="Предыдущие товары"><Icon name="chevron"/></button>}
-    <div className="product-rail" ref={railRef}>{items.map(item=><ProductCard key={`${className}-${item.id}`} product={item} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
-    {hasOverflow&&<button className="product-rail-arrow next" onClick={()=>move(1)} disabled={atEnd} aria-label="Следующие товары"><Icon name="chevron"/></button>}
+    <div className="product-rail">{items.map(item=><ProductCard key={`${className}-${item.id}`} product={item} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
   </div>;
 }
 
