@@ -1,0 +1,60 @@
+/* Product description and characteristics typography */
+.product-page .pdp-description,
+.product-page .pdp-accordion-panel p,
+.product-page .pdp-accordion-panel small,
+.product-page .pdp-accordion-panel dt,
+.product-page .pdp-accordion-panel dd,
+.product-page .pdp-accordion-panel li,
+.product-page .accordion p,
+.product-page .service-copy {
+  font-size: 16px !important;
+  line-height: 1.55;
+}
+
+.product-page .pdp-accordion-trigger > span,
+.product-page .pdp-accordion-panel h2,
+.product-page .pdp-accordion-panel h3,
+.product-page .accordion > button,
+.product-info-drawer h2,
+.product-info-drawer h3 {
+  font-size: 32px !important;
+  line-height: 1.2;
+}
+
+.product-info-drawer p,
+.product-info-drawer li,
+.product-info-drawer dt,
+.product-info-drawer dd,
+.product-info-drawer small {
+  font-size: 16px !important;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .product-page .pdp-description,
+  .product-page .pdp-accordion-panel p,
+  .product-page .pdp-accordion-panel small,
+  .product-page .pdp-accordion-panel dt,
+  .product-page .pdp-accordion-panel dd,
+  .product-page .pdp-accordion-panel li,
+  .product-page .accordion p,
+  .product-page .service-copy,
+  .product-info-drawer p,
+  .product-info-drawer li,
+  .product-info-drawer dt,
+  .product-info-drawer dd,
+  .product-info-drawer small {
+    font-size: 14px !important;
+    line-height: 1.55;
+  }
+
+  .product-page .pdp-accordion-trigger > span,
+  .product-page .pdp-accordion-panel h2,
+  .product-page .pdp-accordion-panel h3,
+  .product-page .accordion > button,
+  .product-info-drawer h2,
+  .product-info-drawer h3 {
+    font-size: 20px !important;
+    line-height: 1.25;
+  }
+}
