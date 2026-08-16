@@ -32,6 +32,7 @@ jobs:
       - name: Build static site
         env:
           NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_BASE_PATH: /kd
         run: npx next build
 
       - name: Disable Jekyll
