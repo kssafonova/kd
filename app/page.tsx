@@ -7,7 +7,7 @@ import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
 
 import { useEffect, useMemo, useState } from "react";
 
-type View = "home" | "catalog" | "collections" | "capsules" | "editorial" | "product";
+type View = "home" | "catalog" | "collections" | "editorial" | "product";
 type Product = {
   id: number;
   name: string;
@@ -249,8 +249,7 @@ export default function Home() {
       <Header onMenu={() => { setMenuSection(""); setMenu(true); }} onSearch={() => setSearch(true)} onAccount={() => setAccount(true)} onFavorites={() => setFavoritesOpen(true)} onCart={() => setCartOpen(true)} count={cartCount} favoriteCount={favorites.length} go={go} />
       {view === "home" && <HomeView go={go} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} />}
       {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
-      {view === "collections" && <CollectionsView mode="collections" openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
-      {view === "capsules" && <CollectionsView mode="capsules" openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
+      {view === "collections" && <CollectionsView openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} />}
       {view === "product" && <ProductView product={selected} favorite={favorite} liked={favorites.includes(selected.id)} chooseSize={() => setSizeSheet(true)} add={(p) => add(p,p.selectedSize,p.quantity)} selectProduct={openProduct} recentlyViewed={recentlyViewed} />}
       <Footer go={go} notice={notice} />
@@ -297,19 +296,7 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }
       <div className="category-grid">{categories.map(([name,image], i)=><button className={`category-card c${i}`} key={name} onClick={() => i===2 ? go("collections") : go("catalog")}><img src={assetUrl(image)} alt={name}/><span>{name}</span><b>Смотреть категорию →</b></button>)}</div>
     </section>
 
-    <section className="home-story-gateway">
-      <div className="home-story-heading"><p>STORIES / LOOKBOOK</p><h2>Дом как журнал</h2><span>Коллекции — для выбора предметов. Капсулы — для настроения, образов и готовых интерьерных историй.</span></div>
-      <div className="home-story-grid">
-        <article className="home-story-card home-story-primary">
-          <button className="home-story-media" onClick={()=>go("capsules")}><img src={assetUrl("/images/time-hero.png")} alt="Капсулы и editorial"/><span>01 / CAPSULES</span></button>
-          <div><p>EDITORIAL CAPSULES</p><h3>Нити времени</h3><span>Короткие главы, визуальные истории и lookbook без перегрузки основного shopping-flow.</span><button onClick={()=>go("capsules")}>СМОТРЕТЬ КАПСУЛЫ →</button></div>
-        </article>
-        <article className="home-story-card home-story-secondary">
-          <button className="home-story-media" onClick={()=>go("collections")}><img src={assetUrl("/images/poetry-editorial.png")} alt="Коллекции Культура дома"/><span>02 / COLLECTIONS</span></button>
-          <div><p>COLLECTION INDEX</p><h3>Коллекции</h3><span>Отдельные страницы коллекций с товарами, историей и опциональным lookbook.</span><button onClick={()=>go("collections")}>СМОТРЕТЬ КОЛЛЕКЦИИ →</button></div>
-        </article>
-      </div>
-    </section>
+    <section className="editorial"><img src={assetUrl("/images/time-hero.png")} alt="Капсула Нити времени"/><div><p>НОВАЯ КАПСУЛА</p><h2>Нити времени</h2><span>Вдохновлена движением звёзд<br/>и бесконечной красотой ночного неба.</span><button onClick={() => go("collections")}>ОТКРЫТЬ ИСТОРИЮ →</button></div></section>
 
     <section className="section products-section"><div className="section-head row"><div><p>ВЫБОР РЕДАКЦИИ · {current.category}</p><h2>{slide===0?"Современное русское лето":slide===1?"Для спокойной спальни":slide===2?"Искусство сервировки":slide===3?"Детали интерьера":"Предметы из коллекций"}</h2></div><button onClick={()=>go(current.destination)}>СМОТРЕТЬ ВСЕ →</button></div><ProductRail key={`featured-${slide}`} className="home-product-rail" items={featuredProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></section>
 
@@ -347,78 +334,58 @@ function ProductCard({ product, onClick, onQuick, favorite, liked }: { product:P
   return <article className="product-card"><button className={`heart ${liked?"liked":""}`} onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button className="product-image" onClick={()=>onClick(chosenProduct)}><ScrollableProductMedia key={`${product.id}-${chosen.name}`} product={chosenProduct} alt={`${product.name}, цвет ${chosen.name}`} position={chosen.position||product.position}/>{product.badge&&<span>{product.badge}</span>}</button><div className="product-copy"><button className="product-link" onClick={()=>onClick(chosenProduct)}><strong>{product.name}</strong><small>{chosen.name.toLowerCase()}, {product.note}</small></button><div className="plp-swatches" role="group" aria-label={`Цвет товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(i)} aria-label={`Выбрать цвет ${variant.name}`} title={variant.name}/>)}</div><span className={`price ${discount?"sale-price":""}`}>{fmt(product.price)} {product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</span></div><button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button></article>;
 }
 
-function CollectionsView({ openEditorial, mode }: { openEditorial:(editorial:Editorial)=>void; mode:"collections"|"capsules" }) {
-  const visible=editorials.filter(item=>mode==="capsules"?item.kind==="КАПСУЛА":item.kind==="КОЛЛЕКЦИЯ");
-  const hero=visible[0];
-  const secondary=visible[1]??visible[0];
-  const collectionMode=mode==="collections";
-  return <div className={`story-index page story-index-${mode}`}>
-    <section className="story-index-hero">
-      <button className="story-index-hero-media" onClick={()=>openEditorial(hero)}>
-        <img src={assetUrl(hero.images[0])} alt={hero.name}/>
-        <span>{collectionMode?"COLLECTION INDEX":"EDITORIAL CAPSULES"} / 01</span>
-      </button>
-      <div className="story-index-hero-copy">
-        <p>{collectionMode?"КОЛЛЕКЦИИ":"КАПСУЛЫ & STORIES"}</p>
-        <h1>{collectionMode?"Предметы, собранные в истории":"Короткие истории для дома"}</h1>
-        <span>{collectionMode?"Каждая коллекция получила собственную страницу: сначала образ и товары, а журнальный контент открывается отдельно.":"Editorial-капсулы работают как вдохновение: образы, сцены и lookbook доступны по желанию и не удлиняют основной путь."}</span>
-        <button onClick={()=>openEditorial(hero)}>ОТКРЫТЬ {hero.name.toUpperCase()} →</button>
-      </div>
-    </section>
-
-    <section className="story-index-intro">
-      <p>{collectionMode?"COLLECTION DIRECTORY":"EDITORIAL DIRECTORY"}</p>
-      <div><h2>{collectionMode?"Все коллекции":"Капсулы и визуальные истории"}</h2><span>{collectionMode?"Выберите коллекцию, посмотрите ключевые предметы и при желании откройте lookbook.":"Каждая карточка ведёт на короткую страницу капсулы; полный журнал открывается отдельным экраном."}</span></div>
-    </section>
-
-    <section className="story-index-grid">
-      {visible.map((item,index)=><article className={`story-index-card story-card-${index%3}`} key={item.id}>
-        <button className="story-card-media" onClick={()=>openEditorial(item)}>
-          <img src={assetUrl(item.images[(index+1)%item.images.length])} alt={item.name}/>
-          <span>{String(index+1).padStart(2,"0")} / {item.kind}</span>
-        </button>
-        <div className="story-card-copy">
-          <p>{item.kind}</p><h2>{item.name}</h2><span>{item.description}</span>
-          <div><button onClick={()=>openEditorial(item)}>ОТКРЫТЬ СТРАНИЦУ →</button><button onClick={()=>openEditorial(item)}>LOOKBOOK</button></div>
-        </div>
-      </article>)}
-    </section>
-
-    <section className="story-index-feature">
-      <button onClick={()=>openEditorial(secondary)}><img src={assetUrl(secondary.images[3])} alt={secondary.name}/><span>LOOKBOOK / {secondary.name}</span></button>
-      <div><p>SHOP THE STORY</p><h2>{collectionMode?"Сначала предметы — потом история":"Не листать длинную статью, а открыть журнал тогда, когда хочется"}</h2><span>{collectionMode?"Страница коллекции остаётся коммерческой и компактной: образ, товары, детали и отдельный вход в editorial.":"На мобильном lookbook перелистывается горизонтально по главам и не увеличивает длину страницы."}</span></div>
-    </section>
-  </div>;
+function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial)=>void }) {
+  const [kind,setKind]=useState("ВСЕ");
+  const visible=editorials.filter(item=>kind==="ВСЕ"||(kind==="КАПСУЛЫ"&&item.kind==="КАПСУЛА")||(kind==="КОЛЛЕКЦИИ"&&item.kind==="КОЛЛЕКЦИЯ"));
+  return <div className="collections page"><div className="section-head"><p>EDITORIAL</p><h1>Коллекции и капсулы</h1></div><div className="center-tabs">{["ВСЕ","КАПСУЛЫ","КОЛЛЕКЦИИ"].map(x=><button key={x} className={kind===x?"active":""} onClick={()=>setKind(x)}>{x}</button>)}</div><div className="collection-grid">{visible.map((item)=><article key={item.id}><button onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[1])} alt={item.name}/><div><h2>{item.name}</h2><p>{item.description}</p><span>СМОТРЕТЬ {item.kind==="КАПСУЛА"?"КАПСУЛУ":"КОЛЛЕКЦИЮ"} <Icon name="arrow"/></span></div></button></article>)}</div></div>;
 }
 
 function EditorialView({ editorial, selectProduct, favorite, favorites }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[] }) {
-  const [lookbookOpen,setLookbookOpen]=useState(false);
   const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);
-  const isCapsule=editorial.kind==="КАПСУЛА";
-  const eyebrow=isCapsule?"EDITORIAL CAPSULE":"COLLECTION";
-  return <div className={`story-detail page story-detail-${isCapsule?"capsule":"collection"}`}>
-    <section className="story-detail-hero">
+  const variant=editorial.id==="time"?"cinematic":editorial.id==="buyan"?"offset":editorial.id==="poetry"?"magazine":"gallery";
+  const chapter=editorial.id==="time"?"NIGHT STUDY":editorial.id==="buyan"?"SUMMER TABLE":editorial.id==="poetry"?"POETRY OF HOME":"FOLKLORE REFRAMED";
+  const index=editorial.id==="time"?"01":editorial.id==="buyan"?"02":editorial.id==="poetry"?"03":"04";
+  const productImage=items[0]?.image||editorial.images[0];
+
+  return <div className={`editorial-page zara-editorial editorial-variant-${variant}`}>
+    <section className="zh-editorial-cover">
       <img src={assetUrl(editorial.images[0])} alt={editorial.name}/>
-      <div className="story-detail-copy"><p>{eyebrow}</p><h1>{editorial.name}</h1><span>{editorial.lead}</span><div><button className="primary story-open-lookbook" onClick={()=>setLookbookOpen(true)}>ОТКРЫТЬ LOOKBOOK</button><button className="story-scroll-products" onClick={()=>document.querySelector(".story-detail-products")?.scrollIntoView({behavior:"smooth"})}>СМОТРЕТЬ ПРЕДМЕТЫ ↓</button></div></div>
+      <div className="zh-editorial-cover-copy"><span>{index} / EDITORIAL</span><p>{editorial.kind}</p><h1>{editorial.name}</h1></div>
     </section>
 
-    <section className="story-detail-summary">
-      <div className="story-detail-summary-copy"><p>THE STORY / SHORT READ</p><h2>{editorial.description}</h2><span>{editorial.detail}</span><button onClick={()=>setLookbookOpen(true)}>ЧИТАТЬ КАК ЖУРНАЛ →</button></div>
-      <button className="story-detail-summary-media" onClick={()=>setLookbookOpen(true)}><img src={assetUrl(editorial.images[1])} alt={`Lookbook ${editorial.name}`}/><span>OPEN LOOKBOOK</span></button>
+    <section className="zh-editorial-lead">
+      <p>{chapter}</p>
+      <h2>{editorial.lead}</h2>
+      <span>{editorial.description}</span>
     </section>
 
-    <section className="story-detail-products">
-      <div className="story-detail-products-head"><div><p>SHOP THE STORY</p><h2>Предметы {isCapsule?"капсулы":"коллекции"}</h2></div><span>{items.length} предмета</span></div>
-      <ProductRail className="story-product-rail" items={items} onProduct={selectProduct} onQuick={selectProduct} favorite={favorite} favorites={favorites}/>
+    <section className="zh-editorial-spread">
+      <figure className="zh-editorial-spread-main"><img src={assetUrl(editorial.images[1])} alt={`История ${editorial.name}`}/><figcaption>01 / STORY</figcaption></figure>
+      <div className="zh-editorial-spread-copy"><span>{index}</span><p>THE STORY</p><h3>{editorial.detail}</h3></div>
     </section>
 
-    <section className="story-lookbook-teaser">
-      <button onClick={()=>setLookbookOpen(true)}><img src={assetUrl(editorial.images[2])} alt="Открыть визуальную главу"/><span>01 / MATERIALS</span></button>
-      <button onClick={()=>setLookbookOpen(true)}><img src={assetUrl(editorial.images[3])} alt="Открыть интерьерную главу"/><span>02 / ATMOSPHERE</span></button>
-      <div><p>DIGITAL LOOKBOOK</p><h2>Пять коротких глав вместо длинной страницы</h2><span>На desktop — полноэкранный журнальный разворот. На mobile — свайп по экранным главам с отдельным shoppable-финалом.</span><button onClick={()=>setLookbookOpen(true)}>ОТКРЫТЬ ЖУРНАЛ →</button></div>
+    {variant==="magazine"&&<section className="zh-editorial-type-page"><span>WORDS / OBJECTS / HOME</span><h2>Красота начинается с паузы между вещами.</h2><p>Редакционная композиция строится как журнальный разворот: крупный текст, свободное поле и один выразительный предмет.</p></section>}
+
+    {variant==="offset"&&<section className="zh-editorial-side-note"><p>02 / TABLE STORY</p><h3>Сервировка не как набор предметов, а как готовая сцена для долгого разговора.</h3></section>}
+
+    <section className="zh-editorial-mosaic">
+      <figure className="zh-editorial-mosaic-a"><img src={assetUrl(editorial.images[2])} alt="Деталь коллекции"/><figcaption>DETAIL / 02</figcaption></figure>
+      <figure className="zh-editorial-mosaic-b"><img src={assetUrl(editorial.images[3])} alt="Образ коллекции"/><figcaption>ATMOSPHERE / 03</figcaption></figure>
+      <div className="zh-editorial-mosaic-copy"><span>03</span><p>OBJECTS IN CONTEXT</p><h3>Вещи раскрываются через масштаб, фактуру и соседство с другими предметами.</h3></div>
     </section>
 
-    {lookbookOpen&&<LookbookViewer editorial={editorial} items={items} close={()=>setLookbookOpen(false)} selectProduct={selectProduct}/>} 
+    <figure className="zh-editorial-full-frame">
+      <img src={assetUrl(productImage)} alt={`Предмет из ${editorial.name}`}/>
+      <figcaption><span>04</span><p>SHOP THE STORY</p></figcaption>
+    </figure>
+
+    {variant==="gallery"&&<section className="zh-editorial-quote"><p>FOLKLORE / NOW</p><h2>Традиция может звучать современно, когда её не копируют буквально.</h2></section>}
+    {variant==="cinematic"&&<section className="zh-editorial-quote"><p>NIGHT / LIGHT / TEXTURE</p><h2>Спокойный интерьер строится не из декора, а из света, материалов и ритма.</h2></section>}
+
+    <section className="editorial-products zh-editorial-products">
+      <div className="editorial-products-head"><div><p>SHOP THE STORY</p><h2>Предметы {editorial.kind==="КАПСУЛА"?"капсулы":"коллекции"}</h2></div></div>
+      <div className="product-grid">{items.map(item=><ProductCard product={item} key={`${editorial.id}-${item.id}`} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
+    </section>
   </div>;
 }
 
@@ -554,7 +521,7 @@ function Menu({ current, setCurrent, close, go, openCatalog }: { current:string;
   const list=subs[current]||[];
   const catalogMap:Record<string,string>={"Спальня":"Постельное бельё","Кухня и столовая":"Посуда и сервировка","Декор":"Пледы и подушки","Ванная":"Все товары","Одежда для дома":"Домашняя одежда","РАСПРОДАЖА":"Все товары","Идеи подарков":"Все товары","Аутлет":"Все товары"};
   const subcategoryMap:Record<string,string>={"Комплекты постельного белья":"Постельное бельё","Пододеяльники":"Постельное бельё","Простыни":"Постельное бельё","Наматрасники":"Постельное бельё","Одеяла и подушки":"Пледы и подушки","Пледы и покрывала":"Пледы и подушки","Наволочки":"Пледы и подушки","Блюда и тарелки":"Посуда и сервировка","Салатники":"Посуда и сервировка","Стаканы и бокалы":"Посуда и сервировка","Графины":"Посуда и сервировка","Чашки":"Посуда и сервировка","Столовые приборы":"Посуда и сервировка","Пижамы":"Домашняя одежда","Халаты":"Домашняя одежда","Домашние костюмы":"Домашняя одежда"};
-  return <div className="overlay navigation-overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть"/><aside className="menu-panel zara-menu"><div className="menu-top"><button onClick={close} aria-label="Закрыть меню"><Icon name="close"/></button><span><Icon name="pin"/> Бутики</span><b>КУЛЬТУРА ДОМА</b></div><div className="menu-body">{!current?<div className="menu-first level-one"><button className="menu-feature" onClick={()=>openCatalog("Все товары")}>НОВИНКИ</button><button className="menu-feature" onClick={()=>go("collections")}>КОЛЛЕКЦИИ</button><button className="menu-feature" onClick={()=>go("capsules")}>КАПСУЛЫ & STORIES</button>{level1.map(x=><button key={x} className={x==="РАСПРОДАЖА"?"sale":""} onClick={()=>setCurrent(x)}>{x}<Icon name="chevron"/></button>)}<hr/><button onClick={()=>go("capsules")}>EDITORIAL / LOOKBOOK</button><button onClick={()=>alert("Электронный сертификат доступен от 3 000 ₽")}>ПОДАРОЧНЫЙ СЕРТИФИКАТ</button></div>:<div className="menu-second level-two" key={current}><button className="menu-back" onClick={()=>setCurrent("")}><Icon name="chevron"/> {current}</button>{list.map((x,i)=><button key={x} className={i===0?"view-all":""} onClick={()=>openCatalog(i===0?(catalogMap[current]??"Все товары"):(subcategoryMap[x]??catalogMap[current]??"Все товары"))}>{x}{i===0&&<Icon name="arrow"/>}</button>)}<hr/><button onClick={()=>openCatalog(catalogMap[current]??"Все товары")}>ЛИДЕРЫ ПРОДАЖ</button></div>}</div></aside></div>;
+  return <div className="overlay navigation-overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть"/><aside className="menu-panel zara-menu"><div className="menu-top"><button onClick={close} aria-label="Закрыть меню"><Icon name="close"/></button><span><Icon name="pin"/> Бутики</span><b>КУЛЬТУРА ДОМА</b></div><div className="menu-body">{!current?<div className="menu-first level-one"><button className="menu-feature" onClick={()=>openCatalog("Все товары")}>НОВИНКИ</button><button className="menu-feature" onClick={()=>go("collections")}>КАПСУЛЫ И КОЛЛЕКЦИИ</button>{level1.map(x=><button key={x} className={x==="РАСПРОДАЖА"?"sale":""} onClick={()=>setCurrent(x)}>{x}<Icon name="chevron"/></button>)}<hr/><button onClick={()=>go("collections")}>EDITORIAL</button><button onClick={()=>alert("Электронный сертификат доступен от 3 000 ₽")}>ПОДАРОЧНЫЙ СЕРТИФИКАТ</button></div>:<div className="menu-second level-two" key={current}><button className="menu-back" onClick={()=>setCurrent("")}><Icon name="chevron"/> {current}</button>{list.map((x,i)=><button key={x} className={i===0?"view-all":""} onClick={()=>openCatalog(i===0?(catalogMap[current]??"Все товары"):(subcategoryMap[x]??catalogMap[current]??"Все товары"))}>{x}{i===0&&<Icon name="arrow"/>}</button>)}<hr/><button onClick={()=>openCatalog(catalogMap[current]??"Все товары")}>ЛИДЕРЫ ПРОДАЖ</button></div>}</div></aside></div>;
 }
 
 function Search({ close, choose }: { close:()=>void; choose:(p:Product)=>void }) { const [q,setQ]=useState(""); const result=products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())); return <div className="overlay"><button className="overlay-bg" onClick={close}/><div className="search-panel"><div><Icon name="search"/><input autoFocus placeholder="Поиск по каталогу" value={q} onChange={e=>setQ(e.target.value)}/><button onClick={close} aria-label="Закрыть поиск"><Icon name="close"/></button></div><p>{q?`Найдено: ${result.length}`:"Популярные запросы: постельное бельё, посуда, подарки"}</p>{q&&<div className="search-results">{result.map(p=><button key={p.id} onClick={()=>choose(p)}><ScrollableProductMedia product={p} alt={p.name} className="search-item-media"/><span>{p.name}<b>{fmt(p.price)}</b></span></button>)}</div>}</div></div> }
