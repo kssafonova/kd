@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile-quick-add.css";
 import "./product-media-scroll.css";
+import "./boutique-drawer.css";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
