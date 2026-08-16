@@ -26,29 +26,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Apply PDP recommendation logic
-        run: python scripts/patch-pdp-recommendations.py
-
-      - name: Remove bundle purchase and cart upsell flows
-        run: python scripts/remove-bundle-upsell.py
-
-      - name: Enable scrollable product media
-        run: python scripts/add-scrollable-product-media.py
-
-      - name: Refine product media behavior
-        run: python scripts/refine-product-media-behavior.py
-
-      - name: Add responsive product rails
-        run: python scripts/add-product-rails.py
-
-      - name: Remove product rail arrows
-        run: python scripts/remove-product-rail-arrows.py
-
       - name: Restore original collections and capsules
         run: python scripts/restore-original-collections.py
-
-      - name: Apply normalized SKU catalog
-        run: python scripts/apply-table-product-data.py
 
       - name: Persist storefront source updates
         run: |
