@@ -1,0 +1,61 @@
+/* Requested mobile PDP typography and control sizing. */
+@media (max-width: 900px) {
+  .pdp-accordion-trigger {
+    min-height: 46px;
+    font-size: 12px;
+  }
+
+  .pdp-price del,
+  .pdp-price mark,
+  .pdp-info > p {
+    font-size: 12px;
+  }
+
+  .pdp-accordion-panel {
+    font-size: 12px;
+  }
+
+  .primary {
+    min-height: 46px;
+    font-size: 12px;
+  }
+
+  .quantity-sizes .size-row > button {
+    font-size: 12px;
+  }
+
+  .quantity-sizes .size-row > button b {
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .quantity-control span {
+    min-width: 20px;
+    font-size: 12px;
+  }
+
+  .sheet-head {
+    font-size: 12px;
+  }
+
+  .stock-actions > button:first-child {
+    font-size: 9px;
+  }
+
+  button,
+  input,
+  select {
+    line-height: 1.2;
+    font-size: 10px;
+  }
+
+  .stores {
+    padding: 14px 0;
+    font-size: 12px;
+  }
+
+  .post-rich-recommendations > .section-head h2 {
+    font-size: 16px;
+  }
+}
