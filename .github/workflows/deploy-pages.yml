@@ -35,6 +35,9 @@ jobs:
       - name: Enable scrollable product media
         run: python scripts/add-scrollable-product-media.py
 
+      - name: Refine product media behavior
+        run: python scripts/refine-product-media-behavior.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx; then
@@ -44,7 +47,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/page.tsx
-          git commit -m "Enable scrollable product media across storefront"
+          git commit -m "Refine product media scroll behavior"
           git push origin HEAD:main
 
       - name: Install dependencies
