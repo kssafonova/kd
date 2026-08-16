@@ -29,6 +29,9 @@ jobs:
       - name: Apply PDP recommendation logic
         run: python scripts/patch-pdp-recommendations.py
 
+      - name: Apply storefront UX refactor
+        run: python scripts/apply-ux-refactor.py
+
       - name: Install dependencies
         run: npm install
 
