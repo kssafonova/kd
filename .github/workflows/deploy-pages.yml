@@ -29,6 +29,9 @@ jobs:
       - name: Restore original collections and capsules
         run: python scripts/restore-original-collections.py
 
+      - name: Sync workbook product specs
+        run: python scripts/sync-workbook-product-specs.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx; then
@@ -38,7 +41,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/page.tsx
-          git commit -m "Restore original collections and capsules"
+          git commit -m "Sync updated workbook product data"
           git push origin HEAD:main
 
       - name: Install dependencies
