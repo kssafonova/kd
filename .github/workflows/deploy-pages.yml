@@ -77,6 +77,9 @@ jobs:
       - name: Apply product catalog and size flow rules
         run: python scripts/apply-product-catalog-rules-v1.py
 
+      - name: Apply strict catalog category mapping
+        run: python scripts/apply-catalog-category-mapping.py
+
       - name: Install dependencies
         run: npm install
 
