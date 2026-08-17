@@ -154,6 +154,27 @@ const productList:CatalogProductOverride[] = [
     {color:"Белый",size:"60×60 см",height:"60 см",width:"60 см",packageInfo:"Наволочка 2 шт",material:"Шелк",composition:"100% Сатин",image:"/kd/images/products/KD-PD-1128-WHITE01.png",gallery:["/kd/images/products/KD-PD-1128-WHITE02.png","/kd/images/products/KD-PD-1128-WHITE03.png"]},
     {color:"Ночной синий",size:"60×60 см",height:"60 см",width:"60 см",packageInfo:"Наволочка 2 шт",material:"Шелк",composition:"100% Сатин",image:"/kd/images/products/KD-PD-1128-DARK01.png",gallery:["/kd/images/products/KD-PD-1128-DARK03.png"]},
   ]),
+
+  // ICE_PATTERN_PRODUCTS_V1
+  makeProduct(2000,"KD-PD-2000","KD-PD-2000","Коллекция «Ледяные узоры»",0,[
+    {color:"Синий",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2000-BLUE01.png",gallery:[]},
+    {color:"Ночной синий",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2000-DARK01.png",gallery:[]},
+    {color:"Белый",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2000-WHITE01.png",gallery:[]},
+  ]),
+  makeProduct(2001,"KD-PD-2001","KD-PD-2001","Коллекция «Ледяные узоры»",0,[
+    {color:"Ночной синий",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2001-DARK01.png",gallery:[]},
+    {color:"Белый",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2001-WHITE01.png",gallery:[]},
+  ]),
+  makeProduct(2003,"KD-PD-2003","KD-PD-2003","Коллекция «Ледяные узоры»",0,[
+    {color:"Синий",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2003-BLUE01.png",gallery:["/images/products/KD-PD-2003-BLUE02.png"]},
+  ]),
+  makeProduct(2004,"KD-PD-2004","KD-PD-2004","Коллекция «Ледяные узоры»",0,[
+    {color:"Белый",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2004-WHITE01.png",gallery:[]},
+  ]),
+  makeProduct(2010,"KD-PD-2010","KD-PD-2010","Коллекция «Ледяные узоры»",0,[
+    {color:"Белый",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2010-WHITE01.png",gallery:[]},
+    {color:"Ночной синий",size:"Стандарт",material:"Не указано",composition:"Не указано",collection:"Ледяные узоры",image:"/images/products/KD-PD-2010-DARK01.png",gallery:[]},
+  ]),
 ];
 
 export const catalogProductOverrides:Record<number,CatalogProductOverride> = Object.fromEntries(
