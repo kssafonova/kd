@@ -21,7 +21,7 @@ css += r'''
   }
   .plp-flow .plp-compact-modal{
     margin:0 0 0 auto!important;
-    width:min(560px,43vw)!important;
+    width:min(646px,46vw)!important;
     height:100%!important;
     max-height:100vh!important;
     display:flex!important;
@@ -36,43 +36,24 @@ css += r'''
   }
   .plp-flow .plp-compact-modal>.close{
     position:fixed!important;
-    top:17px!important;
-    right:18px!important;
-    z-index:8!important;
+    top:18px!important;
+    right:20px!important;
+    z-index:10!important;
   }
-  .plp-compact-top{
+  .plp-reference-gallery{
     flex:0 0 auto!important;
-    display:grid!important;
-    grid-template-columns:minmax(0,56%) minmax(0,44%)!important;
-    align-items:stretch!important;
-    min-height:330px!important;
-  }
-  .plp-compact-media{
-    min-height:330px!important;
-    height:330px!important;
-    aspect-ratio:auto!important;
-  }
-  .plp-compact-media img{
-    min-height:0!important;
     width:100%!important;
-    height:100%!important;
-    object-fit:cover!important;
   }
-  .plp-compact-color-panel{
-    min-height:330px!important;
-    align-items:center!important;
-    padding:64px 28px 30px!important;
+  .plp-reference-media>img{
+    aspect-ratio:1.68/1!important;
   }
-  .plp-compact-bottom{
+  .plp-reference-body{
     flex:1 0 auto!important;
-    display:flex!important;
-    flex-direction:column!important;
-    gap:18px!important;
-    padding:30px 42px 34px!important;
+    padding:38px 46px 38px!important;
   }
 }
 /* END_PLP_DESKTOP_RIGHT_DRAWER_V1 */
 '''
 
 css_path.write_text(css, encoding="utf-8")
-print("Kept adaptive reference layout inside right-edge desktop PLP drawer")
+print("Kept reference PLP quick-add layout inside a right-edge desktop drawer")
