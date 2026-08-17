@@ -33,26 +33,88 @@
   min-width:100%;
 }
 
-/* Desktop PDP product gallery: native up / down scrolling. */
-.pdp-main .pdp-product-media.vertical-media{
-  flex-direction:column;
-  overflow-x:hidden;
-  overflow-y:auto;
-  scroll-snap-type:y proximity;
-  overscroll-behavior-y:auto;
-  touch-action:pan-y;
-  height:calc(100vh - 170px);
-  min-height:620px;
-}
-.pdp-main .pdp-product-media.vertical-media>img{
-  flex:0 0 100%;
-  width:100%;
-  min-width:100%;
-  height:100%;
-  min-height:100%;
+/* Desktop PDP follows the reference: small sticky thumbnails at left and
+   full-size images stacked in the PAGE flow. There is no nested gallery scroll. */
+@media(min-width:901px){
+  .product-page .pdp-grid{
+    grid-template-columns:88px minmax(0,1fr) minmax(350px,.58fr);
+    gap:18px;
+    align-items:start;
+  }
+  .product-page .pdp-grid.without-thumbs{
+    grid-template-columns:minmax(520px,1.6fr) minmax(350px,.72fr);
+  }
+  .product-page .thumbs{
+    position:sticky;
+    top:108px;
+    align-self:start;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    max-height:calc(100vh - 128px);
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:0 2px 4px 0;
+    scrollbar-width:none;
+  }
+  .product-page .thumbs::-webkit-scrollbar{display:none}
+  .product-page .thumbs button{
+    width:100%;
+    aspect-ratio:1/1;
+    padding:0;
+    border:1px solid transparent;
+    background:#f2f0ef;
+    overflow:hidden;
+    opacity:.78;
+    transition:opacity .18s ease,border-color .18s ease;
+  }
+  .product-page .thumbs button:hover{opacity:1}
+  .product-page .thumbs button.active{
+    border-color:#1b1b1b;
+    opacity:1;
+  }
+  .product-page .thumbs img{
+    width:100%;
+    height:100%!important;
+    min-height:0!important;
+    object-fit:cover;
+  }
+  .product-page .pdp-main{
+    min-width:0;
+    overflow:visible;
+  }
+  .pdp-main .pdp-product-media.vertical-media{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    scroll-snap-type:none;
+    overscroll-behavior:auto;
+    touch-action:auto;
+  }
+  .pdp-main .pdp-product-media.vertical-media>img{
+    flex:0 0 auto;
+    width:100%;
+    min-width:0;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:1/1;
+    object-fit:contain;
+    object-position:center;
+    background:#f2f0ef;
+    scroll-snap-align:none;
+    scroll-margin-top:108px;
+  }
+  .product-page .pdp-info{
+    position:sticky;
+    top:108px;
+    align-self:start;
+  }
 }
 
-/* No nested scrolling in PDP content. Only image gallery and product recommendation rails scroll. */
+/* No nested scrolling in PDP content. */
 .product-page .pdp-info,
 .product-page .pdp-grid,
 .product-page .pdp-accordions,
@@ -101,8 +163,7 @@
   scroll-snap-stop:always;
 }
 
-/* Desktop recommendation blocks: neutralize the legacy direct-child grid rule.
-   The shell must span the full recommendation width; the actual product rail owns the columns. */
+/* Desktop recommendation blocks: neutralize the legacy direct-child grid rule. */
 @media(min-width:901px){
   .post-rich-recommendations>.product-rail-shell{
     display:block!important;
@@ -136,23 +197,28 @@
 }
 
 @media(max-width:900px){
-  /* Mobile PDP gallery: left / right only. */
+  /* Mobile PDP gallery stays a native left/right swipe carousel. */
   .pdp-main .pdp-product-media.vertical-media{
     flex-direction:row;
-    overflow-x:auto;
-    overflow-y:hidden;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
     scroll-snap-type:x mandatory;
     overscroll-behavior-x:contain;
     touch-action:pan-x pan-y;
-    height:53vh;
-    min-height:390px;
+    height:53vh!important;
+    min-height:390px!important;
+    gap:0;
   }
   .pdp-main .pdp-product-media.vertical-media>img{
     flex:0 0 100%;
     width:100%;
     min-width:100%;
-    height:53vh;
-    min-height:390px;
+    height:53vh!important;
+    min-height:390px!important;
+    aspect-ratio:auto;
+    object-fit:contain;
+    background:#f2f0ef;
+    scroll-snap-align:start;
   }
 
   /* One complete card + half of the next card are visible; the rest stay in horizontal scroll. */
