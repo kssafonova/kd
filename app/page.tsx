@@ -179,19 +179,19 @@ const baseProducts: Product[] = [
   { id: 12, name: "Комплект «Голубая светлица»", note: "сатин, вышивка гладью", price: 21990, image: "/images/blue-bedding-vertical.png", hasRichContent: true, colorVariants:[{name:"Ледяной голубой",hex:"#afcbd1",image:"/images/blue-bedding-vertical.png"},{name:"Белый",hex:"#f4f2ec",image:"/images/zip-product-bed.png"}] },
 
   // ICE_PATTERN_PRODUCTS_V1
-  { id:2000, name:"Тарелка «Ледяные узоры»", note:"костяной фарфор, 23 см", price:7990, image:"/images/products/KD-PD-2000-BLUE01.png", colorVariants:[
+  { id:2000, name:"Декоративная подушка «Ледяные узоры»", note:"хлопок, 50×50 см", price:5990, image:"/images/products/KD-PD-2000-BLUE01.png", colorVariants:[
     {name:"Ледяной голубой",hex:"#afcbd1",image:"/images/products/KD-PD-2000-BLUE01.png"},
     {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2000-DARK01.png"},
     {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2000-WHITE01.png"},
   ]},
-  { id:2001, name:"Чайная пара «Ледяные узоры»", note:"костяной фарфор, 250 мл", price:6990, image:"/images/products/KD-PD-2001-DARK01.png", colorVariants:[
+  { id:2001, name:"Тарелка «Ледяные узоры»", note:"костяной фарфор, 23 см", price:7990, image:"/images/products/KD-PD-2001-DARK01.png", colorVariants:[
     {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2001-DARK01.png"},
     {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2001-WHITE01.png"},
   ]},
   { id:2003, name:"Плед «Ледяные узоры»", note:"шерсть и хлопок, 140×200 см", price:12990, image:"/images/products/KD-PD-2003-BLUE01.png", gallery:["/images/products/KD-PD-2003-BLUE02.png"], colorVariants:[
     {name:"Ледяной голубой",hex:"#afcbd1",image:"/images/products/KD-PD-2003-BLUE01.png",gallery:["/images/products/KD-PD-2003-BLUE02.png"]},
   ]},
-  { id:2004, name:"Декоративная подушка «Ледяные узоры»", note:"хлопок, 50×50 см", price:5990, image:"/images/products/KD-PD-2004-WHITE01.png", colorVariants:[
+  { id:2004, name:"Чайная пара «Ледяные узоры»", note:"костяной фарфор, 250 мл", price:6990, image:"/images/products/KD-PD-2004-WHITE01.png", colorVariants:[
     {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2004-WHITE01.png"},
   ]},
   { id:2010, name:"Салатник «Ледяные узоры»", note:"костяной фарфор, 24 см", price:9990, image:"/images/products/KD-PD-2010-WHITE01.png", colorVariants:[
@@ -201,11 +201,20 @@ const baseProducts: Product[] = [
 ];
 
 const REMOVED_PRODUCT_IDS = new Set([1,9]);
+// PRODUCT_PREVIEW_RULES_V1
+const catalogPreviewColorByArticle:Record<string,string> = {
+  "KD-PD-1028":"Белый",
+  "KD-PD-1128":"Белый",
+};
 const products: Product[] = baseProducts.map(base=>{
   const override=catalogProductOverrides[base.id];
   if(!override)return base;
-  const first=override.skus[0];
-  const colors=Array.from(new Map(override.skus.map(item=>[item.color,item])).values());
+  const preferredColor=catalogPreviewColorByArticle[override.article];
+  const first=(preferredColor?override.skus.find(item=>item.color===preferredColor):undefined)??override.skus[0];
+  const colorRows=Array.from(new Map(override.skus.map(item=>[item.color,item])).values());
+  const colors=preferredColor
+    ? [...colorRows.filter(item=>item.color===preferredColor),...colorRows.filter(item=>item.color!==preferredColor)]
+    : colorRows;
   return {
     ...base,
     name:override.name,
@@ -433,9 +442,9 @@ function CatalogView({ initialCategory, onFilter, onAdd, onProduct, favorite, fa
   useEffect(()=>setCategory(initialCategory),[initialCategory]);
   const categoryProductIds:Record<string,number[]>={
     "Все товары":products.map(product=>product.id),
-    "Посуда и сервировка":[5,10,2000,2001,2010],
+    "Посуда и сервировка":[5,10,2001,2004,2010],
     "Постельное бельё":[2,4,8,11,12],
-    "Пледы и подушки":[3,6,7,2003,2004],
+    "Пледы и подушки":[3,6,7,2000,2003],
     "Домашняя одежда":[],
     "Столовый текстиль":[],
   };
@@ -757,7 +766,38 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
 
 
 function EditorialView({ editorial, selectProduct, favorite, favorites, buyBundle }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
-  const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);
+  const lunaPreviewRules:Record<string,{color:string;image:string}>={
+    "KD-PD-1023":{color:"Синий",image:"/kd/images/products/KD-PD-1023-BLUE02.png"},
+    "KD-PD-1026":{color:"Синий",image:"/kd/images/products/KD-PD-1026-BLUE01.png"},
+  };
+  const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean).map(product=>{
+    if(editorial.id!=="luna")return product;
+    const rule=lunaPreviewRules[product.article??""];
+    if(!rule)return product;
+    const skus=product.skus?.map(sku=>sku.color===rule.color?{
+      ...sku,
+      image:rule.image,
+      gallery:Array.from(new Set([sku.image,...sku.gallery].filter(image=>image!==rule.image))),
+    }:sku);
+    const orderedSkus=skus
+      ? [...skus.filter(sku=>sku.color===rule.color),...skus.filter(sku=>sku.color!==rule.color)]
+      : skus;
+    const variants=product.colorVariants?.map(variant=>variant.name===rule.color?{
+      ...variant,
+      image:rule.image,
+      gallery:Array.from(new Set([variant.image,...(variant.gallery??[])].filter(image=>image!==rule.image))),
+    }:variant);
+    const orderedVariants=variants
+      ? [...variants.filter(variant=>variant.name===rule.color),...variants.filter(variant=>variant.name!==rule.color)]
+      : variants;
+    return {
+      ...product,
+      image:rule.image,
+      selectedColor:rule.color,
+      skus:orderedSkus,
+      colorVariants:orderedVariants,
+    };
+  });
   const [selecting,setSelecting]=useState(false);
   const [selectedIds,setSelectedIds]=useState<number[]>(items.map(item=>item.id));
   useEffect(()=>{setSelecting(false);setSelectedIds(items.map(item=>item.id))},[editorial.id]);

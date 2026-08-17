@@ -1,4 +1,4 @@
 :HL["/kd/_next/static/chunks/08i59ja999svm.css","style"]
 :HL["/kd/_next/static/chunks/0j9sfvyxrbtsf.css","style"]
 :HL["/kd/_next/static/chunks/0o9tqoce5-5rn.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"green-salon","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"ci03FieD0D8fqRFXz3Y8l"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"green-salon","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"n2JQb9ATYsng7bH5h55Fm"}
