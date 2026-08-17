@@ -107,6 +107,9 @@ jobs:
       - name: Apply final Ice Patterns product type mapping
         run: python scripts/fix-ice-pattern-2000-2004-types.py
 
+      - name: Apply product preview rules
+        run: python scripts/apply-product-preview-rules-v1.py
+
       - name: Install dependencies
         run: npm install
 
