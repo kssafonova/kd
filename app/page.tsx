@@ -416,17 +416,17 @@ function CatalogView({ initialCategory, onFilter, onAdd, onProduct, favorite, fa
   useEffect(()=>setCategory(initialCategory),[initialCategory]);
   const categoryProductIds:Record<string,number[]>={
     "Все товары":products.map(product=>product.id),
-    "Посуда и сервировка":[5,9,10,3,1],
-    "Постельное бельё":[1,2,4,6,8,12],
-    "Пледы и подушки":[3,4,6,7,11],
-    "Домашняя одежда":[2,3,6,8],
-    "Столовый текстиль":[1,3,5],
+    "Посуда и сервировка":[5,10],
+    "Постельное бельё":[2,4,8,11,12],
+    "Пледы и подушки":[3,6,7],
+    "Домашняя одежда":[],
+    "Столовый текстиль":[],
   };
   const list = products.filter(product=>(categoryProductIds[category]??[]).includes(product.id)).sort((a,b)=>sort === "Сначала дешевле" ? a.price-b.price : sort === "Сначала дороже" ? b.price-a.price : a.id-b.id);
-  return <div className="catalog page"><div className="crumbs">Главная / Каталог / Домашний текстиль</div><div className="title-line"><h1>Домашний текстиль</h1><span>345 товаров</span></div>
+  return <div className="catalog page"><div className="crumbs">Главная / Каталог / {category}</div><div className="title-line"><h1>{category}</h1><span>{list.length} {list.length===1?"товар":list.length>=2&&list.length<=4?"товара":"товаров"}</span></div>
     <div className="tabs">{["Все товары","Посуда и сервировка","Постельное бельё","Пледы и подушки","Домашняя одежда","Столовый текстиль"].map(x=><button key={x} className={category===x?"active":""} onClick={()=>setCategory(x)}>{x}</button>)}</div>
     <div className="catalog-tools"><select value={sort} onChange={e=>setSort(e.target.value)}><option>По умолчанию</option><option>Сначала дешевле</option><option>Сначала дороже</option></select><button onClick={onFilter}><Icon name="filter"/> Фильтры</button></div>
-    <div className="product-grid">{list.map(p=><ProductCard key={`${category}-${p.id}`} product={p} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(p.id)}/>)}</div>
+    {list.length?<div className="product-grid">{list.map(p=><ProductCard key={`${category}-${p.id}`} product={p} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(p.id)}/>)}</div>:<div className="catalog-empty"><p>В этой категории пока нет товаров</p></div>}
   </div>;
 }
 
