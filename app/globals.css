@@ -977,6 +977,12 @@ footer{background:#202a2b}
 
 
 
+
+
+
+
+
+
 /* HOME_REFERENCE_REDESIGN_V1 */
 .view-home{background:#fff}
 .view-home .header{
@@ -1415,3 +1421,38 @@ footer{background:#202a2b}
   .home-reference-products .product-card{flex-basis:76vw!important}
 }
 /* END_HOME_EDITORIAL_REFERENCE_V4 */
+
+
+/* MENU_HIGHLIGHT_SOLUTIONS_V1 */
+.zara-menu .menu-highlight-action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 4px 0;
+  padding: 15px 16px 15px 18px !important;
+  background: var(--cream, #f3f0ea);
+  border: 1px solid var(--line, #deded9) !important;
+  border-left: 2px solid var(--accent, #aa7650) !important;
+  font-weight: 600;
+  letter-spacing: .025em;
+  text-align: left;
+}
+.zara-menu .menu-highlight-action svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.zara-menu .menu-highlight-action:hover,
+.zara-menu .menu-highlight-action:focus-visible {
+  background: #ebe6dd;
+}
+.zara-menu .menu-ready-solutions {
+  margin-top: 10px;
+}
+@media (max-width: 700px) {
+  .zara-menu .menu-highlight-action {
+    padding: 14px 14px 14px 16px !important;
+  }
+}
