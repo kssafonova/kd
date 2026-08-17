@@ -717,14 +717,20 @@ function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void;
     <button className="overlay-bg" onClick={close} aria-label="Закрыть"/>
     <section className="plp-modal plp-compact-modal" role="dialog" aria-modal="true" aria-label={`Добавить ${product.name}`}>
       <button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button>
-      <div className="plp-compact-media"><RemoteImage src={preview} alt={product.name}/></div>
-      <div className="plp-compact-controls">
-        <div className="plp-compact-field color-field">
-          <span>Цвет</span>
-          {variants.length>1?<><div className="plp-compact-swatches" role="group" aria-label="Выберите цвет">{variants.map((variant,index)=><button key={variant.name} type="button" className={index===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(index)} aria-label={`Цвет ${variant.name}`} title={variant.name}/>)}</div><small>{color.name}</small></>:<strong>{color.name}</strong>}
+
+      <div className="plp-compact-top">
+        <div className="plp-compact-media"><RemoteImage src={preview} alt={product.name}/></div>
+        <div className="plp-compact-color-panel">
+          <div className="plp-compact-field color-field">
+            <span>Цвет: <b>{color.name}</b></span>
+            {variants.length>1?<div className="plp-compact-swatches" role="group" aria-label="Выберите цвет">{variants.map((variant,index)=><button key={variant.name} type="button" className={index===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(index)} aria-label={`Цвет ${variant.name}`} title={variant.name}/>)}</div>:null}
+          </div>
         </div>
+      </div>
+
+      <div className="plp-compact-bottom">
         <div className="plp-compact-field size-field">
-          <span>Размер</span>
+          <div className="plp-compact-size-head"><span>Размер</span></div>
           {requiresSizeChoice?<div className="plp-compact-sizes" role="group" aria-label="Выберите размер">{sizes.map(([name,price])=><button key={name} type="button" className={chosenSize===name?"active":""} aria-pressed={chosenSize===name} onClick={()=>setChosenSize(name)}><span>{name}</span><b>{fmt(price)}</b></button>)}</div>:<div className="plp-compact-static-size"><strong>{sizes[0]?.[0]??product.selectedSize??"Единый размер"}</strong><b>{fmt(sizes[0]?.[1]??product.price)}</b></div>}
         </div>
         <button className={`primary plp-compact-add ${canAdd?"is-ready":"is-disabled"}`} type="button" disabled={!canAdd} aria-disabled={!canAdd} onClick={()=>{if(!canAdd)return;add(chosenSize,color.name,unitPrice)}}>{canAdd?`Добавить в корзину · ${fmt(unitPrice)}`:"Выберите размер"}</button>
