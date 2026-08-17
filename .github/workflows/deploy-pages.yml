@@ -48,7 +48,16 @@ jobs:
         run: python scripts/normalize-single-color-swatches.py
 
       - name: Apply adaptive story quick-buy and builder
-        run: python scripts/apply-story-builder-v2.py
+        shell: bash
+        run: |
+          if grep -q 'story-v2-layer' app/page.tsx; then
+            echo "Adaptive story builder already present"
+          else
+            python scripts/apply-story-builder-v2.py
+          fi
+
+      - name: Refine story quick-buy preset
+        run: python scripts/refine-story-builder-v2.py
 
       - name: Apply homepage reference redesign
         run: python scripts/redesign-home-reference.py
