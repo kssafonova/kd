@@ -3,6 +3,7 @@
 import { assetUrl } from "./assets";
 import { RemoteImage } from "./remote-image";
 import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
+import { EditorialScenarioLanding } from "./editorial-scenario-landing";
 
 // CATALOG_SKU_MODEL_V1
 
@@ -423,12 +424,13 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 }
 
 function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial)=>void }) {
-  return <div className="collections page">
-    <div className="section-head"><p>EDITORIAL</p><h1>Коллекции и капсулы</h1></div>
-    <div className="collection-grid">
-      {editorials.map((item)=><article key={item.id}><button onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[1])} alt={item.name}/><div><h2>{item.name}</h2><p>{item.description}</p><span>СМОТРЕТЬ {item.kind==="КАПСУЛА"?"КАПСУЛУ":"КОЛЛЕКЦИЮ"} <Icon name="arrow"/></span></div></button></article>)}
-    </div>
-  </div>;
+  return <EditorialScenarioLanding
+    collections={editorials}
+    openCollection={(item)=>{
+      const selected=editorials.find(editorial=>editorial.id===item.id);
+      if(selected)openEditorial(selected);
+    }}
+  />;
 }
 
 function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quickAdd, addToCart, openCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void; openCart:()=>void }) {
