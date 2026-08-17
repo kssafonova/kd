@@ -324,7 +324,7 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, 
   const homeCategories=[
     ["Кухня и столовая","/images/moon-plate.png"],
     ["Домашний текстиль","/images/russian-bedroom.png"],
-    ["Спальня","/images/classic-bedroom.png"],
+    ["Ванная","/images/classic-bedroom.png"],
     ["Декор для дома","/images/zip-product-bed.png"],
     ["Аутлет","/images/beige-bedroom.png"],
   ] as const;
@@ -350,10 +350,10 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, 
     <section className="home-bedroom-collections" aria-labelledby="home-bedroom-collections-title">
       <header className="home-bedroom-collections-head">
         <div>
-          <p>ДЛЯ СПАЛЬНИ</p>
-          <h2 id="home-bedroom-collections-title">Коллекции и истории</h2>
+          <p>СПАЛЬНЯ</p>
+          <h2 id="home-bedroom-collections-title">КОЛЛЕКЦИИ И КАПСУЛЫ</h2>
         </div>
-        <span>Текстиль, свет и детали для личного пространства.</span>
+        <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ →</button>
       </header>
 
       <div className="home-collection-duo">
@@ -361,9 +361,9 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, 
           <img src={assetUrl("/images/editorial/caps_luna_postel.png")} alt="Коллекция Лунная сказка"/>
           <span className="home-collection-feature-shade"/>
           <span className="home-collection-feature-copy">
-            <small>КОЛЛЕКЦИЯ · СПАЛЬНЯ</small>
+            <small>КОЛЛЕКЦИЯ</small>
             <strong>Лунная сказка</strong>
-            <em>СМОТРЕТЬ ИСТОРИИ →</em>
+            <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
           </span>
         </button>
 
@@ -371,16 +371,16 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, 
           <img src={assetUrl("/images/editorial/caps_led.png")} alt="Коллекция Ледяные узоры"/>
           <span className="home-collection-feature-shade"/>
           <span className="home-collection-feature-copy">
-            <small>КОЛЛЕКЦИЯ · СПАЛЬНЯ</small>
+            <small>КОЛЛЕКЦИЯ</small>
             <strong>Ледяные узоры</strong>
-            <em>СМОТРЕТЬ ИСТОРИИ →</em>
+            <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
           </span>
         </button>
       </div>
     </section>
 
     <section className="home-reference-products">
-      <div className="home-reference-products-head"><div><p>ВЫБОР РЕДАКЦИИ · СПАЛЬНЯ</p><h2>ХИТЫ ПРОДАЖ</h2></div><button onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ →</button></div>
+      <div className="home-reference-products-head"><div><p>СПАЛЬНЯ</p><h2>ВЫБОР РЕДАКЦИИ</h2></div><button onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ →</button></div>
       <ProductRail className="home-product-rail" items={bestsellers} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
     </section>
 
