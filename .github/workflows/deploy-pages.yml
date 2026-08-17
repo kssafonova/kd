@@ -56,6 +56,9 @@ jobs:
       - name: Apply Zara-style Luna bundle flow
         run: python scripts/apply-luna-zara-bundle.py
 
+      - name: Normalize single-color swatches
+        run: python scripts/normalize-single-color-swatches.py
+
       - name: Simplify Luna into grouped stories
         run: python scripts/simplify-luna-groups.py
 
