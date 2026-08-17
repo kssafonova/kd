@@ -74,6 +74,9 @@ jobs:
       - name: Compact PLP quick-add modal
         run: python scripts/compact-plp-quick-add.py
 
+      - name: Anchor desktop PLP drawer right
+        run: python scripts/anchor-plp-quick-add-right.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx app/globals.css app/catalog-data.ts; then
