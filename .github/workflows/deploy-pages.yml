@@ -77,6 +77,9 @@ jobs:
       - name: Add bedroom homepage feature
         run: python scripts/add-home-bedroom-feature.py
 
+      - name: Refine homepage editorial layout
+        run: python scripts/refine-homepage-editorial.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx app/globals.css app/catalog-data.ts; then
