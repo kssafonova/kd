@@ -32,12 +32,6 @@ jobs:
       - name: Sync workbook product specs
         run: python scripts/sync-workbook-product-specs.py
 
-      - name: Refine PDP size selection flow
-        run: python scripts/refine-pdp-size-flow.py
-
-      - name: Align product UI to reference screens
-        run: python scripts/align-product-ui-reference.py
-
       - name: Restore previous quick-add flow and drawer size
         run: python scripts/restore-quick-add-flow.py
 
