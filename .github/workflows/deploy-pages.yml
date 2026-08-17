@@ -65,6 +65,9 @@ jobs:
       - name: Refine Luna story commerce
         run: python scripts/refine-luna-commerce.py
 
+      - name: Make story purchase inline
+        run: python scripts/inline-luna-story-purchase.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx app/globals.css app/catalog-data.ts; then
