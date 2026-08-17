@@ -1,11 +1,12 @@
 export type EditorialScenarioConfig = {
   id: string;
   name: string;
-  spaceGroup: "table" | "bedroom";
+  spaceGroup: "table" | "bedroom" | "living";
   spaceLabel: string;
   lead: string;
   canInclude: string;
   exclude: string;
+  source: "core" | "expansion";
 };
 
 export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
@@ -17,6 +18,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Яркое чаепитие, воскресный завтрак и камерный прием гостей для 2–6 человек.",
     canInclude: "Чайные пары «Мокоши», десертные тарелки «Камея», салфетки, плейсматы и дорожка «Мокоши», чайник, сахарница и молочник.",
     exclude: "Голубой «Дияф», зелёный «Петербург», цветочный «Многоцвет», хрусталь и спальневый текстиль.",
+    source: "core",
   },
   {
     id: "quiet-obereg",
@@ -26,6 +28,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Спокойный завтрак, чай вдвоём и домашний ритуал для 2–6 человек.",
     canInclude: "Чайные пары «Овация» или «Камея», салфетки и плейсматы «Обереги», белый фарфор, молочник, сахарница и небольшая скатерть.",
     exclude: "Яркий красный орнамент, золото «Дияф», хрустальный вечерний декор и крупные праздничные блюда.",
+    source: "core",
   },
   {
     id: "sky-celebration",
@@ -35,6 +38,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Праздник, день рождения и торжественное чаепитие для 2–6 человек.",
     canInclude: "Чайные пары, чайник, сахарница и блюдо «Дияф», салфетки, дорожка и скатерть «Дияф», белая база «Овация» или «Камея».",
     exclude: "Спальневый текстиль, грубый нейтральный декор и второй активный красный или зелёный паттерн.",
+    source: "core",
   },
   {
     id: "green-salon",
@@ -44,6 +48,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Камерный ужин, вечерний чай и приём гостей для 2–6 человек.",
     canInclude: "Чайные пары, чайник, сливочник и сахарница «Петербург», дорожка, салфетки и скатерть «Петербург», белые тарелки.",
     exclude: "Голубой «Дияф», красный «Мокоши», цветочные паттерны «Многоцвет» и спальневые товары.",
+    source: "core",
   },
   {
     id: "multicolor-garden",
@@ -53,6 +58,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Весенний чай, подарок и женский праздник для 2–4 человек.",
     canInclude: "Чайные или кофейные пары «Многоцвет», лёгкий текстиль и белые десертные тарелки «Овация» или «Камея».",
     exclude: "Строгий хрустальный вечер, крупный обеденный сервиз на 12 персон и тяжёлый тёмный текстиль.",
+    source: "core",
   },
   {
     id: "white-classic",
@@ -62,6 +68,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Базовая сервировка на каждый день, обед и семейный стол для 2–12 человек.",
     canInclude: "Обеденные, закусочные и десертные тарелки «Камея» или «Овация», чайные пары, салатники, блюда, чайник, сахарница и молочник.",
     exclude: "Несколько активных орнаментов одновременно и яркий текстиль по умолчанию.",
+    source: "core",
   },
   {
     id: "crystal-evening",
@@ -71,6 +78,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Вечерний ужин, праздничный аперитив и романтический вечер для 2–6 человек.",
     canInclude: "Хрусталь, белые блюда, свечи, вазы, нейтральный текстиль и белая база «Овация» или «Камея».",
     exclude: "Повседневные кружки, яркие чайные пары, спальневая логика и избыток столового текстиля.",
+    source: "core",
   },
   {
     id: "quiet-morning-bedroom",
@@ -80,6 +88,7 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Медленное утро, выходной и сезонное обновление спальни.",
     canInclude: "Плед и декоративные подушки «Оренбургские узоры», бельё или наволочки «Обереги», «Голубые цветы», «Тайна острова Буяна», свеча optional.",
     exclude: "Чайные пары, тарелки, хрусталь и более двух активных орнаментальных текстилей одновременно.",
+    source: "core",
   },
   {
     id: "blue-hour-bedroom",
@@ -89,6 +98,148 @@ export const EDITORIAL_SCENARIOS: EditorialScenarioConfig[] = [
     lead: "Вечерний отдых, подарок для дома и оформление спокойной спальни.",
     canInclude: "Постельное бельё «Обереги», «Нити времени» или «Тайна острова Буяна», голубые подушки, плед «Пушица», свечи и наволочки.",
     exclude: "Фарфор, столовый текстиль, красный «Мокоши», зелёный «Петербург» и конфликтующие палитры.",
+    source: "core",
+  },
+
+  {
+    id: "palace-dinner",
+    name: "Дворцовый ужин",
+    spaceGroup: "table",
+    spaceLabel: "Столовая",
+    lead: "Юбилей, Новый год или большой ужин для 4–12 гостей: белая база, церемониальный текстиль и вечерние акценты.",
+    canInclude: "Только реальные товары из разрешённых коллекций «Дворцы России», «Росы», «Овация» и «Камея» и допустимых product_type из expansion rules.",
+    exclude: "Все товары вне разрешённых коллекций и product_type сценария.",
+    source: "expansion",
+  },
+  {
+    id: "flower-sunday",
+    name: "Цветочное воскресенье",
+    spaceGroup: "table",
+    spaceLabel: "Кухня / веранда",
+    lead: "Лёгкий весенний завтрак, бранч или подарок для 2–4 человек.",
+    canInclude: "«Голубые цветы», белая база «Овация»/«Камея», чайные пары, лёгкий текстиль и небольшой декор из разрешённого пула.",
+    exclude: "Все товары вне разрешённых коллекций и product_type сценария.",
+    source: "expansion",
+  },
+  {
+    id: "russian-living-room",
+    name: "Русская гостиная",
+    spaceGroup: "living",
+    spaceLabel: "Гостиная",
+    lead: "Чтение, вечер дома или новоселье: тактильный плед, подушки и камерный свет.",
+    canInclude: "«Оренбургские узоры», «Нити времени», «Тайна острова Буяна», «Голубые цветы» в рамках разрешённых мягких и атмосферных ролей.",
+    exclude: "Все товары вне разрешённых коллекций и product_type сценария.",
+    source: "expansion",
+  },
+  {
+    id: "fairytale-for-two",
+    name: "Сказка на двоих",
+    spaceGroup: "bedroom",
+    spaceLabel: "Спальня / чайный уголок",
+    lead: "Романтический вечер, подарок паре или новоселье: бельё, мягкий слой и тёплый свет.",
+    canInclude: "«Тайна острова Буяна», «Нити времени», «Обереги», «Оренбургские узоры» только в рамках разрешённых ролей.",
+    exclude: "Все товары вне разрешённых коллекций и product_type сценария.",
+    source: "expansion",
+  },
+  {
+    id: "morning-mokoshi",
+    name: "Утро с Мокошью",
+    spaceGroup: "table",
+    spaceLabel: "Кухня",
+    lead: "Завтрак и чай для 2–4 человек с красным орнаментом и белой фарфоровой поддержкой.",
+    canInclude: "«Мокоши» и «Камея» в рамках tea service, table textile и breakfast add-ons.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "winter-guests",
+    name: "Зимние гости",
+    spaceGroup: "table",
+    spaceLabel: "Столовая",
+    lead: "Праздничное зимнее чаепитие и Новый год для 4–8 гостей.",
+    canInclude: "«Дияф», «Камея», «Овация» и доступные вечерние акценты «Росы» только по rules CSV.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "sunday-lunch",
+    name: "Семейный обед",
+    spaceGroup: "table",
+    spaceLabel: "Столовая",
+    lead: "Спокойный семейный обед на 4–12 человек с белой базой и настраиваемым текстильным акцентом.",
+    canInclude: "«Камея», «Овация» и optional-текстиль «Мокоши», «Обереги» или «Петербург» по разрешённым типам.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "petersburg-evening",
+    name: "Петербургский вечер",
+    spaceGroup: "living",
+    spaceLabel: "Гостиная / столовая",
+    lead: "Вечерний чай, ужин или гости для 2–6 человек с зелёным городским ритмом.",
+    canInclude: "«Петербург», «Камея», «Овация» и доступные вечерние add-ons по rules CSV.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "summer-veranda",
+    name: "Летняя веранда",
+    spaceGroup: "table",
+    spaceLabel: "Веранда / сад",
+    lead: "Дневной бранч, чаепитие или подарок для 2–6 человек в цветочной палитре.",
+    canInclude: "«Многоцвет», «Овация», «Камея» и лёгкий столовый текстиль по rules CSV.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "homecoming",
+    name: "Новоселье",
+    spaceGroup: "living",
+    spaceLabel: "Гостиная / столовая",
+    lead: "Первое чаепитие дома и подарок для 2–4 человек.",
+    canInclude: "«Обереги», «Овация», «Камея», «Нити времени», «Тайна острова Буяна» только по разрешённым ролям.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "candlelight-supper",
+    name: "Ужин при свечах",
+    spaceGroup: "table",
+    spaceLabel: "Столовая",
+    lead: "Романтический ужин для 2–4 человек с хрусталём, белым фарфором и камерным светом.",
+    canInclude: "«Росы», «Камея», «Овация», «Дворцы России» в пределах доступных product_type rules CSV.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "blue-botanical-bedroom",
+    name: "Голубой сад",
+    spaceGroup: "bedroom",
+    spaceLabel: "Спальня",
+    lead: "Обновление спальни или подарок с голубым цветочным текстилем.",
+    canInclude: "«Голубые цветы», «Обереги», «Оренбургские узоры», «Нити времени» по bedding, soft decor и atmosphere rules.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "linen-retreat",
+    name: "Льняная пауза",
+    spaceGroup: "living",
+    spaceLabel: "Спальня / гостиная",
+    lead: "Отдых, чтение и self-care: плед, подушки и мягкий вечерний свет.",
+    canInclude: "«Оренбургские узоры», «Обереги», «Голубые цветы», «Нити времени», «Тайна острова Буяна» по rules CSV.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
+  },
+  {
+    id: "tea-gift",
+    name: "Чайный подарок",
+    spaceGroup: "table",
+    spaceLabel: "Чайный уголок",
+    lead: "Готовая подарочная история для чаепития или новоселья на двоих.",
+    canInclude: "«Многоцвет», «Камея», «Овация» в рамках tea service, table textile и gift add-ons.",
+    exclude: "Все товары вне expansion rules этого сценария.",
+    source: "expansion",
   },
 ];
 
