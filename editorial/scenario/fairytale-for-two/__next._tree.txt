@@ -1,4 +1,5 @@
 :HL["/kd/_next/static/chunks/08i59ja999svm.css","style"]
 :HL["/kd/_next/static/chunks/0j9sfvyxrbtsf.css","style"]
+:HL["/kd/_next/static/chunks/0c1wzw8n0vyqy.css","style"]
 :HL["/kd/_next/static/chunks/0vqx41a621f2w.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"editorial","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenario","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"fairytale-for-two","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"PtUJpMmgCWqDavvqh41Jk"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"editorial","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenario","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"fairytale-for-two","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"Z5KFs3Xiwqccy62y64Vpt"}
