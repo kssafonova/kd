@@ -83,6 +83,9 @@ jobs:
       - name: Apply product pricing and merchandising
         run: python scripts/apply-product-pricing-merchandising-v1.py
 
+      - name: Apply PDP collection recommendations
+        run: python scripts/apply-pdp-collection-recommendations-v1.py
+
       - name: Install dependencies
         run: npm install
 
