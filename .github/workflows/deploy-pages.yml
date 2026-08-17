@@ -68,6 +68,9 @@ jobs:
       - name: Make story purchase inline
         run: python scripts/inline-luna-story-purchase.py
 
+      - name: Refine story card controls
+        run: python scripts/refine-luna-story-card-controls.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx app/globals.css app/catalog-data.ts; then
