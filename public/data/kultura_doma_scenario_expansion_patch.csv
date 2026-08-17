@@ -1,0 +1,2 @@
+scenario_id,role,allowed_product_types,preset_status
+palace-dinner,table_base,dinner_plate|snack_plate|dessert_plate,required
