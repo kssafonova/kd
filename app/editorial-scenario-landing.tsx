@@ -6,7 +6,7 @@ import { assetUrl } from "./assets";
 import { RemoteImage } from "./remote-image";
 import { loadConstructorData } from "./constructor/data-client";
 import { EDITORIAL_SCENARIOS } from "./editorial-scenario-config";
-import type { ConstructorData, ScenarioMetaRow } from "./constructor/types";
+import type { ConstructorData, ExpansionRuleRow, ScenarioMetaRow } from "./constructor/types";
 import styles from "./editorial-scenarios.module.css";
 
 type CollectionCard = {
@@ -24,49 +24,113 @@ type ScenarioCardData = {
   name: string;
   lead: string;
   spaceLabel: string;
+  spaceGroup: "table" | "bedroom" | "living";
   occasions: string[];
   images: string[];
   hasPreset: boolean;
+  isExpansion: boolean;
 };
 
 const EVENT_LABELS: Record<string, string> = {
   tea: "Чаепитие",
   breakfast: "Завтрак",
+  brunch: "Бранч",
   lunch: "Обед",
   dinner: "Ужин",
   celebration: "Праздник",
+  anniversary: "Юбилей",
+  new_year: "Новый год",
   gift: "Подарок",
+  housewarming: "Новоселье",
+  romantic_evening: "Романтический вечер",
+  family: "Семейный стол",
+  guests: "Гости",
+  reading: "Чтение",
+  evening: "Вечер дома",
   bedroom: "Ритуалы спальни",
+  bedroom_refresh: "Обновление спальни",
+  rest: "Отдых",
+  self_care: "Self-care",
 };
 
-const EVENT_ORDER = ["tea", "breakfast", "lunch", "dinner", "celebration", "gift", "bedroom"];
+const EVENT_ORDER = [
+  "tea",
+  "breakfast",
+  "brunch",
+  "lunch",
+  "dinner",
+  "celebration",
+  "anniversary",
+  "new_year",
+  "romantic_evening",
+  "gift",
+  "housewarming",
+  "family",
+  "guests",
+  "reading",
+  "evening",
+  "bedroom",
+  "bedroom_refresh",
+  "rest",
+  "self_care",
+];
 
 const unique = <T,>(values: T[]) => Array.from(new Set(values));
+const splitPipe = (value: string) => value.split("|").map((item) => item.trim()).filter(Boolean);
 
-function scenarioImages(data: ConstructorData, scenarioId: string, metaRows: ScenarioMetaRow[]) {
+function patchedExpansionRules(data: ConstructorData, scenarioId: string) {
+  return data.expansionRules
+    .filter((row) => row.scenario_id === scenarioId)
+    .map((row) => {
+      const patch = data.expansionPatches.find((item) => item.scenario_id === row.scenario_id && item.role === row.role);
+      return patch
+        ? { ...row, allowed_product_types: patch.allowed_product_types, preset_status: patch.preset_status }
+        : row;
+    });
+}
+
+function coreScenarioImages(data: ConstructorData, scenarioId: string, metaRows: ScenarioMetaRow[]) {
   const presetImages = data.presets
     .filter((row) => row.scenario_id === scenarioId)
     .map((row) => row.primary_image_url)
     .filter(Boolean);
-
   if (presetImages.length) return unique(presetImages).slice(0, 3);
 
   const candidateImages = data.candidates
     .filter((row) => row.scenario_id === scenarioId)
     .map((row) => row.primary_image_url)
     .filter(Boolean);
-
   if (candidateImages.length) return unique(candidateImages).slice(0, 3);
 
   const collectionNames = unique(
     metaRows.flatMap((row) => `${row.entry_collection}|${row.allowed_collections}`.split("|")).map((value) => value.trim()).filter(Boolean),
   );
-  const catalogImages = data.catalog
-    .filter((row) => collectionNames.includes(row.collection))
-    .map((row) => row.primary_image_url)
-    .filter(Boolean);
+  return unique(
+    data.catalog
+      .filter((row) => collectionNames.includes(row.collection))
+      .map((row) => row.primary_image_url)
+      .filter(Boolean),
+  ).slice(0, 3);
+}
 
-  return unique(catalogImages).slice(0, 3);
+function expansionScenarioImages(data: ConstructorData, rules: ExpansionRuleRow[]) {
+  if (!rules.length) return [];
+
+  const eligible = data.catalog.filter((product) =>
+    rules.some((rule) => {
+      const collections = splitPipe(rule.allowed_collections);
+      const productTypes = splitPipe(rule.allowed_product_types).filter((item) => item !== "required");
+      return collections.includes(product.collection) && productTypes.includes(product.product_type);
+    }),
+  );
+
+  const byRole = rules.flatMap((rule) => {
+    const collections = splitPipe(rule.allowed_collections);
+    const productTypes = splitPipe(rule.allowed_product_types).filter((item) => item !== "required");
+    return eligible.filter((product) => collections.includes(product.collection) && productTypes.includes(product.product_type)).slice(0, 1);
+  });
+
+  return unique([...byRole, ...eligible].map((row) => row.primary_image_url).filter(Boolean)).slice(0, 3);
 }
 
 function ScenarioCard({ scenario }: { scenario: ScenarioCardData }) {
@@ -78,7 +142,7 @@ function ScenarioCard({ scenario }: { scenario: ScenarioCardData }) {
             <RemoteImage key={`${scenario.id}-${image}-${index}`} src={image} alt={`${scenario.name}, предмет ${index + 1}`} loading={index === 0 ? "eager" : "lazy"} />
           ))
         ) : (
-          <div className={styles.scenarioFallback}>РЕАЛЬНЫЕ ФОТО БУДУТ ЗАГРУЖЕНЫ ИЗ CSV</div>
+          <div className={styles.scenarioFallback}>В MASTER CATALOG НЕТ ФОТО ДЛЯ РАЗРЕШЁННОГО СОСТАВА</div>
         )}
       </div>
       <div className={styles.scenarioCopy}>
@@ -86,10 +150,16 @@ function ScenarioCard({ scenario }: { scenario: ScenarioCardData }) {
         <h2>{scenario.name}</h2>
         <p className={styles.scenarioLead}>{scenario.lead}</p>
         <div className={styles.scenarioMeta}>
-          {scenario.occasions.slice(0, 3).map((occasion) => <span key={occasion}>{EVENT_LABELS[occasion] || occasion}</span>)}
+          {scenario.occasions.slice(0, 4).map((occasion) => <span key={occasion}>{EVENT_LABELS[occasion] || occasion}</span>)}
         </div>
         <div className={styles.scenarioFooter}>
-          <span className={styles.scenarioStatus}>{scenario.hasPreset ? "ГОТОВЫЙ PRESET · МОЖНО НАСТРОИТЬ" : "EDITORIAL · PRESET ЕЩЁ НЕ ЗАФИКСИРОВАН"}</span>
+          <span className={styles.scenarioStatus}>
+            {scenario.hasPreset
+              ? "ГОТОВЫЙ PRESET · МОЖНО НАСТРОИТЬ"
+              : scenario.isExpansion
+                ? "КОНСТРУКТОР ПО ПРАВИЛАМ · РЕАЛЬНЫЙ CATALOG"
+                : "EDITORIAL · PRESET ЕЩЁ НЕ ЗАФИКСИРОВАН"}
+          </span>
           <Link className={styles.scenarioCta} href={`/editorial/scenario/${scenario.id}/`}>Собери свою капсулу</Link>
         </div>
       </div>
@@ -120,22 +190,34 @@ export function EditorialScenarioLanding({
 
   const scenarios = useMemo<ScenarioCardData[]>(() => {
     if (!data) return [];
+
     return EDITORIAL_SCENARIOS.map((config) => {
       const metaRows = data.scenarios.filter((row) => row.scenario_id === config.id);
+      const rules = patchedExpansionRules(data, config.id);
+      const occasions = config.source === "expansion"
+        ? unique(rules.flatMap((row) => splitPipe(row.occasion)))
+        : unique(metaRows.flatMap((row) => splitPipe(row.occasion)));
+      const images = config.source === "expansion"
+        ? expansionScenarioImages(data, rules)
+        : coreScenarioImages(data, config.id, metaRows);
+
       return {
         id: config.id,
         name: config.name,
         lead: config.lead,
         spaceLabel: config.spaceLabel,
-        occasions: unique(metaRows.flatMap((row) => row.occasion.split("|")).map((value) => value.trim()).filter(Boolean)),
-        images: scenarioImages(data, config.id, metaRows),
+        spaceGroup: config.spaceGroup,
+        occasions,
+        images,
         hasPreset: data.presets.some((row) => row.scenario_id === config.id),
+        isExpansion: config.source === "expansion",
       };
     });
   }, [data]);
 
-  const tableScenarios = scenarios.filter((item) => EDITORIAL_SCENARIOS.find((config) => config.id === item.id)?.spaceGroup === "table");
-  const bedroomScenarios = scenarios.filter((item) => EDITORIAL_SCENARIOS.find((config) => config.id === item.id)?.spaceGroup === "bedroom");
+  const tableScenarios = scenarios.filter((item) => item.spaceGroup === "table");
+  const bedroomScenarios = scenarios.filter((item) => item.spaceGroup === "bedroom");
+  const livingScenarios = scenarios.filter((item) => item.spaceGroup === "living");
 
   return (
     <div className={styles.shell}>
@@ -145,7 +227,7 @@ export function EditorialScenarioLanding({
             <p className={styles.eyebrow}>EDITORIAL</p>
             <h1 className={styles.title}>Истории для дома</h1>
           </div>
-          <p className={styles.lead}>Коллекции задают настроение. Сценарии помогают перейти от вдохновения к готовому решению для конкретного пространства и повода.</p>
+          <p className={styles.lead}>Коллекции задают настроение. 23 сценария помогают перейти от вдохновения к конкретному пространству, поводу и настраиваемому набору реальных товаров.</p>
         </header>
 
         <div className={styles.tabs} role="tablist" aria-label="Editorial navigation">
@@ -185,7 +267,7 @@ export function EditorialScenarioLanding({
         )}
 
         {tab !== "collections" && !data && !error && (
-          <div className={styles.eventIntro}><h2>Загружаем сценарии…</h2></div>
+          <div className={styles.eventIntro}><h2>Загружаем 23 сценария…</h2></div>
         )}
 
         {tab === "space" && data && (
@@ -193,16 +275,25 @@ export function EditorialScenarioLanding({
             <section className={styles.group}>
               <header className={styles.groupHead}>
                 <h2>Накрыть стол</h2>
-                <span>Чаепитие, завтрак, семейный обед, праздничный стол и вечерняя сервировка.</span>
+                <span>Кухня, столовая, веранда и чайный уголок — от завтрака до большого праздничного ужина.</span>
               </header>
               <div className={styles.scenarioGrid}>{tableScenarios.map((scenario) => <ScenarioCard key={scenario.id} scenario={scenario} />)}</div>
             </section>
+
             <section className={styles.group}>
               <header className={styles.groupHead}>
                 <h2>Оформить спальню</h2>
-                <span>Готовые текстильные истории для медленного утра и спокойного вечера.</span>
+                <span>Спокойные текстильные истории, вечерние ритуалы и сезонное обновление спальни.</span>
               </header>
               <div className={styles.scenarioGrid}>{bedroomScenarios.map((scenario) => <ScenarioCard key={scenario.id} scenario={scenario} />)}</div>
+            </section>
+
+            <section className={styles.group}>
+              <header className={styles.groupHead}>
+                <h2>Гостиная и атмосфера</h2>
+                <span>Чтение, гости, новоселье и мягкие интерьерные композиции для вечера дома.</span>
+              </header>
+              <div className={styles.scenarioGrid}>{livingScenarios.map((scenario) => <ScenarioCard key={scenario.id} scenario={scenario} />)}</div>
             </section>
           </>
         )}
@@ -211,14 +302,14 @@ export function EditorialScenarioLanding({
           <>
             <div className={styles.eventIntro}>
               <h2>Выберите повод</h2>
-              <p>Один сценарий может появляться в нескольких поводах — это намеренно: пользователь выбирает не структуру каталога, а ситуацию, для которой оформляет дом.</p>
+              <p>Один сценарий может появляться в нескольких поводах: пользователь выбирает жизненную ситуацию, а не структуру каталога.</p>
             </div>
             {EVENT_ORDER.map((eventId) => {
               const items = scenarios.filter((scenario) => scenario.occasions.includes(eventId));
               if (!items.length) return null;
               return (
                 <section className={styles.group} key={eventId}>
-                  <header className={styles.groupHead}><h2>{EVENT_LABELS[eventId]}</h2></header>
+                  <header className={styles.groupHead}><h2>{EVENT_LABELS[eventId] || eventId}</h2><span>{items.length} сценариев</span></header>
                   <div className={styles.scenarioGrid}>{items.map((scenario) => <ScenarioCard key={`${eventId}-${scenario.id}`} scenario={scenario} />)}</div>
                 </section>
               );
