@@ -1,0 +1,80 @@
+name: Validate constructor integration
+
+on:
+  push:
+    branches: [constructor-integration]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Apply homepage constructor CTA
+        run: python scripts/add-constructor-home-cta.py
+
+      - name: Persist homepage CTA on integration branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/page.tsx
+          if ! git diff --cached --quiet; then
+            git commit -m "Add constructor CTA to homepage"
+            git push origin HEAD:constructor-integration
+          fi
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run existing project build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /kd
+          NEXT_TELEMETRY_DISABLED: 1
+        run: npm run build
+
+      - name: Run Next.js static export build
+        shell: bash
+        env:
+          NEXT_PUBLIC_BASE_PATH: /kd
+          NEXT_TELEMETRY_DISABLED: 1
+        run: |
+          rm -rf .next out
+          npx next build
+
+      - name: Verify constructor static routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f out/constructor/index.html
+          for scenario in red-thread-tea quiet-obereg sky-celebration green-salon blue-hour-bedroom; do
+            test -f "out/constructor/${scenario}/index.html"
+          done
+          echo "All constructor static routes exist"
+
+      - name: Package source snapshot
+        shell: bash
+        run: |
+          zip -qr kd-next-constructor-source.zip . \
+            -x '.git/*' 'node_modules/*' '.next/*' 'out/*' 'dist/*' '.sites-runtime/*' 'kd-next-constructor-source.zip'
+
+      - name: Upload source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: kd-next-constructor-source
+          path: kd-next-constructor-source.zip
+          if-no-files-found: error
+          retention-days: 7
