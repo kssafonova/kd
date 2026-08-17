@@ -6,6 +6,7 @@ import "./product-card-gallery.css";
 import "./boutique-drawer.css";
 import "./mobile-pdp-overrides.css";
 import "./zara-editorial.css";
+import "./luna-editorial.css";
 import "./collection-flow.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
