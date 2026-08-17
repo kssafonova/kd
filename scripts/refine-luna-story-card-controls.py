@@ -20,11 +20,16 @@ elif sig_v10 not in text:
 quick_base = '<button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button>'
 quick_v9 = '{selectionMode?<button className={`quick selection-check ${selected?"selected":""}`} type="button" onClick={(event)=>{event.stopPropagation();onSelect?.()}} aria-pressed={selected} aria-label={selected?`Убрать ${product.name}`:`Выбрать ${product.name}`}>{selected?"✓":""}</button>:<button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button>}'
 quick_v10 = '{selectionMode?<button className={`quick selection-check ${pending?"pending":selected?"selected":""}`} type="button" onClick={(event)=>{event.stopPropagation();onSelect?.()}} aria-pressed={selected} aria-label={pending?`Выберите размер для ${product.name}`:selected?`Убрать ${product.name}`:`Выбрать ${product.name}`}>{pending?"?":selected?"✓":""}</button>:<button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button>}'
-if quick_base in text:
-    text = text.replace(quick_base, quick_v10, 1)
+quick_nested = quick_v9.replace(quick_base, quick_v10)
+if quick_nested in text:
+    text = text.replace(quick_nested, quick_v10, 1)
 elif quick_v9 in text:
     text = text.replace(quick_v9, quick_v10, 1)
-elif quick_v10 not in text:
+elif quick_v10 in text:
+    pass
+elif quick_base in text:
+    text = text.replace(quick_base, quick_v10, 1)
+else:
     raise SystemExit("ProductCard quick control marker not found")
 
 # Story purchase needs to distinguish "not selected by the user" from
@@ -38,7 +43,6 @@ elif state_new not in text:
 
 story_products = '  const storyProducts=(active?.productIds.map(itemById).filter(Boolean)??[]) as Product[];'
 story_validation = story_products + '''\n  const storyPendingIds=storyProducts.filter(item=>!storyExcludedIds.includes(item.id)).filter(item=>{const color=colorById[item.id]??item.selectedColor;const options=getProductSizeOptions(item,color);return options.length>1&&!sizes[item.id]}).map(item=>item.id);\n  const storyReady=storyPendingIds.length===0&&selectedIds.length>0;\n  const pendingStoryProducts=storyProducts.filter(item=>storyPendingIds.includes(item.id));'''
-# Normalize an older ready-only version if it is present.
 text = re.sub(
     re.escape(story_products) + r'\n  const storyReady=storyProducts\.filter\(item=>selectedIds\.includes\(item\.id\)\)\.every\(item=>\{const color=colorById\[item\.id\]\?\?item\.selectedColor;const options=getProductSizeOptions\(item,color\);return options\.length<=1\|\|Boolean\(sizes\[item\.id\]\)\}\);',
     story_validation,
