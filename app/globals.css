@@ -959,6 +959,18 @@ footer{background:#202a2b}
 }
 
 
+
+
+
+
+
+
+/* CATALOG_CATEGORY_MAPPING_V1 */
+.catalog-empty{min-height:280px;display:grid;place-items:center;border-top:1px solid var(--line);color:var(--muted);text-align:center}
+.catalog-empty p{margin:0;font-size:12px;letter-spacing:.05em}
+/* END_CATALOG_CATEGORY_MAPPING_V1 */
+
+
 /* HOME_REFERENCE_REDESIGN_V1 */
 .view-home{background:#fff}
 .view-home .header{
@@ -1397,9 +1409,3 @@ footer{background:#202a2b}
   .home-reference-products .product-card{flex-basis:76vw!important}
 }
 /* END_HOME_EDITORIAL_REFERENCE_V4 */
-
-
-/* CATALOG_CATEGORY_MAPPING_V1 */
-.catalog-empty{min-height:280px;display:grid;place-items:center;border-top:1px solid var(--line);color:var(--muted);text-align:center}
-.catalog-empty p{margin:0;font-size:12px;letter-spacing:.05em}
-/* END_CATALOG_CATEGORY_MAPPING_V1 */
