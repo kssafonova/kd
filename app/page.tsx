@@ -344,6 +344,19 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }
       <div className="category-grid">{homeCategories.map(([name,image],i)=><button className="category-card" key={name} onClick={()=>i===2?go("catalog"):go("catalog")}><img src={assetUrl(image)} alt={name}/><span>{name}</span><b>Смотреть категорию →</b></button>)}</div>
     </section>
 
+
+
+    <section className="home-bedroom-feature">
+      <img src={assetUrl("/images/blue-bedroom.png")} alt="Коллекции для спальни"/>
+      <div className="home-bedroom-feature-shade"/>
+      <div className="home-bedroom-feature-copy">
+        <p>КОЛЛЕКЦИИ ДЛЯ СПАЛЬНИ</p>
+        <h2>Пространство для тишины</h2>
+        <span>Постельное бельё и текстиль, созданные для спокойных личных ритуалов.</span>
+        <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ КОЛЛЕКЦИИ →</button>
+      </div>
+    </section>
+
     <section className="home-reference-products">
       <div className="home-reference-products-head"><div><p>ВЫБОР РЕДАКЦИИ · СПАЛЬНЯ</p><h2>ХИТЫ ПРОДАЖ</h2></div><button onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ →</button></div>
       <ProductRail className="home-product-rail" items={bestsellers} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
