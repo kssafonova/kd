@@ -13,6 +13,7 @@ export type CatalogSku = {
   composition:string;
   details?:string;
   collection?:string;
+  capsule?:string;
   price:number;
   image:string;
   gallery:string[];

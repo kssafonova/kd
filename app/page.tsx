@@ -862,20 +862,26 @@ function RichContent({product,selectProduct}:{product:Product;selectProduct:(pro
 }
 
 function ProductRecommendations({product,selectProduct,favorite,recentlyViewed}:{product:Product;selectProduct:(product:Product)=>void;favorite:(id:number)=>void;recentlyViewed:number[]}){
-  const categoryGroups=[
-    [1,2,4,8,12],
-    [3,6,7,11],
-    [5,9,10]
-  ];
-  const categoryIds=categoryGroups.find(group=>group.includes(product.id))??products.map(item=>item.id);
-  const categoryProducts=products.filter(item=>item.id!==product.id&&categoryIds.includes(item.id)).slice(0,4);
+  const merchGroupOf=(item:Product)=>{
+    const preferred=findProductSku(item,item.selectedColor,item.selectedSize);
+    const rows=preferred?[preferred,...(item.skus??[]).filter(sku=>sku.id!==preferred.id)]:(item.skus??[]);
+    for(const row of rows){
+      const value=(row.collection??row.capsule)?.trim();
+      if(value)return value.toLocaleLowerCase("ru-RU");
+    }
+    return "";
+  };
+  const currentMerchGroup=merchGroupOf(product);
+  const collectionProducts=currentMerchGroup
+    ? products.filter(item=>item.id!==product.id&&merchGroupOf(item)===currentMerchGroup).slice(0,4)
+    : [];
   const viewedProducts=recentlyViewed
     .filter(id=>id!==product.id)
     .map(id=>products.find(item=>item.id===id))
     .filter((item): item is Product=>Boolean(item))
     .slice(0,4);
   return <>
-    <section className="post-rich-recommendations category-recommendations"><div className="section-head"><p>ПРОДОЛЖИТЬ ВЫБОР</p><h2>Товары из этой категории</h2></div><ProductRail className="recommendation-product-rail" items={categoryProducts} onProduct={selectProduct} onQuick={selectProduct} favorite={favorite} favorites={[]}/></section>
+    {collectionProducts.length>0&&<section className="post-rich-recommendations collection-recommendations"><div className="section-head"><p>КОЛЛЕКЦИЯ / КАПСУЛА</p><h2>Товары из этой коллекции</h2></div><ProductRail className="recommendation-product-rail" items={collectionProducts} onProduct={selectProduct} onQuick={selectProduct} favorite={favorite} favorites={[]}/></section>}
     {viewedProducts.length>0&&<section className="post-rich-recommendations recently-viewed-recommendations" style={{marginTop:0,paddingTop:42}}><div className="section-head"><p>ИСТОРИЯ ПРОСМОТРОВ</p><h2>Вы недавно смотрели</h2></div><ProductRail className="recommendation-product-rail" items={viewedProducts} onProduct={selectProduct} onQuick={selectProduct} favorite={favorite} favorites={[]}/></section>}
   </>;
 }
