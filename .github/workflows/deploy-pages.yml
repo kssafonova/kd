@@ -68,6 +68,9 @@ jobs:
       - name: Remove editorial landing filters
         run: python scripts/remove-editorial-tabs.py
 
+      - name: Add constructor homepage CTA
+        run: python scripts/add-constructor-home-cta.py
+
       - name: Install dependencies
         run: npm install
 
