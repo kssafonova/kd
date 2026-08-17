@@ -80,6 +80,9 @@ jobs:
       - name: Apply strict catalog category mapping
         run: python scripts/apply-catalog-category-mapping.py
 
+      - name: Apply product pricing and merchandising
+        run: python scripts/apply-product-pricing-merchandising-v1.py
+
       - name: Install dependencies
         run: npm install
 
