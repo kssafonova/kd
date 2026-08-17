@@ -47,6 +47,9 @@ jobs:
       - name: Apply Luna editorial capsule
         run: python scripts/apply-luna-editorial.py
 
+      - name: Fix Luna editorial typecheck
+        run: python scripts/fix-luna-typecheck.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx app/globals.css app/catalog-data.ts; then
