@@ -725,7 +725,7 @@ function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void;
         </div>
         <div className="plp-compact-field size-field">
           <span>Размер</span>
-          {requiresSizeChoice?<select value={chosenSize} onChange={event=>setChosenSize(event.target.value)} aria-label="Выберите размер"><option value="" disabled>Выберите размер</option>{sizes.map(([name])=><option key={name} value={name}>{name}</option>)}</select>:<strong>{sizes[0]?.[0]??product.selectedSize??"Единый размер"}</strong>}
+          {requiresSizeChoice?<div className="plp-compact-sizes" role="group" aria-label="Выберите размер">{sizes.map(([name,price])=><button key={name} type="button" className={chosenSize===name?"active":""} aria-pressed={chosenSize===name} onClick={()=>setChosenSize(name)}><span>{name}</span><b>{fmt(price)}</b></button>)}</div>:<div className="plp-compact-static-size"><strong>{sizes[0]?.[0]??product.selectedSize??"Единый размер"}</strong><b>{fmt(sizes[0]?.[1]??product.price)}</b></div>}
         </div>
         <button className={`primary plp-compact-add ${canAdd?"is-ready":"is-disabled"}`} type="button" disabled={!canAdd} aria-disabled={!canAdd} onClick={()=>{if(!canAdd)return;add(chosenSize,color.name,unitPrice)}}>{canAdd?`Добавить в корзину · ${fmt(unitPrice)}`:"Выберите размер"}</button>
       </div>
