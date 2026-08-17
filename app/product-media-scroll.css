@@ -4,7 +4,7 @@
   width:100%;
   min-width:0;
   display:flex;
-  scroll-behavior:smooth;
+  scroll-behavior:auto;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
 }
@@ -13,7 +13,7 @@
   width:100%;
   object-fit:cover;
   scroll-snap-align:start;
-  scroll-snap-stop:always;
+  scroll-snap-stop:normal;
   user-select:none;
   -webkit-user-drag:none;
 }
@@ -33,12 +33,12 @@
   min-width:100%;
 }
 
-/* Desktop PDP product gallery: up / down. */
+/* Desktop PDP product gallery: native up / down scrolling. */
 .pdp-main .pdp-product-media.vertical-media{
   flex-direction:column;
   overflow-x:hidden;
   overflow-y:auto;
-  scroll-snap-type:y mandatory;
+  scroll-snap-type:y proximity;
   overscroll-behavior-y:auto;
   touch-action:pan-y;
   height:calc(100vh - 170px);
