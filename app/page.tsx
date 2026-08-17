@@ -550,7 +550,20 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
       setOccasion("Чай для двоих");setGuests(2);setTableOptional({napkin:true,plate:false,vase:false,gift:false});
     }
   };
-  const openQuick=()=>{setMode("quick");track("story_quick_add_open")};
+  const openQuick=()=>{
+    // Quick-buy always opens the canonical ready-made preset, independent of builder edits.
+    if(story==="bedroom"){
+      setBedSize("");
+      setBedOptional({blanket:true,pillow:true});
+      setBedQty({blanket:1,pillow:1});
+    }else if(story==="table"){
+      setOccasion("Чай для двоих");
+      setGuests(2);
+      setTableOptional({napkin:true,plate:false,vase:false,gift:false});
+    }
+    setMode("quick");
+    track("story_quick_add_open");
+  };
   const openBuilder=()=>{setMode("builder");setBuilderStep(1);track("builder_open")};
 
   const commit=(title:string,lines:StoryLine[])=>{
