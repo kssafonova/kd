@@ -375,7 +375,7 @@ function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial
 }
 
 function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quickAdd }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void }) {
-  const [activeScene,setActiveScene]=useState<string|null>(null);
+  const [bundleId,setBundleId]=useState<string|null>(null);
 
   const colorById:Record<number,string>={4:"Ночной синий",10:"Ночной синий",5:"Ночной синий",6:"Синий",3:"Синий"};
   const previewById:Record<number,string>={
@@ -409,57 +409,134 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
   const preparedItems=editorial.productIds.map(id=>products.find(product=>product.id===id)).filter(Boolean).map(item=>prepareProduct(item!));
   const itemById=(id:number)=>preparedItems.find(item=>item.id===id);
   const scenes=[
-    {id:"bed-1",image:editorial.images[0],fallback:sceneFallbacks[0],kicker:"СПАЛЬНЯ",title:"Лунный сатин",productIds:[4,6,3]},
-    {id:"bed-2",image:editorial.images[1],fallback:sceneFallbacks[1],kicker:"СПАЛЬНЯ",title:"Слои ткани",productIds:[4,3]},
-    {id:"bed-3",image:editorial.images[2],fallback:sceneFallbacks[2],kicker:"ДЕТАЛИ",title:"Синий и кружево",productIds:[4,6,3]},
-    {id:"table-1",image:editorial.images[3],fallback:sceneFallbacks[3],kicker:"СЕРВИРОВКА",title:"Поздний чай",productIds:[10,5]},
-    {id:"table-2",image:editorial.images[4],fallback:sceneFallbacks[4],kicker:"ФАРФОР",title:"Цвет ночного неба",productIds:[10,5]},
-    {id:"table-3",image:editorial.images[5],fallback:sceneFallbacks[5],kicker:"СЕРВИРОВКА",title:"После заката",productIds:[10,5,3]},
+    {id:"bed-1",image:editorial.images[0],fallback:sceneFallbacks[0],kicker:"СПАЛЬНЯ",title:"Лунный сатин",copy:"Комплект постельного белья, плед и подушка в глубоком синем.",productIds:[4,6,3]},
+    {id:"bed-2",image:editorial.images[1],fallback:sceneFallbacks[1],kicker:"СПАЛЬНЯ",title:"Слои ткани",copy:"Спокойная композиция из сатина и кружева.",productIds:[4,3]},
+    {id:"bed-3",image:editorial.images[2],fallback:sceneFallbacks[2],kicker:"ДЕТАЛИ",title:"Синий и кружево",copy:"Текстильные акценты капсулы крупным планом.",productIds:[4,6,3]},
+    {id:"table-1",image:editorial.images[3],fallback:sceneFallbacks[3],kicker:"СЕРВИРОВКА",title:"Поздний чай",copy:"Чайная пара и фарфор в одной ночной палитре.",productIds:[10,5]},
+    {id:"table-2",image:editorial.images[4],fallback:sceneFallbacks[4],kicker:"ФАРФОР",title:"Цвет ночного неба",copy:"Кобальтовый фарфор как продолжение интерьера.",productIds:[10,5]},
+    {id:"table-3",image:editorial.images[5],fallback:sceneFallbacks[5],kicker:"СЕРВИРОВКА",title:"После заката",copy:"Финальная сцена капсулы — текстиль и сервировка в одном ритме.",productIds:[10,5,3]},
   ];
-  const currentScene=scenes.find(scene=>scene.id===activeScene);
-  const currentProducts=(currentScene?.productIds.map(itemById).filter(Boolean)??[]) as Product[];
-  const bedroomActive=Boolean(currentScene&&scenes.slice(0,3).some(scene=>scene.id===currentScene.id));
-  const tableActive=Boolean(currentScene&&scenes.slice(3).some(scene=>scene.id===currentScene.id));
+  const activeBundle=scenes.find(scene=>scene.id===bundleId);
+  const bundleProducts=(activeBundle?.productIds.map(itemById).filter(Boolean)??[]) as Product[];
 
-  const productGrid=(items:Product[],label:string)=><section className="luna-catalog-products" aria-live="polite">
-    <div className="section-head row"><div><p>ТОВАРЫ НА ФОТО</p><h2>{label}</h2></div><span>{items.length} товаров</span></div>
-    <div className="product-grid">{items.map(item=><ProductCard key={`luna-${activeScene}-${item.id}`} product={item} onClick={selectProduct} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
-  </section>;
+  const updateBundleUrl=(id:string|null,mode:"push"|"replace"="push")=>{
+    const url=new URL(window.location.href);
+    if(id){
+      url.searchParams.set("editorial","luna");
+      url.searchParams.set("bundle",id);
+    }else{
+      url.searchParams.delete("editorial");
+      url.searchParams.delete("bundle");
+    }
+    window.history[mode==="push"?"pushState":"replaceState"]({lunaBundle:id},"",`${url.pathname}${url.search}${url.hash}`);
+  };
+  const openBundle=(id:string)=>{
+    setBundleId(id);
+    updateBundleUrl(id,"push");
+    window.scrollTo({top:0,behavior:"auto"});
+  };
+  const closeBundle=()=>{
+    setBundleId(null);
+    updateBundleUrl(null,"replace");
+    window.scrollTo({top:0,behavior:"auto"});
+  };
+  const openProductFromBundle=(product:Product)=>{
+    updateBundleUrl(null,"replace");
+    setBundleId(null);
+    selectProduct(product);
+  };
 
-  return <div className="luna-editorial-page luna-catalog-ux">
-    <section className="luna-hero">
-      <RemoteImage src={editorial.images[0]} fallbackSrc={sceneFallbacks[0]} alt="Капсула Лунная сказка — спальня"/>
-      <div className="luna-hero-shade"/>
-      <div className="luna-hero-copy"><p>КАПСУЛА · 2026</p><h1>Лунная сказка</h1><span>{editorial.lead}</span><button type="button" className="luna-catalog-link" onClick={()=>document.getElementById("luna-products")?.scrollIntoView({behavior:"smooth"})}>СМОТРЕТЬ ТОВАРЫ →</button></div>
+  useEffect(()=>{
+    const readBundle=()=>{
+      const params=new URLSearchParams(window.location.search);
+      const candidate=params.get("editorial")==="luna"?params.get("bundle"):null;
+      setBundleId(candidate&&scenes.some(scene=>scene.id===candidate)?candidate:null);
+    };
+    readBundle();
+    window.addEventListener("popstate",readBundle);
+    return()=>window.removeEventListener("popstate",readBundle);
+  },[]);
+
+  if(activeBundle){
+    return <div className="luna-bundle-page">
+      <div className="luna-bundle-toolbar">
+        <button type="button" onClick={closeBundle} aria-label="Вернуться к Лунной сказке">← <span>Лунная сказка</span></button>
+        <p>{activeBundle.kicker}</p>
+      </div>
+      <div className="luna-bundle-layout">
+        <figure className="luna-bundle-visual">
+          <RemoteImage src={activeBundle.image} fallbackSrc={activeBundle.fallback} alt={activeBundle.title}/>
+          <figcaption><small>{activeBundle.kicker}</small><strong>{activeBundle.title}</strong></figcaption>
+        </figure>
+        <section className="luna-bundle-shop">
+          <header>
+            <p>ЛУННАЯ СКАЗКА</p>
+            <h1>{activeBundle.title}</h1>
+            <span>{activeBundle.copy}</span>
+            <small>{bundleProducts.length} {bundleProducts.length===1?"товар":"товара"} в образе</small>
+          </header>
+          <div className="luna-bundle-grid">
+            {bundleProducts.map(item=><ProductCard key={`luna-bundle-${activeBundle.id}-${item.id}`} product={item} onClick={openProductFromBundle} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>) }
+          </div>
+        </section>
+      </div>
+    </div>;
+  }
+
+  const editorialFrame=(scene:(typeof scenes)[number],className:string)=><button type="button" className={`luna-zara-frame ${className}`} onClick={()=>openBundle(scene.id)} aria-label={`Открыть товары: ${scene.title}`}>
+    <RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/>
+    <span className="luna-zara-frame-caption"><small>{scene.kicker}</small><strong>{scene.title}</strong><em>Смотреть товары</em></span>
+  </button>;
+
+  return <div className="luna-editorial-page luna-zara-editorial">
+    <section className="luna-zara-masthead">
+      <p>КАПСУЛА · 2026</p>
+      <h1>Лунная сказка</h1>
+      <span>{editorial.lead}</span>
     </section>
 
-    <section className="luna-intro">
-      <p>EDITORIAL</p>
-      <h2>Ночная история для современного дома</h2>
+    <section className="luna-zara-hero">
+      {editorialFrame(scenes[0],"luna-zara-frame-hero")}
+    </section>
+
+    <section className="luna-zara-copy-block">
+      <p>НОВАЯ КАПСУЛА</p>
+      <h2>Дом в оттенках ночного неба</h2>
       <span>{editorial.detail}</span>
     </section>
 
-    <section className="luna-story-section">
-      <div className="luna-story-heading"><p>01 / СПАЛЬНЯ</p><h2>Текстиль в оттенках ночного неба</h2><span>Нажмите на фотографию — ниже появятся товары из этого кадра.</span></div>
-      <div className="luna-story-grid luna-story-grid-bedroom">{scenes.slice(0,3).map(scene=><button type="button" key={scene.id} className={`luna-story-card-simple ${activeScene===scene.id?"active":""}`} onClick={()=>setActiveScene(scene.id)} aria-pressed={activeScene===scene.id}>
-        <RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/><span><small>{scene.kicker}</small><strong>{scene.title}</strong><em>Товары на фото</em></span>
-      </button>)}</div>
+    <section className="luna-zara-single">
+      {editorialFrame(scenes[1],"luna-zara-frame-wide")}
     </section>
-    {bedroomActive&&productGrid(currentProducts,currentScene?.title??"Товары из образа")}
 
-    <section className="luna-editorial-divider"><p>Лунная сказка строится на одной палитре, но каждый предмет можно выбрать отдельно.</p></section>
-
-    <section className="luna-story-section">
-      <div className="luna-story-heading"><p>02 / СЕРВИРОВКА</p><h2>Фарфор как продолжение интерьера</h2><span>Тот же принцип покупки: обычные карточки каталога и стандартное добавление в корзину.</span></div>
-      <div className="luna-story-grid luna-story-grid-table">{scenes.slice(3).map(scene=><button type="button" key={scene.id} className={`luna-story-card-simple ${activeScene===scene.id?"active":""}`} onClick={()=>setActiveScene(scene.id)} aria-pressed={activeScene===scene.id}>
-        <RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/><span><small>{scene.kicker}</small><strong>{scene.title}</strong><em>Товары на фото</em></span>
-      </button>)}</div>
+    <section className="luna-zara-copy-block luna-zara-copy-small">
+      <p>ТЕКСТИЛЬ</p>
+      <h2>Сатин, кружево и глубокий синий</h2>
+      <span>Клик по любому editorial-кадру открывает отдельный образ с товарами из этой сцены.</span>
     </section>
-    {tableActive&&productGrid(currentProducts,currentScene?.title??"Товары из образа")}
 
-    <section className="luna-product-catalog" id="luna-products">
-      <div className="section-head row"><div><p>ЛУННАЯ СКАЗКА</p><h2>Соберите комплект</h2></div><span>Добавляйте нужные предметы так же, как в обычном каталоге.</span></div>
-      <div className="product-grid">{preparedItems.map(item=><ProductCard key={`luna-all-${item.id}`} product={item} onClick={selectProduct} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
+    <section className="luna-zara-duo">
+      {editorialFrame(scenes[2],"luna-zara-frame-portrait")}
+      {editorialFrame(scenes[3],"luna-zara-frame-portrait")}
+    </section>
+
+    <section className="luna-zara-copy-block">
+      <p>СЕРВИРОВКА</p>
+      <h2>Фарфор как продолжение интерьера</h2>
+      <span>Товары внутри образа остаются обычными карточками каталога — с привычным избранным и стандартным добавлением в корзину.</span>
+    </section>
+
+    <section className="luna-zara-single luna-zara-single-narrow">
+      {editorialFrame(scenes[4],"luna-zara-frame-wide")}
+    </section>
+
+    <section className="luna-zara-finale">
+      {editorialFrame(scenes[5],"luna-zara-frame-finale")}
+    </section>
+
+    <section className="luna-zara-endnote">
+      <p>ЛУННАЯ СКАЗКА</p>
+      <h2>Выберите кадр, чтобы собрать свой образ.</h2>
     </section>
   </div>;
 }
