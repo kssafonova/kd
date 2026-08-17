@@ -35,6 +35,7 @@ const COLOR_HEX:Record<string,string> = {
   "Молочный":"#e9e1d2",
   "Синий":"#8ba7c0",
   "Песочный":"#c9ad88",
+  "Серо-синий":"#738699",
   "Ночной синий":"#10233e",
   "Пудровый":"#e6bca8",
   "Льняной":"#d2c1aa",
@@ -47,6 +48,7 @@ const COLOR_CODE:Record<string,string> = {
   "Молочный":"MILK",
   "Синий":"BLUE",
   "Песочный":"SAND",
+  "Серо-синий":"GREY-BLUE",
   "Ночной синий":"NIGHT-BLUE",
   "Пудровый":"POWDER",
   "Льняной":"LINEN",
@@ -119,10 +121,10 @@ const productList:CatalogProductOverride[] = [
   ]),
 
   makeProduct(7,"KD-PD-1027","Стёганое покрывало «Бархатный ритм»","микровелюр, 200×220 / 220×240 см",8690,[
-    {color:"Молочный",size:"Евро 200×220 см",height:"200 см",width:"220 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",image:"/kd/images/products/KD-PD-1027-MOL01.png",gallery:["/kd/images/products/KD-PD-1027-MOL02.png"]},
-    {color:"Молочный",size:"Кинг сайз 220×240 см",height:"220 см",width:"240 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",price:9990,image:"/kd/images/products/KD-PD-1027-MOL01.png",gallery:["/kd/images/products/KD-PD-1027-MOL02.png"]},
-    {color:"Песочный",size:"Евро 200×220 см",height:"200 см",width:"220 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",image:"/kd/images/products/KD-PD-1027-PES01.png",gallery:["/kd/images/products/KD-PD-1027-PES02.png"]},
-    {color:"Песочный",size:"Кинг сайз 220×240 см",height:"220 см",width:"240 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",price:9990,image:"/kd/images/products/KD-PD-1027-PES01.png",gallery:["/kd/images/products/KD-PD-1027-PES02.png"]},
+    {color:"Молочный",size:"Евро 200×220 см",height:"200 см",width:"220 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",image:"/kd/images/products/KD-PD-1027-MOL01.png",gallery:[]},
+    {color:"Молочный",size:"Кинг сайз 220×240 см",height:"220 см",width:"240 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",price:9990,image:"/kd/images/products/KD-PD-1027-MOL01.png",gallery:[]},
+    {color:"Серо-синий",size:"Евро 200×220 см",height:"200 см",width:"220 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",image:"/kd/images/products/KD-PD-1027-PES01.png",gallery:[]},
+    {color:"Серо-синий",size:"Кинг сайз 220×240 см",height:"220 см",width:"240 см",packageInfo:"Покрывало 1 шт",material:"Микровелюр",composition:"Внешняя часть: 100% микровелюр Наполнитель: 100% полиэфирное волокно",price:9990,image:"/kd/images/products/KD-PD-1027-PES01.png",gallery:[]},
   ]),
 
   makeProduct(10,"KD-PD-1030","Чайная пара «Лунная сказка»","фарфор, 250 мл",6990,[
