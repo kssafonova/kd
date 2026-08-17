@@ -24,7 +24,7 @@ editorial = '''function EditorialView({ editorial, selectProduct, favorite, favo
   const handleBundle=()=>{if(!selecting){setSelecting(true);return}if(selectedItems.length)buyBundle(selectedItems)};
   return <div className="editorial-page"><section className="editorial-cover"><img src={assetUrl(editorial.images[0])} alt={editorial.name}/><div><p>{editorial.kind}</p><h1>{editorial.name}</h1></div></section><section className="editorial-words"><p>{editorial.lead}</p><span>{editorial.description}</span></section><img className="editorial-detail" src={assetUrl(editorial.images[1])} alt={`Детали ${editorial.name}`}/><section className="editorial-words narrow"><p>{editorial.detail}</p></section><section className="editorial-split"><img src={assetUrl(editorial.images[2])} alt="Предметы коллекции"/><img src={assetUrl(editorial.images[3])} alt="Образ коллекции"/></section><section className={`editorial-products ${selecting?"selection-mode":""}`}><div className="editorial-products-head"><div><p>В {editorial.kind==="КАПСУЛА"?"КАПСУЛЕ":"КОЛЛЕКЦИИ"}</p><h2>Соберите весь образ</h2>{selecting&&<div className="selection-help"><span>Отметьте предметы, которые хотите купить</span><button onClick={()=>setSelectedIds(selectedIds.length===items.length?[]:items.map(item=>item.id))}>{selectedIds.length===items.length?"Снять выбор":"Выбрать всё"}</button></div>}</div><button className="primary total-cta" disabled={selecting&&!selectedItems.length} onClick={handleBundle}><span>{selecting?"ДОБАВИТЬ В КОРЗИНУ":"ВЫКУПИТЬ ВСЮ "+(editorial.kind==="КАПСУЛА"?"КАПСУЛУ":"КОЛЛЕКЦИЮ")}</span><b>{fmt(total)}</b></button></div><div className="product-grid">{items.map(item=><div className={`selectable-product ${selectedIds.includes(item.id)?"selected":""}`} key={`${editorial.id}-${item.id}`}>{selecting&&<label className="product-selector"><input type="checkbox" checked={selectedIds.includes(item.id)} onChange={()=>toggle(item.id)}/><span><Icon name="plus"/></span><b>{selectedIds.includes(item.id)?"Выбрано":"Выбрать"}</b></label>}<ProductCard product={item} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={favorites.includes(item.id)}/></div>)}</div></section></div>;
 }'''
-text, count = re.subn(r'function EditorialView\(.*?\n}\n\nfunction QuantityControl', editorial+'\n\nfunction QuantityControl', text, count=1, flags=re.S)
+text, count = re.subn(r'function EditorialView\(.*?\n}\n\nfunction LookbookViewer', editorial+'\n\nfunction LookbookViewer', text, count=1, flags=re.S)
 if count != 1: raise SystemExit("EditorialView boundaries were not found")
 
 if "const addBundle = (items: Product[])" not in text:
@@ -45,7 +45,7 @@ if "const addBundle = (items: Product[])" not in text:
 text, count = re.subn(r'\{view\s*===\s*"editorial"\s*&&\s*<EditorialView[^\n]*?/\>\}', '{view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}', text, count=1)
 if count != 1: raise SystemExit("EditorialView root render was not found")
 
-for marker in ['ВЫКУПИТЬ ВСЮ ','Соберите весь образ','buyBundle={addBundle}','["ВСЕ","КАПСУЛЫ","КОЛЛЕКЦИИ"]']:
+for marker in ['ВЫКУПИТЬ ВСЮ ','Соберите весь образ','buyBundle={addBundle}','["ВСЕ","КАПСУЛЫ","КОЛЛЕКЦИИ"]','function LookbookViewer']:
   if marker not in text: raise SystemExit(f"Missing marker: {marker}")
 if 'EditorialScenarioLanding' in text: raise SystemExit("Scenario landing still present")
 
