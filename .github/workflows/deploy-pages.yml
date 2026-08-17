@@ -62,6 +62,9 @@ jobs:
       - name: Simplify Luna into grouped stories
         run: python scripts/simplify-luna-groups.py
 
+      - name: Refine Luna story commerce
+        run: python scripts/refine-luna-commerce.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx app/globals.css app/catalog-data.ts; then
