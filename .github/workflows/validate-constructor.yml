@@ -41,21 +41,31 @@ jobs:
         run: npm install
 
       - name: Run existing project build
-        env:
-          NEXT_PUBLIC_BASE_PATH: /kd
-          NEXT_TELEMETRY_DISABLED: 1
-        run: npm run build
-
-      - name: Run Next.js static export build
+        id: legacy_build
+        continue-on-error: true
         shell: bash
         env:
           NEXT_PUBLIC_BASE_PATH: /kd
           NEXT_TELEMETRY_DISABLED: 1
         run: |
+          set -o pipefail
+          npm run build 2>&1 | tee npm-build.log
+
+      - name: Run Next.js static export build
+        id: next_build
+        continue-on-error: true
+        shell: bash
+        env:
+          NEXT_PUBLIC_BASE_PATH: /kd
+          NEXT_TELEMETRY_DISABLED: 1
+        run: |
+          set -o pipefail
           rm -rf .next out
-          npx next build
+          npx next build 2>&1 | tee next-build.log
 
       - name: Verify constructor static routes
+        id: route_check
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -66,15 +76,45 @@ jobs:
           echo "All constructor static routes exist"
 
       - name: Package source snapshot
+        if: always()
         shell: bash
         run: |
           zip -qr kd-next-constructor-source.zip . \
             -x '.git/*' 'node_modules/*' '.next/*' 'out/*' 'dist/*' '.sites-runtime/*' 'kd-next-constructor-source.zip'
 
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: constructor-build-diagnostics
+          path: |
+            npm-build.log
+            next-build.log
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Upload source snapshot
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: kd-next-constructor-source
           path: kd-next-constructor-source.zip
           if-no-files-found: error
           retention-days: 7
+
+      - name: Fail if validation failed
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.legacy_build.outcome }}" != "success" ]]; then
+            echo "npm run build failed"
+            exit 1
+          fi
+          if [[ "${{ steps.next_build.outcome }}" != "success" ]]; then
+            echo "npx next build failed"
+            exit 1
+          fi
+          if [[ "${{ steps.route_check.outcome }}" != "success" ]]; then
+            echo "constructor route check failed"
+            exit 1
+          fi
