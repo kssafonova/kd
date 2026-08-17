@@ -1,11 +1,10 @@
 from pathlib import Path
+import re
 
-path = Path("app/page.tsx")
-text = path.read_text(encoding="utf-8")
+page_path = Path("app/page.tsx")
+css_path = Path("app/globals.css")
+text = page_path.read_text(encoding="utf-8")
 
-# Add the Luna capsule to the shared editorial catalogue. The six referenced
-# images live under public/images/editorial; RemoteImage fallbacks keep the
-# page usable while assets are being uploaded/replaced.
 luna_entry = '''  { id:"luna", name:"Лунная сказка", kind:"КАПСУЛА", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю: вышитый текстиль, кружево, кобальтовый фарфор и свет, который делает дом почти театральным.", description:"Интерактивный editorial о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_postel3.png","/images/editorial/caps_luna_serviz.png","/images/editorial/caps_luna_serviz2.png","/images/editorial/caps_luna_serviz3.png"], productIds:[4,10,5,6,3] },\n'''
 editorial_marker = 'const editorials:Editorial[] = [\n'
 if 'id:"luna"' not in text:
@@ -13,19 +12,21 @@ if 'id:"luna"' not in text:
         raise SystemExit("Editorial catalogue marker not found")
     text = text.replace(editorial_marker, editorial_marker + luna_entry, 1)
 
-# Give the editorial view access to the real cart action so Luna can be shopped
-# directly from imagery instead of forcing a PDP hop.
-old_render = '{view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} />}'
-new_render = '{view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} add={(product)=>add(product,product.selectedSize,product.quantity)} />}'
-if old_render in text:
-    text = text.replace(old_render, new_render, 1)
-elif new_render not in text:
+render_variants = [
+    '{view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} />}',
+    '{view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} add={(product)=>add(product,product.selectedSize,product.quantity)} />}',
+    '{view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} quickAdd={setPlpSize} />}',
+]
+new_render = '{view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} quickAdd={setPlpSize} />}'
+for old in render_variants:
+    if old in text:
+        text = text.replace(old, new_render, 1)
+        break
+else:
     raise SystemExit("EditorialView render marker not found")
 
-luna_component = r'''function LunaEditorialView({ editorial, selectProduct, favorite, favorites, add }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; add:(product:Product)=>void }) {
+luna_component = r'''function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quickAdd }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void }) {
   const [activeScene,setActiveScene]=useState<string|null>(null);
-  const [selectedIds,setSelectedIds]=useState<number[]>(editorial.productIds);
-  const [selectedSizes,setSelectedSizes]=useState<Record<number,string>>({});
 
   const colorById:Record<number,string>={4:"Ночной синий",10:"Ночной синий",5:"Ночной синий",6:"Синий",3:"Синий"};
   const previewById:Record<number,string>={
@@ -34,137 +35,183 @@ luna_component = r'''function LunaEditorialView({ editorial, selectProduct, favo
     3:"/images/products/KD-PD-1023-BLUE02.png",
   };
   const sceneFallbacks=["/images/time-hero.png","/images/blue-bedroom.png","/images/night-editorial.png","/images/time-table.png","/images/time-tea-pair.png","/images/moon-plate.png"];
-  const lunaItems=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);
 
-  const prepareProduct=(product:Product)=>{
-    const color=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;
-    const sizeOptions=getProductSizeOptions(product,color);
-    const chosenSize=selectedSizes[product.id]??sizeOptions[0]?.[0]??product.selectedSize??"";
-    const sku=findProductSku(product,color,chosenSize);
+  const prepareProduct=(product:Product):Product=>{
+    const preferredColor=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;
+    const preferredImage=previewById[product.id];
+    const variants=[...(product.colorVariants??[])];
+    variants.sort((a,b)=>a.name===preferredColor?-1:b.name===preferredColor?1:0);
+    const adjustedVariants=variants.map(variant=>variant.name===preferredColor&&preferredImage?{...variant,image:preferredImage}:variant);
+    const adjustedSkus=product.skus?.map(sku=>sku.color===preferredColor&&preferredImage?{...sku,image:preferredImage,gallery:Array.from(new Set([preferredImage,...sku.gallery]))}:sku);
+    const targetSku=adjustedSkus?.find(sku=>sku.color===preferredColor)??adjustedSkus?.[0];
     return {
       ...product,
-      image:previewById[product.id]??sku?.image??product.image,
-      gallery:sku?.gallery??product.gallery,
-      selectedColor:sku?.color??color,
-      selectedSize:sku?.size??chosenSize,
-      selectedSkuId:sku?.id,
-      price:sku?.price??product.price,
-      quantity:1,
+      image:preferredImage??targetSku?.image??product.image,
+      gallery:targetSku?.gallery??product.gallery,
+      colorVariants:adjustedVariants.length?adjustedVariants:product.colorVariants,
+      skus:adjustedSkus,
+      selectedColor:targetSku?.color??preferredColor,
+      selectedSize:targetSku?.size??product.selectedSize,
+      selectedSkuId:targetSku?.id,
+      price:targetSku?.price??product.price,
     };
   };
 
-  const preparedItems=lunaItems.map(prepareProduct);
+  const preparedItems=editorial.productIds.map(id=>products.find(product=>product.id===id)).filter(Boolean).map(item=>prepareProduct(item!));
   const itemById=(id:number)=>preparedItems.find(item=>item.id===id);
   const scenes=[
-    {id:"bed-1",image:editorial.images[0],fallback:sceneFallbacks[0],kicker:"01 / BEDROOM",title:"Ночь начинается с тактильности",copy:"Сатин, глубокий синий и мягкое кружево собирают спальню в единый спокойный образ.",productIds:[4,6,3]},
-    {id:"bed-2",image:editorial.images[1],fallback:sceneFallbacks[1],kicker:"02 / TEXTURE",title:"Слои света и ткани",copy:"Постельное бельё становится фоном, а плед и подушка — акцентами, которые можно менять независимо.",productIds:[4,3]},
-    {id:"bed-3",image:editorial.images[2],fallback:sceneFallbacks[2],kicker:"03 / QUIET DETAIL",title:"Тихая архитектура спальни",copy:"Один цвет, разные фактуры: сатин отражает свет, хлопок и кружево делают композицию мягче.",productIds:[4,6,3]},
-    {id:"table-1",image:editorial.images[3],fallback:sceneFallbacks[3],kicker:"04 / TABLE",title:"Поздний чай как маленький ритуал",copy:"Кобальтовая сервировка продолжает палитру спальни и связывает предметы капсулы между собой.",productIds:[10,5]},
-    {id:"table-2",image:editorial.images[4],fallback:sceneFallbacks[4],kicker:"05 / PORCELAIN",title:"Фарфор цвета ночного неба",copy:"Чайная пара и тарелка работают вместе, но каждый предмет можно купить отдельно.",productIds:[10,5]},
-    {id:"table-3",image:editorial.images[5],fallback:sceneFallbacks[5],kicker:"06 / AFTER DARK",title:"Дом после заката",copy:"Финальный кадр соединяет спальню и стол: один визуальный язык, несколько самостоятельных сценариев покупки.",productIds:[10,5,3]},
+    {id:"bed-1",image:editorial.images[0],fallback:sceneFallbacks[0],kicker:"СПАЛЬНЯ",title:"Лунный сатин",productIds:[4,6,3]},
+    {id:"bed-2",image:editorial.images[1],fallback:sceneFallbacks[1],kicker:"СПАЛЬНЯ",title:"Слои ткани",productIds:[4,3]},
+    {id:"bed-3",image:editorial.images[2],fallback:sceneFallbacks[2],kicker:"ДЕТАЛИ",title:"Синий и кружево",productIds:[4,6,3]},
+    {id:"table-1",image:editorial.images[3],fallback:sceneFallbacks[3],kicker:"СЕРВИРОВКА",title:"Поздний чай",productIds:[10,5]},
+    {id:"table-2",image:editorial.images[4],fallback:sceneFallbacks[4],kicker:"ФАРФОР",title:"Цвет ночного неба",productIds:[10,5]},
+    {id:"table-3",image:editorial.images[5],fallback:sceneFallbacks[5],kicker:"СЕРВИРОВКА",title:"После заката",productIds:[10,5,3]},
   ];
   const currentScene=scenes.find(scene=>scene.id===activeScene);
-  const currentProducts=currentScene?.productIds.map(itemById).filter((item):item is Product=>Boolean(item))??[];
+  const currentProducts=(currentScene?.productIds.map(itemById).filter(Boolean)??[]) as Product[];
+  const bedroomActive=Boolean(currentScene&&scenes.slice(0,3).some(scene=>scene.id===currentScene.id));
+  const tableActive=Boolean(currentScene&&scenes.slice(3).some(scene=>scene.id===currentScene.id));
 
-  const toggleSelected=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(item=>item!==id):[...current,id]);
-  const addSelectedSet=()=>selectedIds.forEach(id=>{const item=itemById(id);if(item)add(item)});
-  const setSize=(id:number,size:string)=>setSelectedSizes(current=>({...current,[id]:size}));
+  const productGrid=(items:Product[],label:string)=><section className="luna-catalog-products" aria-live="polite">
+    <div className="section-head row"><div><p>ТОВАРЫ НА ФОТО</p><h2>{label}</h2></div><span>{items.length} товаров</span></div>
+    <div className="product-grid">{items.map(item=><ProductCard key={`luna-${activeScene}-${item.id}`} product={item} onClick={selectProduct} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
+  </section>;
 
-  return <div className="luna-editorial-page">
-    <section className="luna-hero" onClick={()=>setActiveScene("bed-1")} role="button" tabIndex={0} onKeyDown={event=>{if(event.key==="Enter"||event.key===" ")setActiveScene("bed-1")}} aria-label="Открыть товары из первого образа">
+  return <div className="luna-editorial-page luna-catalog-ux">
+    <section className="luna-hero">
       <RemoteImage src={editorial.images[0]} fallbackSrc={sceneFallbacks[0]} alt="Капсула Лунная сказка — спальня"/>
       <div className="luna-hero-shade"/>
-      <div className="luna-hero-index">CAPSULE / 2026</div>
-      <div className="luna-hero-copy"><p>EDITORIAL · ЛУННАЯ СКАЗКА</p><h1>Лунная<br/>сказка</h1><span>{editorial.lead}</span><button type="button" onClick={event=>{event.stopPropagation();document.getElementById("luna-story")?.scrollIntoView({behavior:"smooth"})}}>СМОТРЕТЬ ИСТОРИЮ <Icon name="arrow"/></button></div>
-      <button className="luna-shop-look" type="button" onClick={event=>{event.stopPropagation();setActiveScene("bed-1")}}><i>+</i><span>SHOP THE LOOK</span></button>
+      <div className="luna-hero-copy"><p>КАПСУЛА · 2026</p><h1>Лунная сказка</h1><span>{editorial.lead}</span><button type="button" className="luna-catalog-link" onClick={()=>document.getElementById("luna-products")?.scrollIntoView({behavior:"smooth"})}>СМОТРЕТЬ ТОВАРЫ →</button></div>
     </section>
 
-    <section className="luna-intro" id="luna-story">
-      <span>КУЛЬТУРА ДОМА / CAPSULE 05</span>
-      <h2>Ночная история<br/>для современного дома</h2>
-      <p>{editorial.detail}</p>
+    <section className="luna-intro">
+      <p>EDITORIAL</p>
+      <h2>Ночная история для современного дома</h2>
+      <span>{editorial.detail}</span>
     </section>
 
-    <section className="luna-scenes luna-bedroom-scenes">
-      {scenes.slice(0,3).map((scene,index)=><button type="button" key={scene.id} className={`luna-scene-card luna-scene-${index+1}`} onClick={()=>setActiveScene(scene.id)}>
-        <RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/>
-        <span className="luna-scene-overlay"><small>{scene.kicker}</small><strong>{scene.title}</strong><i>СМОТРЕТЬ ТОВАРЫ +</i></span>
-      </button>)}
+    <section className="luna-story-section">
+      <div className="luna-story-heading"><p>01 / СПАЛЬНЯ</p><h2>Текстиль в оттенках ночного неба</h2><span>Нажмите на фотографию — ниже появятся товары из этого кадра.</span></div>
+      <div className="luna-story-grid luna-story-grid-bedroom">{scenes.slice(0,3).map(scene=><button type="button" key={scene.id} className={`luna-story-card-simple ${activeScene===scene.id?"active":""}`} onClick={()=>setActiveScene(scene.id)} aria-pressed={activeScene===scene.id}>
+        <RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/><span><small>{scene.kicker}</small><strong>{scene.title}</strong><em>Товары на фото</em></span>
+      </button>)}</div>
     </section>
+    {bedroomActive&&productGrid(currentProducts,currentScene?.title??"Товары из образа")}
 
-    <section className="luna-text-banner">
-      <span>MOONLIGHT / TEXTURE / SILENCE</span>
-      <h2>В этой капсуле нет одного «правильного» комплекта.</h2>
-      <p>Соберите свою комбинацию: постельное бельё, плед и подушка могут жить вместе или по отдельности.</p>
+    <section className="luna-editorial-divider"><p>Лунная сказка строится на одной палитре, но каждый предмет можно выбрать отдельно.</p></section>
+
+    <section className="luna-story-section">
+      <div className="luna-story-heading"><p>02 / СЕРВИРОВКА</p><h2>Фарфор как продолжение интерьера</h2><span>Тот же принцип покупки: обычные карточки каталога и стандартное добавление в корзину.</span></div>
+      <div className="luna-story-grid luna-story-grid-table">{scenes.slice(3).map(scene=><button type="button" key={scene.id} className={`luna-story-card-simple ${activeScene===scene.id?"active":""}`} onClick={()=>setActiveScene(scene.id)} aria-pressed={activeScene===scene.id}>
+        <RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/><span><small>{scene.kicker}</small><strong>{scene.title}</strong><em>Товары на фото</em></span>
+      </button>)}</div>
     </section>
+    {tableActive&&productGrid(currentProducts,currentScene?.title??"Товары из образа")}
 
-    <section className="luna-generated-banner luna-generated-banner-bed">
-      <div className="luna-generated-main"><RemoteImage src={editorial.images[1]} fallbackSrc={sceneFallbacks[1]} alt="Лунная сказка — спальня"/></div>
-      <div className="luna-generated-detail"><RemoteImage src={previewById[3]} alt="Подушка с кружевом синяя"/><span>DETAIL / LACE</span></div>
-      <div className="luna-generated-copy"><small>03 / MATERIAL STUDY</small><h3>Глубокий синий<br/>без лишней декоративности</h3><p>Главный визуальный приём — один тон и контраст фактур.</p></div>
+    <section className="luna-product-catalog" id="luna-products">
+      <div className="section-head row"><div><p>ЛУННАЯ СКАЗКА</p><h2>Соберите комплект</h2></div><span>Добавляйте нужные предметы так же, как в обычном каталоге.</span></div>
+      <div className="product-grid">{preparedItems.map(item=><ProductCard key={`luna-all-${item.id}`} product={item} onClick={selectProduct} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
     </section>
-
-    <section className="luna-scenes luna-table-scenes">
-      {scenes.slice(3).map((scene,index)=><button type="button" key={scene.id} className={`luna-scene-card luna-table-${index+1}`} onClick={()=>setActiveScene(scene.id)}>
-        <RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/>
-        <span className="luna-scene-overlay"><small>{scene.kicker}</small><strong>{scene.title}</strong><i>SHOP THE TABLE +</i></span>
-      </button>)}
-    </section>
-
-    <section className="luna-generated-banner luna-generated-banner-table">
-      <div className="luna-generated-copy"><small>05 / THE TABLE</small><h3>Сервировка<br/>как продолжение интерьера</h3><p>Фарфор повторяет палитру текстиля и превращает разные категории в одну визуальную систему.</p></div>
-      <div className="luna-generated-main"><RemoteImage src={editorial.images[4]} fallbackSrc={sceneFallbacks[4]} alt="Лунная сказка — сервировка"/></div>
-      <div className="luna-generated-detail luna-plate-detail"><RemoteImage src="/images/moon-plate.png" alt="Тарелка Лунная сказка"/><span>PORCELAIN / NIGHT BLUE</span></div>
-    </section>
-
-    <section className="luna-set-builder">
-      <header><div><span>BUILD YOUR CAPSULE</span><h2>Соберите свой комплект</h2></div><p>Выберите только те части, которые нужны вам. Размер текстиля можно изменить до добавления в корзину.</p></header>
-      <div className="luna-builder-grid">{preparedItems.map(item=>{
-        const checked=selectedIds.includes(item.id);
-        const color=colorById[item.id]??item.selectedColor;
-        const sizes=getProductSizeOptions(item,color);
-        const selectedSize=selectedSizes[item.id]??sizes[0]?.[0]??item.selectedSize??"";
-        const selectedSku=findProductSku(item,color,selectedSize);
-        const price=selectedSku?.price??item.price;
-        return <article className={`luna-builder-card ${checked?"selected":""}`} key={item.id}>
-          <button className="luna-builder-image" type="button" onClick={()=>selectProduct(prepareProduct(item))}><RemoteImage src={previewById[item.id]??item.image} alt={item.name}/></button>
-          <button className="luna-builder-check" type="button" onClick={()=>toggleSelected(item.id)} aria-pressed={checked}><i>{checked?"✓":""}</i><span>{checked?"В КОМПЛЕКТЕ":"ДОБАВИТЬ В КОМПЛЕКТ"}</span></button>
-          <div className="luna-builder-copy"><small>{item.article??`KD-PD-${1020+item.id}`}</small><h3>{item.name}</h3><p>{color}</p>{sizes.length>1&&<label>Размер<select value={selectedSize} onChange={event=>setSize(item.id,event.target.value)}>{sizes.map(([size])=><option key={size} value={size}>{size}</option>)}</select></label>}<strong>{fmt(price)}</strong><div><button type="button" onClick={()=>selectProduct(prepareProduct(item))}>ПОДРОБНЕЕ</button><button type="button" className="luna-card-add" onClick={()=>add(prepareProduct(item))}>В КОРЗИНУ</button></div></div>
-          <button className={`luna-builder-heart ${favorites.includes(item.id)?"active":""}`} type="button" onClick={()=>favorite(item.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={favorites.includes(item.id)}/></button>
-        </article>})}</div>
-      <div className="luna-builder-total"><div><span>ВЫБРАНО · {selectedIds.length}</span><strong>{fmt(selectedIds.reduce((sum,id)=>{const item=itemById(id);if(!item)return sum;const color=colorById[id]??item.selectedColor;const size=selectedSizes[id]??getProductSizeOptions(item,color)[0]?.[0]??item.selectedSize;return sum+(findProductSku(item,color,size)?.price??item.price)},0))}</strong></div><button type="button" disabled={!selectedIds.length} onClick={addSelectedSet}>ДОБАВИТЬ ВЕСЬ КОМПЛЕКТ В КОРЗИНУ <Icon name="arrow"/></button></div>
-    </section>
-
-    <section className="luna-finale" onClick={()=>setActiveScene("table-3")} role="button" tabIndex={0} onKeyDown={event=>{if(event.key==="Enter"||event.key===" ")setActiveScene("table-3")}}>
-      <RemoteImage src={editorial.images[5]} fallbackSrc={sceneFallbacks[5]} alt="Лунная сказка — финальный editorial кадр"/>
-      <div><span>06 / FINALE</span><h2>Дом, который<br/>просыпается ночью</h2><button type="button" onClick={event=>{event.stopPropagation();setActiveScene("table-3")}}>SHOP THE STORY +</button></div>
-    </section>
-
-    {currentScene&&<div className="luna-shop-overlay" role="dialog" aria-modal="true" aria-label={`Товары из образа ${currentScene.title}`}>
-      <button className="luna-shop-backdrop" type="button" onClick={()=>setActiveScene(null)} aria-label="Закрыть товары"/>
-      <aside className="luna-shop-drawer"><header><div><small>{currentScene.kicker}</small><h2>{currentScene.title}</h2><p>{currentScene.copy}</p></div><button type="button" onClick={()=>setActiveScene(null)} aria-label="Закрыть"><Icon name="close"/></button></header><div className="luna-shop-products">{currentProducts.map(item=>{
-        const color=colorById[item.id]??item.selectedColor;
-        const sizes=getProductSizeOptions(item,color);
-        const selectedSize=selectedSizes[item.id]??sizes[0]?.[0]??item.selectedSize??"";
-        const sku=findProductSku(item,color,selectedSize);
-        return <article key={item.id}><button type="button" className="luna-shop-product-image" onClick={()=>{setActiveScene(null);selectProduct(prepareProduct(item))}}><RemoteImage src={previewById[item.id]??item.image} alt={item.name}/></button><div><small>{item.article}</small><h3>{item.name}</h3><span>{color}</span>{sizes.length>1&&<select value={selectedSize} onChange={event=>setSize(item.id,event.target.value)}>{sizes.map(([size])=><option key={size} value={size}>{size}</option>)}</select>}<strong>{fmt(sku?.price??item.price)}</strong><button type="button" onClick={()=>add(prepareProduct(item))}>ДОБАВИТЬ В КОРЗИНУ</button></div></article>})}</div></aside>
-    </div>}
   </div>;
 }
 '''
 
-if 'function LunaEditorialView(' not in text:
-    marker = 'function EditorialView('
+if 'function LunaEditorialView' in text:
+    text, count = re.subn(r'function LunaEditorialView[\s\S]*?(?=\n\nfunction EditorialView)', luna_component.rstrip(), text, count=1)
+    if count != 1:
+        raise SystemExit("Failed to replace LunaEditorialView")
+else:
+    marker = '\nfunction EditorialView('
     if marker not in text:
-        raise SystemExit("EditorialView function marker not found")
-    text = text.replace(marker, luna_component + '\n\n' + marker, 1)
+        raise SystemExit("EditorialView insertion marker not found")
+    text = text.replace(marker, '\n' + luna_component + '\nfunction EditorialView(', 1)
 
-old_signature = 'function EditorialView({ editorial, selectProduct, favorite, favorites }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[] }) {\n  const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);'
-new_signature = 'function EditorialView({ editorial, selectProduct, favorite, favorites, add }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; add:(product:Product)=>void }) {\n  if(editorial.id==="luna")return <LunaEditorialView editorial={editorial} selectProduct={selectProduct} favorite={favorite} favorites={favorites} add={add}/>;\n  const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);'
-if old_signature in text:
-    text = text.replace(old_signature, new_signature, 1)
-elif new_signature not in text:
+old_editorial_signatures = [
+    'function EditorialView({ editorial, selectProduct, favorite, favorites }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[] }) {',
+    'function EditorialView({ editorial, selectProduct, favorite, favorites, add }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; add:(product:Product)=>void }) {',
+    'function EditorialView({ editorial, selectProduct, favorite, favorites, quickAdd }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void }) {',
+]
+new_signature = 'function EditorialView({ editorial, selectProduct, favorite, favorites, quickAdd }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void }) {'
+for old in old_editorial_signatures:
+    if old in text:
+        text = text.replace(old, new_signature, 1)
+        break
+else:
     raise SystemExit("EditorialView signature marker not found")
 
-path.write_text(text, encoding="utf-8")
-print("Applied Luna interactive editorial capsule")
+luna_return_patterns = [
+    '  if(editorial.id==="luna")return <LunaEditorialView editorial={editorial} selectProduct={selectProduct} favorite={favorite} favorites={favorites} add={add}/>;\n',
+    '  if(editorial.id==="luna")return <LunaEditorialView editorial={editorial} selectProduct={selectProduct} favorite={favorite} favorites={favorites} quickAdd={quickAdd}/>;\n',
+]
+new_luna_return = '  if(editorial.id==="luna")return <LunaEditorialView editorial={editorial} selectProduct={selectProduct} favorite={favorite} favorites={favorites} quickAdd={quickAdd}/>;\n'
+inserted = False
+for old in luna_return_patterns:
+    if old in text:
+        text = text.replace(old, new_luna_return, 1)
+        inserted = True
+        break
+if not inserted:
+    signature_pos = text.find(new_signature)
+    if signature_pos < 0:
+        raise SystemExit("Cannot locate EditorialView for Luna branch")
+    line_end = text.find('\n', signature_pos)
+    text = text[:line_end+1] + new_luna_return + text[line_end+1:]
+
+page_path.write_text(text, encoding="utf-8")
+
+css = css_path.read_text(encoding="utf-8")
+css = re.sub(r'\n?/\* LUNA_CATALOG_UX_V2 \*/[\s\S]*\Z', '', css)
+css += r'''
+
+/* LUNA_CATALOG_UX_V2 */
+.luna-catalog-ux{background:#fff;color:#1d1d1f;padding-bottom:96px}
+.luna-catalog-ux .luna-hero{position:relative;min-height:72vh;margin:0;overflow:hidden;background:#eceff2}
+.luna-catalog-ux .luna-hero>img{width:100%;height:72vh;object-fit:cover;display:block}
+.luna-catalog-ux .luna-hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,15,25,.42),rgba(8,15,25,.08) 55%,transparent)}
+.luna-catalog-ux .luna-hero-copy{position:absolute;left:5vw;bottom:9%;max-width:520px;color:#fff;z-index:2}
+.luna-catalog-ux .luna-hero-copy p{font-size:11px;letter-spacing:.14em;margin:0 0 14px}
+.luna-catalog-ux .luna-hero-copy h1{font-size:clamp(42px,6vw,86px);font-weight:400;line-height:.96;margin:0 0 18px}
+.luna-catalog-ux .luna-hero-copy span{display:block;max-width:420px;font-size:15px;line-height:1.55;margin-bottom:24px}
+.luna-catalog-link{appearance:none;border:0;border-bottom:1px solid currentColor;background:transparent;color:inherit;padding:0 0 5px;font:inherit;font-size:12px;letter-spacing:.08em;cursor:pointer}
+.luna-catalog-ux .luna-intro{max-width:760px;margin:96px auto;padding:0 32px;text-align:center}
+.luna-catalog-ux .luna-intro p,.luna-story-heading p{font-size:11px;letter-spacing:.14em;margin:0 0 16px}
+.luna-catalog-ux .luna-intro h2,.luna-story-heading h2{font-weight:400;font-size:clamp(30px,4vw,52px);line-height:1.08;margin:0 0 20px}
+.luna-catalog-ux .luna-intro span,.luna-story-heading span{font-size:14px;line-height:1.65;color:#606064}
+.luna-story-section{padding:0 32px;margin:0 auto 56px;max-width:1440px}
+.luna-story-heading{max-width:620px;margin-bottom:28px}
+.luna-story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.luna-story-card-simple{position:relative;border:0;background:#f3f3f1;padding:0;min-width:0;text-align:left;cursor:pointer;overflow:hidden}
+.luna-story-card-simple>img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .35s ease}
+.luna-story-card-simple:hover>img{transform:scale(1.01)}
+.luna-story-card-simple>span{position:absolute;left:16px;right:16px;bottom:14px;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.35);display:grid;gap:3px}
+.luna-story-card-simple small{font-size:9px;letter-spacing:.12em}
+.luna-story-card-simple strong{font-weight:400;font-size:17px}
+.luna-story-card-simple em{font-style:normal;font-size:10px;text-decoration:underline;text-underline-offset:3px}
+.luna-story-card-simple.active{outline:1px solid #1d1d1f;outline-offset:3px}
+.luna-catalog-products,.luna-product-catalog{max-width:1440px;margin:0 auto 96px;padding:0 32px}
+.luna-catalog-products .section-head,.luna-product-catalog .section-head{align-items:end;margin-bottom:24px}
+.luna-catalog-products .section-head>span,.luna-product-catalog .section-head>span{max-width:380px;font-size:12px;line-height:1.5;color:#68686c}
+.luna-editorial-divider{max-width:980px;margin:110px auto;padding:0 32px;text-align:center}
+.luna-editorial-divider p{font-size:clamp(26px,3vw,42px);font-weight:400;line-height:1.18;margin:0}
+.luna-product-catalog{padding-top:24px;border-top:1px solid #e3e3df}
+.luna-product-catalog .product-grid,.luna-catalog-products .product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:900px){
+  .luna-catalog-ux{padding-bottom:64px}
+  .luna-catalog-ux .luna-hero,.luna-catalog-ux .luna-hero>img{height:72svh;min-height:560px}
+  .luna-catalog-ux .luna-hero-copy{left:20px;right:20px;bottom:28px}
+  .luna-catalog-ux .luna-hero-copy h1{font-size:48px}
+  .luna-catalog-ux .luna-intro{margin:64px auto;padding:0 20px}
+  .luna-story-section,.luna-catalog-products,.luna-product-catalog{padding-left:16px;padding-right:16px}
+  .luna-story-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding-bottom:4px;scrollbar-width:none}
+  .luna-story-grid::-webkit-scrollbar{display:none}
+  .luna-story-card-simple{flex:0 0 78vw;scroll-snap-align:start}
+  .luna-story-card-simple>img{aspect-ratio:4/5}
+  .luna-catalog-products,.luna-product-catalog{margin-bottom:72px}
+  .luna-catalog-products .section-head,.luna-product-catalog .section-head{display:block}
+  .luna-catalog-products .section-head>span,.luna-product-catalog .section-head>span{display:block;margin-top:8px}
+  .luna-product-catalog .product-grid,.luna-catalog-products .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .luna-editorial-divider{margin:76px auto;padding:0 20px}
+}
+'''
+css_path.write_text(css, encoding="utf-8")
+print("Applied Luna editorial with standard catalog shopping UX")
