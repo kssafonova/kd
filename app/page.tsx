@@ -215,6 +215,7 @@ const slideProductIds = [
 
 type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦИЯ"; lead:string; detail:string; description:string; images:string[]; productIds:number[] };
 const editorials:Editorial[] = [
+  { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле. Белый, ледяной голубой и деликатный орнамент создают ощущение тихого зимнего утра.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/images/editorial/caps_led.png","/images/editorial/caps_led_podyshka.png","/images/editorial/caps_led_podyshka2.png","/images/editorial/caps_led_serviz.png"], productIds:[12,3,6,2] },
   { id:"luna", name:"Лунная сказка", kind:"КАПСУЛА", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю: вышитый текстиль, кружево, кобальтовый фарфор и свет, который делает дом почти театральным.", description:"Интерактивный editorial о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_postel3.png","/images/editorial/caps_luna_serviz.png","/images/editorial/caps_luna_serviz2.png","/images/editorial/caps_luna_serviz3.png"], productIds:[4,10,5,6,3] },
   { id:"time", name:"Нити времени", kind:"КАПСУЛА", lead:"Вдохновлена движением звёзд и бесконечной красотой ночного неба.", detail:"Каждая деталь — как напоминание о чём-то важном. Нежные оттенки, благородные материалы и вышивка, созданная с вниманием к вечному.", description:"Капсула о тишине, свете и вечных историях.", images:["/images/time-hero.png","/images/night-editorial.png","/images/blue-bedroom.png","/images/moon-plate.png"], productIds:[4,5,3,6] },
   { id:"buyan", name:"Тайна острова Буяна", kind:"КАПСУЛА", lead:"Солнце, ветер и солёный воздух в узорах русского фарфора.", detail:"Кобальтовые цветы и чистые линии сервировки переносят к морю, где каждый предмет становится частью общего пейзажа.", description:"Сервировка, созданная для долгих летних встреч.", images:["/images/buyan-editorial.png","/images/zip-hero-summer.png","/images/moon-plate.png","/images/poetry-editorial.png"], productIds:[5,3,1,6] },
@@ -281,7 +282,7 @@ export default function Home() {
     <main className={`view-${view}`}>
       <div className="promo">БЕСПЛАТНАЯ ДОСТАВКА ОТ 15 000 ₽ <button onClick={() => go("catalog")}>ПОДРОБНЕЕ</button></div>
       <Header onMenu={() => { setMenuSection(""); setMenu(true); }} onSearch={() => setSearch(true)} onAccount={() => setAccount(true)} onFavorites={() => setFavoritesOpen(true)} onCart={() => setCartOpen(true)} count={cartCount} favoriteCount={favorites.length} go={go} />
-      {view === "home" && <HomeView go={go} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} />}
+      {view === "home" && <HomeView go={go} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
       {view === "collections" && <CollectionsView openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} quickAdd={setPlpSize} addToCart={(product)=>add(product,product.selectedSize,product.quantity)} />}
@@ -311,7 +312,7 @@ function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, count, favor
   </header>;
 }
 
-function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }: { go:(v:View)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void }) {
+function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   const homeSlides=[
     {category:"СПАЛЬНЯ",image:"/images/blue-bedroom.png",destination:"catalog" as View},
     {category:"РАСПРОДАЖА",image:"/images/russian-bedroom.png",destination:"catalog" as View},
@@ -346,26 +347,36 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }
 
 
 
-    <section className="home-collection-duo" aria-label="Коллекции для спальни">
-      <button className="home-collection-feature home-collection-feature-luna" type="button" onClick={()=>go("collections")}>
-        <img src={assetUrl("/images/editorial/caps_luna_postel.png")} alt="Коллекция Лунная сказка"/>
-        <span className="home-collection-feature-shade"/>
-        <span className="home-collection-feature-copy">
-          <small>КОЛЛЕКЦИЯ</small>
-          <strong>Лунная сказка</strong>
-          <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
-        </span>
-      </button>
+    <section className="home-bedroom-collections" aria-labelledby="home-bedroom-collections-title">
+      <header className="home-bedroom-collections-head">
+        <div>
+          <p>ДЛЯ СПАЛЬНИ</p>
+          <h2 id="home-bedroom-collections-title">Коллекции и истории</h2>
+        </div>
+        <span>Текстиль, свет и детали для личного пространства.</span>
+      </header>
 
-      <button className="home-collection-feature home-collection-feature-ice" type="button" onClick={()=>go("collections")}>
-        <img src={assetUrl("/images/editorial/caps_led.png")} alt="Коллекция Ледяные узоры"/>
-        <span className="home-collection-feature-shade"/>
-        <span className="home-collection-feature-copy">
-          <small>КОЛЛЕКЦИЯ</small>
-          <strong>Ледяные узоры</strong>
-          <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
-        </span>
-      </button>
+      <div className="home-collection-duo">
+        <button className="home-collection-feature home-collection-feature-luna" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="luna")!)}>
+          <img src={assetUrl("/images/editorial/caps_luna_postel.png")} alt="Коллекция Лунная сказка"/>
+          <span className="home-collection-feature-shade"/>
+          <span className="home-collection-feature-copy">
+            <small>КОЛЛЕКЦИЯ · СПАЛЬНЯ</small>
+            <strong>Лунная сказка</strong>
+            <em>СМОТРЕТЬ ИСТОРИИ →</em>
+          </span>
+        </button>
+
+        <button className="home-collection-feature home-collection-feature-ice" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}>
+          <img src={assetUrl("/images/editorial/caps_led.png")} alt="Коллекция Ледяные узоры"/>
+          <span className="home-collection-feature-shade"/>
+          <span className="home-collection-feature-copy">
+            <small>КОЛЛЕКЦИЯ · СПАЛЬНЯ</small>
+            <strong>Ледяные узоры</strong>
+            <em>СМОТРЕТЬ ИСТОРИИ →</em>
+          </span>
+        </button>
+      </div>
     </section>
 
     <section className="home-reference-products">
@@ -526,9 +537,9 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
 function EditorialView({ editorial, selectProduct, favorite, favorites, quickAdd, addToCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void }) {
   if(editorial.id==="luna")return <LunaEditorialView editorial={editorial} selectProduct={selectProduct} favorite={favorite} favorites={favorites} quickAdd={quickAdd} addToCart={addToCart}/>;
   const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);
-  const variant=editorial.id==="time"?"cinematic":editorial.id==="buyan"?"offset":editorial.id==="poetry"?"magazine":"gallery";
-  const chapter=editorial.id==="time"?"NIGHT STUDY":editorial.id==="buyan"?"SUMMER TABLE":editorial.id==="poetry"?"POETRY OF HOME":"FOLKLORE REFRAMED";
-  const index=editorial.id==="time"?"01":editorial.id==="buyan"?"02":editorial.id==="poetry"?"03":"04";
+  const variant=editorial.id==="time"||editorial.id==="ice"?"cinematic":editorial.id==="buyan"?"offset":editorial.id==="poetry"?"magazine":"gallery";
+  const chapter=editorial.id==="ice"?"BEDROOM STORIES":editorial.id==="time"?"NIGHT STUDY":editorial.id==="buyan"?"SUMMER TABLE":editorial.id==="poetry"?"POETRY OF HOME":"FOLKLORE REFRAMED";
+  const index=editorial.id==="time"?"01":editorial.id==="ice"?"02":editorial.id==="buyan"?"03":editorial.id==="poetry"?"04":"05";
   const productImage=items[0]?.image||editorial.images[0];
 
   return <div className={`editorial-page zara-editorial editorial-variant-${variant}`}>
