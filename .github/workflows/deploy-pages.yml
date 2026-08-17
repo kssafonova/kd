@@ -92,6 +92,9 @@ jobs:
       - name: Remove retired capsules and collections
         run: python scripts/remove-retired-editorials-v1.py
 
+      - name: Refine Editorial tabs
+        run: python scripts/refine-editorial-tabs-v1.py
+
       - name: Install dependencies
         run: npm install
 
