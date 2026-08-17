@@ -346,15 +346,26 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }
 
 
 
-    <section className="home-bedroom-feature">
-      <img src={assetUrl("/images/blue-bedroom.png")} alt="Коллекции для спальни"/>
-      <div className="home-bedroom-feature-shade"/>
-      <div className="home-bedroom-feature-copy">
-        <p>КОЛЛЕКЦИИ ДЛЯ СПАЛЬНИ</p>
-        <h2>Пространство для тишины</h2>
-        <span>Постельное бельё и текстиль, созданные для спокойных личных ритуалов.</span>
-        <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ КОЛЛЕКЦИИ →</button>
-      </div>
+    <section className="home-collection-duo" aria-label="Коллекции для спальни">
+      <button className="home-collection-feature home-collection-feature-luna" type="button" onClick={()=>go("collections")}>
+        <img src={assetUrl("/images/editorial/caps_luna_postel.png")} alt="Коллекция Лунная сказка"/>
+        <span className="home-collection-feature-shade"/>
+        <span className="home-collection-feature-copy">
+          <small>КОЛЛЕКЦИЯ</small>
+          <strong>Лунная сказка</strong>
+          <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
+        </span>
+      </button>
+
+      <button className="home-collection-feature home-collection-feature-ice" type="button" onClick={()=>go("collections")}>
+        <img src={assetUrl("/images/editorial/caps_led.png")} alt="Коллекция Ледяные узоры"/>
+        <span className="home-collection-feature-shade"/>
+        <span className="home-collection-feature-copy">
+          <small>КОЛЛЕКЦИЯ</small>
+          <strong>Ледяные узоры</strong>
+          <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
+        </span>
+      </button>
     </section>
 
     <section className="home-reference-products">
