@@ -44,32 +44,8 @@ jobs:
       - name: Apply reference PDP gallery
         run: python scripts/apply-pdp-reference-gallery.py
 
-      - name: Normalize Luna editorial render
-        run: python scripts/normalize-luna-render.py
-
-      - name: Apply Luna editorial capsule
-        run: python scripts/apply-luna-editorial.py
-
-      - name: Fix Luna editorial typecheck
-        run: python scripts/fix-luna-typecheck.py
-
-      - name: Apply Zara-style Luna bundle flow
-        run: python scripts/apply-luna-zara-bundle.py
-
       - name: Normalize single-color swatches
         run: python scripts/normalize-single-color-swatches.py
-
-      - name: Simplify Luna into grouped stories
-        run: python scripts/simplify-luna-groups.py
-
-      - name: Refine Luna story commerce
-        run: python scripts/refine-luna-commerce.py
-
-      - name: Make story purchase inline
-        run: python scripts/inline-luna-story-purchase.py
-
-      - name: Refine story card controls
-        run: python scripts/refine-luna-story-card-controls.py
 
       - name: Apply adaptive story quick-buy and builder
         run: python scripts/apply-story-builder-v2.py
