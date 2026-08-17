@@ -16,6 +16,7 @@ export type CatalogSku = {
   price:number;
   image:string;
   gallery:string[];
+  available?:boolean;
 };
 
 export type CatalogProductOverride = {
@@ -35,6 +36,8 @@ const COLOR_HEX:Record<string,string> = {
   "Песочный":"#c9ad88",
   "Ночной синий":"#10233e",
   "Пудровый":"#e6bca8",
+  "Льняной":"#d2c1aa",
+  "Небесный":"#9fb2c6",
 };
 
 const COLOR_CODE:Record<string,string> = {
@@ -44,6 +47,8 @@ const COLOR_CODE:Record<string,string> = {
   "Песочный":"SAND",
   "Ночной синий":"NIGHT-BLUE",
   "Пудровый":"POWDER",
+  "Льняной":"LINEN",
+  "Небесный":"SKY",
 };
 
 const sizeCode=(size:string)=>size
@@ -80,6 +85,24 @@ const makeProduct=(
 });
 
 const productList:CatalogProductOverride[] = [
+  makeProduct(2,"KD-PD-1022","Пододеяльник из сатина","сатин, 140×220 / 200×220 / 220×240 см",18990,[
+    {color:"Белый",size:"Полуторный (140×220 см)",height:"140 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/zip-product-bed.png",gallery:["/kd/images/classic-bedroom.png"]},
+    {color:"Белый",size:"Евро (200×220 см)",height:"200 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/zip-product-bed.png",gallery:["/kd/images/classic-bedroom.png"]},
+    {color:"Белый",size:"Кинг сайз (220×240 см)",height:"220 см",width:"240 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/zip-product-bed.png",gallery:["/kd/images/classic-bedroom.png"],available:false},
+    {color:"Льняной",size:"Полуторный (140×220 см)",height:"140 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/beige-bedroom.png",gallery:["/kd/images/classic-bedroom.png"]},
+    {color:"Льняной",size:"Евро (200×220 см)",height:"200 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/beige-bedroom.png",gallery:["/kd/images/classic-bedroom.png"]},
+    {color:"Льняной",size:"Кинг сайз (220×240 см)",height:"220 см",width:"240 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/beige-bedroom.png",gallery:["/kd/images/classic-bedroom.png"],available:false},
+    {color:"Небесный",size:"Полуторный (140×220 см)",height:"140 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/blue-bedroom.png",gallery:["/kd/images/blue-bedding-vertical.png"]},
+    {color:"Небесный",size:"Евро (200×220 см)",height:"200 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/blue-bedroom.png",gallery:["/kd/images/blue-bedding-vertical.png"]},
+    {color:"Небесный",size:"Кинг сайз (220×240 см)",height:"220 см",width:"240 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/blue-bedroom.png",gallery:["/kd/images/blue-bedding-vertical.png"],available:false},
+    {color:"Пудровый",size:"Полуторный (140×220 см)",height:"140 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/peach-sheet.jpg",gallery:["/kd/images/products/KD-PD-1028-PUDRA02.png"]},
+    {color:"Пудровый",size:"Евро (200×220 см)",height:"200 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/peach-sheet.jpg",gallery:["/kd/images/products/KD-PD-1028-PUDRA02.png"]},
+    {color:"Пудровый",size:"Кинг сайз (220×240 см)",height:"220 см",width:"240 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/peach-sheet.jpg",gallery:["/kd/images/products/KD-PD-1028-PUDRA02.png"],available:false},
+    {color:"Ночной синий",size:"Полуторный (140×220 см)",height:"140 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/zip-collection-night.png",gallery:["/kd/images/products/KD-PD-1024-DARK02.png"]},
+    {color:"Ночной синий",size:"Евро (200×220 см)",height:"200 см",width:"220 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/zip-collection-night.png",gallery:["/kd/images/products/KD-PD-1024-DARK02.png"]},
+    {color:"Ночной синий",size:"Кинг сайз (220×240 см)",height:"220 см",width:"240 см",packageInfo:"Пододеяльник 1 шт.",material:"Шелк",composition:"100% Сатин",image:"/kd/images/zip-collection-night.png",gallery:["/kd/images/products/KD-PD-1024-DARK02.png"],available:false},
+  ]),
+
   makeProduct(3,"KD-PD-1023","Подушка с кружевом","хлопок, 60×60 см",2990,[
     {color:"Белый",size:"60×60 см",height:"60 см",width:"60 см",material:"Хлопок",composition:"Внешняя часть: 100% Хлопок, Наполнитель: 100% Пух",details:"Кружево",image:"/kd/images/products/KD-PD-1023-WHITE01.png",gallery:["/kd/images/products/KD-PD-1023-WHITE02.png"]},
     {color:"Молочный",size:"60×60 см",height:"60 см",width:"60 см",material:"Хлопок",composition:"Внешняя часть: 100% Хлопок, Наполнитель: 100% Пух",details:"Кружево",image:"/kd/images/products/KD-PD-1023-BEIGE01.png",gallery:["/kd/images/products/KD-PD-1023-BEIGE02.png"]},
