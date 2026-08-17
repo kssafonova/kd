@@ -696,6 +696,7 @@ function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void;
   const variants=product.colorVariants?.length?product.colorVariants:[{name:product.selectedColor??"Молочный",hex:"#eee",image:product.image,gallery:product.gallery,position:product.position}];
   const initialColorIndex=Math.max(0,variants.findIndex(variant=>variant.name===product.selectedColor));
   const [colorIndex,setColorIndex]=useState(initialColorIndex);
+  const [detailsOpen,setDetailsOpen]=useState(false);
   const color=variants[colorIndex]??variants[0];
   const sizes=getProductSizeOptions(product,color.name);
   const [chosenSize,setChosenSize]=useState(sizes.length===1?(sizes[0]?.[0]??""):"");
@@ -711,29 +712,46 @@ function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void;
   const hasSingleSize=sizes.length===1;
   const requiresSizeChoice=sizes.length>1;
   const canAdd=hasSingleSize||Boolean(chosenSize);
-  const preview=mediaSku?.image??color.image??product.image;
+  const mediaProduct:Product={...product,selectedColor:color.name,selectedSkuId:selectedSku?.id??mediaSku?.id,image:mediaSku?.image??color.image??product.image,gallery:mediaSku?.gallery??color.gallery??product.gallery};
+  const salePercent=product.oldPrice&&product.oldPrice>product.price?Math.round((1-product.price/product.oldPrice)*100):0;
 
   return <div className="overlay plp-flow plp-compact-flow">
     <button className="overlay-bg" onClick={close} aria-label="Закрыть"/>
     <section className="plp-modal plp-compact-modal" role="dialog" aria-modal="true" aria-label={`Добавить ${product.name}`}>
       <button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button>
 
-      <div className="plp-compact-top">
-        <div className="plp-compact-media"><RemoteImage src={preview} alt={product.name}/></div>
-        <div className="plp-compact-color-panel">
-          <div className="plp-compact-field color-field">
-            <span>Цвет: <b>{color.name}</b></span>
-            {variants.length>1?<div className="plp-compact-swatches" role="group" aria-label="Выберите цвет">{variants.map((variant,index)=><button key={variant.name} type="button" className={index===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(index)} aria-label={`Цвет ${variant.name}`} title={variant.name}/>)}</div>:null}
-          </div>
-        </div>
+      <div className="plp-reference-gallery">
+        <ScrollableProductMedia product={mediaProduct} alt={product.name} className="plp-reference-media" position={color.position??product.position}/>
       </div>
 
-      <div className="plp-compact-bottom">
+      <div className="plp-reference-body">
+        <h2>{product.name}</h2>
+        <div className="plp-reference-price">
+          <strong>{fmt(product.price)}</strong>
+          {product.oldPrice&&product.oldPrice>product.price&&<del>{fmt(product.oldPrice)}</del>}
+          {salePercent>0&&<span>−{salePercent}%</span>}
+        </div>
+
+        <div className="plp-reference-color">
+          <p>Цвет: {color.name.toLowerCase()}</p>
+          {variants.length>1?<div className="plp-compact-swatches" role="group" aria-label="Выберите цвет">{variants.map((variant,index)=><button key={variant.name} type="button" className={index===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(index)} aria-label={`Цвет ${variant.name}`} title={variant.name}/>)}</div>:<div className="plp-reference-one-swatch" style={{background:color.hex}} aria-hidden="true"/>}
+        </div>
+
+        {product.note&&<p className="plp-reference-note">{product.note}</p>}
+
+        <button className="plp-reference-details" type="button" onClick={()=>setDetailsOpen(current=>!current)} aria-expanded={detailsOpen}>
+          <span>ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ</span><Icon name="chevron"/>
+        </button>
+        {detailsOpen&&<div className="plp-reference-details-copy">Материалы, состав и рекомендации по уходу доступны в карточке товара.</div>}
+
         <div className="plp-compact-field size-field">
-          <div className="plp-compact-size-head"><span>Размер</span></div>
+          <div className="plp-compact-size-head"><span>РАЗМЕР</span><button type="button" onClick={()=>alert("Руководство по размерам")}>Руководство по размерам</button></div>
           {requiresSizeChoice?<div className="plp-compact-sizes" role="group" aria-label="Выберите размер">{sizes.map(([name,price])=><button key={name} type="button" className={chosenSize===name?"active":""} aria-pressed={chosenSize===name} onClick={()=>setChosenSize(name)}><span>{name}</span><b>{fmt(price)}</b></button>)}</div>:<div className="plp-compact-static-size"><strong>{sizes[0]?.[0]??product.selectedSize??"Единый размер"}</strong><b>{fmt(sizes[0]?.[1]??product.price)}</b></div>}
         </div>
+
         <button className={`primary plp-compact-add ${canAdd?"is-ready":"is-disabled"}`} type="button" disabled={!canAdd} aria-disabled={!canAdd} onClick={()=>{if(!canAdd)return;add(chosenSize,color.name,unitPrice)}}>{canAdd?`Добавить в корзину · ${fmt(unitPrice)}`:"Выберите размер"}</button>
+
+        <button className="plp-reference-availability" type="button" onClick={()=>alert("Показываем наличие выбранного товара в бутиках")}> <Icon name="pin"/><span>НАЛИЧИЕ В МАГАЗИНАХ</span></button>
       </div>
     </section>
   </div>;
