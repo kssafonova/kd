@@ -9,6 +9,7 @@ import "./zara-editorial.css";
 import "./luna-editorial.css";
 import "./collection-flow.css";
 import "./constructor-entry.css";
+import "./premium-system.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
 export const metadata: Metadata = {
