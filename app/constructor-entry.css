@@ -1,0 +1,4 @@
+.home-constructor-entry{display:flex;justify-content:center;padding:28px 20px 34px;background:#fff;border-bottom:1px solid var(--line)}
+.home-constructor-entry a{display:inline-flex;min-height:46px;align-items:center;border-bottom:1px solid var(--ink);text-decoration:none;color:var(--ink);font-size:10px;letter-spacing:.14em;padding:0 2px}
+.home-constructor-entry a:hover{opacity:.65}
+@media(max-width:700px){.home-constructor-entry{padding:20px 16px 25px}.home-constructor-entry a{font-size:9px}}

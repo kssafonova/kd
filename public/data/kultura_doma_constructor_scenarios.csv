@@ -1,0 +1,14 @@
+﻿scenario_id,scenario_name,occasion,guests_supported,lead_collection_slug,allowed_collections,role,preset_status,quantity_rule,entry_collection,styling_message
+red-thread-tea,Красная нить,tea,2|4|6,mokoshi,Камея,tea_or_coffee_service,required,per_guest,Мокоши,Главный красный акцент
+red-thread-tea,Красная нить,tea,2|4|6,mokoshi,Камея,table_textile,default,per_guest_or_fixed,Мокоши,Красный орнамент и нейтральная база
+quiet-obereg,Тихий оберег,breakfast|tea,2|4|6,oberegi,Овация|Камея,tea_or_coffee_service,required,per_guest,Обереги,Тихая бело-синяя сервировка
+quiet-obereg,Тихий оберег,breakfast|tea,2|4|6,oberegi,Овация|Камея,table_textile,default,per_guest_or_fixed,Обереги,Деликатный текстильный слой
+sky-celebration,Небесный праздник,tea|celebration,2|4|6,diyaf,Овация|Камея,tea_or_coffee_service,required,per_guest,Дияф,Голубой и золотой декоративный акцент
+sky-celebration,Небесный праздник,tea|celebration,2|4|6,diyaf,Овация|Камея,table_textile,default,per_guest_or_fixed,Дияф,Праздничный текстиль
+green-salon,Зелёный салон,breakfast|tea,2|4|6,peterburg,Овация|Камея,tea_or_coffee_service,required,per_guest,Петербург,Зелёный городской акцент
+green-salon,Зелёный салон,breakfast|tea,2|4|6,peterburg,Овация|Камея,table_textile,default,per_guest_or_fixed,Петербург,Зелёная графика на белой основе
+multicolor-garden,Многоцветный сад,tea|gift,2|4,mnogocvet,Овация|Камея,tea_or_coffee_service,required,per_guest,Многоцвет,Деликатный цветочный акцент
+white-classic,Белая классика,breakfast|lunch|tea,2|4|6|12,kameya|ovaciya,Мокоши|Обереги|Дияф|Петербург|Многоцвет,individual_tableware,required,per_guest,Камея|Овация,Нейтральная фарфоровая база
+crystal-evening,Свет Росы,dinner|celebration,2|4|6,rosy,Дворцы России|Овация|Камея,atmosphere_or_drinks,optional,fixed,Росы,Хрустальный вечерний акцент
+quiet-morning-bedroom,Тихое утро,bedroom,,orenburgskie-uzory,Обереги|Голубые цветы|Тайна острова Буяна,bedroom_layer,default,fixed,Оренбургские узоры,Плед и подушки как мягкий слой
+blue-hour-bedroom,Голубой час,bedroom,,oberegi|tayny-ostrova-buyana|niti-vremeni,Оренбургские узоры|Голубые цветы,bedroom_layer,required_or_default,fixed,Обереги|Тайна острова Буяна|Нити времени,Синий текстильный образ

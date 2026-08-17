@@ -340,6 +340,10 @@ function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, 
       <nav className="hero-nav">{homeSlides.map((item,i)=><button key={item.category} className={i===activeIndex?"active":""} onClick={()=>setSlide(i)}>{item.category}</button>)}</nav>
     </section>
 
+    <section className="home-constructor-entry" aria-label="Конструктор сценариев">
+      <a href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`}>СОБРАТЬ СЦЕНАРИЙ →</a>
+    </section>
+
     <section className="home-reference-shelf">
       <div className="home-reference-heading"><p>ДЛЯ ВАШЕГО ДОМА</p><button onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ →</button></div>
       <div className="category-grid">{homeCategories.map(([name,image],i)=><button className="category-card" key={name} onClick={()=>i===2?go("catalog"):go("catalog")}><img src={assetUrl(image)} alt={name}/><span>{name}</span><b>Смотреть категорию →</b></button>)}</div>
