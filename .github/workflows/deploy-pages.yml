@@ -80,6 +80,9 @@ jobs:
       - name: Refine homepage editorial layout
         run: python scripts/refine-homepage-editorial.py
 
+      - name: Remove editorial landing filters
+        run: python scripts/remove-editorial-tabs.py
+
       - name: Persist storefront source updates
         run: |
           if git diff --quiet -- app/page.tsx app/globals.css app/catalog-data.ts; then
