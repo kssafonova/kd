@@ -10,6 +10,13 @@ import type {
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+export const CONSTRUCTOR_DATA_FILES = [
+  "kultura-doma-constructor-presets-final.csv",
+  "kultura_doma_scenario_candidates.csv",
+  "kultura_doma_constructor_scenarios.csv",
+  "kultura_doma_full_constructor_eligible_catalog.csv",
+] as const;
+
 export const constructorDataUrl = (fileName: string) => `${BASE_PATH}/data/${fileName}`;
 
 const parseCsv = <T extends Record<string, string>>(source: string): T[] => {
@@ -65,11 +72,25 @@ const parseCsv = <T extends Record<string, string>>(source: string): T[] => {
 };
 
 const loadCsv = async <T extends Record<string, string>>(fileName: string): Promise<T[]> => {
-  const response = await fetch(constructorDataUrl(fileName), { cache: "force-cache" });
+  let response: Response;
+  try {
+    response = await fetch(constructorDataUrl(fileName), { cache: "force-cache" });
+  } catch {
+    throw new Error("Добавьте CSV-файлы в public/data");
+  }
+
   if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error("Добавьте CSV-файлы в public/data");
+    }
     throw new Error(`Не удалось загрузить ${fileName}: ${response.status}`);
   }
-  return parseCsv<T>(await response.text());
+
+  const rows = parseCsv<T>(await response.text());
+  if (!rows.length) {
+    throw new Error(`CSV-файл ${fileName} пуст или не распознан`);
+  }
+  return rows;
 };
 
 let constructorDataPromise: Promise<ConstructorData> | null = null;
@@ -77,16 +98,16 @@ let constructorDataPromise: Promise<ConstructorData> | null = null;
 export const loadConstructorData = () => {
   if (!constructorDataPromise) {
     constructorDataPromise = Promise.all([
-      loadCsv<PresetRow>("kultura-doma-constructor-presets-final.csv"),
-      loadCsv<CandidateRow>("kultura_doma_scenario_candidates.csv"),
-      loadCsv<ScenarioMetaRow>("kultura_doma_constructor_scenarios.csv"),
-      loadCsv<CatalogRow>("kultura_doma_full_constructor_eligible_catalog.csv"),
-    ]).then(([presets, candidates, scenarios, catalog]) => ({
-      presets,
-      candidates,
-      scenarios,
-      catalog,
-    }));
+      loadCsv<PresetRow>(CONSTRUCTOR_DATA_FILES[0]),
+      loadCsv<CandidateRow>(CONSTRUCTOR_DATA_FILES[1]),
+      loadCsv<ScenarioMetaRow>(CONSTRUCTOR_DATA_FILES[2]),
+      loadCsv<CatalogRow>(CONSTRUCTOR_DATA_FILES[3]),
+    ])
+      .then(([presets, candidates, scenarios, catalog]) => ({ presets, candidates, scenarios, catalog }))
+      .catch((error) => {
+        constructorDataPromise = null;
+        throw error;
+      });
   }
   return constructorDataPromise;
 };
