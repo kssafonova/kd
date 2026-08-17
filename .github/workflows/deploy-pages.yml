@@ -98,6 +98,12 @@ jobs:
       - name: Add Ice Patterns assortment
         run: python scripts/add-ice-pattern-products-v1.py
 
+      - name: Finalize Ice Patterns product data
+        run: python scripts/finalize-ice-pattern-products-v2.py
+
+      - name: Correct KD-PD-2010 as salad bowl
+        run: python scripts/fix-ice-pattern-2010-salad-bowl.py
+
       - name: Install dependencies
         run: npm install
 
