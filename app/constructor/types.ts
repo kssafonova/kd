@@ -59,6 +59,29 @@ export type ScenarioMetaRow = {
   styling_message: string;
 };
 
+export type ExpansionRuleRow = {
+  scenario_id: string;
+  scenario_name: string;
+  space: string;
+  occasion: string;
+  guests_supported: string;
+  lead_collections: string;
+  allowed_collections: string;
+  role: string;
+  allowed_product_types: string;
+  preset_status: string;
+  quantity_rule: string;
+  flow_step: string;
+  styling_message: string;
+};
+
+export type ExpansionPatchRow = {
+  scenario_id: string;
+  role: string;
+  allowed_product_types: string;
+  preset_status: string;
+};
+
 export type CatalogRow = {
   offer_id: string;
   group_id: string;
@@ -88,6 +111,8 @@ export type ConstructorData = {
   candidates: CandidateRow[];
   scenarios: ScenarioMetaRow[];
   catalog: CatalogRow[];
+  expansionRules: ExpansionRuleRow[];
+  expansionPatches: ExpansionPatchRow[];
 };
 
 export type SlotState = {
