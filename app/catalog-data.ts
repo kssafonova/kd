@@ -107,9 +107,9 @@ const productList:CatalogProductOverride[] = [
   ]),
 
   makeProduct(3,"KD-PD-1023","Подушка с кружевом","хлопок, 60×60 см",5990,[
-    {color:"Белый",size:"60×60 см",height:"60 см",width:"60 см",material:"Хлопок",composition:"Внешняя часть: 100% Хлопок, Наполнитель: 100% Пух",details:"Кружево",image:"/kd/images/products/KD-PD-1023-WHITE01.png",gallery:["/kd/images/products/KD-PD-1023-WHITE02.png"]},
+    {color:"Белый",size:"60×60 см",height:"60 см",width:"60 см",material:"Хлопок",composition:"Внешняя часть: 100% Хлопок, Наполнитель: 100% Пух",details:"Кружево",image:"/kd/images/products/KD-PD-1023-WHITE02.png",gallery:["/kd/images/products/KD-PD-1023-WHITE02.png"]},
     {color:"Молочный",size:"60×60 см",height:"60 см",width:"60 см",material:"Хлопок",composition:"Внешняя часть: 100% Хлопок, Наполнитель: 100% Пух",details:"Кружево",image:"/kd/images/products/KD-PD-1023-BEIGE01.png",gallery:["/kd/images/products/KD-PD-1023-BEIGE02.png"]},
-    {color:"Синий",size:"60×60 см",height:"60 см",width:"60 см",material:"Хлопок",composition:"Внешняя часть: 100% Хлопок, Наполнитель: 100% Пух",details:"Кружево",image:"/kd/images/products/KD-PD-1023-BLUE01.png",gallery:["/kd/images/products/KD-PD-1023-BLUE02.png"]},
+    {color:"Синий",size:"60×60 см",height:"60 см",width:"60 см",material:"Хлопок",composition:"Внешняя часть: 100% Хлопок, Наполнитель: 100% Пух",details:"Кружево",image:"/kd/images/products/KD-PD-1023-BLUE02.png",gallery:["/kd/images/products/KD-PD-1023-BLUE02.png"]},
   ]),
 
   makeProduct(6,"KD-PD-1026","Плед из кружева","хлопок, 200×220 см",12990,[

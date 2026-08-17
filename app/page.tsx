@@ -766,38 +766,7 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
 
 
 function EditorialView({ editorial, selectProduct, favorite, favorites, buyBundle }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
-  const lunaPreviewRules:Record<string,{color:string;image:string}>={
-    "KD-PD-1023":{color:"Синий",image:"/kd/images/products/KD-PD-1023-BLUE02.png"},
-    "KD-PD-1026":{color:"Синий",image:"/kd/images/products/KD-PD-1026-BLUE01.png"},
-  };
-  const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean).map(product=>{
-    if(editorial.id!=="luna")return product;
-    const rule=lunaPreviewRules[product.article??""];
-    if(!rule)return product;
-    const skus=product.skus?.map(sku=>sku.color===rule.color?{
-      ...sku,
-      image:rule.image,
-      gallery:Array.from(new Set([sku.image,...sku.gallery].filter(image=>image!==rule.image))),
-    }:sku);
-    const orderedSkus=skus
-      ? [...skus.filter(sku=>sku.color===rule.color),...skus.filter(sku=>sku.color!==rule.color)]
-      : skus;
-    const variants=product.colorVariants?.map(variant=>variant.name===rule.color?{
-      ...variant,
-      image:rule.image,
-      gallery:Array.from(new Set([variant.image,...(variant.gallery??[])].filter(image=>image!==rule.image))),
-    }:variant);
-    const orderedVariants=variants
-      ? [...variants.filter(variant=>variant.name===rule.color),...variants.filter(variant=>variant.name!==rule.color)]
-      : variants;
-    return {
-      ...product,
-      image:rule.image,
-      selectedColor:rule.color,
-      skus:orderedSkus,
-      colorVariants:orderedVariants,
-    };
-  });
+  const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);
   const [selecting,setSelecting]=useState(false);
   const [selectedIds,setSelectedIds]=useState<number[]>(items.map(item=>item.id));
   useEffect(()=>{setSelecting(false);setSelectedIds(items.map(item=>item.id))},[editorial.id]);
