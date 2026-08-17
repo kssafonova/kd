@@ -708,7 +708,9 @@ function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void;
   const mediaSku=findProductSku(product,color.name);
   const selectedSku=chosenSize?findProductSku(product,color.name,chosenSize):undefined;
   const unitPrice=selectedSku?.price??sizes.find(([name])=>name===chosenSize)?.[1]??product.price;
-  const needsSize=sizes.length>1&&!chosenSize;
+  const hasSingleSize=sizes.length===1;
+  const requiresSizeChoice=sizes.length>1;
+  const canAdd=hasSingleSize||Boolean(chosenSize);
   const preview=mediaSku?.image??color.image??product.image;
 
   return <div className="overlay plp-flow plp-compact-flow">
@@ -723,9 +725,9 @@ function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void;
         </div>
         <div className="plp-compact-field size-field">
           <span>Размер</span>
-          {sizes.length>1?<select value={chosenSize} onChange={event=>setChosenSize(event.target.value)} aria-label="Выберите размер"><option value="" disabled>Выберите размер</option>{sizes.map(([name])=><option key={name} value={name}>{name}</option>)}</select>:<strong>{sizes[0]?.[0]??product.selectedSize??"Единый размер"}</strong>}
+          {requiresSizeChoice?<select value={chosenSize} onChange={event=>setChosenSize(event.target.value)} aria-label="Выберите размер"><option value="" disabled>Выберите размер</option>{sizes.map(([name])=><option key={name} value={name}>{name}</option>)}</select>:<strong>{sizes[0]?.[0]??product.selectedSize??"Единый размер"}</strong>}
         </div>
-        <button className="primary plp-compact-add" type="button" disabled={needsSize} onClick={()=>add(chosenSize,color.name,unitPrice)}>{needsSize?"ВЫБЕРИТЕ РАЗМЕР":"ДОБАВИТЬ В КОРЗИНУ"}</button>
+        <button className={`primary plp-compact-add ${canAdd?"is-ready":"is-disabled"}`} type="button" disabled={!canAdd} aria-disabled={!canAdd} onClick={()=>{if(!canAdd)return;add(chosenSize,color.name,unitPrice)}}>{canAdd?`Добавить в корзину · ${fmt(unitPrice)}`:"Выберите размер"}</button>
       </div>
     </section>
   </div>;
