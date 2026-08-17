@@ -71,6 +71,9 @@ jobs:
       - name: Refine story card controls
         run: python scripts/refine-luna-story-card-controls.py
 
+      - name: Apply adaptive story quick-buy and builder
+        run: python scripts/apply-story-builder-v2.py
+
       - name: Apply homepage reference redesign
         run: python scripts/redesign-home-reference.py
 
