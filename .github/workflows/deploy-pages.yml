@@ -89,6 +89,9 @@ jobs:
       - name: Highlight key menu destinations
         run: python scripts/highlight-menu-solutions-v1.py
 
+      - name: Remove retired capsules and collections
+        run: python scripts/remove-retired-editorials-v1.py
+
       - name: Install dependencies
         run: npm install
 
