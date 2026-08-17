@@ -69,7 +69,9 @@ jobs:
             test -f "out/constructor/${scenario}/index.html"
           done
           if [[ "${GITHUB_REF_NAME}" == "editorial-scenarios" ]]; then
-            for scenario in red-thread-tea quiet-obereg sky-celebration green-salon multicolor-garden white-classic crystal-evening quiet-morning-bedroom blue-hour-bedroom; do
+            for scenario in \
+              red-thread-tea quiet-obereg sky-celebration green-salon multicolor-garden white-classic crystal-evening quiet-morning-bedroom blue-hour-bedroom \
+              palace-dinner flower-sunday russian-living-room fairytale-for-two morning-mokoshi winter-guests sunday-lunch petersburg-evening summer-veranda homecoming candlelight-supper blue-botanical-bedroom linen-retreat tea-gift; do
               test -f "out/editorial/scenario/${scenario}/index.html"
             done
           fi
