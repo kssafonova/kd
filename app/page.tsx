@@ -312,29 +312,44 @@ function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, count, favor
 }
 
 function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }: { go:(v:View)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void }) {
-  const current = slides[slide];
-  const featuredProducts = slideProductIds[slide].map(id=>products.find(product=>product.id===id)!).filter(Boolean);
+  const homeSlides=[
+    {category:"СПАЛЬНЯ",image:"/images/blue-bedroom.png",destination:"catalog" as View},
+    {category:"РАСПРОДАЖА",image:"/images/russian-bedroom.png",destination:"catalog" as View},
+    {category:"КУХНЯ И СТОЛОВАЯ",image:"/images/buyan-editorial.png",destination:"catalog" as View},
+    {category:"ДЕКОР ДЛЯ ДОМА",image:"/images/beige-bedroom.png",destination:"catalog" as View},
+  ];
+  const activeIndex=((slide%homeSlides.length)+homeSlides.length)%homeSlides.length;
+  const current=homeSlides[activeIndex];
+  const homeCategories=[
+    ["Кухня и столовая","/images/moon-plate.png"],
+    ["Домашний текстиль","/images/russian-bedroom.png"],
+    ["Спальня","/images/classic-bedroom.png"],
+    ["Декор для дома","/images/zip-product-bed.png"],
+    ["Аутлет","/images/beige-bedroom.png"],
+  ] as const;
+  const bestsellers=[1,2,7,12].map(id=>products.find(product=>product.id===id)!).filter(Boolean);
+
   return <>
-    <section className={`hero ${current.align} ${current.secondaryImage?"editorial-hero":""}`}>
-      <div className={`hero-media ${current.secondaryImage?"split-media":""}`}><img src={assetUrl(current.image)} alt={current.title}/>{current.secondaryImage&&<img src={assetUrl(current.secondaryImage)} alt="Сервировка Культура дома"/>}</div>
-      {current.mobileVideo&&<video className="hero-mobile-video" autoPlay muted loop playsInline poster={assetUrl(current.image)}><source src={assetUrl(current.mobileVideo)} type="video/mp4"/></video>}
+    <section className="hero home-reference-hero">
+      <div className="hero-media"><img src={assetUrl(current.image)} alt={current.category}/></div>
       <div className="hero-shade"/>
-      <div className="hero-copy"><p>{current.eyebrow}</p><h1>{current.title}</h1><span>{current.subtitle}</span><button onClick={() => go(current.destination)}>СМОТРЕТЬ <b>→</b></button></div>
-      <button className="hero-arrow prev" onClick={() => setSlide((slide + slides.length - 1) % slides.length)} aria-label="Предыдущий баннер"><Icon name="chevron"/></button>
-      <button className="hero-arrow next" onClick={() => setSlide((slide + 1) % slides.length)} aria-label="Следующий баннер"><Icon name="chevron"/></button>
-      <div className="hero-dots">{slides.map((_, i)=><button key={i} className={i === slide ? "active" : ""} onClick={() => setSlide(i)} aria-label={`Баннер ${i+1}`}/>)}</div>
-      <nav className="hero-nav">{slides.map((item,i)=><button key={item.category} className={i===slide?"active":""} onClick={() => setSlide(i)}>{item.category}</button>)}</nav>
+      <button className="hero-arrow prev" onClick={() => setSlide((activeIndex + homeSlides.length - 1) % homeSlides.length)} aria-label="Предыдущий баннер"><Icon name="chevron"/></button>
+      <button className="hero-arrow next" onClick={() => setSlide((activeIndex + 1) % homeSlides.length)} aria-label="Следующий баннер"><Icon name="chevron"/></button>
+      <div className="hero-dots">{homeSlides.map((_,i)=><button key={i} className={i===activeIndex?"active":""} onClick={()=>setSlide(i)} aria-label={`Баннер ${i+1}`}/>)}</div>
+      <nav className="hero-nav">{homeSlides.map((item,i)=><button key={item.category} className={i===activeIndex?"active":""} onClick={()=>setSlide(i)}>{item.category}</button>)}</nav>
     </section>
 
-    <section className="section home-shelf"><div className="shelf-title"><div><p>КОЛЛЕКЦИИ</p><h2>Выбор для вашего дома</h2></div><button onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ →</button></div>
-      <div className="category-grid">{categories.map(([name,image], i)=><button className={`category-card c${i}`} key={name} onClick={() => i===2 ? go("collections") : go("catalog")}><img src={assetUrl(image)} alt={name}/><span>{name}</span><b>Смотреть категорию →</b></button>)}</div>
+    <section className="home-reference-shelf">
+      <div className="home-reference-heading"><p>ДЛЯ ВАШЕГО ДОМА</p><button onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ →</button></div>
+      <div className="category-grid">{homeCategories.map(([name,image],i)=><button className="category-card" key={name} onClick={()=>i===2?go("catalog"):go("catalog")}><img src={assetUrl(image)} alt={name}/><span>{name}</span><b>Смотреть категорию →</b></button>)}</div>
     </section>
 
-    <section className="editorial"><img src={assetUrl("/images/time-hero.png")} alt="Капсула Нити времени"/><div><p>НОВАЯ КАПСУЛА</p><h2>Нити времени</h2><span>Вдохновлена движением звёзд<br/>и бесконечной красотой ночного неба.</span><button onClick={() => go("collections")}>ОТКРЫТЬ ИСТОРИЮ →</button></div></section>
+    <section className="home-reference-products">
+      <div className="home-reference-products-head"><div><p>ВЫБОР РЕДАКЦИИ · СПАЛЬНЯ</p><h2>ХИТЫ ПРОДАЖ</h2></div><button onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ →</button></div>
+      <ProductRail className="home-product-rail" items={bestsellers} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
+    </section>
 
-    <section className="section products-section"><div className="section-head row"><div><p>ВЫБОР РЕДАКЦИИ · {current.category}</p><h2>{slide===0?"Современное русское лето":slide===1?"Для спокойной спальни":slide===2?"Искусство сервировки":slide===3?"Детали интерьера":"Предметы из коллекций"}</h2></div><button onClick={()=>go(current.destination)}>СМОТРЕТЬ ВСЕ →</button></div><ProductRail key={`featured-${slide}`} className="home-product-rail" items={featuredProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></section>
-
-    <section className="manifest"><p>КУЛЬТУРА ДОМА</p><h2>Предметы, с которыми остаётся вечное</h2><span>Натуральные материалы, ручная работа и образы русской культуры —<br/>для современного дома и личных семейных историй.</span><button onClick={()=>go("collections")}>УЗНАТЬ О БРЕНДЕ →</button></section>
+    <section className="manifest home-reference-manifest"><p>КУЛЬТУРА ДОМА</p><h2>Предметы, с которыми остаётся вечное</h2><span>Натуральные материалы, ручная работа и образы русской культуры —<br/>для современного дома и личных семейных историй.</span><button onClick={()=>go("collections")}>УЗНАТЬ О БРЕНДЕ →</button></section>
   </>;
 }
 
