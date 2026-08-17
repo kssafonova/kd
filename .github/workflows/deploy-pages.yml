@@ -86,6 +86,9 @@ jobs:
       - name: Apply PDP collection recommendations
         run: python scripts/apply-pdp-collection-recommendations-v1.py
 
+      - name: Highlight key menu destinations
+        run: python scripts/highlight-menu-solutions-v1.py
+
       - name: Install dependencies
         run: npm install
 
