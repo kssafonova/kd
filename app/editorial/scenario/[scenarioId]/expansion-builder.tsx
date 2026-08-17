@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { RemoteImage } from "../../../remote-image";
 import type { CatalogRow, ExpansionRuleRow } from "../../../constructor/types";
-import styles from "../../../editorial-scenarios.module.css";
+import builderStyles from "../../../editorial-expansion-builder.module.css";
 
 const splitPipe = (value: string) => value.split("|").map((item) => item.trim()).filter(Boolean);
 const toPrice = (value: string) => {
@@ -90,14 +90,14 @@ export function ExpansionScenarioBuilder({
   };
 
   return (
-    <div className={styles.expansionBuilder}>
-      <div className={styles.expansionBuilderMain}>
+    <div className={builderStyles.expansionBuilder}>
+      <div className={builderStyles.expansionBuilderMain}>
         {guestOptions.length > 1 && (
-          <div className={styles.expansionGuests}>
+          <div className={builderStyles.expansionGuests}>
             <small>КОЛИЧЕСТВО ПЕРСОН</small>
             <div>
               {guestOptions.map((value) => (
-                <button key={value} type="button" className={guests === value ? styles.expansionGuestActive : ""} onClick={() => setGuests(value)}>
+                <button key={value} type="button" className={guests === value ? builderStyles.expansionGuestActive : ""} onClick={() => setGuests(value)}>
                   {value}
                 </button>
               ))}
@@ -115,15 +115,15 @@ export function ExpansionScenarioBuilder({
           const price = product ? toPrice(product.price) : null;
 
           return (
-            <section className={styles.expansionRole} key={rule.role}>
-              <header className={styles.expansionRoleHead}>
+            <section className={builderStyles.expansionRole} key={rule.role}>
+              <header className={builderStyles.expansionRoleHead}>
                 <div>
                   <small>{rule.preset_status === "required" ? "ОБЯЗАТЕЛЬНО" : rule.preset_status === "default" ? "ОСНОВА СЦЕНАРИЯ" : "ПО ЖЕЛАНИЮ"}</small>
                   <h3>{rule.flow_step}</h3>
                   <p>{rule.styling_message}</p>
                 </div>
                 {rule.preset_status === "optional" && (
-                  <button type="button" className={roleEnabled ? styles.expansionToggleActive : styles.expansionToggle} onClick={() => setEnabled((current) => ({ ...current, [rule.role]: !roleEnabled }))}>
+                  <button type="button" className={roleEnabled ? builderStyles.expansionToggleActive : builderStyles.expansionToggle} onClick={() => setEnabled((current) => ({ ...current, [rule.role]: !roleEnabled }))}>
                     {roleEnabled ? "Добавлено" : "Добавить"}
                   </button>
                 )}
@@ -132,12 +132,12 @@ export function ExpansionScenarioBuilder({
               {roleEnabled && (
                 <>
                   {!candidates.length ? (
-                    <div className={styles.expansionGap}>
+                    <div className={builderStyles.expansionGap}>
                       В master catalog нет реального товара, одновременно подходящего по allowed_collections и allowed_product_types этой роли. Позиция не подменяется похожим товаром.
                     </div>
                   ) : (
-                    <div className={styles.expansionRoleBody}>
-                      <label className={styles.expansionSelectLabel}>
+                    <div className={builderStyles.expansionRoleBody}>
+                      <label className={builderStyles.expansionSelectLabel}>
                         <span>Выберите товар</span>
                         <select value={selected[rule.role] || ""} onChange={(event) => setSelected((current) => ({ ...current, [rule.role]: event.target.value }))}>
                           <option value="">Не выбран</option>
@@ -154,18 +154,18 @@ export function ExpansionScenarioBuilder({
                       </label>
 
                       {product && (
-                        <div className={styles.expansionSelected}>
-                          <div className={styles.expansionSelectedGallery}>
+                        <div className={builderStyles.expansionSelected}>
+                          <div className={builderStyles.expansionSelectedGallery}>
                             {images.map((image, index) => <RemoteImage key={`${product.offer_id}-${image}`} src={image} alt={`${product.product_name}, фото ${index + 1}`} loading={index ? "lazy" : "eager"} />)}
                           </div>
-                          <div className={styles.expansionSelectedCopy}>
+                          <div className={builderStyles.expansionSelectedCopy}>
                             <small>{product.collection} · {product.product_type}</small>
                             <h4>{product.product_name}</h4>
                             <p>{[product.color, product.size, product.material].filter(Boolean).join(" · ")}</p>
                             <strong>{price ? formatRub(price) : "Цена уточняется"}</strong>
                             {isUnavailable(product.availability_status) && <em>Нет в наличии — выберите замену</em>}
                             {!price && <em>Позиция не попадёт в total и payload, пока цена не будет определена.</em>}
-                            <div className={styles.expansionQuantity}>
+                            <div className={builderStyles.expansionQuantity}>
                               <span>Количество</span>
                               {rule.quantity_rule === "per_guest" ? (
                                 <b>{quantity}</b>
@@ -189,10 +189,10 @@ export function ExpansionScenarioBuilder({
         })}
       </div>
 
-      <aside className={styles.expansionSummary}>
+      <aside className={builderStyles.expansionSummary}>
         <small>ВАША КАПСУЛА</small>
         <h3>{activeRows.length} позиций · {totalUnits} шт.</h3>
-        <div className={styles.expansionSummaryList}>
+        <div className={builderStyles.expansionSummaryList}>
           {activeRows.map(({ rule, product }) => (
             <div key={rule.role}>
               <span>{product!.product_name}</span>
@@ -200,22 +200,22 @@ export function ExpansionScenarioBuilder({
             </div>
           ))}
         </div>
-        <div className={styles.expansionTotal}><span>Итого</span><strong>{formatRub(total)}</strong></div>
-        {problems.length > 0 && <div className={styles.expansionProblems}>{problems.map((problem) => <p key={problem}>{problem}</p>)}</div>}
-        <button type="button" className={styles.expansionAdd} disabled={problems.length > 0 || !activeRows.length} onClick={addToCart}>
+        <div className={builderStyles.expansionTotal}><span>Итого</span><strong>{formatRub(total)}</strong></div>
+        {problems.length > 0 && <div className={builderStyles.expansionProblems}>{problems.map((problem) => <p key={problem}>{problem}</p>)}</div>}
+        <button type="button" className={builderStyles.expansionAdd} disabled={problems.length > 0 || !activeRows.length} onClick={addToCart}>
           {problems.length ? "Завершите настройку" : `Добавить всё · ${formatRub(total)}`}
         </button>
       </aside>
 
       {payload && (
-        <div className={styles.expansionModalBackdrop} role="presentation" onClick={() => setPayload(null)}>
-          <div className={styles.expansionModal} role="dialog" aria-modal="true" aria-label="Состав капсулы" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className={styles.expansionModalClose} onClick={() => setPayload(null)} aria-label="Закрыть">×</button>
+        <div className={builderStyles.expansionModalBackdrop} role="presentation" onClick={() => setPayload(null)}>
+          <div className={builderStyles.expansionModal} role="dialog" aria-modal="true" aria-label="Состав капсулы" onClick={(event) => event.stopPropagation()}>
+            <button type="button" className={builderStyles.expansionModalClose} onClick={() => setPayload(null)} aria-label="Закрыть">×</button>
             <small>MVP CART PAYLOAD</small>
             <h3>Капсула готова</h3>
             <p>В корзину передаются отдельные реальные offer_id и количество.</p>
             <pre>{JSON.stringify(payload, null, 2)}</pre>
-            <button type="button" className={styles.expansionAdd} onClick={() => setPayload(null)}>Продолжить</button>
+            <button type="button" className={builderStyles.expansionAdd} onClick={() => setPayload(null)}>Продолжить</button>
           </div>
         </div>
       )}
