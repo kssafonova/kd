@@ -293,7 +293,7 @@ export default function Home() {
       {account && <Account profile={profile} close={() => setAccount(false)} notice={notice} save={setProfile} logout={()=>setProfile(null)} />}
       {favoritesOpen&&<Favorites ids={favorites} close={()=>setFavoritesOpen(false)} remove={favorite} choose={(product)=>{setSelected(product);setFavoritesOpen(false);go("product")}} quickAdd={(product)=>{setFavoritesOpen(false);setPlpSize(product)}}/>}
       {filters && <Filters close={() => setFilters(false)} apply={() => { setFilters(false); notice("Фильтры применены"); }} />}
-      {plpSize && <PLPSizeFlow product={plpSize} close={() => setPlpSize(null)} add={(chosenSize,color,unitPrice) => addFromPLP({...plpSize,selectedColor:color}, chosenSize, 1, unitPrice)} />}
+      {plpSize && <PLPSizeFlow product={plpSize} close={() => setPlpSize(null)} add={(chosenSize,quantity,unitPrice) => addFromPLP(plpSize, chosenSize, quantity, unitPrice)} />}
       {plpAdded && <PLPAdded product={plpAdded} close={()=>setPlpAdded(null)} openCart={()=>{setPlpAdded(null);setCartOpen(true)}} />}
       {sizeSheet && <SizeSheet size={size} setSize={setSize} close={() => setSizeSheet(false)} add={(quantity,unitPrice) => add({...selected,price:unitPrice},size,quantity)} price={selected.price} />}
       {cartOpen && <Cart cart={cart} recentlyViewed={recentlyViewed.map(id=>products.find(product=>product.id===id)!).filter(Boolean)} close={() => setCartOpen(false)} total={total} remove={(i) => setCart((old) => old.filter((_, index) => index !== i))} update={updateCartItem} checkout={() => {setCartOpen(false);setCheckoutOpen(true)}} go={() => { setCartOpen(false); go("catalog"); }} choose={(product)=>{setCartOpen(false);openProduct(product)}} />}
@@ -692,69 +692,16 @@ function Favorites({ids,close,remove,choose,quickAdd}:{ids:number[];close:()=>vo
 
 function Filters({ close, apply }: { close:()=>void; apply:()=>void }) { return <div className="overlay"><button className="overlay-bg" onClick={close}/><aside className="side-panel filters"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>ФИЛЬТРЫ</p>{["Категория","Материал","Цвет","Размер","Цена"].map((x,i)=><details key={x} open={i===0}><summary>{x}<Icon name="plus"/></summary><label><input type="checkbox"/> Постельное бельё</label><label><input type="checkbox"/> Домашний текстиль</label><label><input type="checkbox"/> Посуда и сервировка</label></details>)}<button className="primary" onClick={apply}>ПОКАЗАТЬ 24 ТОВАРА</button><button className="link" onClick={()=>location.reload()}>СБРОСИТЬ</button></aside></div> }
 
-function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void; add:(size:string,color:string,unitPrice:number)=>void }) {
-  const variants=product.colorVariants?.length?product.colorVariants:[{name:product.selectedColor??"Молочный",hex:"#eee",image:product.image,gallery:product.gallery,position:product.position}];
-  const initialColorIndex=Math.max(0,variants.findIndex(variant=>variant.name===product.selectedColor));
-  const [colorIndex,setColorIndex]=useState(initialColorIndex);
-  const [detailsOpen,setDetailsOpen]=useState(false);
-  const color=variants[colorIndex]??variants[0];
-  const sizes=getProductSizeOptions(product,color.name);
-  const [chosenSize,setChosenSize]=useState(sizes.length===1?(sizes[0]?.[0]??""):"");
-
-  useEffect(()=>{
-    const next=getProductSizeOptions(product,color.name);
-    setChosenSize(next.length===1?(next[0]?.[0]??""):"");
-  },[product.id,color.name]);
-
-  const mediaSku=findProductSku(product,color.name);
-  const selectedSku=chosenSize?findProductSku(product,color.name,chosenSize):undefined;
-  const unitPrice=selectedSku?.price??sizes.find(([name])=>name===chosenSize)?.[1]??product.price;
-  const hasSingleSize=sizes.length===1;
-  const requiresSizeChoice=sizes.length>1;
-  const canAdd=hasSingleSize||Boolean(chosenSize);
-  const mediaProduct:Product={...product,selectedColor:color.name,selectedSkuId:selectedSku?.id??mediaSku?.id,image:mediaSku?.image??color.image??product.image,gallery:mediaSku?.gallery??color.gallery??product.gallery};
-  const salePercent=product.oldPrice&&product.oldPrice>product.price?Math.round((1-product.price/product.oldPrice)*100):0;
-
-  return <div className="overlay plp-flow plp-compact-flow">
-    <button className="overlay-bg" onClick={close} aria-label="Закрыть"/>
-    <section className="plp-modal plp-compact-modal" role="dialog" aria-modal="true" aria-label={`Добавить ${product.name}`}>
-      <button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button>
-
-      <div className="plp-reference-gallery">
-        <ScrollableProductMedia product={mediaProduct} alt={product.name} className="plp-reference-media" position={color.position??product.position}/>
-      </div>
-
-      <div className="plp-reference-body">
-        <h2>{product.name}</h2>
-        <div className="plp-reference-price">
-          <strong>{fmt(product.price)}</strong>
-          {product.oldPrice&&product.oldPrice>product.price&&<del>{fmt(product.oldPrice)}</del>}
-          {salePercent>0&&<span>−{salePercent}%</span>}
-        </div>
-
-        <div className="plp-reference-color">
-          <p>Цвет: {color.name.toLowerCase()}</p>
-          {variants.length>1?<div className="plp-compact-swatches" role="group" aria-label="Выберите цвет">{variants.map((variant,index)=><button key={variant.name} type="button" className={index===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(index)} aria-label={`Цвет ${variant.name}`} title={variant.name}/>)}</div>:<div className="plp-reference-one-swatch" style={{background:color.hex}} aria-hidden="true"/>}
-        </div>
-
-        {product.note&&<p className="plp-reference-note">{product.note}</p>}
-
-        <button className="plp-reference-details" type="button" onClick={()=>setDetailsOpen(current=>!current)} aria-expanded={detailsOpen}>
-          <span>ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ</span><Icon name="chevron"/>
-        </button>
-        {detailsOpen&&<div className="plp-reference-details-copy">Материалы, состав и рекомендации по уходу доступны в карточке товара.</div>}
-
-        <div className="plp-compact-field size-field">
-          <div className="plp-compact-size-head"><span>РАЗМЕР</span><button type="button" onClick={()=>alert("Руководство по размерам")}>Руководство по размерам</button></div>
-          {requiresSizeChoice?<div className="plp-compact-sizes" role="group" aria-label="Выберите размер">{sizes.map(([name,price])=><button key={name} type="button" className={chosenSize===name?"active":""} aria-pressed={chosenSize===name} onClick={()=>setChosenSize(name)}><span>{name}</span><b>{fmt(price)}</b></button>)}</div>:<div className="plp-compact-static-size"><strong>{sizes[0]?.[0]??product.selectedSize??"Единый размер"}</strong><b>{fmt(sizes[0]?.[1]??product.price)}</b></div>}
-        </div>
-
-        <button className={`primary plp-compact-add ${canAdd?"is-ready":"is-disabled"}`} type="button" disabled={!canAdd} aria-disabled={!canAdd} onClick={()=>{if(!canAdd)return;add(chosenSize,color.name,unitPrice)}}>{canAdd?`Добавить в корзину · ${fmt(unitPrice)}`:"Выберите размер"}</button>
-
-        <button className="plp-reference-availability" type="button" onClick={()=>alert("Показываем наличие выбранного товара в бутиках")}> <Icon name="pin"/><span>НАЛИЧИЕ В МАГАЗИНАХ</span></button>
-      </div>
-    </section>
-  </div>;
+function PLPSizeFlow({ product, close, add }: { product:Product; close:()=>void; add:(size:string,quantity:number,unitPrice:number)=>void }) {
+  const selectedColor=product.selectedColor??product.colorVariants?.[0]?.name;
+  const [chosenSize,setChosenSize]=useState(findProductSku(product,selectedColor)?.size??"Евро 200×220");
+  const [quantity,setQuantity]=useState(1);
+  const [infoOpen,setInfoOpen]=useState(false);
+  const sizes=getProductSizeOptions(product,selectedColor);
+  const selectedSku=findProductSku(product,selectedColor,chosenSize);
+  const unitPrice=selectedSku?.price??sizes.find(([item])=>item===chosenSize)?.[1]??product.price;
+  const discount=discountOf(product);
+  return <div className="overlay plp-flow"><button className="overlay-bg" onClick={close} aria-label="Закрыть выбор размера"/><section className="plp-modal" role="dialog" aria-modal="true" aria-label={`Добавить ${product.name}`}><div className="flow-handle"/><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><div className="plp-modal-media"><ScrollableProductMedia product={product} alt={product.name}/></div><div className="plp-modal-info"><small>{product.badge||"КУЛЬТУРА ДОМА"}</small><h2>{product.name}</h2><p className="modal-note">{product.note}</p><div className="modal-price"><b>{sizes.length>1?`от ${fmt(sizes[0]?.[1]??product.price)}`:fmt(sizes[0]?.[1]??product.price)}</b>{product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</div><p className="quick-color">Цвет: {product.selectedColor ?? product.colorVariants?.[0]?.name}</p><p className="quick-description">Предмет создан в русской декоративной традиции: ясная форма, благородный цвет и точная отделка.</p><button className="quick-info-link" onClick={()=>setInfoOpen(true)}><span>ИНФОРМАЦИЯ О ТОВАРЕ</span><Icon name="chevron"/></button><div className="sheet-head"><span>РАЗМЕР</span><button onClick={()=>setInfoOpen(true)}>Руководство по размерам</button></div><ProductSizeRows sizes={sizes} selectedSize={chosenSize} setSelectedSize={setChosenSize} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} notify={(name)=>alert(`Сообщим, когда размер «${name}» появится в наличии.`)}/><button className="primary total-cta" onClick={()=>add(chosenSize,quantity,unitPrice)}><span>ДОБАВИТЬ В КОРЗИНУ</span><b>{fmt(unitPrice*quantity)}</b></button><button className="stores" onClick={()=>alert("В наличии: Москва, Петровка · Санкт-Петербург, Невский")}><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button></div></section>{infoOpen&&<ProductInfoDrawer product={product} close={()=>setInfoOpen(false)}/>}</div>
 }
 
 function ProductInfoDrawer({product,close}:{product:Product;close:()=>void}){
