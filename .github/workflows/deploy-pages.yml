@@ -68,6 +68,9 @@ jobs:
       - name: Remove editorial landing filters
         run: python scripts/remove-editorial-tabs.py
 
+      - name: Add Editorial scenario navigation
+        run: python scripts/add-editorial-scenario-navigation.py
+
       - name: Add constructor homepage CTA
         run: python scripts/add-constructor-home-cta.py
 
