@@ -40,10 +40,17 @@ css += r'''
     right:18px!important;
     z-index:8!important;
   }
+  .plp-compact-top{
+    flex:0 0 auto!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,56%) minmax(0,44%)!important;
+    align-items:stretch!important;
+    min-height:330px!important;
+  }
   .plp-compact-media{
-    min-height:0!important;
-    height:48vh!important;
-    flex:0 0 48vh!important;
+    min-height:330px!important;
+    height:330px!important;
+    aspect-ratio:auto!important;
   }
   .plp-compact-media img{
     min-height:0!important;
@@ -51,18 +58,21 @@ css += r'''
     height:100%!important;
     object-fit:cover!important;
   }
-  .plp-compact-controls{
-    flex:1 0 auto!important;
-    justify-content:flex-start!important;
-    gap:22px!important;
-    padding:30px 42px 34px!important;
+  .plp-compact-color-panel{
+    min-height:330px!important;
+    align-items:center!important;
+    padding:64px 28px 30px!important;
   }
-  .plp-compact-add{
-    margin-top:auto!important;
+  .plp-compact-bottom{
+    flex:1 0 auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:18px!important;
+    padding:30px 42px 34px!important;
   }
 }
 /* END_PLP_DESKTOP_RIGHT_DRAWER_V1 */
 '''
 
 css_path.write_text(css, encoding="utf-8")
-print("Anchored desktop PLP quick-add drawer to the right edge")
+print("Kept adaptive reference layout inside right-edge desktop PLP drawer")
