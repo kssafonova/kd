@@ -508,3 +508,55 @@ footer{background:#202a2b}
   .size-sheet .sheet-head>span{font-size:9px!important}
   .size-sheet .sheet-head button{font-size:9px!important}
 }
+
+
+/* QUICK ADD FLOW ROLLBACK V1 */
+@media(min-width:901px){
+  .plp-flow{align-items:stretch!important;justify-content:flex-end!important;padding:0!important}
+  .plp-flow .overlay-bg{background:rgba(0,0,0,.58)!important}
+  .plp-flow .plp-modal{
+    margin-left:auto!important;
+    width:min(560px,43vw)!important;
+    height:100%!important;
+    max-height:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    box-shadow:-12px 0 45px #0002!important;
+    animation:slideLeft .25s ease!important;
+    overflow:auto!important;
+  }
+  .plp-flow .plp-modal>.close{
+    position:fixed!important;
+    right:20px!important;
+    top:17px!important;
+    width:34px!important;
+    height:34px!important;
+    border-radius:50%!important;
+    background:#fff!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+  .plp-flow .plp-modal>.close svg{width:22px!important;height:22px!important}
+  .plp-flow .plp-modal-media{
+    min-height:0!important;
+    height:52vh!important;
+    flex:0 0 52vh!important;
+    background:#f1efea!important;
+  }
+  .plp-flow .plp-modal-media .product-media-scroll{height:100%!important}
+  .plp-flow .plp-modal-media .product-media-scroll img{height:100%!important;object-fit:cover!important;background:#f1efea!important}
+  .plp-flow .plp-modal-info{padding:34px 48px 38px!important}
+  .plp-flow .plp-modal-info h2{font-size:21px!important;line-height:1.15!important;margin:8px 0!important}
+  .plp-flow .plp-modal-info .modal-note{font-size:11px!important}
+  .plp-flow .plp-modal-info .modal-price{margin:12px 0 16px!important}
+  .plp-flow .plp-modal-info .modal-price b{font-size:18px!important}
+  .plp-flow .plp-modal-info>p.quick-color{font-size:10px!important;margin:0 0 16px!important}
+  .plp-flow .plp-modal-info .quick-description{font-size:10px!important;line-height:1.6!important;margin:0 0 12px!important}
+  .plp-flow .plp-modal-info .quick-info-link{font-size:9px!important}
+  .plp-flow .plp-modal-info .sheet-head{margin:20px 0 8px!important}
+  .plp-flow .plp-modal-info .sheet-head>span{font-size:10px!important}
+  .plp-flow .plp-modal-info .quantity-sizes .size-row{min-height:45px!important;padding:0 12px!important}
+  .plp-flow .plp-modal-info .quantity-sizes .size-row>button{font-size:10px!important;padding:14px 0!important}
+  .plp-flow .plp-modal-info .primary{min-height:46px!important;padding:14px!important;margin-top:16px!important;font-size:10px!important}
+  .plp-flow .plp-modal-info .stores{padding:14px 0 0!important;font-size:9px!important}
+}
