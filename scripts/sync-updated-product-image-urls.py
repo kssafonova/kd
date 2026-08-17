@@ -4,17 +4,17 @@ import re
 path = Path("app/catalog-data.ts")
 text = path.read_text(encoding="utf-8")
 
-# Source of truth: товары2(1).xlsx uploaded 2026-08-17.
-# URLs below are aligned to the actual filenames now present in public/images/products.
+# Canonical storefront media after the final product-specific corrections.
+# Keep this mapping aligned with the actual media choices used on the site.
 IMAGES = {
-    ("KD-PD-1023", "Белый"): ("/kd/images/products/KD-PD-1023-WHITE01.png", ["/kd/images/products/KD-PD-1023-WHITE02.png"]),
+    ("KD-PD-1023", "Белый"): ("/kd/images/products/KD-PD-1023-WHITE02.png", ["/kd/images/products/KD-PD-1023-WHITE02.png"]),
     ("KD-PD-1023", "Молочный"): ("/kd/images/products/KD-PD-1023-BEIGE01.png", ["/kd/images/products/KD-PD-1023-BEIGE02.png"]),
-    ("KD-PD-1023", "Синий"): ("/kd/images/products/KD-PD-1023-BLUE01.png", ["/kd/images/products/KD-PD-1023-BLUE02.png"]),
+    ("KD-PD-1023", "Синий"): ("/kd/images/products/KD-PD-1023-BLUE02.png", ["/kd/images/products/KD-PD-1023-BLUE02.png"]),
     ("KD-PD-1026", "Белый"): ("/kd/images/products/KD-PD-1026-WHITE01.png", ["/kd/images/products/KD-PD-1026-WHITE02.png"]),
     ("KD-PD-1026", "Молочный"): ("/kd/images/products/KD-PD-1026-BEIGE01.png", ["/kd/images/products/KD-PD-1026-BEIGE02.png"]),
     ("KD-PD-1026", "Синий"): ("/kd/images/products/KD-PD-1026-BLUE01.png", ["/kd/images/products/KD-PD-1026-BLUE02.png"]),
-    ("KD-PD-1027", "Молочный"): ("/kd/images/products/KD-PD-1027-MOL01.png", ["/kd/images/products/KD-PD-1027-MOL02.png"]),
-    ("KD-PD-1027", "Песочный"): ("/kd/images/products/KD-PD-1027-PES01.png", ["/kd/images/products/KD-PD-1027-PES02.png"]),
+    ("KD-PD-1027", "Молочный"): ("/kd/images/products/KD-PD-1027-MOL01.png", []),
+    ("KD-PD-1027", "Серо-синий"): ("/kd/images/products/KD-PD-1027-PES01.png", []),
     ("KD-PD-1030", "Ночной синий"): ("/kd/images/time-tea-pair.png", []),
     ("KD-PD-1024", "Ночной синий"): ("/kd/images/products/KD-PD-1024-DARK01.png", ["/kd/images/products/KD-PD-1024-DARK02.png"]),
     ("KD-PD-1025", "Ночной синий"): ("https://kssafonova.github.io/kd/images/moon-plate.png", []),
@@ -67,4 +67,4 @@ if missing:
     raise SystemExit(f"Image mappings not found in catalog: {missing}")
 
 path.write_text(text, encoding="utf-8")
-print(f"Synced updated workbook image URLs across {len(seen)} article/color variants; changed {changed} SKU rows")
+print(f"Synced canonical image URLs across {len(seen)} article/color variants; changed {changed} SKU rows")
