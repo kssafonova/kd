@@ -416,7 +416,7 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, add 
     {id:"table-3",image:editorial.images[5],fallback:sceneFallbacks[5],kicker:"06 / AFTER DARK",title:"Дом после заката",copy:"Финальный кадр соединяет спальню и стол: один визуальный язык, несколько самостоятельных сценариев покупки.",productIds:[10,5,3]},
   ];
   const currentScene=scenes.find(scene=>scene.id===activeScene);
-  const currentProducts=currentScene?.productIds.map(itemById).filter((item):item is Product=>Boolean(item))??[];
+  const currentProducts=(currentScene?.productIds.map(itemById).filter(Boolean)??[]) as Product[];
 
   const toggleSelected=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(item=>item!==id):[...current,id]);
   const addSelectedSet=()=>selectedIds.forEach(id=>{const item=itemById(id);if(item)add(item)});
