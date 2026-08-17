@@ -6,20 +6,34 @@ import { RemoteImage } from "../../../remote-image";
 import { ScenarioConstructor } from "../../../constructor/scenario-client";
 import { loadConstructorData } from "../../../constructor/data-client";
 import { getEditorialScenario } from "../../../editorial-scenario-config";
-import type { CandidateRow, CatalogRow, ConstructorData, PresetRow, ScenarioMetaRow } from "../../../constructor/types";
+import type { CandidateRow, CatalogRow, ConstructorData, ExpansionRuleRow, PresetRow, ScenarioMetaRow } from "../../../constructor/types";
+import { ExpansionScenarioBuilder } from "./expansion-builder";
 import styles from "../../../editorial-scenarios.module.css";
 
 const EVENT_LABELS: Record<string, string> = {
   tea: "Чаепитие",
   breakfast: "Завтрак",
+  brunch: "Бранч",
   lunch: "Обед",
   dinner: "Ужин",
   celebration: "Праздник",
+  anniversary: "Юбилей",
+  new_year: "Новый год",
   gift: "Подарок",
+  housewarming: "Новоселье",
+  romantic_evening: "Романтический вечер",
+  family: "Семейный стол",
+  guests: "Гости",
+  reading: "Чтение",
+  evening: "Вечер дома",
   bedroom: "Спальня",
+  bedroom_refresh: "Обновление спальни",
+  rest: "Отдых",
+  self_care: "Self-care",
 };
 
 const unique = <T,>(values: T[]) => Array.from(new Set(values));
+const splitPipe = (value: string) => value.split("|").map((item) => item.trim()).filter(Boolean);
 
 type StoryProduct = {
   offerId: string;
@@ -59,6 +73,17 @@ function fromCatalog(row: CatalogRow): StoryProduct {
   };
 }
 
+function patchedExpansionRules(data: ConstructorData, scenarioId: string) {
+  return data.expansionRules
+    .filter((row) => row.scenario_id === scenarioId)
+    .map((row) => {
+      const patch = data.expansionPatches.find((item) => item.scenario_id === row.scenario_id && item.role === row.role);
+      return patch
+        ? { ...row, allowed_product_types: patch.allowed_product_types, preset_status: patch.preset_status }
+        : row;
+    });
+}
+
 function fallbackCatalog(data: ConstructorData, meta: ScenarioMetaRow[]) {
   const collections = unique(
     meta
@@ -69,7 +94,25 @@ function fallbackCatalog(data: ConstructorData, meta: ScenarioMetaRow[]) {
   return data.catalog.filter((row) => collections.includes(row.collection)).slice(0, 8).map(fromCatalog);
 }
 
-function getStoryProducts(data: ConstructorData, scenarioId: string, meta: ScenarioMetaRow[]) {
+function expansionCatalog(data: ConstructorData, rules: ExpansionRuleRow[]) {
+  const products = rules.flatMap((rule) => {
+    const collections = splitPipe(rule.allowed_collections);
+    const productTypes = splitPipe(rule.allowed_product_types).filter((item) => item !== "required");
+    return data.catalog.filter((row) => collections.includes(row.collection) && productTypes.includes(row.product_type));
+  });
+
+  const seen = new Set<string>();
+  return products
+    .filter((row) => {
+      if (!row.offer_id || seen.has(row.offer_id)) return false;
+      seen.add(row.offer_id);
+      return true;
+    })
+    .slice(0, 8)
+    .map(fromCatalog);
+}
+
+function getStoryProducts(data: ConstructorData, scenarioId: string, meta: ScenarioMetaRow[], expansionRules: ExpansionRuleRow[]) {
   const presetProducts = data.presets.filter((row) => row.scenario_id === scenarioId).map(fromPreset);
   if (presetProducts.length) return presetProducts;
 
@@ -83,6 +126,7 @@ function getStoryProducts(data: ConstructorData, scenarioId: string, meta: Scena
     }).slice(0, 8);
   }
 
+  if (expansionRules.length) return expansionCatalog(data, expansionRules);
   return fallbackCatalog(data, meta);
 }
 
@@ -102,10 +146,16 @@ export function EditorialScenarioStory({ scenarioId }: { scenarioId: string }) {
   }, [scenarioId]);
 
   const meta = useMemo(() => (data?.scenarios ?? []).filter((row) => row.scenario_id === scenarioId), [data, scenarioId]);
-  const products = useMemo(() => (data ? getStoryProducts(data, scenarioId, meta) : []), [data, meta, scenarioId]);
+  const expansionRules = useMemo(() => (data ? patchedExpansionRules(data, scenarioId) : []), [data, scenarioId]);
+  const products = useMemo(() => (data ? getStoryProducts(data, scenarioId, meta, expansionRules) : []), [data, meta, scenarioId, expansionRules]);
   const hasPreset = Boolean(data?.presets.some((row) => row.scenario_id === scenarioId));
-  const occasions = unique(meta.flatMap((row) => row.occasion.split("|")).map((value) => value.trim()).filter(Boolean));
-  const styling = unique(meta.map((row) => row.styling_message).filter(Boolean)).join(". ");
+  const isExpansion = config?.source === "expansion";
+  const occasions = unique(
+    (isExpansion ? expansionRules.flatMap((row) => splitPipe(row.occasion)) : meta.flatMap((row) => splitPipe(row.occasion))).filter(Boolean),
+  );
+  const styling = unique(
+    isExpansion ? expansionRules.map((row) => row.styling_message).filter(Boolean) : meta.map((row) => row.styling_message).filter(Boolean),
+  ).join(". ");
   const heroImages = unique(products.map((product) => product.image).filter(Boolean)).slice(0, 3);
 
   if (!config) return null;
@@ -124,15 +174,15 @@ export function EditorialScenarioStory({ scenarioId }: { scenarioId: string }) {
           <p className={styles.storyHeroLead}>{config.lead}</p>
           <div className={styles.storyHeroMeta}>
             {occasions.map((occasion) => <span key={occasion}>{EVENT_LABELS[occasion] || occasion}</span>)}
-            <span>{hasPreset ? "Готовый preset" : "Editorial selection"}</span>
+            <span>{hasPreset ? "Готовый preset" : isExpansion ? "Конструктор по правилам CSV" : "Editorial selection"}</span>
           </div>
-          {hasPreset && <a className={styles.storyPrimaryLink} href="#builder">Собрать свою капсулу</a>}
+          {(hasPreset || isExpansion) && <a className={styles.storyPrimaryLink} href="#builder">Собрать свою капсулу</a>}
         </div>
 
         <div className={styles.storyHeroMedia}>
           {heroImages.length ? heroImages.map((image, index) => (
             <RemoteImage key={`${image}-${index}`} src={image} alt={`${config.name}, предмет ${index + 1}`} loading={index === 0 ? "eager" : "lazy"} />
-          )) : <div className={styles.scenarioFallback}>Добавьте реальные изображения товаров в CSV</div>}
+          )) : <div className={styles.scenarioFallback}>В master catalog нет изображения для разрешённого состава</div>}
         </div>
       </section>
 
@@ -147,7 +197,7 @@ export function EditorialScenarioStory({ scenarioId }: { scenarioId: string }) {
             <p>{config.canInclude}</p>
           </article>
           <article className={styles.storyRule}>
-            <small>Что не смешиваем</small>
+            <small>Границы сценария</small>
             <p>{config.exclude}</p>
           </article>
         </div>
@@ -156,7 +206,13 @@ export function EditorialScenarioStory({ scenarioId }: { scenarioId: string }) {
       <section className={styles.storySection}>
         <header className={styles.storySectionHead}>
           <h2>Предметы истории</h2>
-          <p>{hasPreset ? "Состав начинается с финального preset и дальше настраивается только совместимыми заменами." : "Ниже показаны реальные товары из разрешённых данных сценария. Они не объявляются готовым набором, пока для сценария не зафиксирован final preset."}</p>
+          <p>
+            {hasPreset
+              ? "Состав начинается с финального preset и дальше настраивается только совместимыми заменами."
+              : isExpansion
+                ? "Показаны только реальные товары master catalog, которые проходят allowed_collections × allowed_product_types сценария. Они не объявляются заранее выбранным preset: конкретный SKU выбирает пользователь."
+                : "Ниже показаны реальные товары из разрешённых данных сценария. Они не объявляются готовым набором, пока для сценария не зафиксирован final preset."}
+          </p>
         </header>
         <div className={styles.storyProducts}>
           {products.slice(0, 8).map((product) => (
@@ -192,11 +248,22 @@ export function EditorialScenarioStory({ scenarioId }: { scenarioId: string }) {
         </section>
       )}
 
-      {!error && data && !hasPreset && (
+      {!error && data && isExpansion && !hasPreset && expansionRules.length > 0 && (
+        <section id="builder" className={styles.storySection}>
+          <div className={styles.storyBuilderIntro}>
+            <span className={styles.storyKicker}>СОБРАТЬ ПО ПРАВИЛАМ СЦЕНАРИЯ</span>
+            <h2>Соберите свою капсулу</h2>
+            <p>Для новых сценариев preset SKU намеренно не выдуман. Выберите реальные товары для каждой роли из master catalog; интерфейс не позволит выйти за разрешённые коллекции и product_type.</p>
+          </div>
+          <ExpansionScenarioBuilder scenarioId={scenarioId} rules={expansionRules} catalog={data.catalog} />
+        </section>
+      )}
+
+      {!error && data && !hasPreset && !isExpansion && (
         <div className={styles.storyPending}>
           <small>PRESET ЕЩЁ НЕ ЗАФИКСИРОВАН</small>
           <h2>Editorial-история готова, покупаемый набор — ещё нет</h2>
-          <p>В текущем `kultura-doma-constructor-presets-final.csv` для «{config.name}» нет финального состава. Поэтому я не подменяю preset кандидатами и не формирую недостоверный cart payload. После добавления preset эта же страница автоматически сможет включить полноценный конструктор.</p>
+          <p>В текущем `kultura-doma-constructor-presets-final.csv` для «{config.name}» нет финального состава. Поэтому preset не подменяется кандидатами и не формируется недостоверный cart payload.</p>
           <Link className={styles.storyPrimaryLink} href="/constructor/">Посмотреть готовые сценарии</Link>
         </div>
       )}
