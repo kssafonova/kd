@@ -6,113 +6,140 @@ css_path = Path("app/globals.css")
 page = page_path.read_text(encoding="utf-8")
 css = css_path.read_text(encoding="utf-8")
 
-# Insert the bedroom editorial feature between the category shelf and bestsellers.
 feature = r'''
 
-    <section className="home-bedroom-feature">
-      <img src={assetUrl("/images/blue-bedroom.png")} alt="Коллекции для спальни"/>
-      <div className="home-bedroom-feature-shade"/>
-      <div className="home-bedroom-feature-copy">
-        <p>КОЛЛЕКЦИИ ДЛЯ СПАЛЬНИ</p>
-        <h2>Пространство для тишины</h2>
-        <span>Постельное бельё и текстиль, созданные для спокойных личных ритуалов.</span>
-        <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ КОЛЛЕКЦИИ →</button>
-      </div>
+    <section className="home-collection-duo" aria-label="Коллекции для спальни">
+      <button className="home-collection-feature home-collection-feature-luna" type="button" onClick={()=>go("collections")}>
+        <img src={assetUrl("/images/editorial/caps_luna_postel.png")} alt="Коллекция Лунная сказка"/>
+        <span className="home-collection-feature-shade"/>
+        <span className="home-collection-feature-copy">
+          <small>КОЛЛЕКЦИЯ</small>
+          <strong>Лунная сказка</strong>
+          <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
+        </span>
+      </button>
+
+      <button className="home-collection-feature home-collection-feature-ice" type="button" onClick={()=>go("collections")}>
+        <img src={assetUrl("/images/editorial/caps_led.png")} alt="Коллекция Ледяные узоры"/>
+        <span className="home-collection-feature-shade"/>
+        <span className="home-collection-feature-copy">
+          <small>КОЛЛЕКЦИЯ</small>
+          <strong>Ледяные узоры</strong>
+          <em>СМОТРЕТЬ КОЛЛЕКЦИЮ →</em>
+        </span>
+      </button>
     </section>'''
 
-# Remove a previous copy if the script is re-run.
+# Remove previous single feature or duo when the script is re-run.
 page = re.sub(r'\n\s*<section className="home-bedroom-feature">[\s\S]*?</section>', '', page, count=1)
+page = re.sub(r'\n\s*<section className="home-collection-duo"[\s\S]*?</section>', '', page, count=1)
 anchor = '    <section className="home-reference-products">'
 if anchor not in page:
     raise SystemExit("Homepage products anchor not found")
 page = page.replace(anchor, feature + "\n\n" + anchor, 1)
 page_path.write_text(page, encoding="utf-8")
 
+# Remove both historical and current styles to keep this patch idempotent.
 css = re.sub(r'\n?/\* HOME_BEDROOM_FEATURE_V1 \*/[\s\S]*?/\* END_HOME_BEDROOM_FEATURE_V1 \*/', '', css)
+css = re.sub(r'\n?/\* HOME_COLLECTION_DUO_V2 \*/[\s\S]*?/\* END_HOME_COLLECTION_DUO_V2 \*/', '', css)
 css += r'''
 
-/* HOME_BEDROOM_FEATURE_V1 */
-.home-bedroom-feature{
-  position:relative;
+/* HOME_COLLECTION_DUO_V2 */
+.home-collection-duo{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
   width:100%;
-  min-height:620px;
-  overflow:hidden;
-  background:#d9dde0;
+  padding:0 26px 48px;
+  background:#fff;
 }
-.home-bedroom-feature>img{
+.home-collection-feature{
+  position:relative;
+  display:block;
+  width:100%;
+  min-height:680px;
+  padding:0;
+  overflow:hidden;
+  background:#e9e9e6;
+  color:#fff;
+  text-align:left;
+}
+.home-collection-feature>img{
   position:absolute;
   inset:0;
   width:100%;
   height:100%;
   object-fit:cover;
   object-position:center;
+  transition:transform .7s ease;
 }
-.home-bedroom-feature-shade{
+.home-collection-feature:hover>img{transform:scale(1.018)}
+.home-collection-feature-shade{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg,rgba(15,24,30,.55) 0%,rgba(15,24,30,.22) 42%,rgba(15,24,30,.04) 72%);
+  background:linear-gradient(180deg,rgba(8,12,16,.03) 42%,rgba(8,12,16,.62) 100%);
 }
-.home-bedroom-feature-copy{
+.home-collection-feature-copy{
   position:absolute;
-  left:7.5%;
-  top:50%;
-  transform:translateY(-50%);
   z-index:2;
-  max-width:610px;
-  color:#fff;
+  left:34px;
+  right:34px;
+  bottom:34px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
 }
-.home-bedroom-feature-copy p{
-  margin:0 0 20px;
-  font-size:9px;
-  letter-spacing:.19em;
+.home-collection-feature-copy small{
+  margin-bottom:12px;
+  font-size:8px;
+  line-height:1;
+  letter-spacing:.18em;
+  font-style:normal;
 }
-.home-bedroom-feature-copy h2{
-  margin:0;
-  max-width:580px;
-  font-size:clamp(48px,5vw,78px);
-  line-height:.98;
+.home-collection-feature-copy strong{
+  max-width:90%;
+  font-size:clamp(38px,4.4vw,70px);
+  line-height:.95;
   font-weight:400;
-  letter-spacing:-.02em;
+  letter-spacing:-.025em;
 }
-.home-bedroom-feature-copy span{
-  display:block;
-  max-width:430px;
-  margin-top:22px;
-  font-size:13px;
-  line-height:1.6;
+.home-collection-feature-copy em{
+  margin-top:24px;
+  padding-bottom:5px;
+  border-bottom:1px solid rgba(255,255,255,.92);
+  font-size:8px;
+  line-height:1;
+  letter-spacing:.1em;
+  font-style:normal;
 }
-.home-bedroom-feature-copy button{
-  margin-top:30px;
-  padding:0 0 6px;
-  border-bottom:1px solid rgba(255,255,255,.9);
-  color:#fff;
-  font-size:9px;
-  letter-spacing:.11em;
-}
+.home-collection-feature-luna>img{object-position:center 54%}
+.home-collection-feature-ice>img{object-position:center}
 @media(max-width:900px){
-  .home-bedroom-feature{min-height:68svh;max-height:720px}
-  .home-bedroom-feature>img{object-position:58% center}
-  .home-bedroom-feature-shade{background:linear-gradient(180deg,rgba(12,20,26,.12),rgba(12,20,26,.48))}
-  .home-bedroom-feature-copy{
-    left:20px;
-    right:20px;
-    top:auto;
-    bottom:40px;
-    transform:none;
-    max-width:none;
+  .home-collection-duo{
+    grid-template-columns:1fr;
+    gap:7px;
+    padding:0 16px 38px;
   }
-  .home-bedroom-feature-copy h2{font-size:44px;max-width:520px}
-  .home-bedroom-feature-copy span{font-size:11px;max-width:360px;margin-top:16px}
-  .home-bedroom-feature-copy button{margin-top:22px}
+  .home-collection-feature{
+    min-height:72svh;
+    max-height:760px;
+  }
+  .home-collection-feature-copy{
+    left:22px;
+    right:22px;
+    bottom:28px;
+  }
+  .home-collection-feature-copy strong{font-size:48px}
 }
 @media(max-width:520px){
-  .home-bedroom-feature{min-height:590px}
-  .home-bedroom-feature-copy{left:16px;right:16px;bottom:30px}
-  .home-bedroom-feature-copy p{font-size:8px;margin-bottom:14px}
-  .home-bedroom-feature-copy h2{font-size:38px;line-height:1}
-  .home-bedroom-feature-copy span{font-size:10px;line-height:1.55}
+  .home-collection-duo{padding:0 0 32px;gap:4px}
+  .home-collection-feature{min-height:620px}
+  .home-collection-feature-copy{left:18px;right:18px;bottom:24px}
+  .home-collection-feature-copy small{font-size:7px;margin-bottom:10px}
+  .home-collection-feature-copy strong{font-size:39px}
+  .home-collection-feature-copy em{font-size:7px;margin-top:20px}
 }
-/* END_HOME_BEDROOM_FEATURE_V1 */
+/* END_HOME_COLLECTION_DUO_V2 */
 '''
 css_path.write_text(css, encoding="utf-8")
-print("Added homepage bedroom editorial feature")
+print("Added paired Luna and Ice Patterns homepage collection features")
