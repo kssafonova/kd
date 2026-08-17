@@ -5,13 +5,13 @@ path = Path("app/catalog-data.ts")
 text = path.read_text(encoding="utf-8")
 
 # Source of truth: товары2(1).xlsx uploaded 2026-08-17.
-# URLs below are the production URLs from that workbook.
+# URLs below are aligned to the actual filenames now present in public/images/products.
 IMAGES = {
     ("KD-PD-1023", "Белый"): ("/kd/images/products/KD-PD-1023-WHITE01.png", ["/kd/images/products/KD-PD-1023-WHITE02.png"]),
     ("KD-PD-1023", "Молочный"): ("/kd/images/products/KD-PD-1023-BEIGE01.png", ["/kd/images/products/KD-PD-1023-BEIGE02.png"]),
     ("KD-PD-1023", "Синий"): ("/kd/images/products/KD-PD-1023-BLUE01.png", ["/kd/images/products/KD-PD-1023-BLUE02.png"]),
     ("KD-PD-1026", "Белый"): ("/kd/images/products/KD-PD-1026-WHITE01.png", ["/kd/images/products/KD-PD-1026-WHITE02.png"]),
-    ("KD-PD-1026", "Молочный"): ("/kd/images/products/KD-PD-1026-BIEGE01.png", ["/kd/images/products/KD-PD-1026-BIEGE02.png"]),
+    ("KD-PD-1026", "Молочный"): ("/kd/images/products/KD-PD-1026-BEIGE01.png", ["/kd/images/products/KD-PD-1026-BEIGE02.png"]),
     ("KD-PD-1026", "Синий"): ("/kd/images/products/KD-PD-1026-BLUE01.png", ["/kd/images/products/KD-PD-1026-BLUE02.png"]),
     ("KD-PD-1027", "Молочный"): ("/kd/images/products/KD-PD-1027-MOL01.png", ["/kd/images/products/KD-PD-1027-MOL02.png"]),
     ("KD-PD-1027", "Песочный"): ("/kd/images/products/KD-PD-1027-PES01.png", ["/kd/images/products/KD-PD-1027-PES02.png"]),
@@ -23,7 +23,7 @@ IMAGES = {
     ("KD-PD-1028", "Ночной синий"): ("/kd/images/products/KD-PD-1028-DARK01.png", ["/kd/images/products/KD-PD-1028-DARK02.png"]),
     ("KD-PD-1128", "Пудровый"): ("/kd/images/products/KD-PD-1128-PUDRA01.png", ["/kd/images/products/KD-PD-1128-PUDRA03.png"]),
     ("KD-PD-1128", "Белый"): ("/kd/images/products/KD-PD-1128-WHITE01.png", ["/kd/images/products/KD-PD-1128-WHITE02.png", "/kd/images/products/KD-PD-1128-WHITE03.png"]),
-    ("KD-PD-1128", "Ночной синий"): ("/kd/images/products/KD-PD-1128-DARK01.png", ["/kd/images/products/KD-PD-1128-DARK02.png"]),
+    ("KD-PD-1128", "Ночной синий"): ("/kd/images/products/KD-PD-1128-DARK01.png", ["/kd/images/products/KD-PD-1128-DARK03.png"]),
 }
 
 product_pattern = re.compile(
