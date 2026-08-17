@@ -95,6 +95,9 @@ jobs:
       - name: Refine Editorial tabs
         run: python scripts/refine-editorial-tabs-v1.py
 
+      - name: Add Ice Patterns assortment
+        run: python scripts/add-ice-pattern-products-v1.py
+
       - name: Install dependencies
         run: npm install
 
