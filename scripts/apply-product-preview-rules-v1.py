@@ -1,7 +1,38 @@
 from pathlib import Path
+import re
 
 path = Path("app/page.tsx")
 text = path.read_text(encoding="utf-8")
+
+catalog_path = Path("app/catalog-data.ts")
+catalog = catalog_path.read_text(encoding="utf-8")
+
+# KD-PD-1023 media rule:
+# keep White and Blue color variants, but remove WHITE01/BLUE01 from product media.
+match = re.search(
+    r'makeProduct\(3,"KD-PD-1023","Подушка с кружевом".*?\n  \]\),',
+    catalog,
+    flags=re.S,
+)
+if not match:
+    raise SystemExit("KD-PD-1023 catalog block not found")
+
+block = match.group(0)
+block = block.replace(
+    'image:"/kd/images/products/KD-PD-1023-WHITE01.png",gallery:["/kd/images/products/KD-PD-1023-WHITE02.png"]',
+    'image:"/kd/images/products/KD-PD-1023-WHITE02.png",gallery:[]',
+)
+block = block.replace(
+    'image:"/kd/images/products/KD-PD-1023-BLUE01.png",gallery:["/kd/images/products/KD-PD-1023-BLUE02.png"]',
+    'image:"/kd/images/products/KD-PD-1023-BLUE02.png",gallery:[]',
+)
+if "KD-PD-1023-WHITE01.png" in block or "KD-PD-1023-BLUE01.png" in block:
+    raise SystemExit("KD-PD-1023 still references WHITE01 or BLUE01")
+if "KD-PD-1023-WHITE02.png" not in block or "KD-PD-1023-BLUE02.png" not in block:
+    raise SystemExit("KD-PD-1023 replacement media is missing")
+
+catalog = catalog[:match.start()] + block + catalog[match.end():]
+catalog_path.write_text(catalog, encoding="utf-8")
 
 marker = "// PRODUCT_PREVIEW_RULES_V1"
 
@@ -82,4 +113,4 @@ else:
         raise SystemExit("Preview rules marker exists but required rules are missing: " + ", ".join(missing))
 
 path.write_text(text, encoding="utf-8")
-print("Applied catalog white previews for KD-PD-1028/KD-PD-1128 and Luna blue previews for KD-PD-1023/KD-PD-1026")
+print("Applied product preview rules and removed WHITE01/BLUE01 from KD-PD-1023 media")
