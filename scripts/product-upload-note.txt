@@ -1,0 +1,1 @@
+Uploading original PNG files from products.zip to public/images/products without recompression.
