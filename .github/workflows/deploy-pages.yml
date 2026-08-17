@@ -26,9 +26,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Restore original collections and capsules
-        run: python scripts/restore-original-collections.py
-
       - name: Sync workbook product specs
         run: python scripts/sync-workbook-product-specs.py
 
