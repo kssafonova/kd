@@ -40,4 +40,12 @@ elif empty_new not in text:
     raise SystemExit("Catalog product grid block not found")
 
 path.write_text(text, encoding="utf-8")
+
+css_path = Path("app/globals.css")
+css = css_path.read_text(encoding="utf-8")
+marker = "/* CATALOG_CATEGORY_MAPPING_V1 */"
+if marker not in css:
+    css += '''\n\n/* CATALOG_CATEGORY_MAPPING_V1 */\n.catalog-empty{min-height:280px;display:grid;place-items:center;border-top:1px solid var(--line);color:var(--muted);text-align:center}\n.catalog-empty p{margin:0;font-size:12px;letter-spacing:.05em}\n/* END_CATALOG_CATEGORY_MAPPING_V1 */\n'''
+    css_path.write_text(css, encoding="utf-8")
+
 print("Applied strict catalog category mapping")
