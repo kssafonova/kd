@@ -377,6 +377,8 @@ function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial
 function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quickAdd, addToCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void }) {
   const [story,setStory]=useState<"bedroom"|"table"|null>(null);
   const [builderOpen,setBuilderOpen]=useState(false);
+  const [builderIds,setBuilderIds]=useState<number[]>(editorial.productIds);
+  const [builderTitle,setBuilderTitle]=useState("Соберите капсулу");
   const [selectedIds,setSelectedIds]=useState<number[]>(editorial.productIds);
   const [sizes,setSizes]=useState<Record<number,string>>({});
   const [qty,setQty]=useState<Record<number,number>>({});
@@ -386,10 +388,24 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
 
   const prepare=(product:Product):Product=>{
     const color=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;
+    const regularPrice=product.oldPrice??product.price;
     const preview=previewById[product.id];
-    const skus=product.skus?.map(s=>s.color===color&&preview?{...s,image:preview,gallery:Array.from(new Set([preview,...s.gallery]))}:s);
+    const variants=(product.colorVariants??[]).filter(variant=>variant.name===color);
+    const skus=product.skus?.filter(s=>s.color===color).map(s=>({...s,price:regularPrice,...(preview?{image:preview,gallery:Array.from(new Set([preview,...s.gallery]))}:{} )}));
     const sku=skus?.find(s=>s.color===color)??skus?.[0];
-    return {...product,image:preview??sku?.image??product.image,gallery:sku?.gallery??product.gallery,skus,selectedColor:sku?.color??color,selectedSize:sku?.size??product.selectedSize,selectedSkuId:sku?.id,price:sku?.price??product.price};
+    return {
+      ...product,
+      oldPrice:undefined,
+      badge:undefined,
+      image:preview??sku?.image??product.image,
+      gallery:sku?.gallery??product.gallery,
+      colorVariants:variants.length?variants:product.colorVariants,
+      skus,
+      selectedColor:sku?.color??color,
+      selectedSize:sku?.size??product.selectedSize,
+      selectedSkuId:sku?.id,
+      price:regularPrice,
+    };
   };
   const items=editorial.productIds.map(id=>products.find(p=>p.id===id)).filter(Boolean).map(p=>prepare(p!));
   const itemById=(id:number)=>items.find(p=>p.id===id);
@@ -399,6 +415,7 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
   ];
   const active=groups.find(g=>g.id===story);
   const storyProducts=(active?.productIds.map(itemById).filter(Boolean)??[]) as Product[];
+  const builderItems=builderIds.map(itemById).filter(Boolean) as Product[];
 
   useEffect(()=>{if(!story&&!builderOpen)return;const old=document.body.style.overflow;document.body.style.overflow="hidden";return()=>{document.body.style.overflow=old}},[story,builderOpen]);
 
@@ -408,11 +425,12 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
     const size=sizes[item.id]??options[0]?.[0]??item.selectedSize??"";
     const sku=findProductSku(item,color,size);
     const quantity=qty[item.id]??1;
-    return {...item,price:sku?.price??item.price,image:sku?.image??item.image,gallery:sku?.gallery??item.gallery,selectedColor:sku?.color??color,selectedSize:sku?.size??size,selectedSkuId:sku?.id,quantity};
+    return {...item,price:item.price,image:sku?.image??item.image,gallery:sku?.gallery??item.gallery,selectedColor:sku?.color??color,selectedSize:sku?.size??size,selectedSkuId:sku?.id,quantity};
   };
   const total=selectedIds.reduce((sum,id)=>{const item=itemById(id);if(!item)return sum;const p=configured(item);return sum+p.price*(p.quantity??1)},0);
   const toggle=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(x=>x!==id):[...current,id]);
-  const addAll=()=>{const chosen=selectedIds.map(itemById).filter(Boolean).map(p=>configured(p!));if(!chosen.length)return;setBuilderOpen(false);chosen.forEach(addToCart)};
+  const openBuilder=(ids:number[],title:string)=>{setBuilderIds(ids);setSelectedIds(ids);setBuilderTitle(title);setBuilderOpen(true)};
+  const addAll=()=>{const chosen=selectedIds.map(itemById).filter(Boolean).map(p=>configured(p!));if(!chosen.length)return;setBuilderOpen(false);setStory(null);chosen.forEach(addToCart)};
 
   const gallery=(group:(typeof groups)[number],reverse=false)=><section className={`luna-clean-group ${reverse?"reverse":""}`}>
     <h2>{group.title}</h2>
@@ -424,28 +442,28 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
     <section className="luna-clean-head"><p>КАПСУЛА</p><h1>Лунная сказка</h1><span>{editorial.lead}</span></section>
     {gallery(groups[0])}
     {gallery(groups[1],true)}
-    <section className="luna-clean-builder-entry"><h2>Соберите капсулу</h2><button type="button" onClick={()=>setBuilderOpen(true)}>СОБРАТЬ КАПСУЛУ</button></section>
+    <section className="luna-clean-builder-entry"><h2>Соберите капсулу</h2><button type="button" onClick={()=>openBuilder(editorial.productIds,"Соберите капсулу")}>СОБРАТЬ КАПСУЛУ</button></section>
 
     {active&&<div className="luna-clean-overlay" role="dialog" aria-modal="true">
       <button className="luna-clean-backdrop" onClick={()=>setStory(null)} aria-label="Закрыть"/>
       <section className="luna-clean-story">
         <header><strong>{active.title}</strong><button type="button" onClick={()=>setStory(null)} aria-label="Закрыть"><Icon name="close"/></button></header>
         <div className="luna-clean-story-images">{active.images.map((src,i)=><RemoteImage key={`${active.id}-story-${i}`} src={src} fallbackSrc={active.fallbacks[i]} alt={`${active.title}, кадр ${i+1}`}/>)}</div>
-        <div className="luna-clean-products">{storyProducts.map(item=><ProductCard key={`${active.id}-${item.id}`} product={item} onClick={quickAdd} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
+        <div className="luna-clean-products">{storyProducts.map(item=><ProductCard key={`${active.id}-${item.id}`} product={item} onClick={quickAdd} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div><div className="luna-clean-story-buy"><button type="button" onClick={()=>openBuilder(active.productIds,`Купить историю · ${active.title}`)}>КУПИТЬ ИСТОРИЮ</button></div>
       </section>
     </div>}
 
     {builderOpen&&<div className="luna-clean-overlay" role="dialog" aria-modal="true">
       <button className="luna-clean-backdrop" onClick={()=>setBuilderOpen(false)} aria-label="Закрыть"/>
       <section className="luna-clean-builder">
-        <header><strong>Соберите капсулу</strong><button type="button" onClick={()=>setBuilderOpen(false)} aria-label="Закрыть"><Icon name="close"/></button></header>
-        <div className="luna-clean-builder-tools"><span>{selectedIds.length} из {items.length}</span><button type="button" onClick={()=>setSelectedIds(selectedIds.length===items.length?[]:items.map(i=>i.id))}>{selectedIds.length===items.length?"СНЯТЬ ВСЕ":"ВЫБРАТЬ ВСЕ"}</button></div>
-        <div className="luna-clean-builder-list">{items.map(item=>{const selected=selectedIds.includes(item.id);const color=colorById[item.id]??item.selectedColor;const options=getProductSizeOptions(item,color);const size=sizes[item.id]??options[0]?.[0]??item.selectedSize??"";const sku=findProductSku(item,color,size);const price=sku?.price??item.price;const quantity=qty[item.id]??1;return <article className={selected?"selected":""} key={item.id}>
+        <header><strong>{builderTitle}</strong><button type="button" onClick={()=>setBuilderOpen(false)} aria-label="Закрыть"><Icon name="close"/></button></header>
+        <div className="luna-clean-builder-tools"><span>{selectedIds.length} из {builderItems.length}</span><button type="button" onClick={()=>setSelectedIds(selectedIds.length===builderItems.length?[]:builderItems.map(i=>i.id))}>{selectedIds.length===builderItems.length?"СНЯТЬ ВСЕ":"ВЫБРАТЬ ВСЕ"}</button></div>
+        <div className="luna-clean-builder-list">{builderItems.map(item=>{const selected=selectedIds.includes(item.id);const color=colorById[item.id]??item.selectedColor;const options=getProductSizeOptions(item,color);const size=sizes[item.id]??options[0]?.[0]??item.selectedSize??"";const sku=findProductSku(item,color,size);const price=sku?.price??item.price;const quantity=qty[item.id]??1;return <article className={selected?"selected":""} key={item.id}>
           <button className="luna-clean-check" type="button" onClick={()=>toggle(item.id)} aria-pressed={selected}>{selected?"✓":""}</button>
           <RemoteImage src={previewById[item.id]??item.image} alt={item.name}/>
           <div><h3>{item.name}</h3>{options.length>1?<select value={size} onChange={e=>setSizes(current=>({...current,[item.id]:e.target.value}))}>{options.map(([o])=><option key={o}>{o}</option>)}</select>:<small>{size}</small>}<div className="luna-clean-row"><strong>{fmt(price*quantity)}</strong><span><button type="button" onClick={()=>setQty(current=>({...current,[item.id]:Math.max(1,quantity-1)}))}>−</button><b>{quantity}</b><button type="button" onClick={()=>setQty(current=>({...current,[item.id]:quantity+1}))}>+</button></span></div></div>
         </article>})}</div>
-        <footer><div><span>{selectedIds.length} позиций</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selectedIds.length} onClick={addAll}>ДОБАВИТЬ В КОРЗИНУ</button></footer>
+        <footer><div><span>{selectedIds.length} позиций</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selectedIds.length} onClick={addAll}>{builderIds.length===items.length?"ДОБАВИТЬ КАПСУЛУ В КОРЗИНУ":"ДОБАВИТЬ ИСТОРИЮ В КОРЗИНУ"}</button></footer>
       </section>
     </div>}
   </div>;
