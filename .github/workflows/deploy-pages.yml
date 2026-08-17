@@ -104,6 +104,9 @@ jobs:
       - name: Correct KD-PD-2010 as salad bowl
         run: python scripts/fix-ice-pattern-2010-salad-bowl.py
 
+      - name: Apply final Ice Patterns product type mapping
+        run: python scripts/fix-ice-pattern-2000-2004-types.py
+
       - name: Install dependencies
         run: npm install
 
