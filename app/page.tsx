@@ -296,7 +296,7 @@ export default function Home() {
       <Header onMenu={() => { setMenuSection(""); setMenu(true); }} onSearch={() => setSearch(true)} onAccount={() => setAccount(true)} onFavorites={() => setFavoritesOpen(true)} onCart={() => setCartOpen(true)} count={cartCount} favoriteCount={favorites.length} go={go} />
       {view === "home" && <HomeView go={go} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
-      {view === "collections" && <CollectionsView openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
+      {view === "collections" && <CollectionsView openEditorial={(item)=>{setEditorial(item);go("editorial")}} onProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} />}
       {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
       {view === "product" && <ProductView product={selected} favorite={favorite} liked={favorites.includes(selected.id)} chooseSize={() => setSizeSheet(true)} add={(p) => add(p,p.selectedSize,p.quantity)} selectProduct={openProduct} recentlyViewed={recentlyViewed} />}
       <Footer go={go} notice={notice} />
@@ -435,10 +435,19 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
   return <article className="product-card"><button className={`heart ${liked?"liked":""}`} onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button className="product-image" onClick={()=>onClick(chosenProduct)}><ScrollableProductMedia key={`${product.id}-${chosen.name}`} product={chosenProduct} alt={`${product.name}, цвет ${chosen.name}`} position={chosen.position||product.position}/>{product.badge&&<span>{product.badge}</span>}</button><div className="product-copy"><button className="product-link" onClick={()=>onClick(chosenProduct)}><strong>{product.name}</strong><small>{chosen.name.toLowerCase()}, {product.note}</small></button>{variants.length>1&&<div className="plp-swatches" role="group" aria-label={`Цвет товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(i)} aria-label={`Выбрать цвет ${variant.name}`} title={variant.name}/>)}</div>}<span className={`price ${discount?"sale-price":""}`}>{hasMultipleSizes?"от ":""}{fmt(product.price)} {product.oldPrice&&<><del>{hasMultipleSizes?"от ":""}{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</span></div>{selectionMode?<button className={`quick selection-check ${pending?"pending":selected?"selected":""}`} type="button" onClick={(event)=>{event.stopPropagation();onSelect?.()}} aria-pressed={selected} aria-label={pending?`Выберите размер для ${product.name}`:selected?`Убрать ${product.name}`:`Выбрать ${product.name}`}>{pending?"?":selected?"✓":""}</button>:<button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button>}</article>;
 }
 
-function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial)=>void }) {
-  const [kind,setKind]=useState("ВСЕ");
-  const visible=editorials.filter(item=>kind==="ВСЕ"||(kind==="КАПСУЛЫ"&&item.kind==="КАПСУЛА")||(kind==="КОЛЛЕКЦИИ"&&item.kind==="КОЛЛЕКЦИЯ"));
-  return <div className="collections page"><div className="section-head"><p>EDITORIAL</p><h1>Коллекции и капсулы</h1></div><div className="center-tabs">{["ВСЕ","КАПСУЛЫ","КОЛЛЕКЦИИ"].map(x=><button key={x} className={kind===x?"active":""} onClick={()=>setKind(x)}>{x}</button>)}</div><div className="collection-grid">{visible.map((item)=><article key={item.id}><button onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[1])} alt={item.name}/><div><h2>{item.name}</h2><p>{item.description}</p><span>СМОТРЕТЬ {item.kind==="КАПСУЛА"?"КАПСУЛУ":"КОЛЛЕКЦИЮ"} <Icon name="arrow"/></span></div></button></article>)}</div></div>;
+function CollectionsView({ openEditorial,onProduct,onQuick,favorite,favorites }: { openEditorial:(editorial:Editorial)=>void; onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[] }) {
+  const [kind,setKind]=useState<"Истории"|"Готовые решения">("Истории");
+  const solutionProductIds=Array.from(new Set(editorials.flatMap(item=>item.productIds)));
+  const solutionProducts=solutionProductIds.map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
+  return <div className="collections page">
+    <div className="section-head"><p>EDITORIAL</p><h1>Истории и готовые решения</h1></div>
+    <div className="center-tabs">{(["Истории","Готовые решения"] as const).map(x=><button key={x} className={kind===x?"active":""} onClick={()=>setKind(x)}>{x}</button>)}</div>
+    {kind==="Истории"?
+      <div className="collection-grid">{editorials.map((item)=><article key={item.id}><button onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[1])} alt={item.name}/><div><h2>{item.name}</h2><p>{item.description}</p><span>СМОТРЕТЬ ИСТОРИЮ <Icon name="arrow"/></span></div></button></article>)}</div>
+      :solutionProducts.length?
+        <div className="product-grid editorial-solutions-grid">{solutionProducts.map(product=><ProductCard key={`editorial-solution-${product.id}`} product={product} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(product.id)}/>)}</div>
+        :<div className="catalog-empty"><p>В опубликованных историях пока нет товаров</p></div>}
+  </div>;
 }
 
 function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quickAdd, addToCart, openCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void; openCart:()=>void }) {
