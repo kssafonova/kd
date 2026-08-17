@@ -4,6 +4,8 @@ import type {
   CandidateRow,
   CatalogRow,
   ConstructorData,
+  ExpansionPatchRow,
+  ExpansionRuleRow,
   PresetRow,
   ScenarioMetaRow,
 } from "./types";
@@ -15,6 +17,11 @@ export const CONSTRUCTOR_DATA_FILES = [
   "kultura_doma_scenario_candidates.csv",
   "kultura_doma_constructor_scenarios.csv",
   "kultura_doma_full_constructor_eligible_catalog.csv",
+] as const;
+
+export const EDITORIAL_EXPANSION_FILES = [
+  "kultura_doma_scenario_expansion_rules.csv",
+  "kultura_doma_scenario_expansion_patch.csv",
 ] as const;
 
 export const constructorDataUrl = (fileName: string) => `${BASE_PATH}/data/${fileName}`;
@@ -93,6 +100,16 @@ const loadCsv = async <T extends Record<string, string>>(fileName: string): Prom
   return rows;
 };
 
+const loadOptionalCsv = async <T extends Record<string, string>>(fileName: string): Promise<T[]> => {
+  try {
+    const response = await fetch(constructorDataUrl(fileName), { cache: "force-cache" });
+    if (!response.ok) return [];
+    return parseCsv<T>(await response.text());
+  } catch {
+    return [];
+  }
+};
+
 let constructorDataPromise: Promise<ConstructorData> | null = null;
 
 export const loadConstructorData = () => {
@@ -102,8 +119,17 @@ export const loadConstructorData = () => {
       loadCsv<CandidateRow>(CONSTRUCTOR_DATA_FILES[1]),
       loadCsv<ScenarioMetaRow>(CONSTRUCTOR_DATA_FILES[2]),
       loadCsv<CatalogRow>(CONSTRUCTOR_DATA_FILES[3]),
+      loadOptionalCsv<ExpansionRuleRow>(EDITORIAL_EXPANSION_FILES[0]),
+      loadOptionalCsv<ExpansionPatchRow>(EDITORIAL_EXPANSION_FILES[1]),
     ])
-      .then(([presets, candidates, scenarios, catalog]) => ({ presets, candidates, scenarios, catalog }))
+      .then(([presets, candidates, scenarios, catalog, expansionRules, expansionPatches]) => ({
+        presets,
+        candidates,
+        scenarios,
+        catalog,
+        expansionRules,
+        expansionPatches,
+      }))
       .catch((error) => {
         constructorDataPromise = null;
         throw error;
