@@ -1,112 +1,145 @@
-# vinext-starter
+# Культура Дома
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Существующий Next.js App Router storefront с static export для GitHub Pages.
 
-## Prerequisites
+## Требования
 
 - Node.js `>=22.13.0`
-- Linux with `flock`, `curl`, and GNU `timeout`
+- npm
 
-## Sites Lifecycle
+## Локальный запуск
 
-The Sites lifecycle CLI runs the dependency install before returning this checkout. Edit the source under `app/`, then checkpoint when a coherent milestone is ready to inspect or share. The remote Sites builder runs `npm run build` against the pushed commit. Do not repeat install or build as a normal pre-checkpoint step.
-
-This starter does not use `wrangler.jsonc`.
-
-`install:ci` is intentionally a single, non-retrying `npm install`. It refuses a concurrent install for the same project, consumes a matching image-seeded npm cache with `--prefer-offline` while retaining registry fallback for a missing cache object, otherwise downloads and verifies the required dependency tarballs, limits npm to one socket, and terminates a stalled install. `build` applies a short timeout and then validates the Sites artifact. These helpers target Linux and use GNU `timeout`; they are not native macOS scripts.
-
-Scripts that need writable project-scoped home, npm, XDG, and temporary paths use `scripts/sites-env.sh`. The `dev` and `start` scripts honor the caller's runtime environment and keep Wrangler logs inside the checkout. The generated `.sites-runtime/` directory is disposable and ignored by Git.
-
-## Included Shape
-
-- edit site code under `app/`
-- `app/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/index.ts` reads the D1 binding from the Cloudflare Worker environment
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm install
+npm run dev
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+Главная сайта открывается на локальном адресе, который выводит dev server.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+Раздел конструктора:
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+```text
+/constructor/
+```
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+## Сборка
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+Проверка существующего проекта:
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+```bash
+npm run build
+```
 
-## Diagnostic Commands
+GitHub Pages workflow дополнительно выполняет статический Next.js export:
 
-- `npm run install:ci`: perform the one bounded dependency install
-- `npm run dev`: start the Vite/Vinext development server
-- `npm run build`: build and validate the deployable Sites artifact
-- `npm run start`: start the built Vinext application
-- `npm test`: build, validate, and verify the rendered development-preview metadata
-- `npm run validate:artifact`: recheck an existing artifact's manifest and ESM `default.fetch` export
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+```bash
+NEXT_PUBLIC_BASE_PATH=/kd npx next build
+```
 
-Use build and validation commands for targeted diagnosis after a remote failure, not as part of the normal checkpoint path.
+`next.config.ts` сохраняет:
 
-The timeout defaults can be overridden for a controlled canary with `SITES_INSTALL_TIMEOUT`, `SITES_INSTALL_KILL_AFTER`, `SITES_BUILD_TIMEOUT`, and `SITES_BUILD_KILL_AFTER`. A timeout fails the command; the helpers never retry an unchanged install or build.
+- `output: "export"`;
+- `trailingSlash: true`;
+- `basePath: "/kd"` в GitHub Actions;
+- `assetPrefix: "/kd/"` в GitHub Actions;
+- `images.unoptimized: true`.
 
-## Learn More
+## Конструктор сценариев
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+Новый раздел встроен в текущий Next.js-проект и не использует Vite/React Router как отдельное приложение.
 
-## Repository media note
+Маршруты App Router:
 
-The application source is self-contained in this repository. Large visual media are served from the existing Kultura Doma demo origin via `app/assets.ts`, so the repository stays lightweight while preserving the original-quality product and editorial imagery.
+```text
+/constructor/
+/constructor/red-thread-tea/
+/constructor/quiet-obereg/
+/constructor/sky-celebration/
+/constructor/green-salon/
+/constructor/blue-hour-bedroom/
+```
+
+`app/constructor/[scenarioId]/page.tsx` содержит `generateStaticParams()` для всех пяти `scenario_id`, поэтому страницы формируются во время static export и не требуют сервера.
+
+### CSV
+
+Конструктор загружает данные на клиенте через `fetch()`. CSV не импортируются в TypeScript/JavaScript bundle и не конвертируются в Base64/JSON.
+
+В `public/data/` должны лежать исходные файлы без изменения содержимого:
+
+```text
+public/data/kultura-doma-constructor-presets-final.csv
+public/data/kultura_doma_scenario_candidates.csv
+public/data/kultura_doma_constructor_scenarios.csv
+public/data/kultura_doma_full_constructor_eligible_catalog.csv
+```
+
+На GitHub Pages путь строится как `/kd/data/<filename>` через `NEXT_PUBLIC_BASE_PATH=/kd`. Локально используется `/data/<filename>`.
+
+Если CSV отсутствуют, интерфейс не падает и показывает сообщение:
+
+```text
+Добавьте CSV-файлы в public/data
+```
+
+### Источники данных
+
+- preset и порядок: `kultura-doma-constructor-presets-final.csv`;
+- разрешённые замены: `kultura_doma_scenario_candidates.csv`;
+- названия/описания: `kultura_doma_constructor_scenarios.csv`;
+- изображения, варианты, материалы, цены и `availability_status`: `kultura_doma_full_constructor_eligible_catalog.csv`.
+
+Изображения используются только из `primary_image_url` и `all_image_urls`.
+
+### Замены
+
+По умолчанию замена разрешена только при полном совпадении `product_type`.
+
+Единственное исключение:
+
+```text
+tea_pair <-> coffee_pair
+```
+
+Поэтому `napkin` нельзя заменить на `placemat`, `table_runner` или `tablecloth`, а типы тарелок не смешиваются.
+
+### MVP-корзина
+
+Кнопка «Добавить всё в корзину» формирует массив отдельных SKU:
+
+```json
+[
+  { "offer_id": "1330", "quantity": 2 }
+]
+```
+
+Payload выводится в интерфейс и `console.log` с меткой `ADD_ALL_TO_CART`.
+
+Позиции без валидной цены, недоступные SKU и товар с обязательным невыбранным вариантом блокируют добавление. Для `blue-hour-bedroom` конкретный размер белья выбирается вручную; автоматический выбор запрещён.
+
+## GitHub Pages
+
+Workflow: `.github/workflows/deploy-pages.yml`.
+
+При push в `main` он:
+
+1. применяет существующие storefront patches;
+2. добавляет CTA «Собрать сценарий» на главную;
+3. устанавливает зависимости;
+4. выполняет `npx next build` с `NEXT_PUBLIC_BASE_PATH=/kd`;
+5. публикует static export в текущую legacy Pages-схему репозитория.
+
+После публикации итоговые URL:
+
+```text
+https://kssafonova.github.io/kd/constructor/
+https://kssafonova.github.io/kd/constructor/red-thread-tea/
+https://kssafonova.github.io/kd/constructor/quiet-obereg/
+https://kssafonova.github.io/kd/constructor/sky-celebration/
+https://kssafonova.github.io/kd/constructor/green-salon/
+https://kssafonova.github.io/kd/constructor/blue-hour-bedroom/
+```
+
+## Существующий storefront
+
+Существующие `app/page.tsx`, `app/layout.tsx`, карточки, PDP, галереи, editorial flow и CSS сохраняются. Конструктор добавлен отдельным App Router-разделом под `app/constructor/` и переиспользует `app/remote-image.tsx` для безопасной загрузки изображений.
