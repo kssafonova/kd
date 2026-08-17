@@ -3,7 +3,6 @@
 import { assetUrl } from "./assets";
 import { RemoteImage } from "./remote-image";
 import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
-import { EditorialScenarioLanding } from "./editorial-scenario-landing";
 
 // CATALOG_SKU_MODEL_V1
 
@@ -268,6 +267,15 @@ export default function Home() {
     setCart((current) => [...current, item]);
     setPlpSize(null); setSizeSheet(false); if(openDrawer)setCartOpen(true);
   };
+  const addBundle = (items: Product[]) => {
+    const bundleItems: CartItem[] = items.map((product)=>{
+      const variant=product.colorVariants?.find(v=>v.name===product.selectedColor)??product.colorVariants?.[0];
+      const sku=findProductSku(product,product.selectedColor,product.selectedSize);
+      return {...product,price:sku?.price??product.price,image:sku?.image??variant?.image??product.image,gallery:sku?.gallery??product.gallery,position:variant?.position??product.position,selectedSize:sku?.size??product.selectedSize??"",selectedColor:sku?.color??variant?.name??"Молочный",selectedSkuId:sku?.id,quantity:product.quantity??1};
+    });
+    setCart(current=>[...current,...bundleItems]);
+    setCartOpen(true);
+  };
   const addFromPLP = (product: Product, chosenSize: string, quantity: number, unitPrice: number) => {
     const selectedVariant = product.colorVariants?.find((variant) => variant.name === product.selectedColor) ?? product.colorVariants?.[0];
     const selectedSku=findProductSku(product,product.selectedColor,chosenSize);
@@ -286,7 +294,7 @@ export default function Home() {
       {view === "home" && <HomeView go={go} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
       {view === "collections" && <CollectionsView openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
-      {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} quickAdd={setPlpSize} addToCart={(product)=>add(product,product.selectedSize,product.quantity,false)} openCart={()=>setCartOpen(true)} />}
+      {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
       {view === "product" && <ProductView product={selected} favorite={favorite} liked={favorites.includes(selected.id)} chooseSize={() => setSizeSheet(true)} add={(p) => add(p,p.selectedSize,p.quantity)} selectProduct={openProduct} recentlyViewed={recentlyViewed} />}
       <Footer go={go} notice={notice} />
 
@@ -424,13 +432,9 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 }
 
 function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial)=>void }) {
-  return <EditorialScenarioLanding
-    collections={editorials}
-    openCollection={(item)=>{
-      const selected=editorials.find(editorial=>editorial.id===item.id);
-      if(selected)openEditorial(selected);
-    }}
-  />;
+  const [kind,setKind]=useState("ВСЕ");
+  const visible=editorials.filter(item=>kind==="ВСЕ"||(kind==="КАПСУЛЫ"&&item.kind==="КАПСУЛА")||(kind==="КОЛЛЕКЦИИ"&&item.kind==="КОЛЛЕКЦИЯ"));
+  return <div className="collections page"><div className="section-head"><p>EDITORIAL</p><h1>Коллекции и капсулы</h1></div><div className="center-tabs">{["ВСЕ","КАПСУЛЫ","КОЛЛЕКЦИИ"].map(x=><button key={x} className={kind===x?"active":""} onClick={()=>setKind(x)}>{x}</button>)}</div><div className="collection-grid">{visible.map((item)=><article key={item.id}><button onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[1])} alt={item.name}/><div><h2>{item.name}</h2><p>{item.description}</p><span>СМОТРЕТЬ {item.kind==="КАПСУЛА"?"КАПСУЛУ":"КОЛЛЕКЦИЮ"} <Icon name="arrow"/></span></div></button></article>)}</div></div>;
 }
 
 function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quickAdd, addToCart, openCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void; openCart:()=>void }) {
@@ -715,54 +719,16 @@ function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quic
 }
 
 
-function EditorialView({ editorial, selectProduct, favorite, favorites, quickAdd, addToCart, openCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void; openCart:()=>void }) {
-  if(editorial.id==="luna")return <LunaEditorialView editorial={editorial} selectProduct={selectProduct} favorite={favorite} favorites={favorites} quickAdd={quickAdd} addToCart={addToCart} openCart={openCart}/>;
+function EditorialView({ editorial, selectProduct, favorite, favorites, buyBundle }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
   const items=editorial.productIds.map(id=>products.find(product=>product.id===id)!).filter(Boolean);
-  const variant=editorial.id==="time"||editorial.id==="ice"?"cinematic":editorial.id==="buyan"?"offset":editorial.id==="poetry"?"magazine":"gallery";
-  const chapter=editorial.id==="ice"?"BEDROOM STORIES":editorial.id==="time"?"NIGHT STUDY":editorial.id==="buyan"?"SUMMER TABLE":editorial.id==="poetry"?"POETRY OF HOME":"FOLKLORE REFRAMED";
-  const index=editorial.id==="time"?"01":editorial.id==="ice"?"02":editorial.id==="buyan"?"03":editorial.id==="poetry"?"04":"05";
-  const productImage=items[0]?.image||editorial.images[0];
-
-  return <div className={`editorial-page zara-editorial editorial-variant-${variant}`}>
-    <section className="zh-editorial-cover">
-      <img src={assetUrl(editorial.images[0])} alt={editorial.name}/>
-      <div className="zh-editorial-cover-copy"><span>{index} / EDITORIAL</span><p>{editorial.kind}</p><h1>{editorial.name}</h1></div>
-    </section>
-
-    <section className="zh-editorial-lead">
-      <p>{chapter}</p>
-      <h2>{editorial.lead}</h2>
-      <span>{editorial.description}</span>
-    </section>
-
-    <section className="zh-editorial-spread">
-      <figure className="zh-editorial-spread-main"><img src={assetUrl(editorial.images[1])} alt={`История ${editorial.name}`}/><figcaption>01 / STORY</figcaption></figure>
-      <div className="zh-editorial-spread-copy"><span>{index}</span><p>THE STORY</p><h3>{editorial.detail}</h3></div>
-    </section>
-
-    {variant==="magazine"&&<section className="zh-editorial-type-page"><span>WORDS / OBJECTS / HOME</span><h2>Красота начинается с паузы между вещами.</h2><p>Редакционная композиция строится как журнальный разворот: крупный текст, свободное поле и один выразительный предмет.</p></section>}
-
-    {variant==="offset"&&<section className="zh-editorial-side-note"><p>02 / TABLE STORY</p><h3>Сервировка не как набор предметов, а как готовая сцена для долгого разговора.</h3></section>}
-
-    <section className="zh-editorial-mosaic">
-      <figure className="zh-editorial-mosaic-a"><img src={assetUrl(editorial.images[2])} alt="Деталь коллекции"/><figcaption>DETAIL / 02</figcaption></figure>
-      <figure className="zh-editorial-mosaic-b"><img src={assetUrl(editorial.images[3])} alt="Образ коллекции"/><figcaption>ATMOSPHERE / 03</figcaption></figure>
-      <div className="zh-editorial-mosaic-copy"><span>03</span><p>OBJECTS IN CONTEXT</p><h3>Вещи раскрываются через масштаб, фактуру и соседство с другими предметами.</h3></div>
-    </section>
-
-    <figure className="zh-editorial-full-frame">
-      <RemoteImage src={productImage} alt={`Предмет из ${editorial.name}`}/>
-      <figcaption><span>04</span><p>SHOP THE STORY</p></figcaption>
-    </figure>
-
-    {variant==="gallery"&&<section className="zh-editorial-quote"><p>FOLKLORE / NOW</p><h2>Традиция может звучать современно, когда её не копируют буквально.</h2></section>}
-    {variant==="cinematic"&&<section className="zh-editorial-quote"><p>NIGHT / LIGHT / TEXTURE</p><h2>Спокойный интерьер строится не из декора, а из света, материалов и ритма.</h2></section>}
-
-    <section className="editorial-products zh-editorial-products">
-      <div className="editorial-products-head"><div><p>SHOP THE STORY</p><h2>Предметы {editorial.kind==="КАПСУЛА"?"капсулы":"коллекции"}</h2></div></div>
-      <div className="product-grid">{items.map(item=><ProductCard product={item} key={`${editorial.id}-${item.id}`} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
-    </section>
-  </div>;
+  const [selecting,setSelecting]=useState(false);
+  const [selectedIds,setSelectedIds]=useState<number[]>(items.map(item=>item.id));
+  useEffect(()=>{setSelecting(false);setSelectedIds(items.map(item=>item.id))},[editorial.id]);
+  const selectedItems=items.filter(item=>selectedIds.includes(item.id));
+  const total=selectedItems.reduce((sum,item)=>sum+item.price,0);
+  const toggle=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(itemId=>itemId!==id):[...current,id]);
+  const handleBundle=()=>{if(!selecting){setSelecting(true);return}if(selectedItems.length)buyBundle(selectedItems)};
+  return <div className="editorial-page"><section className="editorial-cover"><img src={assetUrl(editorial.images[0])} alt={editorial.name}/><div><p>{editorial.kind}</p><h1>{editorial.name}</h1></div></section><section className="editorial-words"><p>{editorial.lead}</p><span>{editorial.description}</span></section><img className="editorial-detail" src={assetUrl(editorial.images[1])} alt={`Детали ${editorial.name}`}/><section className="editorial-words narrow"><p>{editorial.detail}</p></section><section className="editorial-split"><img src={assetUrl(editorial.images[2])} alt="Предметы коллекции"/><img src={assetUrl(editorial.images[3])} alt="Образ коллекции"/></section><section className={`editorial-products ${selecting?"selection-mode":""}`}><div className="editorial-products-head"><div><p>В {editorial.kind==="КАПСУЛА"?"КАПСУЛЕ":"КОЛЛЕКЦИИ"}</p><h2>Соберите весь образ</h2>{selecting&&<div className="selection-help"><span>Отметьте предметы, которые хотите купить</span><button onClick={()=>setSelectedIds(selectedIds.length===items.length?[]:items.map(item=>item.id))}>{selectedIds.length===items.length?"Снять выбор":"Выбрать всё"}</button></div>}</div><button className="primary total-cta" disabled={selecting&&!selectedItems.length} onClick={handleBundle}><span>{selecting?"ДОБАВИТЬ В КОРЗИНУ":"ВЫКУПИТЬ ВСЮ "+(editorial.kind==="КАПСУЛА"?"КАПСУЛУ":"КОЛЛЕКЦИЮ")}</span><b>{fmt(total)}</b></button></div><div className="product-grid">{items.map(item=><div className={`selectable-product ${selectedIds.includes(item.id)?"selected":""}`} key={`${editorial.id}-${item.id}`}>{selecting&&<label className="product-selector"><input type="checkbox" checked={selectedIds.includes(item.id)} onChange={()=>toggle(item.id)}/><span><Icon name="plus"/></span><b>{selectedIds.includes(item.id)?"Выбрано":"Выбрать"}</b></label>}<ProductCard product={item} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={favorites.includes(item.id)}/></div>)}</div></section></div>;
 }
 
 function LookbookViewer({editorial,items,close,selectProduct}:{editorial:Editorial;items:Product[];close:()=>void;selectProduct?:(product:Product)=>void}){
