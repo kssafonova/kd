@@ -365,7 +365,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked }: { product:P
   const chosenSku=findProductSku(product,chosen.name);
   const chosenProduct = { ...product, image: chosenSku?.image??chosen.image, gallery:chosenSku?.gallery??chosen.gallery??product.gallery, position: chosen.position ?? product.position, selectedColor: chosen.name, selectedSize:chosenSku?.size, selectedSkuId:chosenSku?.id };
   const discount=discountOf(product);
-  return <article className="product-card"><button className={`heart ${liked?"liked":""}`} onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button className="product-image" onClick={()=>onClick(chosenProduct)}><ScrollableProductMedia key={`${product.id}-${chosen.name}`} product={chosenProduct} alt={`${product.name}, цвет ${chosen.name}`} position={chosen.position||product.position}/>{product.badge&&<span>{product.badge}</span>}</button><div className="product-copy"><button className="product-link" onClick={()=>onClick(chosenProduct)}><strong>{product.name}</strong><small>{chosen.name.toLowerCase()}, {product.note}</small></button>{variants.length>1&&<div className="plp-swatches" role="group" aria-label={`Цвет товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(i)} aria-label={`Выбрать цвет ${variant.name}`} title={variant.name}/>)}</div>}<span className={`price ${discount?"sale-price":""}`}>{fmt(product.price)} {product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</span></div><button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button></article>;
+  return <article className="product-card"><button className={`heart ${liked?"liked":""}`} onClick={()=>favorite(product.id)} aria-label="Добавить в избранное"><Icon name="heart" filled={liked}/></button><button className="product-image" onClick={()=>onClick(chosenProduct)}><ScrollableProductMedia key={`${product.id}-${chosen.name}`} product={chosenProduct} alt={`${product.name}, цвет ${chosen.name}`} position={chosen.position||product.position}/>{product.badge&&<span>{product.badge}</span>}</button><div className="product-copy"><button className="product-link" onClick={()=>onClick(chosenProduct)}><strong>{product.name}</strong><small>{chosen.name.toLowerCase()}, {product.note}</small></button>{variants.length>1&&{variants.length>1&&<div className="plp-swatches" role="group" aria-label={`Цвет товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>setColorIndex(i)} aria-label={`Выбрать цвет ${variant.name}`} title={variant.name}/>)}</div>}}<span className={`price ${discount?"sale-price":""}`}>{fmt(product.price)} {product.oldPrice&&<><del>{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</span></div><button className="quick" onClick={()=>onQuick(chosenProduct)} aria-label={`Добавить в корзину ${product.name}`}><Icon name="cart-add"/></button></article>;
 }
 
 function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial)=>void }) {
@@ -374,131 +374,78 @@ function CollectionsView({ openEditorial }: { openEditorial:(editorial:Editorial
   return <div className="collections page"><div className="section-head"><p>EDITORIAL</p><h1>Коллекции и капсулы</h1></div><div className="center-tabs">{["ВСЕ","КАПСУЛЫ","КОЛЛЕКЦИИ"].map(x=><button key={x} className={kind===x?"active":""} onClick={()=>setKind(x)}>{x}</button>)}</div><div className="collection-grid">{visible.map((item)=><article key={item.id}><button onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[1])} alt={item.name}/><div><h2>{item.name}</h2><p>{item.description}</p><span>СМОТРЕТЬ {item.kind==="КАПСУЛА"?"КАПСУЛУ":"КОЛЛЕКЦИЮ"} <Icon name="arrow"/></span></div></button></article>)}</div></div>;
 }
 
-function LunaEditorialView({ editorial, favorite, favorites, quickAdd, addToCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void }) {
-  const [storyId,setStoryId]=useState<string|null>(null);
+function LunaEditorialView({ editorial, selectProduct, favorite, favorites, quickAdd, addToCart }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; quickAdd:(product:Product)=>void; addToCart:(product:Product)=>void }) {
+  const [story,setStory]=useState<"bedroom"|"table"|null>(null);
   const [builderOpen,setBuilderOpen]=useState(false);
   const [selectedIds,setSelectedIds]=useState<number[]>(editorial.productIds);
-  const [configuredSizes,setConfiguredSizes]=useState<Record<number,string>>({});
-  const [configuredQty,setConfiguredQty]=useState<Record<number,number>>({});
-
+  const [sizes,setSizes]=useState<Record<number,string>>({});
+  const [qty,setQty]=useState<Record<number,number>>({});
   const colorById:Record<number,string>={4:"Ночной синий",10:"Ночной синий",5:"Ночной синий",6:"Синий",3:"Синий"};
-  const previewById:Record<number,string>={
-    4:"/images/products/KD-PD-1024-DARK02.png",
-    6:"/images/products/KD-PD-1026-BLUE01.png",
-    3:"/images/products/KD-PD-1023-BLUE02.png",
-  };
-  const sceneFallbacks=["/images/time-hero.png","/images/blue-bedroom.png","/images/night-editorial.png","/images/time-table.png","/images/time-tea-pair.png","/images/moon-plate.png"];
+  const previewById:Record<number,string>={4:"/images/products/KD-PD-1024-DARK02.png",6:"/images/products/KD-PD-1026-BLUE01.png",3:"/images/products/KD-PD-1023-BLUE02.png"};
+  const fallbacks=["/images/time-hero.png","/images/blue-bedroom.png","/images/night-editorial.png","/images/time-table.png","/images/time-tea-pair.png","/images/moon-plate.png"];
 
-  const prepareProduct=(product:Product):Product=>{
-    const preferredColor=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;
-    const preferredImage=previewById[product.id];
-    const variants=[...(product.colorVariants??[])];
-    variants.sort((a,b)=>a.name===preferredColor?-1:b.name===preferredColor?1:0);
-    const adjustedVariants=variants.map(variant=>variant.name===preferredColor&&preferredImage?{...variant,image:preferredImage}:variant);
-    const adjustedSkus=product.skus?.map(sku=>sku.color===preferredColor&&preferredImage?{...sku,image:preferredImage,gallery:Array.from(new Set([preferredImage,...sku.gallery]))}:sku);
-    const targetSku=adjustedSkus?.find(sku=>sku.color===preferredColor)??adjustedSkus?.[0];
-    return {
-      ...product,
-      image:preferredImage??targetSku?.image??product.image,
-      gallery:targetSku?.gallery??product.gallery,
-      colorVariants:adjustedVariants.length?adjustedVariants:product.colorVariants,
-      skus:adjustedSkus,
-      selectedColor:targetSku?.color??preferredColor,
-      selectedSize:targetSku?.size??product.selectedSize,
-      selectedSkuId:targetSku?.id,
-      price:targetSku?.price??product.price,
-    };
+  const prepare=(product:Product):Product=>{
+    const color=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;
+    const preview=previewById[product.id];
+    const skus=product.skus?.map(s=>s.color===color&&preview?{...s,image:preview,gallery:Array.from(new Set([preview,...s.gallery]))}:s);
+    const sku=skus?.find(s=>s.color===color)??skus?.[0];
+    return {...product,image:preview??sku?.image??product.image,gallery:sku?.gallery??product.gallery,skus,selectedColor:sku?.color??color,selectedSize:sku?.size??product.selectedSize,selectedSkuId:sku?.id,price:sku?.price??product.price};
   };
-
-  const preparedItems=editorial.productIds.map(id=>products.find(product=>product.id===id)).filter(Boolean).map(item=>prepareProduct(item!));
-  const itemById=(id:number)=>preparedItems.find(item=>item.id===id);
-  const scenes=[
-    {id:"bed-1",image:editorial.images[0],fallback:sceneFallbacks[0],kicker:"СПАЛЬНЯ",title:"Лунный сатин",copy:"Комплект постельного белья, плед и подушка в глубоком синем.",productIds:[4,6,3]},
-    {id:"bed-2",image:editorial.images[1],fallback:sceneFallbacks[1],kicker:"ТЕКСТИЛЬ",title:"Слои ткани",copy:"Сатин и кружево собираются в спокойную многослойную композицию.",productIds:[4,3]},
-    {id:"bed-3",image:editorial.images[2],fallback:sceneFallbacks[2],kicker:"ДЕТАЛИ",title:"Синий и кружево",copy:"Тактильные детали капсулы крупным планом.",productIds:[4,6,3]},
-    {id:"table-1",image:editorial.images[3],fallback:sceneFallbacks[3],kicker:"СЕРВИРОВКА",title:"Поздний чай",copy:"Чайная пара и тарелка продолжают ночную палитру текстиля.",productIds:[10,5]},
-    {id:"table-2",image:editorial.images[4],fallback:sceneFallbacks[4],kicker:"ФАРФОР",title:"Цвет ночного неба",copy:"Кобальтовый фарфор как самостоятельный акцент и часть общей истории.",productIds:[10,5]},
-    {id:"table-3",image:editorial.images[5],fallback:sceneFallbacks[5],kicker:"ПОСЛЕ ЗАКАТА",title:"Дом после заката",copy:"Финальный образ соединяет сервировку и текстиль в одном визуальном ритме.",productIds:[10,5,3]},
+  const items=editorial.productIds.map(id=>products.find(p=>p.id===id)).filter(Boolean).map(p=>prepare(p!));
+  const itemById=(id:number)=>items.find(p=>p.id===id);
+  const groups=[
+    {id:"bedroom" as const,title:"Спальня",images:editorial.images.slice(0,3),fallbacks:fallbacks.slice(0,3),productIds:[4,6,3]},
+    {id:"table" as const,title:"Сервировка",images:editorial.images.slice(3,6),fallbacks:fallbacks.slice(3,6),productIds:[10,5,3]}
   ];
-  const activeStory=scenes.find(scene=>scene.id===storyId);
-  const storyProducts=(activeStory?.productIds.map(itemById).filter(Boolean)??[]) as Product[];
+  const active=groups.find(g=>g.id===story);
+  const storyProducts=(active?.productIds.map(itemById).filter(Boolean)??[]) as Product[];
 
-  useEffect(()=>{
-    if(!storyId&&!builderOpen)return;
-    const previous=document.body.style.overflow;
-    document.body.style.overflow="hidden";
-    return()=>{document.body.style.overflow=previous};
-  },[storyId,builderOpen]);
+  useEffect(()=>{if(!story&&!builderOpen)return;const old=document.body.style.overflow;document.body.style.overflow="hidden";return()=>{document.body.style.overflow=old}},[story,builderOpen]);
 
-  const configuredProduct=(item:Product)=>{
+  const configured=(item:Product)=>{
     const color=colorById[item.id]??item.selectedColor;
-    const sizes=getProductSizeOptions(item,color);
-    const size=configuredSizes[item.id]??sizes[0]?.[0]??item.selectedSize??"";
+    const options=getProductSizeOptions(item,color);
+    const size=sizes[item.id]??options[0]?.[0]??item.selectedSize??"";
     const sku=findProductSku(item,color,size);
-    const quantity=configuredQty[item.id]??1;
+    const quantity=qty[item.id]??1;
     return {...item,price:sku?.price??item.price,image:sku?.image??item.image,gallery:sku?.gallery??item.gallery,selectedColor:sku?.color??color,selectedSize:sku?.size??size,selectedSkuId:sku?.id,quantity};
   };
-  const configuredTotal=selectedIds.reduce((sum,id)=>{const item=itemById(id);if(!item)return sum;const configured=configuredProduct(item);return sum+configured.price*(configured.quantity??1)},0);
-  const toggleItem=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(item=>item!==id):[...current,id]);
-  const addConfiguredCapsule=()=>{
-    const chosen=selectedIds.map(itemById).filter(Boolean).map(item=>configuredProduct(item!));
-    if(!chosen.length)return;
-    setBuilderOpen(false);
-    chosen.forEach(addToCart);
-  };
+  const total=selectedIds.reduce((sum,id)=>{const item=itemById(id);if(!item)return sum;const p=configured(item);return sum+p.price*(p.quantity??1)},0);
+  const toggle=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(x=>x!==id):[...current,id]);
+  const addAll=()=>{const chosen=selectedIds.map(itemById).filter(Boolean).map(p=>configured(p!));if(!chosen.length)return;setBuilderOpen(false);chosen.forEach(addToCart)};
 
-  const editorialFrame=(scene:(typeof scenes)[number],className:string)=><figure className={`luna-premium-frame ${className}`}>
-    <button type="button" className="luna-premium-image-button" onClick={()=>setStoryId(scene.id)} aria-label={`Открыть историю ${scene.title}`}><RemoteImage src={scene.image} fallbackSrc={scene.fallback} alt={scene.title}/></button>
-    <figcaption><div><small>{scene.kicker}</small><strong>{scene.title}</strong></div><button type="button" onClick={()=>setStoryId(scene.id)}>СМОТРЕТЬ ИСТОРИЮ</button></figcaption>
-  </figure>;
+  const gallery=(group:(typeof groups)[number],reverse=false)=><section className={`luna-clean-group ${reverse?"reverse":""}`}>
+    <h2>{group.title}</h2>
+    <div className="luna-clean-gallery">{group.images.map((src,i)=><button key={`${group.id}-${i}`} type="button" onClick={()=>setStory(group.id)}><RemoteImage src={src} fallbackSrc={group.fallbacks[i]} alt={`${group.title}, кадр ${i+1}`}/></button>)}</div>
+    <button className="luna-clean-link" type="button" onClick={()=>setStory(group.id)}>СМОТРЕТЬ ИСТОРИЮ</button>
+  </section>;
 
-  return <div className="luna-editorial-page luna-premium-editorial">
-    <section className="luna-premium-masthead"><p>КАПСУЛА · 2026</p><h1>Лунная сказка</h1><span>{editorial.lead}</span><button type="button" onClick={()=>setBuilderOpen(true)}>СОБРАТЬ КАПСУЛУ</button></section>
+  return <div className="luna-clean-page">
+    <section className="luna-clean-head"><p>КАПСУЛА</p><h1>Лунная сказка</h1><span>{editorial.lead}</span></section>
+    {gallery(groups[0])}
+    {gallery(groups[1],true)}
+    <section className="luna-clean-builder-entry"><h2>Соберите капсулу</h2><button type="button" onClick={()=>setBuilderOpen(true)}>СОБРАТЬ КАПСУЛУ</button></section>
 
-    <section className="luna-premium-hero">{editorialFrame(scenes[0],"hero-frame")}</section>
-
-    <section className="luna-premium-copy"><p>НОВАЯ КАПСУЛА</p><h2>Дом в оттенках ночного неба</h2><span>{editorial.detail}</span></section>
-
-    <section className="luna-premium-asym">
-      <div className="luna-premium-asym-main">{editorialFrame(scenes[1],"tall-frame")}</div>
-      <div className="luna-premium-asym-side"><div className="luna-premium-side-note"><p>01 / ТЕКСТИЛЬ</p><h3>Один цвет.<br/>Разный характер материалов.</h3><span>Большие спокойные поверхности сменяются камерными деталями, чтобы история читалась как журнал, а не как товарная сетка.</span></div>{editorialFrame(scenes[2],"compact-frame")}</div>
-    </section>
-
-    <section className="luna-premium-scroll-chapter"><header><p>02 / СЕРВИРОВКА</p><h2>История продолжается за столом</h2><span>Проведите по горизонтали — каждый кадр открывается отдельно.</span></header><div className="luna-premium-scroll">{editorialFrame(scenes[3],"scroll-wide")}{editorialFrame(scenes[4],"scroll-narrow")}</div></section>
-
-    <section className="luna-premium-finale"><div className="luna-premium-finale-copy"><p>03 / AFTER DARK</p><h2>Предметы можно собрать в один комплект — или оставить только нужное.</h2><span>В конструкторе размеры и количество настраиваются сразу для всех позиций.</span><button type="button" onClick={()=>setBuilderOpen(true)}>НАСТРОИТЬ КАПСУЛУ</button></div>{editorialFrame(scenes[5],"finale-frame")}</section>
-
-    <section className="luna-premium-builder-callout"><div><p>ЛУННАЯ СКАЗКА · 5 ПРЕДМЕТОВ</p><h2>Соберите капсулу за один шаг</h2><span>Выберите нужные позиции, размеры и количество — без переходов между карточками.</span></div><button type="button" onClick={()=>setBuilderOpen(true)}>СОБРАТЬ КАПСУЛУ</button></section>
-
-    {!storyId&&!builderOpen&&<button className="luna-mobile-builder-bar" type="button" onClick={()=>setBuilderOpen(true)}>СОБРАТЬ КАПСУЛУ · {preparedItems.length}</button>}
-
-    {activeStory&&<div className="luna-story-overlay" role="dialog" aria-modal="true" aria-label={`История ${activeStory.title}`}>
-      <button className="luna-overlay-backdrop" onClick={()=>setStoryId(null)} aria-label="Закрыть историю"/>
-      <section className="luna-story-sheet">
-        <header className="luna-overlay-header"><div><small>{activeStory.kicker}</small><strong>{activeStory.title}</strong></div><button type="button" onClick={()=>setStoryId(null)} aria-label="Закрыть"><Icon name="close"/></button></header>
-        <div className="luna-story-body"><figure><RemoteImage src={activeStory.image} fallbackSrc={activeStory.fallback} alt={activeStory.title}/><figcaption>{activeStory.copy}</figcaption></figure><section className="luna-story-products"><div className="luna-story-products-head"><p>ПРЕДМЕТЫ ИЗ ИСТОРИИ</p><span>{storyProducts.length} {storyProducts.length===1?"товар":"товара"}</span></div><div className="luna-story-product-grid">{storyProducts.map(item=><ProductCard key={`story-${activeStory.id}-${item.id}`} product={item} onClick={quickAdd} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div></section></div>
+    {active&&<div className="luna-clean-overlay" role="dialog" aria-modal="true">
+      <button className="luna-clean-backdrop" onClick={()=>setStory(null)} aria-label="Закрыть"/>
+      <section className="luna-clean-story">
+        <header><strong>{active.title}</strong><button type="button" onClick={()=>setStory(null)} aria-label="Закрыть"><Icon name="close"/></button></header>
+        <div className="luna-clean-story-images">{active.images.map((src,i)=><RemoteImage key={`${active.id}-story-${i}`} src={src} fallbackSrc={active.fallbacks[i]} alt={`${active.title}, кадр ${i+1}`}/>)}</div>
+        <div className="luna-clean-products">{storyProducts.map(item=><ProductCard key={`${active.id}-${item.id}`} product={item} onClick={quickAdd} onQuick={quickAdd} favorite={favorite} liked={favorites.includes(item.id)}/>)}</div>
       </section>
     </div>}
 
-    {builderOpen&&<div className="luna-builder-overlay" role="dialog" aria-modal="true" aria-label="Собрать капсулу Лунная сказка">
-      <button className="luna-overlay-backdrop" onClick={()=>setBuilderOpen(false)} aria-label="Закрыть конструктор"/>
-      <section className="luna-builder-sheet">
-        <header className="luna-overlay-header"><div><small>ЛУННАЯ СКАЗКА</small><strong>Соберите капсулу</strong></div><button type="button" onClick={()=>setBuilderOpen(false)} aria-label="Закрыть"><Icon name="close"/></button></header>
-        <div className="luna-builder-toolbar"><span>Выбрано {selectedIds.length} из {preparedItems.length}</span><button type="button" onClick={()=>setSelectedIds(selectedIds.length===preparedItems.length?[]:preparedItems.map(item=>item.id))}>{selectedIds.length===preparedItems.length?"СНЯТЬ ВСЕ":"ВЫБРАТЬ ВСЕ"}</button></div>
-        <div className="luna-builder-items">{preparedItems.map(item=>{
-          const selected=selectedIds.includes(item.id);
-          const color=colorById[item.id]??item.selectedColor;
-          const sizes=getProductSizeOptions(item,color);
-          const size=configuredSizes[item.id]??sizes[0]?.[0]??item.selectedSize??"";
-          const sku=findProductSku(item,color,size);
-          const unitPrice=sku?.price??item.price;
-          const quantity=configuredQty[item.id]??1;
-          return <article className={`luna-config-item ${selected?"selected":""}`} key={item.id}>
-            <button className="luna-config-toggle" type="button" onClick={()=>toggleItem(item.id)} aria-pressed={selected}><i>{selected?"✓":""}</i></button>
-            <RemoteImage src={previewById[item.id]??item.image} alt={item.name}/>
-            <div className="luna-config-copy"><small>{item.article}</small><h3>{item.name}</h3>{sizes.length>1?<label><span>Размер</span><select value={size} onChange={event=>setConfiguredSizes(current=>({...current,[item.id]:event.target.value}))}>{sizes.map(([option])=><option key={option} value={option}>{option}</option>)}</select></label>:<p>{size}</p>}<div className="luna-config-bottom"><strong>{fmt(unitPrice*quantity)}</strong><div className="luna-config-qty"><button type="button" onClick={()=>setConfiguredQty(current=>({...current,[item.id]:Math.max(1,quantity-1)}))}>−</button><span>{quantity}</span><button type="button" onClick={()=>setConfiguredQty(current=>({...current,[item.id]:quantity+1}))}>+</button></div></div></div>
-          </article>})}</div>
-        <footer className="luna-builder-footer"><div><span>{selectedIds.length} позиций</span><strong>{fmt(configuredTotal)}</strong></div><button type="button" disabled={!selectedIds.length} onClick={addConfiguredCapsule}>ДОБАВИТЬ В КОРЗИНУ</button></footer>
+    {builderOpen&&<div className="luna-clean-overlay" role="dialog" aria-modal="true">
+      <button className="luna-clean-backdrop" onClick={()=>setBuilderOpen(false)} aria-label="Закрыть"/>
+      <section className="luna-clean-builder">
+        <header><strong>Соберите капсулу</strong><button type="button" onClick={()=>setBuilderOpen(false)} aria-label="Закрыть"><Icon name="close"/></button></header>
+        <div className="luna-clean-builder-tools"><span>{selectedIds.length} из {items.length}</span><button type="button" onClick={()=>setSelectedIds(selectedIds.length===items.length?[]:items.map(i=>i.id))}>{selectedIds.length===items.length?"СНЯТЬ ВСЕ":"ВЫБРАТЬ ВСЕ"}</button></div>
+        <div className="luna-clean-builder-list">{items.map(item=>{const selected=selectedIds.includes(item.id);const color=colorById[item.id]??item.selectedColor;const options=getProductSizeOptions(item,color);const size=sizes[item.id]??options[0]?.[0]??item.selectedSize??"";const sku=findProductSku(item,color,size);const price=sku?.price??item.price;const quantity=qty[item.id]??1;return <article className={selected?"selected":""} key={item.id}>
+          <button className="luna-clean-check" type="button" onClick={()=>toggle(item.id)} aria-pressed={selected}>{selected?"✓":""}</button>
+          <RemoteImage src={previewById[item.id]??item.image} alt={item.name}/>
+          <div><h3>{item.name}</h3>{options.length>1?<select value={size} onChange={e=>setSizes(current=>({...current,[item.id]:e.target.value}))}>{options.map(([o])=><option key={o}>{o}</option>)}</select>:<small>{size}</small>}<div className="luna-clean-row"><strong>{fmt(price*quantity)}</strong><span><button type="button" onClick={()=>setQty(current=>({...current,[item.id]:Math.max(1,quantity-1)}))}>−</button><b>{quantity}</b><button type="button" onClick={()=>setQty(current=>({...current,[item.id]:quantity+1}))}>+</button></span></div></div>
+        </article>})}</div>
+        <footer><div><span>{selectedIds.length} позиций</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selectedIds.length} onClick={addAll}>ДОБАВИТЬ В КОРЗИНУ</button></footer>
       </section>
     </div>}
   </div>;
