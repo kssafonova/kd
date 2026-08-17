@@ -88,7 +88,7 @@ const productList:CatalogProductOverride[] = [
 
   makeProduct(6,"KD-PD-1026","Плед из кружева","хлопок, 200×220 см",9990,[
     {color:"Белый",size:"200×220 см",height:"200 см",width:"220 см",material:"Хлопок",composition:"70% хлопок, 30% лен",details:"Кружево",image:"/kd/images/products/KD-PD-1026-WHITE01.png",gallery:["/kd/images/products/KD-PD-1026-WHITE02.png"]},
-    {color:"Молочный",size:"200×220 см",height:"200 см",width:"220 см",material:"Хлопок",composition:"70% хлопок, 30% лен",details:"Кружево",image:"/kd/images/products/KD-PD-1026-BIEGE01.png",gallery:["/kd/images/products/KD-PD-1026-BIEGE02.png"]},
+    {color:"Молочный",size:"200×220 см",height:"200 см",width:"220 см",material:"Хлопок",composition:"70% хлопок, 30% лен",details:"Кружево",image:"/kd/images/products/KD-PD-1026-BEIGE01.png",gallery:["/kd/images/products/KD-PD-1026-BEIGE02.png"]},
     {color:"Синий",size:"200×220 см",height:"200 см",width:"220 см",material:"Хлопок",composition:"70% хлопок, 30% лен",details:"Кружево",image:"/kd/images/products/KD-PD-1026-BLUE01.png",gallery:["/kd/images/products/KD-PD-1026-BLUE02.png"]},
   ]),
 
@@ -128,7 +128,7 @@ const productList:CatalogProductOverride[] = [
   makeProduct(11,"KD-PD-1128","Наволочка из сатина","шёлк, 60×60 см",4990,[
     {color:"Пудровый",size:"60×60 см",height:"60 см",width:"60 см",packageInfo:"Наволочка 2 шт",material:"Шелк",composition:"100% Сатин",image:"/kd/images/products/KD-PD-1128-PUDRA01.png",gallery:["/kd/images/products/KD-PD-1128-PUDRA03.png"]},
     {color:"Белый",size:"60×60 см",height:"60 см",width:"60 см",packageInfo:"Наволочка 2 шт",material:"Шелк",composition:"100% Сатин",image:"/kd/images/products/KD-PD-1128-WHITE01.png",gallery:["/kd/images/products/KD-PD-1128-WHITE02.png","/kd/images/products/KD-PD-1128-WHITE03.png"]},
-    {color:"Ночной синий",size:"60×60 см",height:"60 см",width:"60 см",packageInfo:"Наволочка 2 шт",material:"Шелк",composition:"100% Сатин",image:"/kd/images/products/KD-PD-1128-DARK01.png",gallery:["/kd/images/products/KD-PD-1128-DARK02.png"]},
+    {color:"Ночной синий",size:"60×60 см",height:"60 см",width:"60 см",packageInfo:"Наволочка 2 шт",material:"Шелк",composition:"100% Сатин",image:"/kd/images/products/KD-PD-1128-DARK01.png",gallery:["/kd/images/products/KD-PD-1128-DARK03.png"]},
   ]),
 ];
 
