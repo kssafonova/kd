@@ -44,6 +44,9 @@ jobs:
       - name: Apply reference PDP gallery
         run: python scripts/apply-pdp-reference-gallery.py
 
+      - name: Normalize Luna editorial render
+        run: python scripts/normalize-luna-render.py
+
       - name: Apply Luna editorial capsule
         run: python scripts/apply-luna-editorial.py
 
