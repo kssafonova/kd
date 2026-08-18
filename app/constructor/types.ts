@@ -154,3 +154,34 @@ export type CartPayloadItem = {
   offer_id: string;
   quantity: number;
 };
+
+export type FinalScenarioSummaryRow = {
+  scenario_id: string;
+  scenario_name: string;
+  space: string;
+  occasion: string;
+  total_items: string;
+  required_items: string;
+  status: string;
+};
+
+export type FinalScenarioVariantRow = {
+  scenario_name: string;
+  space: string;
+  occasion: string;
+  role: string;
+  type: "Основной" | "Альтернатива" | string;
+  offer_id: string;
+  product_name: string;
+  price_rub: string;
+  material: string;
+  color: string;
+  product_url: string;
+  note: string;
+};
+
+export type FinalConstructorData = {
+  summaries: FinalScenarioSummaryRow[];
+  variants: FinalScenarioVariantRow[];
+  catalog: CatalogRow[];
+};
