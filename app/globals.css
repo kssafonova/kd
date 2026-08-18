@@ -124,7 +124,7 @@ footer{background:#202a2b}
 /* Zara Home-style progressive navigation: level 2 replaces level 1 */
 .navigation-overlay{pointer-events:none;background:transparent}
 .navigation-overlay .overlay-bg{display:none}
-.zara-menu{pointer-events:auto;width:365px!important;max-width:88vw;box-shadow:9px 0 28px rgba(0,0,0,.06);background:rgba(255,255,255,.985)}
+.zara-menu{pointer-events:auto;width:365px!important;max-width:88vw;box-shadow:9px 0 28px rgba(0,0,0,.06);background:#fff}
 .zara-menu .menu-top{height:78px;padding:0 28px}
 .zara-menu .menu-top b{display:none}
 .zara-menu .menu-body{display:block;height:calc(100% - 78px);overflow-y:auto}
