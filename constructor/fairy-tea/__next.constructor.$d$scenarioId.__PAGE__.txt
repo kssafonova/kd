@@ -1,6 +1,6 @@
 1:"$Sreact.fragment"
-2:I[69403,["/kd/_next/static/chunks/17~zpoul0y5p3.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0srvz7b8_oir7.js"],"ScenarioConstructor"]
+2:I[69403,["/kd/_next/static/chunks/17~zpoul0y5p3.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0-pc.lritxdjo.js"],"ScenarioConstructor"]
 3:I[97367,["/kd/_next/static/chunks/17~zpoul0y5p3.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
 4:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"fairy-tea"}],[["$","script","script-0",{"src":"/kd/_next/static/chunks/0srvz7b8_oir7.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"1EbjN0Yz6r13PvodKftnX"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"fairy-tea"}],[["$","script","script-0",{"src":"/kd/_next/static/chunks/0-pc.lritxdjo.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"6is4AqQEyxThKOaf3NUSH"}
 5:null
