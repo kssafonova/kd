@@ -41,8 +41,8 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { o
         :<div className="catalog-empty"><p>В опубликованных историях пока нет товаров</p></div>}
 
     {storyPreview&&<section className="editorial-story-overlay" role="dialog" aria-modal="true" aria-label={`История ${storyPreview.name}`}>
-      <div className={`editorial-story-visual ${storyPreview.images.length<2?"single":""}`}>
-        {storyPreview.images.slice(0,3).map((image,index)=><figure key={`${storyPreview.id}-story-${image}`}><img src={assetUrl(image)} alt={`${storyPreview.name}, editorial ${index+1}`}/></figure>)}
+      <div className={`editorial-story-visual ${storyPreview.images.length<2?"single":""}`} aria-label={`Editorial ${storyPreview.name}. Прокрутите, чтобы листать изображения`}>
+        {storyPreview.images.map((image,index)=><figure key={`${storyPreview.id}-story-${image}`}><img src={assetUrl(image)} alt={`${storyPreview.name}, editorial ${index+1}`}/></figure>)}
       </div>
       <aside className="editorial-story-shop">
         <button className="editorial-story-close" type="button" onClick={()=>setStoryPreview(null)} aria-label="Закрыть историю"><Icon name="close"/></button>
@@ -74,7 +74,13 @@ if marker not in text:
         raise SystemExit("Could not locate CollectionsView block")
     text = text[:start] + replacement + text[end:]
 else:
-    print("Editorial story overlay component already present")
+    # Keep the already-installed overlay current on repeated builds.
+    text = text.replace("storyPreview.images.slice(0,3).map", "storyPreview.images.map")
+    text = text.replace(
+        '<div className={`editorial-story-visual ${storyPreview.images.length<2?"single":""}`}>',
+        '<div className={`editorial-story-visual ${storyPreview.images.length<2?"single":""}`} aria-label={`Editorial ${storyPreview.name}. Прокрутите, чтобы листать изображения`}>',
+    )
+    print("Editorial story overlay component already present; magazine image flow refreshed")
 
 old_call = '{view === "collections" && <CollectionsView openEditorial={(item)=>{setEditorial(item);go("editorial")}} onProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} />}'
 new_call = '{view === "collections" && <CollectionsView onProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}'
