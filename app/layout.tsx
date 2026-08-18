@@ -8,6 +8,7 @@ import "./mobile-pdp-overrides.css";
 import "./zara-editorial.css";
 import "./luna-editorial.css";
 import "./collection-flow.css";
+import "./editorial-magazine.css";
 import "./constructor-entry.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
