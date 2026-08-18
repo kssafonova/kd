@@ -3,166 +3,112 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
-import { loadConstructorData } from "./data-client";
-import {
-  computeQuantity,
-  createIndexes,
-  formatRub,
-  toNumber,
-  trackConstructorEvent,
-} from "./logic";
+import { loadFinalConstructorData } from "./data-client";
 import { CONSTRUCTOR_SCENARIO_IDS } from "./scenarios";
-import type { ConstructorData } from "./types";
+import type { CatalogRow, FinalConstructorData, FinalScenarioVariantRow } from "./types";
 
-const paletteColors: Record<string, string> = {
-  red: "#9a3f3a",
-  milk: "#eee8dc",
-  white: "#f7f7f4",
-  blue: "#7f9ab1",
-  sky_blue: "#9db8cf",
-  navy: "#243b59",
-  gold: "#b49a65",
-  green: "#647b67",
-  beige: "#c8b49a",
-  grey: "#999b98",
-  pink: "#d6aaa5",
-  black: "#262626",
-  multicolor: "#9b7772",
+const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
+const toPrice = (value: string) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
+
+const catalogByOffer = (catalog: CatalogRow[]) => {
+  const map = new Map<string, CatalogRow>();
+  catalog.forEach((row) => {
+    if (row.offer_id && !map.has(String(row.offer_id))) map.set(String(row.offer_id), row);
+  });
+  return map;
+};
+
+const defaultRows = (rows: FinalScenarioVariantRow[]) => {
+  const groups = new Map<string, FinalScenarioVariantRow[]>();
+  rows.forEach((row) => groups.set(row.role, [...(groups.get(row.role) ?? []), row]));
+  return Array.from(groups.values())
+    .map((group) => group.find((row) => row.type === "Основной"))
+    .filter((row): row is FinalScenarioVariantRow => Boolean(row));
 };
 
 export function ConstructorLanding() {
-  const [data, setData] = useState<ConstructorData | null>(null);
+  const [data, setData] = useState<FinalConstructorData | null>(null);
   const [error, setError] = useState("");
+  const [space, setSpace] = useState("Все");
 
   useEffect(() => {
     let active = true;
-    loadConstructorData()
+    loadFinalConstructorData()
       .then((loaded) => active && setData(loaded))
-      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Ошибка загрузки CSV"));
-    trackConstructorEvent("constructor_opened");
-    return () => {
-      active = false;
-    };
+      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Не удалось загрузить сценарии"));
+    return () => { active = false; };
   }, []);
 
   const cards = useMemo(() => {
     if (!data) return [];
-    const indexes = createIndexes(data);
-
+    const imageIndex = catalogByOffer(data.catalog);
     return CONSTRUCTOR_SCENARIO_IDS.map((scenarioId) => {
-      const presets = data.presets
-        .filter((row) => row.scenario_id === scenarioId)
-        .sort((a, b) => Number(a.sort_order) - Number(b.sort_order));
-      const meta = data.scenarios.filter((row) => row.scenario_id === scenarioId);
-      if (!presets.length) return null;
-
-      const defaultGuests = Number(presets[0].default_guests) || (presets[0].domain === "table" ? 2 : 1);
-      const defaultRows = presets.filter((row) => row.preset_status !== "optional");
-      const startPrice = defaultRows.reduce((sum, preset) => {
-        const catalog = indexes.catalogByOffer.get(String(preset.offer_id));
-        const price = toNumber(catalog?.price || preset.price_rub);
-        return sum + (price ? price * computeQuantity(preset, defaultGuests) : 0);
-      }, 0);
-
-      const images = presets
-        .map((preset) => indexes.catalogByOffer.get(String(preset.offer_id))?.primary_image_url || preset.primary_image_url)
-        .filter((url) => url.startsWith("https://"))
-        .slice(0, 4);
-
-      const paletteTokens = Array.from(
-        new Set(
-          data.candidates
-            .filter((row) => row.scenario_id === scenarioId)
-            .flatMap((row) => row.palette.split("|"))
-            .map((value) => value.trim().toLowerCase())
-            .filter(Boolean),
-        ),
-      ).slice(0, 5);
-
-      const description = Array.from(new Set(meta.map((row) => row.styling_message).filter(Boolean))).slice(0, 2).join(". ");
-
+      const summary = data.summaries.find((row) => row.scenario_id === scenarioId);
+      if (!summary) return null;
+      const rows = data.variants.filter((row) => row.scenario_name === summary.scenario_name);
+      const defaults = defaultRows(rows);
+      const images = Array.from(new Set(defaults
+        .map((row) => imageIndex.get(String(row.offer_id))?.primary_image_url)
+        .filter((value): value is string => Boolean(value)))).slice(0, 3);
+      const price = defaults.reduce((sum, row) => sum + toPrice(row.price_rub), 0);
       return {
-        scenarioId,
-        name: meta[0]?.scenario_name || presets[0].scenario_name,
-        description: description || presets[0].selection_reason,
+        id: scenarioId,
+        name: summary.scenario_name,
+        space: summary.space,
+        occasion: summary.occasion,
         images,
-        startPrice,
-        itemCount: defaultRows.length,
-        paletteTokens,
+        price,
+        roles: new Set(rows.map((row) => row.role)).size,
+        alternatives: rows.filter((row) => row.type === "Альтернатива").length,
       };
-    }).filter(Boolean) as Array<{
-      scenarioId: string;
-      name: string;
-      description: string;
-      images: string[];
-      startPrice: number;
-      itemCount: number;
-      paletteTokens: string[];
-    }>;
+    }).filter(Boolean) as Array<{id:string;name:string;space:string;occasion:string;images:string[];price:number;roles:number;alternatives:number}>;
   }, [data]);
 
-  if (error) {
-    return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Не удалось загрузить данные конструктора</h1><p>{error}</p></div></main>;
-  }
+  const spaces = useMemo(() => {
+    const values = new Set(cards.flatMap((card) => card.space.split("/").map((value) => value.trim())).filter(Boolean));
+    return ["Все", ...Array.from(values)];
+  }, [cards]);
 
-  if (!data) {
-    return <main className="constructor-shell"><div className="constructor-wrap constructor-empty">Загружаем сценарии…</div></main>;
-  }
+  const visible = cards.filter((card) => space === "Все" || card.space.toLowerCase().includes(space.toLowerCase()));
+
+  if (error) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Не удалось загрузить сценарии</h1><p>{error}</p></div></main>;
+  if (!data) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty">Загружаем готовые решения…</div></main>;
 
   return (
-    <main className="constructor-shell">
+    <main className="constructor-shell constructor-landing">
       <div className="constructor-wrap">
-        <Link className="constructor-back" href="/">← КУЛЬТУРА ДОМА</Link>
+        <nav className="constructor-topline">
+          <Link className="constructor-back" href="/">КУЛЬТУРА ДОМА</Link>
+          <span>ГОТОВЫЕ РЕШЕНИЯ</span>
+        </nav>
+
         <header className="constructor-landing-head">
-          <p className="constructor-kicker">EDITORIAL CONSTRUCTOR</p>
-          <h1 className="constructor-title">Соберите сценарий</h1>
-          <p className="constructor-lead">Пять готовых историй для сервировки и спальни. Выберите образ, настройте количество и заменяйте только совместимые предметы.</p>
+          <p className="constructor-kicker">EDITORIAL · ГОТОВЫЕ СЦЕНАРИИ</p>
+          <h1 className="constructor-title">Соберите атмосферу дома</h1>
+          <p className="constructor-lead">Выберите историю, а затем настройте её под себя: оставьте основную сборку или замените отдельные предметы на визуально совместимые альтернативы.</p>
         </header>
 
-        <section className="constructor-scenario-grid" aria-label="Сценарии конструктора">
-          {cards.map((card) => (
-            <article className="constructor-scenario-card" key={card.scenarioId}>
-              <div className="constructor-scenario-collage">
-                {Array.from({ length: 3 }, (_, index) => {
-                  const image = card.images[index];
-                  return image ? (
-                    <div key={`${image}-${index}`}>
-                      <RemoteImage
-                        src={image}
-                        alt={`${card.name}, предмет сценария ${index + 1}`}
-                        loading={index === 0 ? "eager" : "lazy"}
-                      />
-                    </div>
-                  ) : (
-                    <div className="constructor-image-fallback" key={`fallback-${index}`}>Фото товара недоступно</div>
-                  );
-                })}
-              </div>
-              <div className="constructor-scenario-copy">
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 16, alignItems: "flex-start" }}>
-                  <div>
-                    <p className="constructor-kicker">СЦЕНАРИЙ</p>
-                    <h2>{card.name}</h2>
-                  </div>
-                  <div aria-label="Палитра" style={{ display: "flex", gap: 5, paddingTop: 5 }}>
-                    {card.paletteTokens.map((token) => (
-                      <i key={token} title={token} style={{ width: 15, height: 15, borderRadius: "50%", border: "1px solid #ddd", background: paletteColors[token] || "#9b9c99" }} />
-                    ))}
-                  </div>
+        <div className="constructor-filter" role="tablist" aria-label="Фильтр по пространству">
+          {spaces.map((item) => <button key={item} className={space === item ? "active" : ""} onClick={() => setSpace(item)}>{item.toUpperCase()}</button>)}
+        </div>
+
+        <section className="constructor-scenario-grid" aria-label="Финальные сценарии">
+          {visible.map((card, index) => (
+            <article className="constructor-scenario-card" key={card.id}>
+              <Link className="constructor-scenario-media" href={`/constructor/${card.id}/`} aria-label={`Открыть ${card.name}`}>
+                <div className="constructor-scenario-collage">
+                  {Array.from({ length: 3 }, (_, imageIndex) => {
+                    const image = card.images[imageIndex];
+                    return image ? <div key={image}><RemoteImage src={image} alt={`${card.name}: предмет ${imageIndex + 1}`} loading={index < 2 ? "eager" : "lazy"}/></div> : <div className="constructor-image-fallback" key={imageIndex}>Фото товара</div>;
+                  })}
                 </div>
-                <p>{card.description}</p>
+              </Link>
+              <div className="constructor-scenario-copy">
+                <div className="constructor-card-labels"><span>{card.space}</span><span>{card.occasion}</span></div>
+                <h2>{card.name}</h2>
                 <div className="constructor-scenario-meta">
-                  <div>
-                    <span>{card.itemCount} позиций по умолчанию</span>
-                    <strong>{card.startPrice > 0 ? `от ${formatRub(card.startPrice)}` : "Цена уточняется"}</strong>
-                  </div>
-                  <Link
-                    className="constructor-primary-link"
-                    href={`/constructor/${card.scenarioId}/`}
-                    onClick={() => trackConstructorEvent("scenario_selected", { scenario_id: card.scenarioId })}
-                  >
-                    СОБРАТЬ ОБРАЗ →
-                  </Link>
+                  <div><small>{card.roles} групп · {card.alternatives} альтернатив</small><strong>{card.price ? `от ${formatRub(card.price)}` : "Цена уточняется"}</strong></div>
+                  <Link className="constructor-primary-link" href={`/constructor/${card.id}/`}>СОБРАТЬ РЕШЕНИЕ <span>→</span></Link>
                 </div>
               </div>
             </article>
