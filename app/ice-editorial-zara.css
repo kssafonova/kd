@@ -1,0 +1,424 @@
+/* Ice Patterns collection — visual-first editorial treatment inspired by the
+   restrained commerce/editorial rhythm of contemporary Zara Home pages.
+   Scope is intentionally limited to the Ice Patterns Editorial page only. */
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) {
+  --ice-ink: #11120f;
+  --ice-muted: #777a76;
+  --ice-line: #dedfda;
+  --ice-paper: #ffffff;
+  --ice-frost: #f5f6f4;
+  background: var(--ice-paper);
+  color: var(--ice-ink);
+  padding: 0 0 128px;
+  overflow: hidden;
+}
+
+/* -------------------------------------------------------------------------
+   HERO
+   ------------------------------------------------------------------------- */
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover {
+  position: relative;
+  width: 100vw;
+  height: min(88svh, 980px);
+  min-height: 680px;
+  margin-left: calc(50% - 50vw);
+  background: #e9ecec;
+  overflow: hidden;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(9,18,25,.02) 42%, rgba(9,18,25,.38) 100%);
+  pointer-events: none;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover > div {
+  position: absolute;
+  z-index: 2;
+  left: clamp(22px, 4.2vw, 72px);
+  right: clamp(22px, 4.2vw, 72px);
+  bottom: clamp(28px, 4.4vw, 70px);
+  color: #fff;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover p {
+  margin: 0 0 12px;
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover h1 {
+  max-width: 980px;
+  margin: 0;
+  font: 400 clamp(52px, 7.2vw, 110px)/.92 var(--serif, "Tenor Sans", serif);
+  letter-spacing: -.045em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------------
+   EDITORIAL COPY — let the page breathe between images
+   ------------------------------------------------------------------------- */
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words {
+  width: min(780px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 116px 0 124px;
+  text-align: center;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words > p {
+  margin: 0;
+  font: 400 clamp(28px, 3.1vw, 48px)/1.18 var(--serif, "Tenor Sans", serif);
+  letter-spacing: -.02em;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words > span {
+  display: block;
+  max-width: 580px;
+  margin: 24px auto 0;
+  color: var(--ice-muted);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+/* -------------------------------------------------------------------------
+   SINGLE DETAIL FRAME
+   ------------------------------------------------------------------------- */
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-detail {
+  display: block;
+  width: min(1180px, 78vw);
+  height: min(82svh, 900px);
+  min-height: 620px;
+  margin: 0 auto;
+  object-fit: cover;
+  object-position: center;
+  background: var(--ice-frost);
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words.narrow {
+  width: min(640px, calc(100% - 48px));
+  margin: 0 max(6vw, calc((100vw - 1440px)/2)) 0 auto;
+  padding: 88px 0 116px;
+  text-align: left;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words.narrow > p {
+  font-size: clamp(25px, 2.45vw, 39px);
+  line-height: 1.24;
+}
+
+/* -------------------------------------------------------------------------
+   ASYMMETRIC VISUAL SPREAD
+   ------------------------------------------------------------------------- */
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-split {
+  width: min(1500px, calc(100% - 48px));
+  margin: 0 auto 136px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.28fr) minmax(300px, .72fr);
+  gap: clamp(18px, 2.2vw, 36px);
+  align-items: start;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-split > img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  background: var(--ice-frost);
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-split > img:first-child {
+  height: min(88svh, 930px);
+  min-height: 660px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-split > img:last-child {
+  height: min(60svh, 650px);
+  min-height: 480px;
+  margin-top: 16vh;
+}
+
+/* -------------------------------------------------------------------------
+   SHOP THE COLLECTION
+   ------------------------------------------------------------------------- */
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products {
+  width: min(1600px, 100%);
+  margin: 0 auto;
+  padding: 0 clamp(16px, 2.2vw, 34px) 36px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head {
+  min-height: 130px;
+  margin: 0 0 34px;
+  padding: 28px 0 26px;
+  border-top: 1px solid var(--ice-line);
+  border-bottom: 1px solid var(--ice-line);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 48px;
+  align-items: end;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head p {
+  margin: 0 0 8px;
+  color: var(--ice-muted);
+  font-size: 8px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head h2 {
+  margin: 0;
+  font: 400 clamp(30px, 3.1vw, 48px)/1 var(--serif, "Tenor Sans", serif);
+  letter-spacing: -.025em;
+  text-transform: uppercase;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head .primary {
+  min-width: 292px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 1px solid #181917;
+  border-radius: 0;
+  background: #181917;
+  color: #fff;
+  box-shadow: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head .primary b {
+  color: inherit;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head .primary:disabled {
+  opacity: .36;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .selection-help {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: var(--ice-muted);
+  font-size: 10px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .selection-help button {
+  padding-bottom: 2px;
+  border-bottom: 1px solid currentColor;
+  font-size: 9px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products > .product-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 42px 12px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .selectable-product {
+  position: relative;
+  min-width: 0;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-card {
+  background: transparent;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-card .product-image {
+  background: var(--ice-frost);
+  overflow: hidden;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-card .product-image img {
+  object-fit: cover;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-copy {
+  padding-top: 12px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-copy strong {
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-copy small,
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-copy .price {
+  font-size: 9px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-selector {
+  z-index: 6;
+  top: 12px;
+  left: 12px;
+  right: auto;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-selector > span {
+  width: 25px;
+  height: 25px;
+  border: 1px solid #222;
+  border-radius: 50%;
+  background: rgba(255,255,255,.92);
+  display: grid;
+  place-items: center;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-selector > span svg {
+  width: 12px;
+  height: 12px;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-selector > b {
+  display: none;
+}
+
+.editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-selector input:checked + span {
+  background: #181917;
+  color: #fff;
+}
+
+/* -------------------------------------------------------------------------
+   TABLET / MOBILE
+   ------------------------------------------------------------------------- */
+@media (max-width: 1050px) {
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products > .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) {
+    padding-bottom: 74px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover {
+    height: 72svh;
+    min-height: 540px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover > div {
+    left: 16px;
+    right: 16px;
+    bottom: 24px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover p {
+    font-size: 7px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-cover h1 {
+    font-size: clamp(38px, 12vw, 58px);
+    line-height: .95;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words {
+    width: auto;
+    margin: 0 18px;
+    padding: 68px 0 74px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words > p {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words > span {
+    margin-top: 18px;
+    font-size: 10px;
+    line-height: 1.65;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-detail {
+    width: 100%;
+    height: 65svh;
+    min-height: 470px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words.narrow {
+    width: auto;
+    margin: 0 18px;
+    padding: 60px 0 74px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-words.narrow > p {
+    font-size: 26px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-split {
+    width: 100%;
+    margin: 0 0 82px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-split > img:first-child,
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-split > img:last-child {
+    width: 100%;
+    height: 62svh;
+    min-height: 460px;
+    margin: 0;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products {
+    padding: 0 12px 24px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head {
+    min-height: 0;
+    margin-bottom: 22px;
+    padding: 20px 0;
+    display: block;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head h2 {
+    font-size: 31px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products-head .primary {
+    width: 100%;
+    min-width: 0;
+    margin-top: 22px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products > .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 8px;
+  }
+
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .product-copy strong {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .editorial-page:has(.editorial-cover img[src*="caps_led.png"]) .editorial-products > .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
