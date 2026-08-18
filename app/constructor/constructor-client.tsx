@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
 import { loadFinalConstructorData } from "./data-client";
-import { SCENARIO_COPY } from "./scenario-copy";
+import { SCENARIO_COPY, SPACE_TAXONOMY } from "./scenario-copy";
 import { CONSTRUCTOR_SCENARIO_IDS, isConstructorScenarioId } from "./scenarios";
 import type { CatalogRow, FinalConstructorData, FinalScenarioVariantRow } from "./types";
 
@@ -57,12 +57,13 @@ export function ConstructorLanding() {
         const rowPrice = toPrice(row.price_rub);
         return oldPrice > rowPrice ? sum + (oldPrice - rowPrice) : sum;
       }, 0);
+      const copy = isConstructorScenarioId(scenarioId) ? SCENARIO_COPY[scenarioId] : undefined;
       return {
         id: scenarioId,
         name: summary.scenario_name,
-        space: summary.space,
+        space: copy?.space ?? "",
         occasion: summary.occasion,
-        mood: isConstructorScenarioId(scenarioId) ? SCENARIO_COPY[scenarioId].mood : "",
+        mood: copy?.mood ?? "",
         images,
         price,
         savings,
@@ -72,12 +73,15 @@ export function ConstructorLanding() {
     }).filter(Boolean) as Array<{id:string;name:string;space:string;occasion:string;mood:string;images:string[];price:number;savings:number;roles:number;alternatives:number}>;
   }, [data]);
 
+  // Only offer a filter tab for a space that at least one live scenario
+  // actually belongs to — "Гостиная"/"Ванная" join automatically the day a
+  // scenario is added there, no empty dead-end tabs in the meantime.
   const spaces = useMemo(() => {
-    const values = new Set(cards.flatMap((card) => card.space.split("/").map((value) => value.trim())).filter(Boolean));
-    return ["Все", ...Array.from(values)];
+    const present = new Set(cards.map((card) => card.space));
+    return ["Все", ...SPACE_TAXONOMY.filter((label) => present.has(label))];
   }, [cards]);
 
-  const visible = cards.filter((card) => space === "Все" || card.space.toLowerCase().includes(space.toLowerCase()));
+  const visible = cards.filter((card) => space === "Все" || card.space === space);
 
   if (error) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Не удалось загрузить сценарии</h1><p>{error}</p></div></main>;
   if (!data) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty">Загружаем готовые решения…</div></main>;

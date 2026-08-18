@@ -210,12 +210,12 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
       <div className="constructor-wrap">
         <nav className="constructor-topline">
           <Link className="constructor-back" href="/constructor/">← ВСЕ ГОТОВЫЕ РЕШЕНИЯ</Link>
-          <span>{summary.space}</span>
+          <span>{copy?.space ?? summary.space}</span>
         </nav>
 
         <header className="constructor-page-head">
           <div>
-            <p className="constructor-kicker">ГОТОВОЕ РЕШЕНИЕ · {summary.space.toUpperCase()}</p>
+            <p className="constructor-kicker">ГОТОВОЕ РЕШЕНИЕ · {(copy?.space ?? summary.space).toUpperCase()}</p>
             <h1 className="constructor-title">{summary.scenario_name}</h1>
             <p className="constructor-occasion">{summary.occasion}</p>
             {copy && <p className="constructor-mood">«{copy.mood}»</p>}
