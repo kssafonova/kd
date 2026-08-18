@@ -3,481 +3,211 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
-import { loadConstructorData } from "./data-client";
-import {
-  buildCartPayload,
-  calculateSummary,
-  createIndexes,
-  deriveProductView,
-  formatRub,
-  getBlockingReasons,
-  getReplacementCandidates,
-  getVariantOptions,
-  isUnavailable,
-  toNumber,
-  trackConstructorEvent,
-} from "./logic";
-import type {
-  CandidateRow,
-  CatalogRow,
-  CartPayloadItem,
-  ConstructorData,
-  PresetRow,
-  ProductView,
-  SlotState,
-} from "./types";
+import { loadFinalConstructorData } from "./data-client";
+import type { CatalogRow, FinalConstructorData, FinalScenarioVariantRow } from "./types";
 
-const GUEST_OPTIONS = [2, 4, 6, 8] as const;
+const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
+const toPrice = (value: string) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
 
-const humanProductType = (value: string) => {
-  const labels: Record<string, string> = {
-    tea_pair: "Чайная пара",
-    coffee_pair: "Кофейная пара",
-    dessert_plate: "Десертная тарелка",
-    dinner_plate: "Обеденная тарелка",
-    snack_plate: "Закусочная тарелка",
-    napkin: "Салфетка",
-    placemat: "Плейсмат",
-    table_runner: "Дорожка",
-    tablecloth: "Скатерть",
-    milk_jug: "Молочник",
-    sugar_bowl: "Сахарница",
-    teapot: "Чайник",
-    decorative_pillow: "Декоративная подушка",
-    throw: "Плед",
-    candle: "Свеча",
-    bedding_set: "Постельное бельё",
-  };
-  return labels[value] || value.replaceAll("_", " ");
+const makeCatalogIndex = (rows: CatalogRow[]) => {
+  const map = new Map<string, CatalogRow>();
+  rows.forEach((row) => {
+    const key = String(row.offer_id || "");
+    if (key && !map.has(key)) map.set(key, row);
+  });
+  return map;
 };
 
-function ProductImage({ view, eager = false }: { view: ProductView; eager?: boolean }) {
-  if (!view.primaryImageUrl) return <div className="constructor-image-fallback">Фото товара недоступно</div>;
-  return <RemoteImage src={view.primaryImageUrl} alt={`${view.name}, ${view.collection}`} loading={eager ? "eager" : "lazy"} />;
-}
+const splitImages = (catalog?: CatalogRow) => Array.from(new Set([
+  catalog?.primary_image_url,
+  ...(catalog?.all_image_urls || "").split("|")
+].filter((value): value is string => Boolean(value))));
+
+const cleanRole = (role: string) => role.replace(/\s+/g, " ").trim();
 
 export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
-  const [data, setData] = useState<ConstructorData | null>(null);
+  const [data, setData] = useState<FinalConstructorData | null>(null);
   const [error, setError] = useState("");
-  const [guests, setGuests] = useState(2);
-  const [slots, setSlots] = useState<SlotState[]>([]);
-  const [replacementKey, setReplacementKey] = useState<string | null>(null);
-  const [galleryKey, setGalleryKey] = useState<string | null>(null);
-  const [payload, setPayload] = useState<CartPayloadItem[] | null>(null);
+  const [selected, setSelected] = useState<Record<string, string>>({});
+  const [enabled, setEnabled] = useState<Record<string, boolean>>({});
+  const [quantity, setQuantity] = useState<Record<string, number>>({});
+  const [expandedRole, setExpandedRole] = useState<string | null>(null);
+  const [galleryOffer, setGalleryOffer] = useState<string | null>(null);
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     let active = true;
-    loadConstructorData()
+    loadFinalConstructorData()
       .then((loaded) => active && setData(loaded))
-      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Ошибка загрузки CSV"));
-    trackConstructorEvent("constructor_opened", { scenario_id: scenarioId });
-    return () => {
-      active = false;
-    };
-  }, [scenarioId]);
+      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Не удалось загрузить сценарий"));
+    return () => { active = false; };
+  }, []);
 
-  const presets = useMemo(
-    () => (data?.presets ?? []).filter((row) => row.scenario_id === scenarioId).sort((a, b) => Number(a.sort_order) - Number(b.sort_order)),
-    [data, scenarioId],
-  );
+  const summary = useMemo(() => data?.summaries.find((row) => row.scenario_id === scenarioId), [data, scenarioId]);
+  const rows = useMemo(() => summary ? (data?.variants ?? []).filter((row) => row.scenario_name === summary.scenario_name) : [], [data, summary]);
+  const catalogIndex = useMemo(() => makeCatalogIndex(data?.catalog ?? []), [data]);
 
-  const indexes = useMemo(() => (data ? createIndexes(data) : null), [data]);
+  const groups = useMemo(() => {
+    const order: string[] = [];
+    const map = new Map<string, FinalScenarioVariantRow[]>();
+    rows.forEach((row) => {
+      const role = cleanRole(row.role);
+      if (!map.has(role)) order.push(role);
+      map.set(role, [...(map.get(role) ?? []), row]);
+    });
+    return order.map((role) => ({ role, options: map.get(role) ?? [] }));
+  }, [rows]);
 
   useEffect(() => {
-    if (!presets.length) return;
-    const first = presets[0];
-    setGuests(first.domain === "table" ? Number(first.default_guests) || 2 : 1);
-    setSlots(
-      presets.map((preset) => ({
-        key: `${preset.scenario_id}:${preset.sort_order}:${preset.offer_id}`,
-        enabled: preset.preset_status !== "optional",
-      })),
-    );
-    setReplacementKey(null);
-    setGalleryKey(null);
-    setPayload(null);
-  }, [scenarioId, presets.length]);
+    if (!groups.length) return;
+    const nextSelected: Record<string, string> = {};
+    const nextEnabled: Record<string, boolean> = {};
+    const nextQuantity: Record<string, number> = {};
+    groups.forEach(({ role, options }) => {
+      const main = options.find((row) => row.type === "Основной");
+      const initial = main ?? options[0];
+      if (!initial) return;
+      nextSelected[role] = initial.offer_id;
+      nextEnabled[role] = Boolean(main);
+      nextQuantity[role] = 1;
+    });
+    setSelected(nextSelected);
+    setEnabled(nextEnabled);
+    setQuantity(nextQuantity);
+    setExpandedRole(null);
+    setGalleryOffer(null);
+    setAdded(false);
+  }, [scenarioId, groups.length]);
 
-  const presetByKey = useMemo(() => {
-    const map = new Map<string, PresetRow>();
-    presets.forEach((preset) => map.set(`${preset.scenario_id}:${preset.sort_order}:${preset.offer_id}`, preset));
-    return map;
-  }, [presets]);
+  const selectedRows = useMemo(() => groups.map(({ role, options }) => {
+    const row = options.find((option) => option.offer_id === selected[role]) ?? options.find((option) => option.type === "Основной") ?? options[0];
+    return row ? { role, row, enabled: enabled[role] !== false, quantity: quantity[role] || 1 } : null;
+  }).filter(Boolean) as Array<{role:string;row:FinalScenarioVariantRow;enabled:boolean;quantity:number}>, [groups, selected, enabled, quantity]);
 
-  const views = useMemo(() => {
-    if (!indexes) return [];
-    return slots
-      .map((slot) => {
-        const preset = presetByKey.get(slot.key);
-        return preset ? deriveProductView(preset, slot, guests, indexes) : null;
-      })
-      .filter((view): view is ProductView => Boolean(view));
-  }, [guests, indexes, presetByKey, slots]);
+  const activeRows = selectedRows.filter((item) => item.enabled);
+  const total = activeRows.reduce((sum, item) => sum + toPrice(item.row.price_rub) * item.quantity, 0);
+  const mainImages = activeRows.map((item) => catalogIndex.get(String(item.row.offer_id))?.primary_image_url).filter((value): value is string => Boolean(value)).slice(0, 5);
+  const galleryRow = rows.find((row) => row.offer_id === galleryOffer);
+  const galleryCatalog = galleryRow ? catalogIndex.get(String(galleryRow.offer_id)) : undefined;
+  const galleryImages = splitImages(galleryCatalog);
 
-  const meta = useMemo(() => (data?.scenarios ?? []).filter((row) => row.scenario_id === scenarioId), [data, scenarioId]);
-  const firstPreset = presets[0];
-  const summary = calculateSummary(views);
-  const blockers = getBlockingReasons(views);
-  const galleryView = galleryKey ? views.find((view) => view.key === galleryKey) : undefined;
-  const replacementView = replacementKey ? views.find((view) => view.key === replacementKey) : undefined;
-  const replacementPreset = replacementKey ? presetByKey.get(replacementKey) : undefined;
-  const replacementCandidates = replacementView && replacementPreset && data
-    ? getReplacementCandidates(scenarioId, replacementPreset.product_type, replacementView.offerId, data)
-    : [];
+  if (error) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Не удалось загрузить сценарий</h1><p>{error}</p></div></main>;
+  if (!data) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty">Загружаем решение…</div></main>;
+  if (!summary) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Сценарий не найден</h1><Link href="/constructor/">Вернуться к готовым решениям</Link></div></main>;
 
-  if (error) {
-    return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Не удалось загрузить сценарий</h1><p>{error}</p></div></main>;
-  }
-
-  if (!data || !indexes) {
-    return <main className="constructor-shell"><div className="constructor-wrap constructor-empty">Загружаем сценарий…</div></main>;
-  }
-
-  if (!firstPreset) {
-    return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Сценарий не найден</h1><Link href="/constructor/">Вернуться к сценариям</Link></div></main>;
-  }
-
-  const description = Array.from(new Set(meta.map((row) => row.styling_message).filter(Boolean))).join(". ") || firstPreset.selection_reason;
-  const isTable = firstPreset.domain === "table";
-
-  const updateSlot = (key: string, patch: Partial<SlotState>) => {
-    setSlots((current) => current.map((slot) => (slot.key === key ? { ...slot, ...patch } : slot)));
-    setPayload(null);
-  };
-
-  const addAll = () => {
-    const currentBlockers = getBlockingReasons(views);
-    if (currentBlockers.length) return;
-    const nextPayload = buildCartPayload(views);
-    console.log("ADD_ALL_TO_CART", nextPayload);
-    setPayload(nextPayload);
-    trackConstructorEvent("add_all_to_cart_clicked", { scenario_id: scenarioId, payload: nextPayload });
-    trackConstructorEvent("add_all_to_cart_success", { scenario_id: scenarioId, items: nextPayload.length });
+  const addSolution = () => {
+    const payload = activeRows.map((item) => ({
+      scenario_id: scenarioId,
+      scenario_name: summary.scenario_name,
+      offer_id: item.row.offer_id,
+      product_name: item.row.product_name,
+      quantity: item.quantity,
+      unit_price: toPrice(item.row.price_rub),
+    }));
+    try { localStorage.setItem("kultura-constructor-cart", JSON.stringify(payload)); } catch {}
+    setAdded(true);
   };
 
   return (
-    <main className="constructor-shell">
+    <main className="constructor-shell constructor-detail">
       <div className="constructor-wrap">
-        <Link className="constructor-back" href="/constructor/">← ВСЕ СЦЕНАРИИ</Link>
+        <nav className="constructor-topline">
+          <Link className="constructor-back" href="/constructor/">← ВСЕ ГОТОВЫЕ РЕШЕНИЯ</Link>
+          <span>{summary.space}</span>
+        </nav>
 
         <header className="constructor-page-head">
           <div>
-            <p className="constructor-kicker">{isTable ? "СЕРВИРОВКА" : "СПАЛЬНЯ"}</p>
-            <h1 className="constructor-title">{meta[0]?.scenario_name || firstPreset.scenario_name}</h1>
-            <p className="constructor-lead">{description}</p>
+            <p className="constructor-kicker">ГОТОВОЕ РЕШЕНИЕ · {summary.space.toUpperCase()}</p>
+            <h1 className="constructor-title">{summary.scenario_name}</h1>
+            <p className="constructor-lead">{summary.occasion}. Основная сборка уже выбрана — меняйте только те предметы, для которых в сценарии предусмотрены альтернативы.</p>
           </div>
-          {isTable && (
-            <div className="constructor-guests">
-              <p>КОЛИЧЕСТВО ПЕРСОН</p>
-              <div className="constructor-guest-buttons" role="group" aria-label="Количество персон">
-                {GUEST_OPTIONS.map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    className={guests === value ? "active" : ""}
-                    aria-pressed={guests === value}
-                    onClick={() => {
-                      setGuests(value);
-                      setPayload(null);
-                      trackConstructorEvent("guest_count_changed", { scenario_id: scenarioId, guests: value });
-                    }}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <div className="constructor-head-stat"><span>СОСТАВ</span><strong>{groups.length}</strong><small>групп предметов</small></div>
         </header>
 
+        <section className="constructor-hero-collage" aria-label="Выбранные предметы сценария">
+          {Array.from({ length: Math.max(4, Math.min(5, mainImages.length)) }, (_, index) => {
+            const image = mainImages[index];
+            return image ? <div key={`${image}-${index}`}><RemoteImage src={image} alt={`${summary.scenario_name}: выбранный предмет ${index + 1}`} loading={index < 3 ? "eager" : "lazy"}/></div> : <div className="constructor-image-fallback" key={index}>Фото товара</div>;
+          })}
+        </section>
+
         <div className="constructor-layout">
-          <div>
-            <section className="constructor-hero-collage" aria-label="Предметы сценария">
-              {views.filter((view) => view.enabled).slice(0, 5).map((view, index) => (
-                <button key={view.key} type="button" onClick={() => setGalleryKey(view.key)} aria-label={`Открыть фотографии ${view.name}`}>
-                  <ProductImage view={view} eager={index < 4} />
-                </button>
-              ))}
-            </section>
+          <section className="constructor-builder">
+            <header className="constructor-section-head">
+              <div><p className="constructor-kicker">СОСТАВ РЕШЕНИЯ</p><h2>Настройте под себя</h2></div>
+              <p>Основной предмет выбран автоматически. Нажмите «Другой вариант», чтобы заменить его на альтернативу из финального сценария.</p>
+            </header>
 
-            <section>
-              <header className="constructor-section-head">
-                <div>
-                  <p className="constructor-kicker">СОСТАВ</p>
-                  <h2>Настройте образ</h2>
-                </div>
-                <span>Обязательные позиции нельзя отключить. Default можно убрать, optional — добавить. Замены показываются только внутри того же типа товара.</span>
-              </header>
+            <div className="constructor-role-list">
+              {groups.map(({ role, options }, index) => {
+                const current = options.find((option) => option.offer_id === selected[role]) ?? options.find((option) => option.type === "Основной") ?? options[0];
+                if (!current) return null;
+                const catalog = catalogIndex.get(String(current.offer_id));
+                const image = catalog?.primary_image_url;
+                const isEnabled = enabled[role] !== false;
+                const hasMain = options.some((option) => option.type === "Основной");
+                const hasAlternatives = options.length > 1;
+                const q = quantity[role] || 1;
+                return <article className={`constructor-role ${isEnabled ? "active" : "inactive"}`} key={role}>
+                  <div className="constructor-role-number">{String(index + 1).padStart(2, "0")}</div>
+                  <button className="constructor-role-image" onClick={() => setGalleryOffer(current.offer_id)} aria-label={`Открыть изображения ${current.product_name}`}>
+                    {image ? <RemoteImage src={image} alt={current.product_name}/> : <span className="constructor-image-fallback">Фото товара</span>}
+                  </button>
+                  <div className="constructor-role-copy">
+                    <div className="constructor-role-heading"><div><p>{role}</p><h3>{current.product_name}</h3></div><button className={`constructor-inclusion ${isEnabled ? "active" : ""}`} onClick={() => setEnabled((state) => ({ ...state, [role]: !isEnabled }))}>{isEnabled ? "В РЕШЕНИИ ✓" : "+ ДОБАВИТЬ"}</button></div>
+                    <div className="constructor-product-facts">
+                      {current.material && <span>{current.material}</span>}
+                      {current.color && <span>Цвет: {current.color}</span>}
+                      <span>Арт. {current.offer_id}</span>
+                      {!hasMain && <span className="constructor-optional-label">Дополнение</span>}
+                    </div>
+                    {current.note && <p className="constructor-note">{current.note}</p>}
+                    <div className="constructor-role-bottom">
+                      <div className="constructor-price">{toPrice(current.price_rub) ? formatRub(toPrice(current.price_rub)) : "Цена уточняется"}</div>
+                      <div className="constructor-qty" aria-label="Количество"><button onClick={() => setQuantity((state) => ({ ...state, [role]: Math.max(1, q - 1) }))}>−</button><span>{q}</span><button onClick={() => setQuantity((state) => ({ ...state, [role]: q + 1 }))}>+</button></div>
+                      {hasAlternatives && <button className="constructor-change" onClick={() => setExpandedRole(expandedRole === role ? null : role)}>{expandedRole === role ? "СКРЫТЬ ВАРИАНТЫ" : `ДРУГОЙ ВАРИАНТ · ${options.length - 1}`}</button>}
+                    </div>
 
-              <div className="constructor-products">
-                {views.map((view) => {
-                  const preset = presetByKey.get(view.key)!;
-                  const slot = slots.find((item) => item.key === view.key)!;
-                  const variants = getVariantOptions(preset, slot, indexes);
-                  const replacements = getReplacementCandidates(scenarioId, preset.product_type, view.offerId, data);
-                  const priceMissing = !view.price && !(view.variantRequired && !view.variantSelected);
-                  const unavailable = isUnavailable(view.availabilityStatus);
+                    {expandedRole === role && <div className="constructor-alternatives">
+                      {options.map((option) => {
+                        const optionCatalog = catalogIndex.get(String(option.offer_id));
+                        const optionImage = optionCatalog?.primary_image_url;
+                        const picked = current.offer_id === option.offer_id;
+                        return <button key={option.offer_id} className={picked ? "selected" : ""} onClick={() => { setSelected((state) => ({ ...state, [role]: option.offer_id })); setEnabled((state) => ({ ...state, [role]: true })); setAdded(false); }}>
+                          <span className="constructor-alt-image">{optionImage ? <RemoteImage src={optionImage} alt={option.product_name}/> : <i/>}</span>
+                          <span className="constructor-alt-copy"><small>{option.type === "Основной" ? "ОСНОВНОЙ" : "АЛЬТЕРНАТИВА"}</small><strong>{option.product_name}</strong><em>{formatRub(toPrice(option.price_rub))}</em></span>
+                          <b>{picked ? "✓" : ""}</b>
+                        </button>;
+                      })}
+                    </div>}
+                  </div>
+                </article>;
+              })}
+            </div>
+          </section>
 
-                  return (
-                    <article className={`constructor-product ${view.enabled ? "" : "is-off"}`} key={view.key}>
-                      <div className="constructor-product-media">
-                        <button type="button" onClick={() => setGalleryKey(view.key)} aria-label={`Галерея ${view.name}`}>
-                          <ProductImage view={view} />
-                        </button>
-                        <div className="constructor-product-badges">
-                          <span className="constructor-chip">{humanProductType(view.productType)}</span>
-                          {view.status === "required" && <span className="constructor-chip required">ОБЯЗАТЕЛЬНО</span>}
-                        </div>
-                        {view.status !== "required" && (
-                          <button
-                            className={`constructor-toggle ${view.enabled ? "active" : ""}`}
-                            type="button"
-                            aria-pressed={view.enabled}
-                            onClick={() => {
-                              updateSlot(view.key, { enabled: !view.enabled });
-                              trackConstructorEvent("item_toggled", { scenario_id: scenarioId, offer_id: view.offerId, enabled: !view.enabled });
-                            }}
-                          >
-                            {view.enabled ? "✓ В НАБОРЕ" : "+ ДОБАВИТЬ"}
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="constructor-product-copy">
-                        <p>{view.collection || "КУЛЬТУРА ДОМА"}</p>
-                        <h3>{view.name}</h3>
-                        <div className="constructor-product-facts">
-                          {view.color && <span>Цвет: {view.color}</span>}
-                          {view.material && <span>{view.material}</span>}
-                          {view.size && <span>{view.size}</span>}
-                          <span>{view.quantity} шт.</span>
-                        </div>
-
-                        {view.variantRequired && (
-                          <div className="constructor-variant">
-                            <label htmlFor={`variant-${view.key}`}>ВЫБЕРИТЕ РАЗМЕР</label>
-                            <select
-                              id={`variant-${view.key}`}
-                              value={view.variantSelected ? view.offerId : ""}
-                              onChange={(event) => {
-                                updateSlot(view.key, { selectedVariantOfferId: event.target.value || undefined, enabled: true });
-                                if (event.target.value) trackConstructorEvent("variant_selected", { scenario_id: scenarioId, offer_id: event.target.value });
-                              }}
-                            >
-                              <option value="">Размер не выбран</option>
-                              {variants.map((variant) => {
-                                const variantPrice = toNumber(variant.price);
-                                return (
-                                  <option key={variant.offer_id} value={variant.offer_id} disabled={isUnavailable(variant.availability_status) || !variantPrice}>
-                                    {variant.size || variant.product_name} · {variantPrice ? formatRub(variantPrice) : "Цена уточняется"}{isUnavailable(variant.availability_status) ? " · Нет в наличии" : ""}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                            {!view.variantSelected && <p className="constructor-warning">Без выбора размера сценарий нельзя добавить в корзину.</p>}
-                          </div>
-                        )}
-
-                        <div className="constructor-price-row">
-                          <div className="constructor-price">
-                            {view.variantRequired && !view.variantSelected ? (
-                              <><span>{view.displayPrice ? `от ${formatRub(view.displayPrice)}` : "Цена уточняется"}</span><small>В итог попадёт после выбора размера</small></>
-                            ) : view.price ? (
-                              <><span>{formatRub(view.price)}</span>{view.oldPrice && <del>{formatRub(view.oldPrice)}</del>}</>
-                            ) : (
-                              <><span>Цена уточняется</span><small>Позиция не войдёт в корзину</small></>
-                            )}
-                          </div>
-                          <div className="constructor-actions">
-                            {replacements.length > 0 && <button type="button" onClick={() => setReplacementKey(view.key)}>ЗАМЕНИТЬ ТОВАР</button>}
-                            {view.productUrl && <a href={view.productUrl} target="_blank" rel="noreferrer">КАРТОЧКА ТОВАРА ↗</a>}
-                          </div>
-                        </div>
-                        {priceMissing && <p className="constructor-warning">Цена не получена: выберите другую позицию или дождитесь обновления данных.</p>}
-                        {unavailable && <p className="constructor-warning">Нет в наличии. {view.status === "required" ? "Выберите совместимую замену." : "Замените или отключите позицию."}</p>}
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          </div>
-
-          <aside className="constructor-summary" aria-label="Итог сценария">
-            <p>ВАШ СЦЕНАРИЙ</p>
-            <h2>Состав набора</h2>
+          <aside className="constructor-summary">
+            <p>ВАШЕ РЕШЕНИЕ</p>
+            <h2>{summary.scenario_name}</h2>
             <div className="constructor-summary-list">
-              {views.filter((view) => view.enabled).map((view) => (
-                <div className="constructor-summary-item" key={view.key}>
-                  <div>{view.primaryImageUrl ? <RemoteImage src={view.primaryImageUrl} alt={`${view.name}, ${view.collection}`} loading="lazy" /> : <div className="constructor-image-fallback" />}</div>
-                  <div><strong>{view.name}</strong><span>{view.variantRequired && !view.variantSelected ? "Выберите размер" : `${view.quantity} шт.${view.size ? ` · ${view.size}` : ""}`}</span></div>
-                  <b>{view.price && !isUnavailable(view.availabilityStatus) ? formatRub(view.price * view.quantity) : "—"}</b>
-                </div>
-              ))}
+              {activeRows.map((item) => <div className="constructor-summary-item" key={item.role}><span>{item.row.product_name}<small>{item.quantity} шт.</small></span><b>{formatRub(toPrice(item.row.price_rub) * item.quantity)}</b></div>)}
             </div>
-            <div className="constructor-summary-total">
-              <div><span>ИТОГО</span><strong>{formatRub(summary.total)}</strong></div>
-              <small>{summary.positions} поз. · {summary.units} шт.</small>
-              {summary.savings > 0 && <small className="constructor-saving">Выгода {formatRub(summary.savings)}</small>}
-              {blockers.length > 0 && <div className="constructor-blockers">{blockers.map((reason) => <div key={reason}>{reason}</div>)}</div>}
-              <button className="constructor-primary" type="button" disabled={blockers.length > 0} onClick={addAll}>
-                {blockers.some((reason) => reason.startsWith("Выберите размер")) ? "ВЫБЕРИТЕ РАЗМЕР" : blockers.length ? "ПРОВЕРЬТЕ СОСТАВ" : "ДОБАВИТЬ ВСЁ В КОРЗИНУ"}
-              </button>
-            </div>
+            <div className="constructor-summary-total"><span>ИТОГО</span><strong>{formatRub(total)}</strong><small>{activeRows.length} позиций в выбранной сборке</small></div>
+            <button className="constructor-primary" disabled={!activeRows.length} onClick={addSolution}>ДОБАВИТЬ РЕШЕНИЕ · {formatRub(total)}</button>
+            <p className="constructor-summary-hint">Вы можете изменить состав до оформления заказа.</p>
+            {added && <div className="constructor-success"><b>Решение сохранено</b><span>{activeRows.length} позиций добавлены в выбранный комплект.</span></div>}
           </aside>
         </div>
       </div>
 
-      <ReplacementDrawer
-        open={Boolean(replacementKey)}
-        source={replacementView}
-        candidates={replacementCandidates}
-        catalog={data.catalog}
-        onClose={() => setReplacementKey(null)}
-        onChoose={(candidate) => {
-          if (!replacementKey) return;
-          updateSlot(replacementKey, { replacementOfferId: String(candidate.offer_id), selectedVariantOfferId: undefined, enabled: true });
-          setReplacementKey(null);
-          trackConstructorEvent("item_replaced", { scenario_id: scenarioId, offer_id: candidate.offer_id, product_type: candidate.product_type });
-        }}
-      />
-
-      <GalleryModal view={galleryView} onClose={() => setGalleryKey(null)} />
-      <PayloadModal payload={payload} onClose={() => setPayload(null)} />
+      {galleryRow && galleryImages.length > 0 && <div className="constructor-overlay center" role="dialog" aria-modal="true" aria-label={`Галерея ${galleryRow.product_name}`}>
+        <button className="constructor-overlay-bg" onClick={() => setGalleryOffer(null)} aria-label="Закрыть"/>
+        <div className="constructor-modal constructor-gallery-modal">
+          <div className="constructor-panel-head"><div><p className="constructor-kicker">{galleryRow.role}</p><h2>{galleryRow.product_name}</h2></div><button className="constructor-panel-close" onClick={() => setGalleryOffer(null)}>×</button></div>
+          <div className="constructor-gallery-grid">{galleryImages.map((image, index) => <div key={`${image}-${index}`}><RemoteImage src={image} alt={`${galleryRow.product_name}, фото ${index + 1}`}/></div>)}</div>
+        </div>
+      </div>}
     </main>
-  );
-}
-
-function ReplacementDrawer({
-  open,
-  source,
-  candidates,
-  catalog,
-  onClose,
-  onChoose,
-}: {
-  open: boolean;
-  source?: ProductView;
-  candidates: CandidateRow[];
-  catalog: CatalogRow[];
-  onClose: () => void;
-  onChoose: (candidate: CandidateRow) => void;
-}) {
-  useEffect(() => {
-    if (!open) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const keydown = (event: KeyboardEvent) => event.key === "Escape" && onClose();
-    document.addEventListener("keydown", keydown);
-    return () => {
-      document.body.style.overflow = previous;
-      document.removeEventListener("keydown", keydown);
-    };
-  }, [open, onClose]);
-
-  if (!open || !source) return null;
-  const catalogByOffer = new Map(catalog.map((row) => [String(row.offer_id), row]));
-
-  return (
-    <div className="constructor-overlay" role="dialog" aria-modal="true" aria-label={`Заменить ${source.name}`}>
-      <button className="constructor-overlay-bg" type="button" onClick={onClose} aria-label="Закрыть окно замен" />
-      <aside className="constructor-drawer constructor-panel-content">
-        <header className="constructor-panel-head">
-          <div><p className="constructor-kicker">СОВМЕСТИМЫЕ ЗАМЕНЫ</p><h2>{humanProductType(source.productType)}</h2></div>
-          <button className="constructor-panel-close" type="button" onClick={onClose} aria-label="Закрыть">×</button>
-        </header>
-        <div className="constructor-candidates">
-          {candidates.length === 0 && <div className="constructor-empty">Для этого типа товара нет разрешённых замен.</div>}
-          {candidates.map((candidate) => {
-            const master = catalogByOffer.get(String(candidate.offer_id));
-            const price = toNumber(master?.price || candidate.price_rub);
-            const oldPrice = toNumber(master?.old_price || candidate.old_price_rub);
-            const image = master?.primary_image_url || candidate.primary_image_url;
-            const unavailable = isUnavailable(master?.availability_status);
-            return (
-              <article className="constructor-candidate" key={candidate.offer_id}>
-                <div>{image ? <RemoteImage src={image} alt={`${master?.product_name || candidate.product_name}, ${master?.collection || candidate.collection}`} loading="lazy" /> : <div className="constructor-image-fallback" />}</div>
-                <div>
-                  <p>{master?.collection || candidate.collection || "КУЛЬТУРА ДОМА"}</p>
-                  <h3>{master?.product_name || candidate.product_name}</h3>
-                  <span>{master?.material || candidate.material}{(master?.size || candidate.size) ? ` · ${master?.size || candidate.size}` : ""}</span>
-                  <strong>{price ? formatRub(price) : "Цена уточняется"}{oldPrice && price && oldPrice > price ? ` · ранее ${formatRub(oldPrice)}` : ""}</strong>
-                  {unavailable && <span style={{ color: "#8b5d3c", marginTop: 5 }}>Нет в наличии</span>}
-                  <div className="constructor-candidate-actions">
-                    <button type="button" disabled={!price || unavailable} onClick={() => onChoose(candidate)}>{!price ? "ЦЕНА УТОЧНЯЕТСЯ" : unavailable ? "НЕТ В НАЛИЧИИ" : "ВЫБРАТЬ"}</button>
-                    {(master?.product_url || candidate.product_url)?.startsWith("https://") && <a href={master?.product_url || candidate.product_url} target="_blank" rel="noreferrer">Открыть товар ↗</a>}
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </aside>
-    </div>
-  );
-}
-
-function GalleryModal({ view, onClose }: { view?: ProductView; onClose: () => void }) {
-  const [index, setIndex] = useState(0);
-  useEffect(() => {
-    if (!view) return;
-    setIndex(0);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const keydown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-      if (event.key === "ArrowRight") setIndex((current) => Math.min(view.images.length - 1, current + 1));
-      if (event.key === "ArrowLeft") setIndex((current) => Math.max(0, current - 1));
-    };
-    document.addEventListener("keydown", keydown);
-    return () => {
-      document.body.style.overflow = previous;
-      document.removeEventListener("keydown", keydown);
-    };
-  }, [view, onClose]);
-
-  if (!view) return null;
-  const images = view.images.length ? view.images : [view.primaryImageUrl].filter(Boolean);
-
-  return (
-    <div className="constructor-overlay center" role="dialog" aria-modal="true" aria-label={`Галерея ${view.name}`}>
-      <button className="constructor-overlay-bg" type="button" onClick={onClose} aria-label="Закрыть галерею" />
-      <section className="constructor-modal constructor-panel-content">
-        <header className="constructor-panel-head">
-          <div><p className="constructor-kicker">{view.collection}</p><h2>{view.name}</h2></div>
-          <button className="constructor-panel-close" type="button" onClick={onClose} aria-label="Закрыть">×</button>
-        </header>
-        <div className="constructor-gallery-body">
-          <div className="constructor-gallery-main">{images[index] ? <RemoteImage src={images[index]} alt={`${view.name}, фото ${index + 1}`} loading="eager" /> : <div className="constructor-image-fallback" />}</div>
-        </div>
-        {images.length > 1 && <div className="constructor-gallery-thumbs">{images.map((image, imageIndex) => <button type="button" className={index === imageIndex ? "active" : ""} key={`${image}-${imageIndex}`} onClick={() => setIndex(imageIndex)} aria-label={`Фото ${imageIndex + 1}`}><RemoteImage src={image} alt={`${view.name}, миниатюра ${imageIndex + 1}`} loading="lazy" /></button>)}</div>}
-      </section>
-    </div>
-  );
-}
-
-function PayloadModal({ payload, onClose }: { payload: CartPayloadItem[] | null; onClose: () => void }) {
-  useEffect(() => {
-    if (!payload) return;
-    const keydown = (event: KeyboardEvent) => event.key === "Escape" && onClose();
-    document.addEventListener("keydown", keydown);
-    return () => document.removeEventListener("keydown", keydown);
-  }, [payload, onClose]);
-
-  if (!payload) return null;
-  return (
-    <div className="constructor-overlay center" role="dialog" aria-modal="true" aria-label="Payload корзины">
-      <button className="constructor-overlay-bg" type="button" onClick={onClose} aria-label="Закрыть" />
-      <section className="constructor-modal constructor-panel-content" style={{ maxWidth: 620 }}>
-        <header className="constructor-panel-head">
-          <div><p className="constructor-kicker">MVP КОРЗИНА</p><h2>Сценарий готов</h2></div>
-          <button className="constructor-panel-close" type="button" onClick={onClose} aria-label="Закрыть">×</button>
-        </header>
-        <div className="constructor-json">
-          <p>Массив также выведен в console.log с меткой <code>ADD_ALL_TO_CART</code>.</p>
-          <pre>{JSON.stringify(payload, null, 2)}</pre>
-        </div>
-      </section>
-    </div>
   );
 }
