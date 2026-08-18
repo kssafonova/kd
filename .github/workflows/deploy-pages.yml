@@ -104,6 +104,9 @@ jobs:
       - name: Apply product preview rules
         run: python scripts/apply-product-preview-rules-v1.py
 
+      - name: Add full-screen Editorial story overlay
+        run: python scripts/add-editorial-story-overlay-v1.py
+
       - name: Install dependencies
         run: npm install
 
