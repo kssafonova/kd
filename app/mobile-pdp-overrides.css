@@ -62,6 +62,14 @@
     font-size: 10px;
   }
 
+  /* Text-entry fields need >=16px to stay readable and to stop iOS Safari
+     from auto-zooming the page when the field receives focus. */
+  .checkout-fields input,
+  .checkout-address input,
+  footer input {
+    font-size: 16px;
+  }
+
   .stores {
     padding: 14px 0;
     font-size: 10px;
