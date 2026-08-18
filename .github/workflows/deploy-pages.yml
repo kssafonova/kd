@@ -26,100 +26,80 @@ jobs:
         with:
           node-version: 22
 
-      - name: Sync workbook product specs
-        run: python scripts/sync-workbook-product-specs.py
-
-      - name: Restore previous quick-add flow and drawer size
-        run: python scripts/restore-quick-add-flow.py
-
-      - name: Add runtime image URL loader
-        run: python scripts/add-remote-image-loader.py
-
-      - name: Sync updated product image URLs
-        run: python scripts/sync-updated-product-image-urls.py
-
-      - name: Apply reference PDP gallery
-        run: python scripts/apply-pdp-reference-gallery.py
-
-      - name: Normalize single-color swatches
-        run: python scripts/normalize-single-color-swatches.py
-
-      - name: Apply adaptive story quick-buy and builder
+      - name: Run all migration patches
+        id: migration
+        continue-on-error: true
         shell: bash
         run: |
-          if grep -q 'story-v2-layer' app/page.tsx; then
-            echo "Adaptive story builder already present"
-          else
-            python scripts/apply-story-builder-v2.py
-          fi
-
-      - name: Refine story quick-buy preset
-        run: python scripts/refine-story-builder-v2.py
-
-      - name: Apply homepage reference redesign
-        run: python scripts/redesign-home-reference.py
-
-      - name: Add bedroom homepage feature
-        run: python scripts/add-home-bedroom-feature.py
-
-      - name: Refine homepage editorial layout
-        run: python scripts/refine-homepage-editorial.py
-
-      - name: Remove editorial landing filters
-        run: python scripts/remove-editorial-tabs.py
-
-      - name: Add Editorial scenario navigation
-        run: python scripts/add-editorial-scenario-navigation.py
-
-      - name: Add constructor homepage CTA
-        run: python scripts/add-constructor-home-cta.py
-
-      - name: Apply product catalog and size flow rules
-        run: python scripts/apply-product-catalog-rules-v1.py
-
-      - name: Apply strict catalog category mapping
-        run: python scripts/apply-catalog-category-mapping.py
-
-      - name: Apply product pricing and merchandising
-        run: python scripts/apply-product-pricing-merchandising-v1.py
-
-      - name: Apply PDP collection recommendations
-        run: python scripts/apply-pdp-collection-recommendations-v1.py
-
-      - name: Highlight key menu destinations
-        run: python scripts/highlight-menu-solutions-v1.py
-
-      - name: Remove retired capsules and collections
-        run: python scripts/remove-retired-editorials-v1.py
-
-      - name: Refine Editorial tabs
-        run: python scripts/refine-editorial-tabs-v1.py
-
-      - name: Add Ice Patterns assortment
-        run: python scripts/add-ice-pattern-products-v1.py
-
-      - name: Canonicalize Ice Patterns product data
-        run: python scripts/fix-ice-pattern-2000-2004-types.py
-
-      - name: Apply product preview rules
-        run: python scripts/apply-product-preview-rules-v1.py
-
-      - name: Add full-screen Editorial story overlay
-        run: python scripts/add-editorial-story-overlay-v1.py
-
-      - name: Apply final magazine homepage redesign
-        run: python scripts/redesign-home-magazine-v2.py
+          set -o pipefail
+          python scripts/migrate-site-with-diagnostics.py 2>&1 | tee /tmp/migration-run.log
 
       - name: Install dependencies
-        run: npm install
+        id: dependencies
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm install 2>&1 | tee /tmp/npm-install.log
 
       - name: Build static site
+        id: storefront_build
+        continue-on-error: true
+        if: steps.dependencies.outcome == 'success'
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NEXT_PUBLIC_BASE_PATH: /kd
-        run: npx next build
+        shell: bash
+        run: |
+          set -o pipefail
+          npx next build 2>&1 | tee /tmp/storefront-build.log
+
+      - name: Persist migration diagnostics
+        if: always() && (steps.migration.outcome == 'failure' || steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "# Site migration diagnostics"
+            echo
+            echo "migration=${{ steps.migration.outcome }}"
+            echo "dependencies=${{ steps.dependencies.outcome }}"
+            echo "build=${{ steps.storefront_build.outcome }}"
+            echo
+            if [ -f migration-errors.txt ]; then
+              echo "## Migration patches"
+              cat migration-errors.txt
+              echo
+            elif [ -f /tmp/migration-run.log ]; then
+              echo "## Migration runner"
+              cat /tmp/migration-run.log
+              echo
+            fi
+            if [ -f /tmp/npm-install.log ]; then
+              echo "## npm install"
+              cat /tmp/npm-install.log
+              echo
+            fi
+            if [ -f /tmp/storefront-build.log ]; then
+              echo "## Next build"
+              cat /tmp/storefront-build.log
+              echo
+            fi
+          } > migration-diagnostics.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- migration-diagnostics.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "Capture migration diagnostics"
+            git push origin HEAD:main
+          fi
+
+      - name: Stop after migration failure
+        if: always() && (steps.migration.outcome == 'failure' || steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
+        run: exit 1
 
       - name: Prepare legacy Pages source
+        if: steps.migration.outcome == 'success' && steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -141,6 +121,7 @@ jobs:
           mv "$names_file" /tmp/pages-output-names
 
       - name: Commit storefront source and static export
+        if: steps.migration.outcome == 'success' && steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -150,6 +131,9 @@ jobs:
           while IFS= read -r name; do
             git add -A -- "$name"
           done < /tmp/pages-output-names
+          if [ -f migration-diagnostics.txt ]; then
+            git rm -f migration-diagnostics.txt || true
+          fi
           if git diff --cached --quiet; then
             echo "Static storefront is already current"
             exit 0
