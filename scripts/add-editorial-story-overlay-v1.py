@@ -36,7 +36,7 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { o
       image:sku?.image??product.image,
       gallery:sku?.gallery??product.gallery,
       selectedColor:sku?.color??color,
-      selectedSize:size||sku?.size??product.selectedSize,
+      selectedSize:size||(sku?.size??product.selectedSize),
       selectedSkuId:sku?.id??product.selectedSkuId,
       quantity:1,
     };
@@ -113,7 +113,7 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { o
               const selected=selectedStoryIds.includes(item.id);
               const pending=selectingStory&&selected&&multiple&&!storySizes[item.id];
               return <div className={`editorial-story-catalog-item ${selected?"selected":""} ${pending?"pending-size":""}`} key={`story-product-${storyPreview.id}-${item.id}`}>
-                <ProductCard product={item} onClick={(product)=>{closeStory();onProduct(product)}} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)} selectionMode={selectingStory} selected={selected} pending={pending} onSelect={()=>toggleStoryProduct(item.id)}/>
+                <ProductCard product={item} onClick={(product)=>{closeStory();onProduct(product)}} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)} selectionMode={selectingStory} selected={selected} pending={false} onSelect={()=>toggleStoryProduct(item.id)}/>
                 {selectingStory&&selected&&multiple&&<label className={`editorial-story-size-select ${pending?"required":""}`}>
                   <span>РАЗМЕР</span>
                   <select value={storySizes[item.id]??""} onChange={event=>setStorySizes(current=>({...current,[item.id]:event.target.value}))}>
