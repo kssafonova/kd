@@ -10,6 +10,7 @@ import "./luna-editorial.css";
 import "./collection-flow.css";
 import "./editorial-magazine.css";
 import "./ice-editorial-zara.css";
+import "./editorial-story-overlay.css";
 import "./constructor-entry.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
