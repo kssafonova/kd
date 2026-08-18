@@ -13,6 +13,7 @@ import "./ice-editorial-zara.css";
 import "./editorial-story-overlay.css";
 import "./constructor-entry.css";
 import "./home-magazine-v2.css";
+import "./menu-zara-premium.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
 export const metadata: Metadata = {
