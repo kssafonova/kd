@@ -107,6 +107,9 @@ jobs:
       - name: Add full-screen Editorial story overlay
         run: python scripts/add-editorial-story-overlay-v1.py
 
+      - name: Apply final magazine homepage redesign
+        run: python scripts/redesign-home-magazine-v2.py
+
       - name: Install dependencies
         run: npm install
 
