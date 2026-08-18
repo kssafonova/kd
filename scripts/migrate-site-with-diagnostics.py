@@ -29,6 +29,7 @@ scripts = [
     "apply-product-preview-rules-v1.py",
     "add-editorial-story-overlay-v1.py",
     "redesign-home-magazine-v2.py",
+    "redesign-home-commerce-v3.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
