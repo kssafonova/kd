@@ -111,10 +111,33 @@ jobs:
         run: npm install
 
       - name: Build static site
+        id: storefront_build
+        continue-on-error: true
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NEXT_PUBLIC_BASE_PATH: /kd
-        run: npx next build
+        shell: bash
+        run: |
+          set -o pipefail
+          npx next build 2>&1 | tee /tmp/storefront-build.log
+
+      - name: Persist first build failure
+        if: steps.storefront_build.outcome == 'failure'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f build-diagnostics.txt ]; then
+            cp /tmp/storefront-build.log build-diagnostics.txt
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -- build-diagnostics.txt
+            git commit -m "Capture storefront build failure"
+            git push origin HEAD:main
+          fi
+
+      - name: Stop after failed build
+        if: steps.storefront_build.outcome == 'failure'
+        run: exit 1
 
       - name: Prepare legacy Pages source
         shell: bash
