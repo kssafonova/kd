@@ -6,6 +6,9 @@ import type {
   ConstructorData,
   ExpansionPatchRow,
   ExpansionRuleRow,
+  FinalConstructorData,
+  FinalScenarioSummaryRow,
+  FinalScenarioVariantRow,
   PresetRow,
   ScenarioMetaRow,
 } from "./types";
@@ -16,6 +19,12 @@ export const CONSTRUCTOR_DATA_FILES = [
   "kultura-doma-constructor-presets-final.csv",
   "kultura_doma_scenario_candidates.csv",
   "kultura_doma_constructor_scenarios.csv",
+  "kultura_doma_full_constructor_eligible_catalog.csv",
+] as const;
+
+export const FINAL_CONSTRUCTOR_DATA_FILES = [
+  "kultura_doma_scenarios_summary.csv",
+  "kultura_doma_scenarios_full_variants.csv",
   "kultura_doma_full_constructor_eligible_catalog.csv",
 ] as const;
 
@@ -92,4 +101,44 @@ export const loadConstructorData = () => {
       .catch((error) => { constructorDataPromise = null; throw error; });
   }
   return constructorDataPromise;
+};
+
+let finalConstructorDataPromise: Promise<FinalConstructorData> | null = null;
+
+export const loadFinalConstructorData = () => {
+  if (!finalConstructorDataPromise) {
+    finalConstructorDataPromise = Promise.all([
+      loadCsv<Record<string, string>>(FINAL_CONSTRUCTOR_DATA_FILES[0]),
+      loadCsv<Record<string, string>>(FINAL_CONSTRUCTOR_DATA_FILES[1]),
+      loadCsv<CatalogRow>(FINAL_CONSTRUCTOR_DATA_FILES[2]),
+    ])
+      .then(([summaryRaw, variantRaw, catalog]) => {
+        const summaries: FinalScenarioSummaryRow[] = summaryRaw.map((row) => ({
+          scenario_id: row.scenario_id ?? "",
+          scenario_name: row.scenario_name ?? "",
+          space: row.space ?? "",
+          occasion: row.occasion ?? "",
+          total_items: row.total_items ?? "",
+          required_items: row.required_items ?? "",
+          status: row.status ?? "",
+        }));
+        const variants: FinalScenarioVariantRow[] = variantRaw.map((row) => ({
+          scenario_name: row["Сценарий"] ?? "",
+          space: row["Пространство"] ?? "",
+          occasion: row["Повод"] ?? "",
+          role: row["Роль"] ?? "",
+          type: row["Тип"] ?? "",
+          offer_id: row.offer_id ?? "",
+          product_name: row["Название товара"] ?? "",
+          price_rub: row["Цена"] ?? "",
+          material: row["Материал"] ?? "",
+          color: row["Цвет"] ?? "",
+          product_url: row.URL ?? "",
+          note: row["Примечание"] ?? "",
+        }));
+        return { summaries, variants, catalog };
+      })
+      .catch((error) => { finalConstructorDataPromise = null; throw error; });
+  }
+  return finalConstructorDataPromise;
 };
