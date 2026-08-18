@@ -1,56 +1,57 @@
-/* Editorial landing — magazine-style index for capsules and collections.
-   Scoped to .collections.page so collection detail pages and product grids stay untouched. */
+/* Editorial landing — compact horizontal magazine rail for capsules and collections.
+   Scoped to .collections.page so Editorial details, story overlay and catalogue stay untouched. */
 
 .collections.page {
   max-width: none !important;
-  padding: 0 3.2vw 132px !important;
+  padding: 0 3.2vw 96px !important;
   background: #fff;
   color: var(--ink, #171817);
+  overflow: hidden;
 }
 
 .collections.page > .section-head {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 0 24px;
+  gap: 0 20px;
   width: min(1540px, 100%);
   margin: 0 auto;
-  padding: 96px 0 62px;
+  padding: 70px 0 42px;
   border-bottom: 1px solid var(--line, #d9d9d4);
 }
 
 .collections.page > .section-head > p {
   grid-column: 1 / 4;
   align-self: start;
-  margin: 8px 0 0;
+  margin: 5px 0 0;
   color: var(--muted, #777873);
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: .22em;
 }
 
 .collections.page > .section-head > h1 {
-  grid-column: 4 / 13;
-  max-width: 920px;
+  grid-column: 4 / 12;
+  max-width: 760px;
   margin: 0;
-  font: 400 clamp(52px, 5.7vw, 92px)/.94 var(--serif, "Tenor Sans", serif);
-  letter-spacing: -.045em;
+  font: 400 clamp(38px, 4.2vw, 66px)/.96 var(--serif, "Tenor Sans", serif);
+  letter-spacing: -.04em;
   text-transform: uppercase;
 }
 
 .collections.page > .center-tabs {
   justify-content: flex-start;
-  gap: 34px;
+  gap: 30px;
   width: min(1540px, 100%);
-  margin: 0 auto 54px;
+  margin: 0 auto 34px;
   padding: 0;
   border-bottom: 1px solid var(--line, #d9d9d4);
 }
 
 .collections.page > .center-tabs button {
-  min-height: 48px;
-  padding: 16px 0 14px;
+  min-height: 43px;
+  padding: 14px 0 12px;
   color: var(--muted, #777873);
   border-bottom: 1px solid transparent;
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: .17em;
   text-transform: uppercase;
 }
@@ -60,186 +61,138 @@
   border-bottom-color: var(--ink, #171817);
 }
 
-/* Magazine index: twelve-column canvas with deliberately unequal stories. */
+/* ----------------------------------------------------------------------
+   MAGAZINE RAIL
+   Deliberately shows a piece of the next story to communicate scrolling.
+   ---------------------------------------------------------------------- */
 .collections.page .collection-grid {
   counter-reset: editorial-story;
-  display: grid !important;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 128px 24px !important;
-  width: min(1540px, 100%);
-  margin: 0 auto;
+  display: flex !important;
+  align-items: flex-start;
+  gap: 20px !important;
+  width: calc(100% + 3.2vw);
+  max-width: none !important;
+  margin: 0 -3.2vw 0 0;
+  padding: 0 10vw 18px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 0;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
+
+.collections.page .collection-grid::-webkit-scrollbar { display: none; }
 
 .collections.page .collection-grid > article {
   counter-increment: editorial-story;
-  min-width: 0;
   position: relative;
+  flex: 0 0 clamp(390px, 35vw, 560px);
+  min-width: 0;
+  margin: 0 !important;
+  scroll-snap-align: start;
+}
+
+.collections.page .collection-grid > article:nth-child(3n + 2) {
+  flex-basis: clamp(420px, 39vw, 620px);
+  padding-top: 54px;
+}
+
+.collections.page .collection-grid > article:nth-child(3n) {
+  flex-basis: clamp(340px, 30vw, 480px);
+  padding-top: 18px;
 }
 
 .collections.page .collection-grid > article::before {
   content: "0" counter(editorial-story);
   position: absolute;
   z-index: 2;
-  top: 14px;
-  left: 14px;
+  top: 12px;
+  left: 12px;
   color: #fff;
-  font-size: 8px;
+  font-size: 7px;
   letter-spacing: .18em;
-  text-shadow: 0 1px 12px rgba(0,0,0,.35);
+  text-shadow: 0 1px 10px rgba(0,0,0,.35);
   pointer-events: none;
 }
 
+.collections.page .collection-grid > article:nth-child(3n + 2)::before { top: 66px; }
+.collections.page .collection-grid > article:nth-child(3n)::before { top: 30px; }
+
 .collections.page .collection-grid > article > button {
+  display: block !important;
   width: 100%;
   padding: 0;
-  text-align: left;
   background: transparent;
-  display: grid;
-  align-items: end;
+  text-align: left;
 }
 
-.collections.page .collection-grid > article img {
+.collections.page .collection-grid > article img,
+.collections.page .collection-grid > article:nth-child(n) img {
   display: block;
   width: 100%;
-  height: 100%;
-  min-height: 0;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
   background: #f2f2ef;
-  transition: transform .8s cubic-bezier(.22,.61,.36,1);
+  transition: transform .65s cubic-bezier(.22,.61,.36,1);
+}
+
+.collections.page .collection-grid > article:nth-child(3n + 2) img {
+  aspect-ratio: 5 / 4;
+}
+
+.collections.page .collection-grid > article:nth-child(3n) img {
+  aspect-ratio: 3 / 4;
 }
 
 .collections.page .collection-grid > article > button:hover img {
   transform: scale(1.012);
 }
 
-.collections.page .collection-grid > article > button > div {
+.collections.page .collection-grid > article > button > div,
+.collections.page .collection-grid > article:nth-child(n) > button > div {
   min-width: 0;
+  max-width: 94%;
+  padding: 15px 0 0 !important;
   background: #fff;
 }
 
 .collections.page .collection-grid h2 {
   margin: 0;
-  font: 400 clamp(34px, 3.6vw, 58px)/.98 var(--serif, "Tenor Sans", serif);
-  letter-spacing: -.035em;
+  font: 400 clamp(24px, 2.35vw, 36px)/1 var(--serif, "Tenor Sans", serif);
+  letter-spacing: -.03em;
   text-transform: uppercase;
 }
 
 .collections.page .collection-grid p {
-  max-width: 48ch;
-  margin: 17px 0 0;
+  max-width: 44ch;
+  margin: 9px 0 0;
   color: var(--muted, #6f716d);
-  font-size: 11px;
-  line-height: 1.72;
+  font-size: 9px;
+  line-height: 1.58;
 }
 
 .collections.page .collection-grid span {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  margin-top: 25px;
-  padding-bottom: 6px;
+  gap: 10px;
+  margin-top: 14px;
+  padding-bottom: 4px;
   border-bottom: 1px solid currentColor;
   color: var(--ink, #171817);
-  font-size: 8px;
-  letter-spacing: .16em;
+  font-size: 7px;
+  letter-spacing: .14em;
 }
 
 .collections.page .collection-grid span svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
 }
 
-/* 01 — cover story: broad image, editorial copy as a side column. */
-.collections.page .collection-grid > article:nth-child(6n + 1) {
-  grid-column: 1 / 13;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 1) > button {
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 1) img {
-  grid-column: 1 / 9;
-  height: min(76vw, 900px);
-  max-height: 78vh;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 1) > button > div {
-  grid-column: 9 / 13;
-  align-self: end;
-  padding: 0 2vw 24px 18px;
-}
-
-/* 02 — reverse feature: text column first, large image shifted right. */
-.collections.page .collection-grid > article:nth-child(6n + 2) {
-  grid-column: 2 / 12;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 2) > button {
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 24px;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 2) img {
-  grid-column: 5 / 11;
-  grid-row: 1;
-  height: min(70vw, 820px);
-  max-height: 76vh;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 2) > button > div {
-  grid-column: 1 / 5;
-  grid-row: 1;
-  align-self: end;
-  padding: 0 30px 28px 0;
-}
-
-/* Future stories automatically rotate through more magazine proportions. */
-.collections.page .collection-grid > article:nth-child(6n + 3) {
-  grid-column: 1 / 7;
-}
-.collections.page .collection-grid > article:nth-child(6n + 3) img {
-  height: min(72vw, 880px);
-}
-.collections.page .collection-grid > article:nth-child(6n + 3) > button > div {
-  padding: 24px 10% 0 0;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 4) {
-  grid-column: 8 / 13;
-  margin-top: 160px;
-}
-.collections.page .collection-grid > article:nth-child(6n + 4) img {
-  height: min(58vw, 700px);
-}
-.collections.page .collection-grid > article:nth-child(6n + 4) > button > div {
-  padding: 24px 0 0 12%;
-}
-
-.collections.page .collection-grid > article:nth-child(6n + 5) {
-  grid-column: 2 / 11;
-}
-.collections.page .collection-grid > article:nth-child(6n + 5) img {
-  height: min(48vw, 650px);
-}
-.collections.page .collection-grid > article:nth-child(6n + 5) > button > div {
-  max-width: 620px;
-  padding-top: 24px;
-}
-
-.collections.page .collection-grid > article:nth-child(6n) {
-  grid-column: 5 / 13;
-}
-.collections.page .collection-grid > article:nth-child(6n) img {
-  height: min(62vw, 760px);
-}
-.collections.page .collection-grid > article:nth-child(6n) > button > div {
-  max-width: 620px;
-  padding: 24px 0 0 16%;
-}
-
-/* Product tab remains a product catalogue, only shares the editorial width. */
+/* Product tab remains the regular catalogue. */
 .collections.page .editorial-solutions-grid,
 .collections.page > .catalog-empty {
   width: min(1540px, 100%);
@@ -249,66 +202,72 @@
 
 @media (max-width: 900px) {
   .collections.page {
-    padding: 0 14px 88px !important;
+    padding: 0 14px 72px !important;
   }
 
   .collections.page > .section-head {
     display: block;
-    padding: 60px 0 38px;
+    padding: 46px 0 30px;
   }
 
   .collections.page > .section-head > p {
-    margin: 0 0 14px;
-    font-size: 8px;
+    margin: 0 0 11px;
+    font-size: 7px;
   }
 
   .collections.page > .section-head > h1 {
-    font-size: clamp(40px, 11vw, 62px);
+    max-width: 540px;
+    font-size: clamp(34px, 8.7vw, 50px);
     line-height: .98;
   }
 
   .collections.page > .center-tabs {
-    gap: 26px;
-    margin-bottom: 34px;
+    gap: 24px;
+    margin-bottom: 24px;
   }
 
   .collections.page .collection-grid {
-    display: block !important;
+    width: calc(100% + 14px);
+    margin-right: -14px;
+    gap: 10px !important;
+    padding: 0 18vw 14px 0;
+    scroll-snap-type: x mandatory;
   }
 
   .collections.page .collection-grid > article,
   .collections.page .collection-grid > article:nth-child(n) {
-    margin: 0 0 74px;
+    flex: 0 0 68vw;
+    padding-top: 0;
   }
 
-  .collections.page .collection-grid > article > button,
-  .collections.page .collection-grid > article:nth-child(n) > button {
-    display: block;
+  .collections.page .collection-grid > article:nth-child(2n) {
+    flex-basis: 76vw;
+    padding-top: 32px;
   }
+
+  .collections.page .collection-grid > article::before,
+  .collections.page .collection-grid > article:nth-child(n)::before {
+    top: 10px;
+    left: 10px;
+  }
+
+  .collections.page .collection-grid > article:nth-child(2n)::before { top: 42px; }
 
   .collections.page .collection-grid > article img,
   .collections.page .collection-grid > article:nth-child(n) img {
-    width: 100%;
-    height: auto;
-    max-height: none;
     aspect-ratio: 4 / 5;
   }
 
   .collections.page .collection-grid > article:nth-child(2n) img {
-    aspect-ratio: 4 / 3;
-  }
-
-  .collections.page .collection-grid > article > button > div,
-  .collections.page .collection-grid > article:nth-child(n) > button > div {
-    padding: 20px 4px 0;
+    aspect-ratio: 5 / 4;
   }
 
   .collections.page .collection-grid h2 {
-    font-size: clamp(32px, 9vw, 46px);
+    font-size: clamp(25px, 6.5vw, 34px);
   }
 
   .collections.page .collection-grid p {
-    font-size: 10px;
+    font-size: 9px;
   }
 }
 
@@ -319,19 +278,29 @@
   }
 
   .collections.page > .section-head {
-    padding-top: 44px;
+    padding-top: 38px;
   }
 
   .collections.page > .section-head > h1 {
-    font-size: 39px;
+    font-size: 34px;
+  }
+
+  .collections.page .collection-grid {
+    width: calc(100% + 12px);
+    margin-right: -12px;
+    padding-right: 20vw;
   }
 
   .collections.page .collection-grid > article,
   .collections.page .collection-grid > article:nth-child(n) {
-    margin-bottom: 58px;
+    flex-basis: 74vw;
+  }
+
+  .collections.page .collection-grid > article:nth-child(2n) {
+    flex-basis: 82vw;
   }
 
   .collections.page .collection-grid h2 {
-    font-size: 32px;
+    font-size: 27px;
   }
 }
