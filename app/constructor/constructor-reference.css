@@ -1,0 +1,306 @@
+/* Screenshot-matched editorial landing for /constructor/ only.
+   Loaded after constructor.css so the detail/builder logic stays intact. */
+
+.constructor-landing.constructor-shell {
+  background: #fff;
+  color: #171817;
+  padding: 22px 30px 96px;
+}
+
+.constructor-landing .constructor-wrap {
+  max-width: 1540px;
+  margin: 0 auto;
+}
+
+.constructor-landing .constructor-topline {
+  min-height: 38px;
+  border-bottom: 1px solid #dadbd7;
+  color: #8e918d;
+  font-size: 8px;
+  letter-spacing: .17em;
+}
+
+.constructor-landing .constructor-topline span,
+.constructor-landing .constructor-back {
+  font-weight: 400;
+}
+
+.constructor-landing .constructor-landing-head {
+  max-width: 920px;
+  padding: 58px 0 42px;
+}
+
+.constructor-landing .constructor-kicker {
+  color: #a66f4c;
+  font-size: 7px;
+  letter-spacing: .2em;
+}
+
+.constructor-landing .constructor-title {
+  margin-top: 10px;
+  font: 400 clamp(42px, 4.25vw, 66px)/.98 var(--serif, "Tenor Sans", Arial, sans-serif);
+  letter-spacing: -.04em;
+  text-transform: uppercase;
+}
+
+.constructor-landing .constructor-lead {
+  max-width: 700px;
+  margin-top: 13px;
+  color: #777a76;
+  font-size: 10px;
+  line-height: 1.65;
+}
+
+.constructor-landing .constructor-filter {
+  gap: 34px;
+  margin: 0 0 25px;
+  border-bottom: 1px solid #dedfdb;
+}
+
+.constructor-landing .constructor-filter button {
+  min-height: 38px;
+  padding: 12px 0 11px;
+  color: #969995;
+  border-bottom-width: 1px;
+  font-size: 7px;
+  letter-spacing: .16em;
+}
+
+.constructor-landing .constructor-filter button.active {
+  color: #181918;
+  border-color: #181918;
+}
+
+.constructor-landing .constructor-scenario-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 20px;
+  row-gap: 46px;
+}
+
+.constructor-landing .constructor-scenario-card {
+  min-width: 0;
+  background: transparent;
+}
+
+.constructor-landing .constructor-scenario-collage {
+  aspect-ratio: 1.52 / 1;
+  grid-template-columns: 1.42fr .68fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0;
+  background: #f3f3f1;
+}
+
+.constructor-landing .constructor-scenario-collage > div {
+  background: #f5f5f3;
+}
+
+.constructor-landing .constructor-scenario-collage > div:nth-child(2),
+.constructor-landing .constructor-scenario-collage > div:nth-child(3) {
+  border-left: 1px solid #f0f0ed;
+}
+
+.constructor-landing .constructor-scenario-collage img {
+  object-fit: contain;
+  object-position: center;
+  background: #f5f5f3;
+  transform: none !important;
+}
+
+/* Bedroom scenarios usually carry an interior hero image. Let the large image
+   fill the frame while keeping the two product images editorial/clean. */
+.constructor-landing .constructor-scenario-card:nth-child(2) .constructor-scenario-collage > div:first-child img,
+.constructor-landing .constructor-scenario-card:nth-child(4) .constructor-scenario-collage > div:first-child img {
+  object-fit: cover;
+}
+
+.constructor-landing .constructor-scenario-copy {
+  padding: 17px 2px 0;
+}
+
+.constructor-landing .constructor-card-labels {
+  gap: 10px;
+  color: #888b87;
+  font-size: 6.5px;
+  letter-spacing: .15em;
+}
+
+.constructor-landing .constructor-card-labels span + span:before {
+  margin-right: 10px;
+}
+
+.constructor-landing .constructor-scenario-copy h2 {
+  margin-top: 7px;
+  font: 400 clamp(24px, 2.35vw, 36px)/1.02 var(--serif, "Tenor Sans", Arial, sans-serif);
+  letter-spacing: -.025em;
+}
+
+.constructor-landing .constructor-card-mood {
+  max-width: 39ch;
+  min-height: 31px;
+  margin: 7px 0 0;
+  color: #858884;
+  font-size: 8.5px;
+  line-height: 1.55;
+  font-style: italic;
+}
+
+.constructor-landing .constructor-scenario-meta {
+  min-height: 47px;
+  margin-top: 13px;
+  padding-top: 11px;
+  border-top: 1px solid #ecece8;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+/* The reference does not expose technical composition counts. */
+.constructor-landing .constructor-scenario-meta small {
+  display: none;
+}
+
+.constructor-landing .constructor-scenario-meta strong {
+  margin: 0;
+  color: #242523;
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.constructor-landing .constructor-card-savings {
+  margin-top: 4px;
+  color: #6d806e;
+  font-size: 7px;
+  font-style: normal;
+}
+
+.constructor-landing .constructor-primary-link {
+  align-self: flex-start;
+  gap: 15px;
+  min-height: 24px;
+  padding: 0 0 4px;
+  border-bottom: 1px solid #777a76;
+  color: #4f514e;
+  font-size: 6.5px;
+  letter-spacing: .14em;
+}
+
+.constructor-landing .constructor-primary-link span {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.constructor-landing .constructor-image-fallback {
+  background: #f5f5f3;
+  color: #b4b6b2;
+  font-size: 8px;
+}
+
+@media (min-width: 1500px) {
+  .constructor-landing.constructor-shell { padding-left: 42px; padding-right: 42px; }
+  .constructor-landing .constructor-scenario-grid { column-gap: 24px; row-gap: 54px; }
+}
+
+@media (max-width: 900px) {
+  .constructor-landing.constructor-shell {
+    padding: 16px 14px 82px;
+  }
+
+  .constructor-landing .constructor-topline {
+    min-height: 34px;
+    font-size: 7px;
+  }
+
+  .constructor-landing .constructor-landing-head {
+    padding: 42px 0 30px;
+  }
+
+  .constructor-landing .constructor-title {
+    font-size: clamp(34px, 9vw, 48px);
+  }
+
+  .constructor-landing .constructor-lead {
+    max-width: 560px;
+    font-size: 10px;
+  }
+
+  .constructor-landing .constructor-filter {
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+
+  .constructor-landing .constructor-filter button {
+    font-size: 7px;
+  }
+
+  .constructor-landing .constructor-scenario-grid {
+    grid-template-columns: 1fr;
+    row-gap: 38px;
+  }
+
+  .constructor-landing .constructor-scenario-collage {
+    aspect-ratio: 1.38 / 1;
+  }
+
+  .constructor-landing .constructor-scenario-copy {
+    padding-top: 14px;
+  }
+
+  .constructor-landing .constructor-scenario-copy h2 {
+    font-size: clamp(25px, 7vw, 34px);
+  }
+
+  .constructor-landing .constructor-card-mood {
+    min-height: 0;
+    max-width: 46ch;
+    font-size: 9px;
+  }
+
+  .constructor-landing .constructor-scenario-meta {
+    min-height: 44px;
+    margin-top: 11px;
+  }
+
+  .constructor-landing .constructor-scenario-meta strong {
+    font-size: 10px;
+  }
+
+  .constructor-landing .constructor-primary-link {
+    font-size: 7px;
+  }
+}
+
+@media (max-width: 520px) {
+  .constructor-landing.constructor-shell {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .constructor-landing .constructor-landing-head {
+    padding-top: 35px;
+  }
+
+  .constructor-landing .constructor-title {
+    font-size: 35px;
+  }
+
+  .constructor-landing .constructor-lead {
+    font-size: 9.5px;
+  }
+
+  .constructor-landing .constructor-scenario-collage {
+    grid-template-columns: 1.38fr .62fr;
+    aspect-ratio: 1.23 / 1;
+  }
+
+  .constructor-landing .constructor-card-labels {
+    font-size: 6px;
+  }
+
+  .constructor-landing .constructor-scenario-copy h2 {
+    font-size: 28px;
+  }
+
+  .constructor-landing .constructor-scenario-meta {
+    gap: 10px;
+  }
+}
