@@ -480,15 +480,13 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
-  const [kind,setKind]=useState<"Истории"|"Готовые решения">("Истории");
   const [storyPreview,setStoryPreview]=useState<Editorial|null>(null);
   const [selectingStory,setSelectingStory]=useState(false);
   const [selectedStoryIds,setSelectedStoryIds]=useState<number[]>([]);
   const [storySizes,setStorySizes]=useState<Record<number,string>>({});
 
-  const solutionProductIds=Array.from(new Set(editorials.flatMap(item=>item.productIds)));
-  const solutionProducts=solutionProductIds.map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
   const storyItems=(storyPreview?.productIds??[]).map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
 
   const sizeOptions=(product:Product)=>Array.from(new Set((product.skus??[]).map(item=>item.size).filter(Boolean)));
@@ -541,7 +539,6 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { o
     const onKey=(event:KeyboardEvent)=>{if(event.key==="Escape")closeStory()};
     window.addEventListener("keydown",onKey);
     return()=>{document.body.style.overflow=previous;window.removeEventListener("keydown",onKey)};
-  // closeStory intentionally stays local to this overlay lifecycle
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[storyPreview]);
 
@@ -558,13 +555,24 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { o
   };
 
   return <div className="collections page">
-    <div className="section-head"><p>EDITORIAL</p><h1>Истории и готовые решения</h1></div>
-    <div className="center-tabs">{(["Истории","Готовые решения"] as const).map(x=><button key={x} className={kind===x?"active":""} onClick={()=>setKind(x)}>{x}</button>)}</div>
-    {kind==="Истории"?
-      <div className="collection-grid">{editorials.map((item)=><article key={item.id}><button onClick={()=>openStory(item)}><img src={assetUrl(item.images[1]??item.images[0])} alt={item.name}/><div><h2>{item.name}</h2><p>{item.description}</p><span>СМОТРЕТЬ ИСТОРИЮ <Icon name="arrow"/></span></div></button></article>)}</div>
-      :solutionProducts.length?
-        <div className="product-grid editorial-solutions-grid">{solutionProducts.map(product=><ProductCard key={`editorial-solution-${product.id}`} product={product} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(product.id)}/>)}</div>
-        :<div className="catalog-empty"><p>В опубликованных историях пока нет товаров</p></div>}
+    <header className="section-head editorial-index-head">
+      <p>EDITORIAL</p>
+      <h1>Капсулы и коллекции</h1>
+    </header>
+
+    <div className="collection-grid" aria-label="Капсулы и коллекции">
+      {editorials.map((item)=><article key={item.id}>
+        <button type="button" onClick={()=>openStory(item)}>
+          <img src={assetUrl(item.images[1]??item.images[0])} alt={item.name}/>
+          <div>
+            <small>{item.kind}</small>
+            <h2>{item.name}</h2>
+            <p>{item.description}</p>
+            <span>СМОТРЕТЬ ИСТОРИЮ <Icon name="arrow"/></span>
+          </div>
+        </button>
+      </article>)}
+    </div>
 
     {storyPreview&&<section className={`editorial-story-overlay ${selectingStory?"story-selection-mode":""}`} role="dialog" aria-modal="true" aria-label={`История ${storyPreview.name}`}>
       <div className={`editorial-story-visual ${storyPreview.images.length<2?"single":""}`}>
