@@ -1,6 +1,5 @@
 /* Full-screen Editorial story overlay.
-   Left side behaves like a digital magazine: every editorial image is a full page.
-   Right side remains a fixed shoppable story panel. */
+   Left: scroll-snapped digital magazine. Right: catalog-style shoppable grid. */
 
 .editorial-story-overlay{
   position:fixed;
@@ -10,7 +9,7 @@
   height:100dvh;
   background:#fff;
   display:grid;
-  grid-template-columns:minmax(0,58fr) minmax(420px,42fr);
+  grid-template-columns:minmax(0,58fr) minmax(440px,42fr);
   overflow:hidden;
 }
 
@@ -27,7 +26,6 @@
   scroll-behavior:smooth;
   overscroll-behavior:contain;
   scrollbar-width:none;
-  counter-reset:editorial-page;
 }
 .editorial-story-visual::-webkit-scrollbar{display:none}
 .editorial-story-visual.single{display:block}
@@ -42,23 +40,6 @@
   background:#e8e9e6;
   scroll-snap-align:start;
   scroll-snap-stop:always;
-  counter-increment:editorial-page;
-}
-.editorial-story-visual figure::after{
-  content:counter(editorial-page, decimal-leading-zero);
-  position:absolute;
-  left:24px;
-  bottom:22px;
-  z-index:2;
-  min-width:36px;
-  padding:7px 9px 6px;
-  background:rgba(255,255,255,.88);
-  color:#111;
-  font-size:8px;
-  line-height:1;
-  letter-spacing:.16em;
-  text-align:center;
-  backdrop-filter:blur(8px);
 }
 .editorial-story-visual img{
   display:block;
@@ -66,7 +47,23 @@
   height:100%;
   object-fit:cover;
 }
+.editorial-story-visual figcaption{
+  position:absolute;
+  left:24px;
+  bottom:22px;
+  z-index:2;
+  min-width:54px;
+  padding:7px 9px 6px;
+  background:rgba(255,255,255,.88);
+  color:#111;
+  font-size:8px;
+  line-height:1;
+  letter-spacing:.14em;
+  text-align:center;
+  backdrop-filter:blur(8px);
+}
 
+/* SHOP PANEL ------------------------------------------------------------- */
 .editorial-story-shop{
   position:relative;
   height:100dvh;
@@ -79,9 +76,9 @@
 }
 .editorial-story-close{
   position:absolute;
-  z-index:5;
-  right:24px;
-  top:22px;
+  z-index:8;
+  right:22px;
+  top:20px;
   width:38px;
   height:38px;
   display:grid;
@@ -93,51 +90,104 @@
 }
 .editorial-story-close svg{width:21px;height:21px}
 
-.editorial-story-shop-head{padding:58px 58px 28px 52px;border-bottom:1px solid #e8e8e4}
-.editorial-story-shop-head>small{display:block;margin:0 0 13px;font-size:8px;letter-spacing:.23em;color:#6f716d}
-.editorial-story-shop-head h2{margin:0;font:400 clamp(34px,3.35vw,58px)/1 var(--serif,"Tenor Sans",serif);letter-spacing:-.035em}
-.editorial-story-shop-head p{max-width:520px;margin:18px 0 0;font-size:11px;line-height:1.65;color:#6b6d69}
+.editorial-story-shop-head{
+  padding:48px 64px 22px 30px;
+  border-bottom:1px solid #e8e8e4;
+  flex:0 0 auto;
+}
+.editorial-story-shop-head>small{display:block;margin:0 0 10px;font-size:8px;letter-spacing:.22em;color:#6f716d}
+.editorial-story-shop-head h2{margin:0;font:400 clamp(28px,2.6vw,46px)/1 var(--serif,"Tenor Sans",serif);letter-spacing:-.03em}
+.editorial-story-shop-head p{max-width:520px;margin:13px 0 0;font-size:10px;line-height:1.6;color:#6b6d69}
+.editorial-story-selection-tools{margin-top:14px;padding-top:12px;border-top:1px solid #ecece8;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.editorial-story-selection-tools span{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#777973}
+.editorial-story-selection-tools button{border:0;background:transparent;padding:0;font-size:9px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;color:#111}
 
 .editorial-story-products{
   flex:1;
   min-height:0;
   overflow:auto;
   overscroll-behavior:contain;
-  padding:5px 52px 22px;
+  padding:20px 18px 28px;
+  scrollbar-width:thin;
 }
-.editorial-story-product{
-  width:100%;
+.editorial-story-catalog-grid.product-grid{
   display:grid;
-  grid-template-columns:86px minmax(0,1fr) auto;
-  gap:18px;
-  align-items:center;
-  padding:17px 0;
-  border:0;
-  border-bottom:1px solid #ecece8;
-  background:transparent;
-  text-align:left;
-  color:#111;
-  cursor:pointer;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:30px 12px;
+  align-items:start;
 }
-.editorial-story-product-image{width:86px;height:104px;overflow:hidden;background:#f2f2ef}
-.editorial-story-product-image img{display:block;width:100%;height:100%;object-fit:cover}
-.editorial-story-product-copy{min-width:0;display:flex;flex-direction:column;gap:7px}
-.editorial-story-product-copy strong{font-size:12px;font-weight:400;line-height:1.35}
-.editorial-story-product-copy span{font-size:9px;line-height:1.4;color:#777973;text-transform:lowercase}
-.editorial-story-product>strong{align-self:center;font-size:11px;font-weight:400;white-space:nowrap}
+.editorial-story-catalog-item{min-width:0;position:relative}
+.editorial-story-catalog-item .product-card{min-width:0;margin:0}
+.editorial-story-catalog-item .product-image{aspect-ratio:1/1;overflow:hidden;background:#f3f3f0}
+.editorial-story-catalog-item .product-image .product-media-scroll,
+.editorial-story-catalog-item .product-image .product-media-scroll>*{height:100%}
+.editorial-story-catalog-item .product-copy{padding-top:9px}
+.editorial-story-catalog-item .product-link strong{font-size:10px;line-height:1.35;font-weight:400}
+.editorial-story-catalog-item .product-link small{font-size:8px;line-height:1.35}
+.editorial-story-catalog-item .price{font-size:10px}
+.editorial-story-catalog-item .plp-swatches{margin-top:8px}
+.editorial-story-catalog-item .plp-swatches button{width:15px;height:15px}
 
-.editorial-story-shop-footer{padding:21px 52px 27px;border-top:1px solid #dededa;background:#fff}
-.editorial-story-total{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:15px}
-.editorial-story-total span{font-size:9px;letter-spacing:.12em;color:#686a66;text-transform:uppercase}
-.editorial-story-total strong{font-size:16px;font-weight:400}
+/* Selection mode keeps the catalog card, but quick-add becomes a square checkbox. */
+.story-selection-mode .editorial-story-catalog-item .selection-check{
+  width:29px!important;
+  height:29px!important;
+  min-width:29px!important;
+  min-height:29px!important;
+  border:1px solid #111!important;
+  border-radius:0!important;
+  background:#fff!important;
+  color:#111!important;
+  box-shadow:none!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  font-size:15px!important;
+  line-height:1!important;
+}
+.story-selection-mode .editorial-story-catalog-item .selection-check.selected,
+.story-selection-mode .editorial-story-catalog-item.selected .selection-check{
+  background:#111!important;
+  color:#fff!important;
+}
+.story-selection-mode .editorial-story-catalog-item:not(.selected){opacity:.58}
+.story-selection-mode .editorial-story-catalog-item:not(.selected):hover{opacity:.86}
+.story-selection-mode .editorial-story-catalog-item.selected{opacity:1}
+
+.editorial-story-size-select{
+  margin-top:11px;
+  display:block;
+  border-top:1px solid #dededa;
+  padding-top:10px;
+}
+.editorial-story-size-select>span{display:block;margin-bottom:6px;font-size:8px;letter-spacing:.16em;color:#666;text-transform:uppercase}
+.editorial-story-size-select select{
+  width:100%;
+  height:38px;
+  border:1px solid #cfcfca;
+  border-radius:0;
+  background:#fff;
+  color:#111;
+  padding:0 28px 0 10px;
+  font:400 9px/1 Arial,sans-serif;
+  outline:none;
+}
+.editorial-story-size-select select:focus{border-color:#111}
+.editorial-story-size-select.required>span::after{content:" · выберите";color:#8d3e37}
+.editorial-story-size-select.required select{border-color:#8d3e37}
+
+.editorial-story-shop-footer{padding:17px 24px 22px;border-top:1px solid #dededa;background:#fff;flex:0 0 auto}
+.editorial-story-total{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:12px}
+.editorial-story-total span{font-size:8px;letter-spacing:.12em;color:#686a66;text-transform:uppercase}
+.editorial-story-total strong{font-size:14px;font-weight:400}
 .editorial-story-buy{
   width:100%;
-  min-height:50px;
-  padding:0 20px;
+  min-height:48px;
+  padding:0 18px;
   border:1px solid #111;
   background:#111;
   color:#fff;
-  font-size:10px;
+  font-size:9px;
   letter-spacing:.15em;
   cursor:pointer;
   display:flex;
@@ -145,17 +195,18 @@
   justify-content:space-between;
   gap:20px;
 }
-.editorial-story-buy b{font-size:11px;font-weight:400;letter-spacing:.03em}
+.editorial-story-buy b{font-size:10px;font-weight:400;letter-spacing:.03em}
 .editorial-story-buy:hover{background:#2a2a28;border-color:#2a2a28}
+.editorial-story-buy:disabled{background:#d7d7d3;border-color:#d7d7d3;color:#777;cursor:not-allowed}
 
 @media(max-width:900px){
   .editorial-story-overlay{
     grid-template-columns:1fr;
-    grid-template-rows:48dvh minmax(0,52dvh);
+    grid-template-rows:43dvh minmax(0,57dvh);
   }
   .editorial-story-visual{
     width:100%;
-    height:48dvh;
+    height:43dvh;
     display:flex;
     overflow-x:auto;
     overflow-y:hidden;
@@ -167,33 +218,37 @@
   .editorial-story-visual figure{
     flex:0 0 100vw;
     width:100vw;
-    height:48dvh;
+    height:43dvh;
     scroll-snap-align:start;
     scroll-snap-stop:always;
   }
-  .editorial-story-visual figure::after{left:14px;bottom:12px;font-size:7px;padding:6px 8px 5px}
-  .editorial-story-visual.single figure{width:100%;height:48dvh}
-  .editorial-story-shop{height:52dvh;border-left:0;border-top:1px solid #e6e6e2}
-  .editorial-story-close{right:10px;top:10px;width:34px;height:34px;background:rgba(255,255,255,.92)}
-  .editorial-story-shop-head{padding:22px 48px 15px 18px}
-  .editorial-story-shop-head>small{font-size:7px;margin-bottom:7px}
-  .editorial-story-shop-head h2{font-size:28px;line-height:1.02}
+  .editorial-story-visual figcaption{left:12px;bottom:10px;font-size:7px;padding:6px 8px 5px}
+  .editorial-story-visual.single figure{width:100%;height:43dvh}
+  .editorial-story-shop{height:57dvh;border-left:0;border-top:1px solid #e6e6e2}
+  .editorial-story-close{right:8px;top:8px;width:34px;height:34px;background:rgba(255,255,255,.92)}
+  .editorial-story-shop-head{padding:18px 46px 12px 14px}
+  .editorial-story-shop-head>small{font-size:7px;margin-bottom:6px}
+  .editorial-story-shop-head h2{font-size:24px;line-height:1.02}
   .editorial-story-shop-head p{display:none}
-  .editorial-story-products{padding:0 18px 10px}
-  .editorial-story-product{grid-template-columns:64px minmax(0,1fr) auto;gap:12px;padding:11px 0}
-  .editorial-story-product-image{width:64px;height:76px}
-  .editorial-story-product-copy strong{font-size:10px}
-  .editorial-story-product-copy span{font-size:8px}
-  .editorial-story-product>strong{font-size:9px}
-  .editorial-story-shop-footer{padding:12px 18px 16px}
-  .editorial-story-total{margin-bottom:9px}
-  .editorial-story-total span{font-size:8px}.editorial-story-total strong{font-size:13px}
-  .editorial-story-buy{min-height:45px;font-size:9px}
+  .editorial-story-selection-tools{margin-top:10px;padding-top:9px}
+  .editorial-story-products{padding:14px 10px 18px}
+  .editorial-story-catalog-grid.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 8px}
+  .editorial-story-catalog-item .product-copy{padding-top:7px}
+  .editorial-story-catalog-item .product-link strong{font-size:9px}
+  .editorial-story-catalog-item .product-link small{font-size:7px}
+  .editorial-story-catalog-item .price{font-size:9px}
+  .story-selection-mode .editorial-story-catalog-item .selection-check{width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important}
+  .editorial-story-size-select{margin-top:8px;padding-top:8px}
+  .editorial-story-size-select select{height:34px;font-size:8px}
+  .editorial-story-shop-footer{padding:10px 12px 13px}
+  .editorial-story-total{margin-bottom:8px}
+  .editorial-story-total span{font-size:7px}.editorial-story-total strong{font-size:12px}
+  .editorial-story-buy{min-height:43px;font-size:8px}
 }
 
 @media(max-width:480px){
-  .editorial-story-overlay{grid-template-rows:43dvh minmax(0,57dvh)}
-  .editorial-story-visual,.editorial-story-visual figure,.editorial-story-visual.single figure{height:43dvh}
+  .editorial-story-overlay{grid-template-rows:39dvh minmax(0,61dvh)}
+  .editorial-story-visual,.editorial-story-visual figure,.editorial-story-visual.single figure{height:39dvh}
   .editorial-story-visual figure{flex-basis:100vw}
-  .editorial-story-shop{height:57dvh}
+  .editorial-story-shop{height:61dvh}
 }
