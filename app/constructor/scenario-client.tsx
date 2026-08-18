@@ -4,10 +4,18 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
 import { loadFinalConstructorData } from "./data-client";
+import { trackConstructorEvent } from "./logic";
+import { SCENARIO_COPY } from "./scenario-copy";
+import { isConstructorScenarioId } from "./scenarios";
 import type { CatalogRow, FinalConstructorData, FinalScenarioVariantRow } from "./types";
 
 const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
-const toPrice = (value: string) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
+const toPrice = (value: string | undefined) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
+
+const CART_STORAGE_KEY = "kultura-cart";
+// Offset keeps synthetic ids for constructor items clear of the storefront's
+// own hardcoded product ids (which stay well under this range).
+const CART_ID_OFFSET = 900000;
 
 const makeCatalogIndex = (rows: CatalogRow[]) => {
   const map = new Map<string, CatalogRow>();
@@ -25,6 +33,54 @@ const splitImages = (catalog?: CatalogRow) => Array.from(new Set([
 
 const cleanRole = (role: string) => role.replace(/\s+/g, " ").trim();
 
+/**
+ * A cart line item shaped to match app/page.tsx's own Product/CartItem
+ * contract exactly (id, skus, selectedColor/Size, etc.) so the storefront
+ * cart drawer, quantity controls and checkout can render it with no
+ * special-casing. The two apps only share this shape through
+ * localStorage — there is no compile-time import between them.
+ */
+type SharedCartItem = {
+  id: number;
+  name: string;
+  note: string;
+  price: number;
+  image: string;
+  gallery: string[];
+  selectedColor: string;
+  selectedSize: string;
+  selectedSkuId: string;
+  quantity: number;
+  skus: Array<{
+    id: string;
+    article: string;
+    productId: number;
+    color: string;
+    colorHex: string;
+    size: string;
+    material: string;
+    composition: string;
+    price: number;
+    image: string;
+    gallery: string[];
+  }>;
+};
+
+const mergeIntoSharedCart = (items: SharedCartItem[]) => {
+  let existing: SharedCartItem[] = [];
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (raw) existing = JSON.parse(raw);
+  } catch { existing = []; }
+  const merged = [...existing];
+  items.forEach((item) => {
+    const matchIndex = merged.findIndex((entry) => entry.id === item.id && entry.selectedColor === item.selectedColor);
+    if (matchIndex >= 0) merged[matchIndex] = { ...merged[matchIndex], quantity: merged[matchIndex].quantity + item.quantity };
+    else merged.push(item);
+  });
+  try { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(merged)); } catch {}
+};
+
 export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
   const [data, setData] = useState<FinalConstructorData | null>(null);
   const [error, setError] = useState("");
@@ -34,6 +90,7 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
   const [galleryOffer, setGalleryOffer] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -46,6 +103,7 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
   const summary = useMemo(() => data?.summaries.find((row) => row.scenario_id === scenarioId), [data, scenarioId]);
   const rows = useMemo(() => summary ? (data?.variants ?? []).filter((row) => row.scenario_name === summary.scenario_name) : [], [data, summary]);
   const catalogIndex = useMemo(() => makeCatalogIndex(data?.catalog ?? []), [data]);
+  const copy = isConstructorScenarioId(scenarioId) ? SCENARIO_COPY[scenarioId] : undefined;
 
   const groups = useMemo(() => {
     const order: string[] = [];
@@ -77,15 +135,22 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
     setExpandedRole(null);
     setGalleryOffer(null);
     setAdded(false);
+    setRedirecting(false);
   }, [scenarioId, groups.length]);
 
   const selectedRows = useMemo(() => groups.map(({ role, options }) => {
     const row = options.find((option) => option.offer_id === selected[role]) ?? options.find((option) => option.type === "Основной") ?? options[0];
-    return row ? { role, row, enabled: enabled[role] !== false, quantity: quantity[role] || 1 } : null;
-  }).filter(Boolean) as Array<{role:string;row:FinalScenarioVariantRow;enabled:boolean;quantity:number}>, [groups, selected, enabled, quantity]);
+    const hasMain = options.some((option) => option.type === "Основной");
+    return row ? { role, row, enabled: enabled[role] !== false, quantity: quantity[role] || 1, hasMain } : null;
+  }).filter(Boolean) as Array<{ role: string; row: FinalScenarioVariantRow; enabled: boolean; quantity: number; hasMain: boolean }>, [groups, selected, enabled, quantity]);
 
   const activeRows = selectedRows.filter((item) => item.enabled);
   const total = activeRows.reduce((sum, item) => sum + toPrice(item.row.price_rub) * item.quantity, 0);
+  const savings = activeRows.reduce((sum, item) => {
+    const catalogOldPrice = toPrice(catalogIndex.get(String(item.row.offer_id))?.old_price);
+    const price = toPrice(item.row.price_rub);
+    return catalogOldPrice > price ? sum + (catalogOldPrice - price) * item.quantity : sum;
+  }, 0);
   const mainImages = activeRows.map((item) => catalogIndex.get(String(item.row.offer_id))?.primary_image_url).filter((value): value is string => Boolean(value)).slice(0, 5);
   const galleryRow = rows.find((row) => row.offer_id === galleryOffer);
   const galleryCatalog = galleryRow ? catalogIndex.get(String(galleryRow.offer_id)) : undefined;
@@ -96,16 +161,48 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
   if (!summary) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Сценарий не найден</h1><Link href="/constructor/">Вернуться к готовым решениям</Link></div></main>;
 
   const addSolution = () => {
-    const payload = activeRows.map((item) => ({
-      scenario_id: scenarioId,
-      scenario_name: summary.scenario_name,
-      offer_id: item.row.offer_id,
-      product_name: item.row.product_name,
-      quantity: item.quantity,
-      unit_price: toPrice(item.row.price_rub),
-    }));
-    try { localStorage.setItem("kultura-constructor-cart", JSON.stringify(payload)); } catch {}
+    const items: SharedCartItem[] = activeRows.map((item) => {
+      const catalog = catalogIndex.get(String(item.row.offer_id));
+      const unitPrice = toPrice(item.row.price_rub);
+      const image = catalog?.primary_image_url || "";
+      const gallery = splitImages(catalog);
+      const skuId = `solution-${item.row.offer_id}`;
+      const numericId = CART_ID_OFFSET + (Number(item.row.offer_id) || 0);
+      return {
+        id: numericId,
+        name: item.row.product_name,
+        note: `Из решения «${summary.scenario_name}»`,
+        price: unitPrice,
+        image,
+        gallery,
+        selectedColor: item.row.color || "",
+        selectedSize: "1 шт",
+        selectedSkuId: skuId,
+        quantity: item.quantity,
+        skus: [{
+          id: skuId,
+          article: String(item.row.offer_id),
+          productId: numericId,
+          color: item.row.color || "",
+          colorHex: "#d8d5cf",
+          size: "1 шт",
+          material: item.row.material || "",
+          composition: "",
+          price: unitPrice,
+          image,
+          gallery,
+        }],
+      };
+    });
+
+    mergeIntoSharedCart(items);
+    trackConstructorEvent("constructor:add_solution", { scenario_id: scenarioId, items: items.length, total });
     setAdded(true);
+    setRedirecting(true);
+    window.setTimeout(() => {
+      const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+      window.location.href = `${base}/?cart=open`;
+    }, 850);
   };
 
   return (
@@ -120,7 +217,9 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
           <div>
             <p className="constructor-kicker">ГОТОВОЕ РЕШЕНИЕ · {summary.space.toUpperCase()}</p>
             <h1 className="constructor-title">{summary.scenario_name}</h1>
-            <p className="constructor-lead">{summary.occasion}. Основная сборка уже выбрана — меняйте только те предметы, для которых в сценарии предусмотрены альтернативы.</p>
+            <p className="constructor-occasion">{summary.occasion}</p>
+            {copy && <p className="constructor-mood">«{copy.mood}»</p>}
+            <p className="constructor-lead">{copy?.narrative ?? "Основная сборка уже выбрана — меняйте только те предметы, для которых в сценарии предусмотрены альтернативы."}</p>
           </div>
           <div className="constructor-head-stat"><span>СОСТАВ</span><strong>{groups.length}</strong><small>групп предметов</small></div>
         </header>
@@ -132,11 +231,15 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
           })}
         </section>
 
-        <div className="constructor-layout">
+        <div className="constructor-scroll-cue">
+          <a href="#constructor-builder">Собрать это решение <span aria-hidden="true">↓</span></a>
+        </div>
+
+        <div className="constructor-layout" id="constructor-builder">
           <section className="constructor-builder">
             <header className="constructor-section-head">
               <div><p className="constructor-kicker">СОСТАВ РЕШЕНИЯ</p><h2>Настройте под себя</h2></div>
-              <p>Основной предмет выбран автоматически. Нажмите «Другой вариант», чтобы заменить его на альтернативу из финального сценария.</p>
+              <p>Основа решения зафиксирована куратором. Предметы «по желанию» можно включать и выключать, а альтернативы — менять на совместимые варианты.</p>
             </header>
 
             <div className="constructor-role-list">
@@ -155,14 +258,18 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
                     {image ? <RemoteImage src={image} alt={current.product_name}/> : <span className="constructor-image-fallback">Фото товара</span>}
                   </button>
                   <div className="constructor-role-copy">
-                    <div className="constructor-role-heading"><div><p>{role}</p><h3>{current.product_name}</h3></div><button className={`constructor-inclusion ${isEnabled ? "active" : ""}`} onClick={() => setEnabled((state) => ({ ...state, [role]: !isEnabled }))}>{isEnabled ? "В РЕШЕНИИ ✓" : "+ ДОБАВИТЬ"}</button></div>
+                    <div className="constructor-role-heading">
+                      <div><p>{role}</p><h3>{current.product_name}</h3></div>
+                      {hasMain
+                        ? <span className="constructor-core-badge">ОСНОВА РЕШЕНИЯ</span>
+                        : <button className={`constructor-inclusion ${isEnabled ? "active" : ""}`} onClick={() => setEnabled((state) => ({ ...state, [role]: !isEnabled }))}>{isEnabled ? "ПО ЖЕЛАНИЮ ✓" : "+ ДОБАВИТЬ"}</button>}
+                    </div>
                     <div className="constructor-product-facts">
                       {current.material && <span>{current.material}</span>}
                       {current.color && <span>Цвет: {current.color}</span>}
                       <span>Арт. {current.offer_id}</span>
-                      {!hasMain && <span className="constructor-optional-label">Дополнение</span>}
                     </div>
-                    {current.note && <p className="constructor-note">{current.note}</p>}
+                    {current.note && <p className="constructor-note"><span className="constructor-note-mark">Стилист</span>{current.note}</p>}
                     <div className="constructor-role-bottom">
                       <div className="constructor-price">{toPrice(current.price_rub) ? formatRub(toPrice(current.price_rub)) : "Цена уточняется"}</div>
                       <div className="constructor-qty" aria-label="Количество"><button onClick={() => setQuantity((state) => ({ ...state, [role]: Math.max(1, q - 1) }))}>−</button><span>{q}</span><button onClick={() => setQuantity((state) => ({ ...state, [role]: q + 1 }))}>+</button></div>
@@ -193,10 +300,14 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
             <div className="constructor-summary-list">
               {activeRows.map((item) => <div className="constructor-summary-item" key={item.role}><span>{item.row.product_name}<small>{item.quantity} шт.</small></span><b>{formatRub(toPrice(item.row.price_rub) * item.quantity)}</b></div>)}
             </div>
-            <div className="constructor-summary-total"><span>ИТОГО</span><strong>{formatRub(total)}</strong><small>{activeRows.length} позиций в выбранной сборке</small></div>
-            <button className="constructor-primary" disabled={!activeRows.length} onClick={addSolution}>ДОБАВИТЬ РЕШЕНИЕ · {formatRub(total)}</button>
-            <p className="constructor-summary-hint">Вы можете изменить состав до оформления заказа.</p>
-            {added && <div className="constructor-success"><b>Решение сохранено</b><span>{activeRows.length} позиций добавлены в выбранный комплект.</span></div>}
+            <div className="constructor-summary-total">
+              <span>ИТОГО</span><strong>{formatRub(total)}</strong>
+              <small>{activeRows.length} позиций в выбранной сборке</small>
+              {savings > 0 && <small className="constructor-summary-savings">Экономия {formatRub(savings)}</small>}
+            </div>
+            <button className="constructor-primary" disabled={!activeRows.length || redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : `ДОБАВИТЬ РЕШЕНИЕ · ${formatRub(total)}`}</button>
+            <p className="constructor-summary-hint">Решение попадает в вашу обычную корзину — состав можно изменить до оформления заказа.</p>
+            {added && <div className="constructor-success"><b>Решение добавлено</b><span>Переходим в корзину…</span></div>}
           </aside>
         </div>
       </div>

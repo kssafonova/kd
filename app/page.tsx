@@ -287,10 +287,21 @@ export default function Home() {
     document.body.style.overflow = menu || search || account || favoritesOpen || filters || plpSize || plpAdded || sizeSheet || cartOpen || checkoutOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menu, search, account, favoritesOpen, filters, plpSize, plpAdded, sizeSheet, cartOpen, checkoutOpen]);
-  useEffect(()=>{try{const savedProfile=localStorage.getItem("kultura-profile");const savedFavorites=localStorage.getItem("kultura-favorites");const savedViewed=localStorage.getItem("kultura-viewed");if(savedProfile)setProfile(JSON.parse(savedProfile));if(savedFavorites)setFavorites(JSON.parse(savedFavorites));if(savedViewed)setRecentlyViewed(JSON.parse(savedViewed))}catch{}},[]);
+  useEffect(()=>{try{const savedProfile=localStorage.getItem("kultura-profile");const savedFavorites=localStorage.getItem("kultura-favorites");const savedViewed=localStorage.getItem("kultura-viewed");const savedCart=localStorage.getItem("kultura-cart");if(savedProfile)setProfile(JSON.parse(savedProfile));if(savedFavorites)setFavorites(JSON.parse(savedFavorites));if(savedViewed)setRecentlyViewed(JSON.parse(savedViewed));if(savedCart)setCart(JSON.parse(savedCart))}catch{}
+    try{
+      const params=new URLSearchParams(window.location.search);
+      if(params.get("cart")==="open"){
+        setCartOpen(true);
+        const url=new URL(window.location.href);
+        url.searchParams.delete("cart");
+        window.history.replaceState({},"",url.toString());
+      }
+    }catch{}
+  },[]);
   useEffect(()=>{localStorage.setItem("kultura-favorites",JSON.stringify(favorites))},[favorites]);
   useEffect(()=>{if(profile)localStorage.setItem("kultura-profile",JSON.stringify(profile));else localStorage.removeItem("kultura-profile")},[profile]);
   useEffect(()=>{localStorage.setItem("kultura-viewed",JSON.stringify(recentlyViewed))},[recentlyViewed]);
+  useEffect(()=>{localStorage.setItem("kultura-cart",JSON.stringify(cart))},[cart]);
 
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);

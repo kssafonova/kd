@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
 import { loadFinalConstructorData } from "./data-client";
-import { CONSTRUCTOR_SCENARIO_IDS } from "./scenarios";
+import { SCENARIO_COPY } from "./scenario-copy";
+import { CONSTRUCTOR_SCENARIO_IDS, isConstructorScenarioId } from "./scenarios";
 import type { CatalogRow, FinalConstructorData, FinalScenarioVariantRow } from "./types";
 
 const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
-const toPrice = (value: string) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
+const toPrice = (value: string | undefined) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
 
 const catalogByOffer = (catalog: CatalogRow[]) => {
   const map = new Map<string, CatalogRow>();
@@ -51,17 +52,24 @@ export function ConstructorLanding() {
         .map((row) => imageIndex.get(String(row.offer_id))?.primary_image_url)
         .filter((value): value is string => Boolean(value)))).slice(0, 3);
       const price = defaults.reduce((sum, row) => sum + toPrice(row.price_rub), 0);
+      const savings = defaults.reduce((sum, row) => {
+        const oldPrice = toPrice(imageIndex.get(String(row.offer_id))?.old_price);
+        const rowPrice = toPrice(row.price_rub);
+        return oldPrice > rowPrice ? sum + (oldPrice - rowPrice) : sum;
+      }, 0);
       return {
         id: scenarioId,
         name: summary.scenario_name,
         space: summary.space,
         occasion: summary.occasion,
+        mood: isConstructorScenarioId(scenarioId) ? SCENARIO_COPY[scenarioId].mood : "",
         images,
         price,
+        savings,
         roles: new Set(rows.map((row) => row.role)).size,
         alternatives: rows.filter((row) => row.type === "Альтернатива").length,
       };
-    }).filter(Boolean) as Array<{id:string;name:string;space:string;occasion:string;images:string[];price:number;roles:number;alternatives:number}>;
+    }).filter(Boolean) as Array<{id:string;name:string;space:string;occasion:string;mood:string;images:string[];price:number;savings:number;roles:number;alternatives:number}>;
   }, [data]);
 
   const spaces = useMemo(() => {
@@ -83,16 +91,16 @@ export function ConstructorLanding() {
         </nav>
 
         <header className="constructor-landing-head">
-          <p className="constructor-kicker">EDITORIAL · ГОТОВЫЕ СЦЕНАРИИ</p>
+          <p className="constructor-kicker">EDITORIAL · ГОТОВЫЕ РЕШЕНИЯ</p>
           <h1 className="constructor-title">Соберите атмосферу дома</h1>
-          <p className="constructor-lead">Выберите историю, а затем настройте её под себя: оставьте основную сборку или замените отдельные предметы на визуально совместимые альтернативы.</p>
+          <p className="constructor-lead">Каждое решение — реальная сервировка или спальный сценарий, собранный куратором. Оставьте состав как есть или замените отдельные предметы на совместимые альтернативы.</p>
         </header>
 
         <div className="constructor-filter" role="tablist" aria-label="Фильтр по пространству">
           {spaces.map((item) => <button key={item} className={space === item ? "active" : ""} onClick={() => setSpace(item)}>{item.toUpperCase()}</button>)}
         </div>
 
-        <section className="constructor-scenario-grid" aria-label="Финальные сценарии">
+        <section className="constructor-scenario-grid" aria-label="Готовые решения">
           {visible.map((card, index) => (
             <article className="constructor-scenario-card" key={card.id}>
               <Link className="constructor-scenario-media" href={`/constructor/${card.id}/`} aria-label={`Открыть ${card.name}`}>
@@ -106,8 +114,13 @@ export function ConstructorLanding() {
               <div className="constructor-scenario-copy">
                 <div className="constructor-card-labels"><span>{card.space}</span><span>{card.occasion}</span></div>
                 <h2>{card.name}</h2>
+                {card.mood && <p className="constructor-card-mood">{card.mood}</p>}
                 <div className="constructor-scenario-meta">
-                  <div><small>{card.roles} групп · {card.alternatives} альтернатив</small><strong>{card.price ? `от ${formatRub(card.price)}` : "Цена уточняется"}</strong></div>
+                  <div>
+                    <small>{card.roles} групп · {card.alternatives} альтернатив</small>
+                    <strong>{card.price ? `от ${formatRub(card.price)}` : "Цена уточняется"}</strong>
+                    {card.savings > 0 && <em className="constructor-card-savings">Экономия от {formatRub(card.savings)}</em>}
+                  </div>
                   <Link className="constructor-primary-link" href={`/constructor/${card.id}/`}>СОБРАТЬ РЕШЕНИЕ <span>→</span></Link>
                 </div>
               </div>
