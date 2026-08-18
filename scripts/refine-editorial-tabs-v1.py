@@ -4,6 +4,12 @@ import re
 PAGE = Path("app/page.tsx")
 text = PAGE.read_text(encoding="utf-8")
 
+# Newer fullscreen Editorial story overlay owns CollectionsView completely.
+# In that state this legacy tab migration is already superseded and must not fail.
+if "EDITORIAL_STORY_OVERLAY_V1" in text or "EDITORIAL_STORY_OVERLAY_V2" in text or "buyBundle:(items:Product[])=>void" in text:
+    print("Skipped legacy Editorial tab refinement: fullscreen story overlay already owns CollectionsView")
+    raise SystemExit(0)
+
 replacement = '''function CollectionsView({ openEditorial,onProduct,onQuick,favorite,favorites }: { openEditorial:(editorial:Editorial)=>void; onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[] }) {
   const [kind,setKind]=useState<"Истории"|"Готовые решения">("Истории");
   const solutionProductIds=Array.from(new Set(editorials.flatMap(item=>item.productIds)));
@@ -24,7 +30,6 @@ function LunaEditorialView'''
 pattern = r'function CollectionsView\(\{ openEditorial \}: \{ openEditorial:\(editorial:Editorial\)=>void \}\) \{[\s\S]*?\n\}\n\nfunction LunaEditorialView'
 text, count = re.subn(pattern, replacement, text, count=1)
 if count != 1:
-    # Support rerunning after this script has already patched the signature.
     pattern = r'function CollectionsView\(\{ openEditorial,onProduct,onQuick,favorite,favorites \}[\s\S]*?\n\}\n\nfunction LunaEditorialView'
     text, count = re.subn(pattern, replacement, text, count=1)
 if count != 1:
