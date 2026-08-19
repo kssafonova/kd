@@ -1,0 +1,172 @@
+/* Homepage UX V7 — tighter section hierarchy and square category cards. */
+
+/* Section title + CTA + arrows are one visual group, not opposite page edges. */
+.home-reference-v5 .hv4-head,
+.home-reference-v5 .hv4-traditions-collections-head{
+  justify-content:flex-start!important;
+  align-items:flex-end!important;
+  gap:12px!important;
+  margin-bottom:16px!important;
+}
+.home-reference-v5 .hv4-head>div:first-child,
+.home-reference-v5 .hv4-traditions-collections-head>div:first-child{
+  flex:0 1 auto!important;
+  width:auto!important;
+}
+.home-reference-v5 .hv4-head-actions{
+  justify-content:flex-start!important;
+  margin-left:2px!important;
+  gap:0!important;
+}
+.home-reference-v5 .hv4-head-actions .hv4-text-cta{
+  order:-1!important;
+  margin:0 6px 0 0!important;
+  padding:0 8px!important;
+}
+.home-reference-v5 .hv4-head h2,
+.home-reference-v5 .hv4-traditions-collections-head h2{
+  max-width:none!important;
+  font:400 clamp(16px,1.08vw,19px)/1.08 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.012em!important;
+  text-transform:uppercase!important;
+}
+.home-reference-v5 .hv4-head small,
+.home-reference-v5 .hv4-traditions-collections-head small{
+  margin-bottom:4px!important;
+  font-size:6px!important;
+  letter-spacing:.16em!important;
+}
+.home-reference-v5 .hv4-rail-arrow{
+  width:34px!important;
+  height:34px!important;
+}
+.home-reference-v5 .hv4-text-cta,
+.home-reference-v5 .hv4-head>a,
+.home-reference-v5 .hv4-head>button,
+.home-reference-v5 .hv4-traditions-collections-head>button{
+  min-height:34px!important;
+  font-size:6.5px!important;
+  letter-spacing:.11em!important;
+}
+
+/* Categories: clean image cards, square media, no separator after the block. */
+.home-reference-v5 .hv4-categories{
+  padding-top:44px!important;
+  padding-bottom:52px!important;
+  border-bottom:0!important;
+}
+.home-reference-v5 .hv4-category-rail{
+  gap:10px!important;
+  align-items:flex-start!important;
+  padding:0 0 8px!important;
+  border:0!important;
+}
+.home-reference-v5 .hv4-category-card{
+  flex:0 0 clamp(150px,12.6vw,190px)!important;
+  min-height:0!important;
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:#fff!important;
+  text-align:left!important;
+  scroll-snap-align:start!important;
+}
+.home-reference-v5 .hv4-category-card:first-child{padding-left:0!important}
+.home-reference-v5 .hv4-category-card img{
+  display:block!important;
+  width:100%!important;
+  aspect-ratio:1/1!important;
+  object-fit:cover!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-category-card>span{
+  display:block!important;
+  padding-top:8px!important;
+}
+.home-reference-v5 .hv4-category-card strong{
+  display:block!important;
+  margin:0!important;
+  font-size:9.5px!important;
+  line-height:1.18!important;
+  font-weight:400!important;
+}
+.home-reference-v5 .hv4-category-card small{
+  display:block!important;
+  margin-top:3px!important;
+  color:#8d8e8a!important;
+  font-size:5.5px!important;
+  line-height:1!important;
+  letter-spacing:.08em!important;
+}
+.home-reference-v5 .hv4-category-card svg{display:none!important}
+
+/* The next section should start through whitespace, not a rule. */
+.home-reference-v5 .hv4-new{
+  border-top:0!important;
+  padding-top:50px!important;
+}
+
+@media(max-width:900px){
+  .home-reference-v5 .hv4-head,
+  .home-reference-v5 .hv4-traditions-collections-head{
+    align-items:flex-end!important;
+    gap:7px!important;
+    margin-bottom:14px!important;
+  }
+  .home-reference-v5 .hv4-head h2,
+  .home-reference-v5 .hv4-traditions-collections-head h2{
+    font-size:16px!important;
+  }
+  .home-reference-v5 .hv4-head small,
+  .home-reference-v5 .hv4-traditions-collections-head small{
+    font-size:5.5px!important;
+  }
+  .home-reference-v5 .hv4-head-actions .hv4-text-cta{
+    display:inline-flex!important;
+    min-height:36px!important;
+    margin-right:2px!important;
+    padding:0 5px!important;
+    font-size:5.5px!important;
+  }
+  .home-reference-v5 .hv4-rail-arrow{
+    width:36px!important;
+    height:36px!important;
+  }
+  .home-reference-v5 .hv4-categories{
+    padding-top:34px!important;
+    padding-bottom:40px!important;
+  }
+  .home-reference-v5 .hv4-category-rail{
+    gap:8px!important;
+    margin-right:-12px!important;
+    padding-right:12px!important;
+  }
+  .home-reference-v5 .hv4-category-card{
+    flex:0 0 27.5vw!important;
+    min-width:0!important;
+  }
+  .home-reference-v5 .hv4-category-card>span{
+    padding-top:6px!important;
+  }
+  .home-reference-v5 .hv4-category-card strong{
+    font-size:8.5px!important;
+  }
+  .home-reference-v5 .hv4-category-card small{
+    margin-top:2px!important;
+    font-size:5px!important;
+  }
+  .home-reference-v5 .hv4-new{
+    padding-top:44px!important;
+  }
+}
+
+@media(max-width:520px){
+  .home-reference-v5 .hv4-head h2,
+  .home-reference-v5 .hv4-traditions-collections-head h2{
+    font-size:15px!important;
+  }
+  .home-reference-v5 .hv4-category-card{
+    flex-basis:27.8vw!important;
+  }
+}
