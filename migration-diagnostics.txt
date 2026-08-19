@@ -1,0 +1,179 @@
+# Site migration diagnostics
+
+migration=success
+dependencies=success
+build=failure
+
+## Migration patches
+
+===== sync-workbook-product-specs.py =====
+exit=0
+Synced workbook product characteristics to PDP
+
+
+===== restore-quick-add-flow.py =====
+exit=0
+Restored previous quick-add navigation flow and desktop drawer dimensions
+
+
+===== add-remote-image-loader.py =====
+exit=0
+Remote URL image loader wired into storefront media
+
+
+===== sync-updated-product-image-urls.py =====
+exit=0
+Synced canonical image URLs across 17 article/color variants; changed 0 SKU rows
+
+
+===== apply-pdp-reference-gallery.py =====
+exit=0
+Applied reference-style PDP gallery: page-scroll desktop, sticky thumbnails, mobile swipe
+
+
+===== normalize-single-color-swatches.py =====
+exit=0
+Normalized product swatches: 1
+
+
+===== apply-story-builder-v2.py =====
+SKIPPED: adaptive story builder already present
+
+===== refine-story-builder-v2.py =====
+exit=0
+Story quick-buy preset already refined
+
+
+===== redesign-home-reference.py =====
+exit=0
+Applied screenshot-inspired homepage redesign
+
+
+===== add-home-bedroom-feature.py =====
+exit=0
+Added direct bedroom collection story links for Luna and Ice Patterns
+
+
+===== refine-homepage-editorial.py =====
+exit=0
+Refined homepage to the supplied editorial reference
+
+
+===== remove-editorial-tabs.py =====
+exit=0
+Removed All / Capsules / Collections tabs from editorial landing
+
+
+===== add-editorial-scenario-navigation.py =====
+exit=0
+Restored pre-constructor Editorial buy-all flow
+
+
+===== add-constructor-home-cta.py =====
+exit=0
+Added constructor CTA to homepage
+
+
+===== apply-product-catalog-rules-v1.py =====
+exit=0
+Applied product removals, KD-PD-1022 SKU model, unified size flow, stock notification and media cover rules
+
+
+===== apply-catalog-category-mapping.py =====
+exit=0
+Applied strict catalog category mapping
+
+
+===== apply-product-pricing-merchandising-v1.py =====
+exit=0
+Applied product pricing, sale presentation and handmade badges
+
+
+===== apply-pdp-collection-recommendations-v1.py =====
+exit=0
+Applied collection/capsule-aware PDP recommendations
+
+
+===== highlight-menu-solutions-v1.py =====
+exit=0
+Applied Zara Home premium navigation menu
+
+
+===== remove-retired-editorials-v1.py =====
+exit=0
+Removed retired Editorial capsules/collections and their named promo slides
+
+
+===== refine-editorial-tabs-v1.py =====
+exit=0
+Skipped legacy Editorial tab refinement: fullscreen story overlay already owns CollectionsView
+
+
+===== add-ice-pattern-products-v1.py =====
+exit=0
+Added five Ice Patterns products and replaced the previous collection assortment
+
+
+===== fix-ice-pattern-2000-2004-types.py =====
+exit=0
+Canonical Ice Patterns: 2000 pillow, 2001 plate, 2003 plaid, 2004 tea pair, 2010 salad bowl
+
+
+===== apply-product-preview-rules-v1.py =====
+exit=0
+Updated KD-PD-1023 media and KD-PD-1027 Grey-blue single-image variants
+
+
+===== add-editorial-story-overlay-v1.py =====
+exit=0
+Editorial capsules and collections landing applied
+
+
+===== redesign-home-magazine-v2.py =====
+exit=0
+Applied final editorial magazine homepage redesign
+
+
+===== redesign-home-commerce-v3.py =====
+exit=0
+Applied premium conversion-focused homepage V3
+
+
+===== redesign-home-v4.py =====
+exit=0
+Applied homepage V4 storefront redesign
+
+
+===== merge-home-traditions-collections-v1.py =====
+exit=0
+Merged traditions with a shoppable collection product rail
+
+
+## npm install
+npm warn deprecated tsconfck@3.1.6: unmaintained
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
+
+added 513 packages in 18s
+
+## Next build
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.2s
+  Running TypeScript ...
+Failed to type check.
+
+./app/page.tsx:442:71
+Type error: Cannot find name 'collectionProducts'.
+
+  [90m440 |[0m ...[32mutton"[0m onClick={()=>go([32m"collections"[0m)}>СМОТРЕТЬ ВСЕ</button>
+  [90m441 |[0m ...
+[31m[1m>[0m [90m442 |[0m ...sName=[32m"hv4-collection-product-rail"[0m items={collectionProducts} onProduct={onProduct} o...
+  [90m    |[0m                                               [31m[1m^[0m
+  [90m443 |[0m ...
+  [90m444 |[0m ...
+  [90m445 |[0m ...
+Next.js build worker exited with code: 1 and signal: null
+
