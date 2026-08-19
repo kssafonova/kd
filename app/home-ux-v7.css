@@ -170,3 +170,13 @@
     flex-basis:27.8vw!important;
   }
 }
+
+/* Keep CTA beside the title; rail navigation lives on the far right. */
+.home-reference-v5 .hv4-head-actions{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  width:auto!important;
+}
+.home-reference-v5 .hv4-head-actions .hv4-rail-arrow.prev{
+  margin-left:auto!important;
+}
