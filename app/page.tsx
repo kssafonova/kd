@@ -376,6 +376,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
   ];
   const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[activeIndex];
+  const [traditionsPlaying,setTraditionsPlaying]=useState(true);
 
   useEffect(()=>{
     const timer=window.setInterval(()=>setSlide((activeIndex+1)%heroSlides.length),6500);
@@ -418,7 +419,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
         <source media="(max-width: 700px)" srcSet={assetUrl(hero.mobileImage)}/>
         <img src={assetUrl(hero.desktopImage)} alt={hero.title}/>
       </picture>
-      <div className="hv4-hero-copy"><h1>{hero.title}</h1><button type="button" onClick={hero.action}>СМОТРЕТЬ</button></div>
+      <div className="hv4-hero-copy"><h1>{hero.title}</h1><button type="button" onClick={hero.action}><span>СМОТРЕТЬ</span><Icon name="arrow"/></button></div>
       <div className="hv4-hero-controls">
         <nav className="hv4-hero-tabs" aria-label="Слайды главной">{heroSlides.map((item,index)=><button type="button" key={item.label} className={index===activeIndex?"active":""} onClick={()=>setSlide(index)}>{item.label}</button>)}</nav>
       </div>
@@ -436,11 +437,18 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
 
     <section className="hv4-traditions-collections" aria-label="Традиции, капсулы и коллекции">
       <div className="hv4-traditions-collections-shell">
-        <div className="hv4-traditions-media">
+        <div className={`hv4-traditions-media ${traditionsPlaying?"is-playing":"is-paused"}`}> 
           <img src={assetUrl("/images/russian-bedroom.png")} alt="Современная русская спальня"/>
           <img src={assetUrl("/images/editorial-table.webp")} alt="Сервировка дома"/>
           <img src={assetUrl("/images/time-hero.png")} alt="Предметы Культура дома"/>
           <div className="hv4-traditions-copy"><div><small>BRAND STORY</small><h2>Традиции в каждом доме</h2></div><span>КУЛЬТУРА ДОМА</span></div>
+          <div className="hv4-video-controls" aria-label="Управление историей">
+            <button type="button" className="hv4-video-toggle" onClick={()=>setTraditionsPlaying(value=>!value)} aria-label={traditionsPlaying?"Поставить видео на паузу":"Продолжить видео"}>
+              {traditionsPlaying?<span className="hv4-pause-icon" aria-hidden="true"><i/><i/></span>:<span className="hv4-play-icon" aria-hidden="true"/>}
+            </button>
+            <span className="hv4-video-track" aria-hidden="true"><i/></span>
+            <small>0:15</small>
+          </div>
         </div>
 
         <div className="hv4-traditions-collections-content">
@@ -506,6 +514,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
