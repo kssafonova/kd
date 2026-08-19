@@ -278,15 +278,16 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [boutiquesOpen,setBoutiquesOpen]=useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [recentlyViewed,setRecentlyViewed]=useState<number[]>([]);
   const [slide, setSlide] = useState(0);
   const [toast, setToast] = useState("");
 
   useEffect(() => {
-    document.body.style.overflow = menu || search || account || favoritesOpen || filters || plpSize || plpAdded || sizeSheet || cartOpen || checkoutOpen ? "hidden" : "";
+    document.body.style.overflow = menu || search || account || favoritesOpen || filters || plpSize || plpAdded || sizeSheet || cartOpen || checkoutOpen || boutiquesOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [menu, search, account, favoritesOpen, filters, plpSize, plpAdded, sizeSheet, cartOpen, checkoutOpen]);
+  }, [menu, search, account, favoritesOpen, filters, plpSize, plpAdded, sizeSheet, cartOpen, checkoutOpen, boutiquesOpen]);
   useEffect(()=>{try{const savedProfile=localStorage.getItem("kultura-profile");const savedFavorites=localStorage.getItem("kultura-favorites");const savedViewed=localStorage.getItem("kultura-viewed");const savedCart=localStorage.getItem("kultura-cart");if(savedProfile)setProfile(JSON.parse(savedProfile));if(savedFavorites)setFavorites(JSON.parse(savedFavorites));if(savedViewed)setRecentlyViewed(JSON.parse(savedViewed));if(savedCart)setCart(JSON.parse(savedCart))}catch{}
     try{
       const params=new URLSearchParams(window.location.search);
@@ -337,7 +338,7 @@ export default function Home() {
   return (
     <main className={`view-${view}`}>
       <div className="promo">БЕСПЛАТНАЯ ДОСТАВКА ОТ 15 000 ₽ <button onClick={() => go("catalog")}>ПОДРОБНЕЕ</button></div>
-      <Header onMenu={() => { setMenuSection(""); setMenu(true); }} onSearch={() => setSearch(true)} onAccount={() => setAccount(true)} onFavorites={() => setFavoritesOpen(true)} onCart={() => setCartOpen(true)} count={cartCount} favoriteCount={favorites.length} go={go} />
+      <Header onMenu={() => { setMenuSection(""); setMenu(true); }} onSearch={() => setSearch(true)} onAccount={() => setAccount(true)} onFavorites={() => setFavoritesOpen(true)} onCart={() => setCartOpen(true)} onBoutiques={() => setBoutiquesOpen(true)} count={cartCount} favoriteCount={favorites.length} go={go} />
       {view === "home" && <HomeView go={go} openCatalog={openCatalog} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
       {view === "collections" && <CollectionsView onProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
@@ -355,17 +356,50 @@ export default function Home() {
       {sizeSheet && <SizeSheet size={size} setSize={setSize} close={() => setSizeSheet(false)} add={(quantity,unitPrice) => add({...selected,price:unitPrice},size,quantity)} price={selected.price} />}
       {cartOpen && <Cart cart={cart} recentlyViewed={recentlyViewed.map(id=>products.find(product=>product.id===id)!).filter(Boolean)} close={() => setCartOpen(false)} total={total} remove={(i) => setCart((old) => old.filter((_, index) => index !== i))} update={updateCartItem} checkout={() => {setCartOpen(false);setCheckoutOpen(true)}} go={() => { setCartOpen(false); go("catalog"); }} choose={(product)=>{setCartOpen(false);openProduct(product)}} />}
       {checkoutOpen&&<Checkout cart={cart} total={total} profile={profile} close={()=>setCheckoutOpen(false)} editCart={()=>{setCheckoutOpen(false);setCartOpen(true)}} submit={()=>{setCheckoutOpen(false);setCart([]);notice("Заказ оформлен. Подтверждение отправлено на email")}}/>}
+      {boutiquesOpen&&<BoutiqueMap close={()=>setBoutiquesOpen(false)}/>}
       {toast && <div className="toast">{toast}</div>}
     </main>
   );
 }
 
-function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, count, favoriteCount, go }: { onMenu:()=>void; onSearch:()=>void; onAccount:()=>void; onFavorites:()=>void; onCart:()=>void; count:number; favoriteCount:number; go:(v:View)=>void }) {
+function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, onBoutiques, count, favoriteCount, go }: { onMenu:()=>void; onSearch:()=>void; onAccount:()=>void; onFavorites:()=>void; onCart:()=>void; onBoutiques:()=>void; count:number; favoriteCount:number; go:(v:View)=>void }) {
   return <header className="header">
-    <div className="header-left"><button className="icon-btn hamburger" aria-label="Открыть меню" onClick={onMenu}><i/><i/><i/></button><button className="boutiques" onClick={() => alert("Бутики: Москва · Санкт-Петербург · Казань")}><Icon name="pin"/> Бутики</button></div>
+    <div className="header-left"><button className="icon-btn hamburger" aria-label="Открыть меню" onClick={onMenu}><i/><i/><i/></button><button className="boutiques" onClick={onBoutiques}><Icon name="pin"/> Бутики</button></div>
     <button className="logo" onClick={() => go("home")}>КУЛЬТУРА ДОМА</button>
     <div className="header-actions"><button onClick={onSearch} aria-label="Поиск"><Icon name="search"/></button><button onClick={onAccount} aria-label="Профиль"><Icon name="user"/></button><button className="favorite-header" onClick={onFavorites} aria-label={`Избранное: ${favoriteCount}`}><Icon name="heart" filled={favoriteCount>0}/>{favoriteCount>0&&<b>{favoriteCount}</b>}</button><button className="bag" onClick={onCart} aria-label="Корзина"><Icon name="bag"/>{count > 0 && <b>{count}</b>}</button></div>
   </header>;
+}
+
+
+// HOME_BOUTIQUES_MAP_V11
+function HomeBoutiques(){
+  const boutiques=[
+    {city:"Москва",address:"Петровка",hours:"Ежедневно · 10:00–22:00",lat:55.7636,lon:37.6156},
+    {city:"Санкт-Петербург",address:"Невский проспект",hours:"Ежедневно · 10:00–22:00",lat:59.9357,lon:30.3259},
+    {city:"Казань",address:"Улица Баумана",hours:"Ежедневно · 10:00–21:00",lat:55.7903,lon:49.1124},
+  ];
+  const [selected,setSelected]=useState(0);
+  const boutique=boutiques[selected];
+  const delta=.04;
+  const mapSrc=`https://www.openstreetmap.org/export/embed.html?bbox=${boutique.lon-delta}%2C${boutique.lat-delta}%2C${boutique.lon+delta}%2C${boutique.lat+delta}&layer=mapnik&marker=${boutique.lat}%2C${boutique.lon}`;
+  return <section id="home-boutiques" className="home-boutiques-map" aria-labelledby="home-boutiques-title">
+    <div className="home-boutiques-copy">
+      <small>БУТИКИ</small>
+      <h2 id="home-boutiques-title">Посетите Культура дома</h2>
+      <p>Посмотрите материалы, оттенки и коллекции вживую. Выберите город — карта покажет расположение бутика.</p>
+      <div className="home-boutique-list" aria-label="Выбрать бутик">
+        {boutiques.map((item,index)=><button type="button" key={item.city} className={index===selected?"active":""} onClick={()=>setSelected(index)} aria-pressed={index===selected}>
+          <span><Icon name="pin"/><b>{item.city}</b></span>
+          <strong>{item.address}</strong>
+          <small>{item.hours}</small>
+        </button>)}
+      </div>
+    </div>
+    <div className="home-boutiques-map-canvas">
+      <iframe key={`${boutique.city}-${selected}`} src={mapSrc} title={`Карта бутика Культура дома — ${boutique.city}`} loading="lazy" referrerPolicy="no-referrer-when-downgrade"/>
+      <div className="home-boutiques-map-caption"><div><b>{boutique.city}</b><span>{boutique.address}</span></div><small>{boutique.hours}</small></div>
+    </div>
+  </section>;
 }
 
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
@@ -418,7 +452,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     {room:"КУХНЯ",title:"Утро в зимнем саду",image:"/images/buyan-editorial.png"},
   ];
 
-  return <main className="home-v4 home-reference-v5 home-togas-v10">
+  return <main className="home-v4 home-reference-v5 home-togas-v10 home-ux-v11">
     <section className="hv4-hero" aria-label="Главные разделы"
       onPointerEnter={()=>setHeroPaused(true)} onPointerLeave={()=>setHeroPaused(false)}
       onFocusCapture={()=>setHeroPaused(true)} onBlurCapture={()=>setHeroPaused(false)}
@@ -482,10 +516,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
       </div>
     </section>
 
-    <section className="hv4-brand-boutiques">
-      <div className="hv4-brand-copy"><small>О БРЕНДЕ</small><h2>Культура дома</h2><p>Современный взгляд на русские традиции через текстиль, посуду и предметы интерьера.</p><div className="hv4-boutiques-list" aria-label="Бутики"><span>МОСКВА · ПЕТРОВКА</span><span>САНКТ-ПЕТЕРБУРГ · НЕВСКИЙ</span><span>КАЗАНЬ · БАУМАНА</span></div><button type="button" onClick={()=>alert("Бутики: Москва · Петровка, Санкт-Петербург · Невский проспект, Казань · улица Баумана")}>СМОТРЕТЬ БУТИКИ</button></div>
-      <div className="hv4-brand-media"><img src={assetUrl("/images/russian-bedroom.png")} alt="Культура дома — интерьер"/><span>КУЛЬТУРА ДОМА · БУТИКИ</span></div>
-    </section>
+    <HomeBoutiques/>
   </main>;
 }
 
@@ -524,6 +555,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
