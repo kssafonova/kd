@@ -1,0 +1,53 @@
+/* Homepage V11 — real responsive video in the Editorial story block. Loaded last. */
+.home-togas-v10 .hv4-traditions-media{
+  position:relative!important;
+  overflow:hidden!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-traditions-video{
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-traditions-media::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.01) 30%,rgba(0,0,0,.34) 100%);
+}
+.home-togas-v10 .hv4-traditions-copy,
+.home-togas-v10 .hv4-video-controls{
+  z-index:2!important;
+}
+.home-togas-v10 .hv4-video-track i{
+  animation:none!important;
+  transition:transform .12s linear!important;
+  transform-origin:left center!important;
+}
+.home-togas-v10 .hv4-traditions-media.is-paused .hv4-traditions-video{
+  opacity:1!important;
+}
+
+@media(max-width:700px){
+  .home-togas-v10 .hv4-traditions-media{
+    min-height:0!important;
+    aspect-ratio:9/16!important;
+  }
+  .home-togas-v10 .hv4-traditions-video{
+    object-position:center!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .home-togas-v10 .hv4-traditions-video{
+    animation:none!important;
+  }
+}
