@@ -146,7 +146,7 @@ Applied homepage V4 storefront redesign
 
 ===== merge-home-traditions-collections-v1.py =====
 exit=0
-Merged traditions with a shoppable collection product rail
+Merged traditions with a shoppable collection product rail and Editorial CTA
 
 
 ## npm install
@@ -154,7 +154,7 @@ npm warn deprecated tsconfck@3.1.6: unmaintained
 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
 npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
 
-added 513 packages in 18s
+added 513 packages in 16s
 
 ## Next build
 ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
@@ -168,7 +168,7 @@ Failed to type check.
 ./app/page.tsx:442:71
 Type error: Cannot find name 'collectionProducts'.
 
-  [90m440 |[0m ...[32mutton"[0m onClick={()=>go([32m"collections"[0m)}>СМОТРЕТЬ ВСЕ</button>
+  [90m440 |[0m ...[32mutton"[0m onClick={()=>go([32m"collections"[0m)}>СМОТРЕТЬ [33mEDITORIAL[0m</button>
   [90m441 |[0m ...
 [31m[1m>[0m [90m442 |[0m ...sName=[32m"hv4-collection-product-rail"[0m items={collectionProducts} onProduct={onProduct} o...
   [90m    |[0m                                               [31m[1m^[0m
