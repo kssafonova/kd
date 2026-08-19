@@ -1,0 +1,615 @@
+/* Homepage UX V9 — responsive luxury ecommerce system. Loaded last. */
+.home-reference-v5{
+  --home-gutter:clamp(16px,3.6vw,54px);
+  --home-ink:#171817;
+  --home-muted:#777975;
+  --home-line:#ecece9;
+  --home-title:clamp(15px,1.05vw,18px);
+  --home-kicker:clamp(5.5px,.42vw,6.5px);
+  --home-cta:clamp(6.5px,.5vw,7.5px);
+  background:#fff!important;
+}
+
+/* The first campaign block fills the user's viewport below the promo bar. */
+.home-reference-v5 .hv4-hero{
+  height:calc(100svh - 31px)!important;
+  height:calc(100dvh - 31px)!important;
+  min-height:600px!important;
+  max-height:none!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-hero-media,
+.home-reference-v5 .hv4-hero-media img{
+  width:100%!important;
+  height:100%!important;
+}
+.home-reference-v5 .hv4-hero-media img{
+  object-fit:cover!important;
+}
+.home-reference-v5 .hv4-hero::after{
+  background:linear-gradient(180deg,rgba(0,0,0,.08) 0%,rgba(0,0,0,.015) 44%,rgba(0,0,0,.46) 100%)!important;
+}
+
+/* Home header scales with the viewport while preserving useful hit areas. */
+.view-home .header{
+  height:clamp(58px,5.5vw,76px)!important;
+  padding-inline:clamp(12px,2.4vw,32px)!important;
+}
+.view-home .header-left,
+.view-home .header-actions{
+  gap:clamp(8px,1.35vw,18px)!important;
+}
+.view-home .header-actions>button,
+.view-home .header-left>.icon-btn{
+  width:clamp(38px,3vw,44px)!important;
+  height:clamp(38px,3vw,44px)!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+}
+.view-home .header-actions svg{
+  width:clamp(19px,1.55vw,24px)!important;
+  height:clamp(19px,1.55vw,24px)!important;
+}
+.view-home .header-actions .bag svg{
+  width:clamp(20px,1.7vw,26px)!important;
+  height:clamp(20px,1.7vw,26px)!important;
+}
+.view-home .logo{
+  font-size:clamp(18px,1.8vw,25px)!important;
+  white-space:nowrap!important;
+}
+.view-home .boutiques{
+  font-size:clamp(9px,.8vw,12px)!important;
+}
+.view-home .boutiques svg{
+  width:clamp(17px,1.45vw,22px)!important;
+  height:clamp(17px,1.45vw,22px)!important;
+}
+.view-home .promo{
+  font-size:clamp(7.5px,.66vw,10px)!important;
+}
+.view-home .promo button{
+  font-size:clamp(7px,.58vw,9px)!important;
+}
+
+/* Hero copy is intentionally restrained; the CTA is the commercial focal point. */
+.home-reference-v5 .hv4-hero-copy{
+  left:var(--home-gutter)!important;
+  right:auto!important;
+  bottom:clamp(84px,10vh,112px)!important;
+  max-width:min(440px,70vw)!important;
+}
+.home-reference-v5 .hv4-hero-copy h1{
+  max-width:420px!important;
+  margin:0!important;
+  font:400 clamp(24px,2.2vw,32px)/1.04 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.015em!important;
+  text-transform:uppercase!important;
+}
+.home-reference-v5 .hv4-hero-copy button{
+  min-height:42px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:14px!important;
+  margin-top:16px!important;
+  padding:0 18px!important;
+  border:1px solid #fff!important;
+  background:#fff!important;
+  color:#171817!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  font-size:clamp(6.5px,.52vw,7.5px)!important;
+  letter-spacing:.12em!important;
+  text-transform:uppercase!important;
+  transition:background .18s ease,color .18s ease!important;
+}
+.home-reference-v5 .hv4-hero-copy button svg{
+  width:12px!important;
+  height:12px!important;
+  stroke-width:1.25!important;
+}
+@media(hover:hover){
+  .home-reference-v5 .hv4-hero-copy button:hover{
+    background:#171817!important;
+    border-color:#171817!important;
+    color:#fff!important;
+  }
+}
+.home-reference-v5 .hv4-hero-controls{
+  left:var(--home-gutter)!important;
+  right:var(--home-gutter)!important;
+  bottom:16px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+}
+.home-reference-v5 .hv4-hero-tabs{
+  justify-content:flex-start!important;
+  gap:clamp(16px,2vw,30px)!important;
+}
+.home-reference-v5 .hv4-hero-tabs button{
+  min-height:38px!important;
+  font-size:clamp(6.5px,.48vw,7.5px)!important;
+  letter-spacing:.13em!important;
+}
+.home-reference-v5 .hv4-hero-arrows{
+  display:flex!important;
+  align-items:center!important;
+  gap:4px!important;
+}
+.home-reference-v5 .hv4-hero-arrows button{
+  width:40px!important;
+  height:40px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  border:1px solid rgba(255,255,255,.56)!important;
+  border-radius:50%!important;
+  color:#fff!important;
+  background:rgba(0,0,0,.05)!important;
+}
+.home-reference-v5 .hv4-hero-arrows button:first-child svg{transform:rotate(180deg)!important}
+.home-reference-v5 .hv4-hero-arrows svg{
+  width:13px!important;
+  height:13px!important;
+  stroke-width:1.15!important;
+}
+
+/* Dense, repeatable section hierarchy. */
+.home-reference-v5 .hv4-head,
+.home-reference-v5 .hv4-traditions-collections-head{
+  margin:0 0 13px!important;
+  align-items:flex-end!important;
+  gap:10px!important;
+}
+.home-reference-v5 .hv4-head h2,
+.home-reference-v5 .hv4-traditions-collections-head h2{
+  font:400 var(--home-title)/1.08 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.01em!important;
+  text-transform:uppercase!important;
+}
+.home-reference-v5 .hv4-head small,
+.home-reference-v5 .hv4-traditions-collections-head small{
+  margin-bottom:3px!important;
+  color:var(--home-muted)!important;
+  font-size:var(--home-kicker)!important;
+  letter-spacing:.15em!important;
+}
+.home-reference-v5 .hv4-head-actions{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  align-items:center!important;
+  gap:2px!important;
+}
+.home-reference-v5 .hv4-head-actions .hv4-text-cta{
+  order:-1!important;
+  min-height:32px!important;
+  margin:0 7px 0 0!important;
+  padding:0 10px!important;
+  border:1px solid #babbb7!important;
+  background:#fff!important;
+  color:var(--home-ink)!important;
+  font-size:var(--home-cta)!important;
+  letter-spacing:.105em!important;
+  transition:background .18s ease,color .18s ease,border-color .18s ease!important;
+}
+.home-reference-v5 .hv4-head-actions .hv4-rail-arrow.prev{
+  margin-left:auto!important;
+}
+.home-reference-v5 .hv4-rail-arrow{
+  width:38px!important;
+  height:38px!important;
+}
+.home-reference-v5 .hv4-rail-arrow svg{
+  width:12px!important;
+  height:12px!important;
+  stroke-width:1.15!important;
+}
+@media(hover:hover){
+  .home-reference-v5 .hv4-head-actions .hv4-text-cta:hover{
+    background:var(--home-ink)!important;
+    border-color:var(--home-ink)!important;
+    color:#fff!important;
+  }
+  .home-reference-v5 .hv4-rail-arrow:hover{
+    background:#f7f7f5!important;
+  }
+}
+
+/* Tighter content cadence. */
+.home-reference-v5 .hv4-categories{
+  padding-top:32px!important;
+  padding-bottom:34px!important;
+  border:0!important;
+}
+.home-reference-v5 .hv4-new{
+  padding-top:42px!important;
+  padding-bottom:48px!important;
+  border:0!important;
+}
+.home-reference-v5 .hv4-traditions-collections{
+  padding:0 0 48px!important;
+  border:0!important;
+}
+.home-reference-v5 .hv4-traditions-collections-content{
+  padding-top:20px!important;
+}
+.home-reference-v5 .hv4-solutions{
+  padding:44px 0 52px!important;
+  border-top:1px solid var(--home-line)!important;
+  border-bottom:0!important;
+}
+
+/* Categories stay visual but compact and scan quickly. */
+.home-reference-v5 .hv4-category-rail{
+  gap:8px!important;
+  padding:0!important;
+  scroll-snap-type:x proximity!important;
+}
+.home-reference-v5 .hv4-category-card{
+  flex:0 0 clamp(136px,10.8vw,170px)!important;
+}
+.home-reference-v5 .hv4-category-card img{
+  aspect-ratio:1/1!important;
+}
+.home-reference-v5 .hv4-category-card>span{
+  padding-top:6px!important;
+}
+.home-reference-v5 .hv4-category-card strong{
+  font-size:clamp(8.5px,.72vw,10px)!important;
+  line-height:1.18!important;
+}
+.home-reference-v5 .hv4-category-card small{
+  margin-top:2px!important;
+  font-size:clamp(5px,.42vw,6px)!important;
+}
+
+/* Product rails: more products visible, but all card actions remain accessible. */
+.home-reference-v5 .hv4-new .product-rail,
+.home-reference-v5 .hv4-traditions-collections .product-rail{
+  gap:8px!important;
+  padding-bottom:8px!important;
+  scroll-snap-type:x proximity!important;
+}
+.home-reference-v5 .hv4-new .product-card{
+  flex:0 0 clamp(228px,18.5vw,292px)!important;
+}
+.home-reference-v5 .hv4-traditions-collections .product-card{
+  flex:0 0 clamp(198px,16vw,248px)!important;
+}
+.home-reference-v5 .product-card .heart{
+  top:7px!important;
+  right:7px!important;
+  width:28px!important;
+  height:28px!important;
+}
+.home-reference-v5 .product-card .heart svg{
+  width:17px!important;
+  height:17px!important;
+  stroke-width:1.2!important;
+}
+.home-reference-v5 .product-card .quick{
+  width:38px!important;
+  height:38px!important;
+  display:grid!important;
+  place-items:center!important;
+}
+.home-reference-v5 .product-card .quick>svg{
+  width:27px!important;
+  height:27px!important;
+}
+.home-reference-v5 .product-copy{
+  padding-top:7px!important;
+}
+.home-reference-v5 .product-copy strong{
+  font-size:clamp(9.5px,.75vw,11px)!important;
+  line-height:1.2!important;
+}
+.home-reference-v5 .product-copy small{
+  font-size:clamp(5.5px,.44vw,6.5px)!important;
+}
+.home-reference-v5 .price{
+  font-size:clamp(9px,.7vw,10.5px)!important;
+}
+.home-reference-v5 .plp-swatches{
+  gap:5px!important;
+}
+.home-reference-v5 .plp-swatches button{
+  width:14px!important;
+  height:14px!important;
+}
+
+/* Brand story is supporting content, not a second hero. */
+.home-reference-v5 .hv4-traditions-media{
+  aspect-ratio:16/6.7!important;
+  min-height:320px!important;
+}
+.home-reference-v5 .hv4-traditions-copy{
+  left:20px!important;
+  right:20px!important;
+  bottom:18px!important;
+}
+.home-reference-v5 .hv4-traditions-copy h2{
+  max-width:430px!important;
+  font:400 clamp(22px,1.8vw,30px)/1.02 var(--serif,"Tenor Sans",sans-serif)!important;
+}
+.home-reference-v5 .hv4-video-controls{
+  right:16px!important;
+  bottom:16px!important;
+}
+.home-reference-v5 .hv4-video-toggle{
+  width:32px!important;
+  height:32px!important;
+}
+
+/* Ready-made room scenarios are a high-intent conversion path. */
+.home-reference-v5 .hv4-solution-rail{
+  gap:8px!important;
+}
+.home-reference-v5 .hv4-solution-card{
+  flex:0 0 calc((100% - 24px)/4)!important;
+  min-width:220px!important;
+}
+.home-reference-v5 .hv4-solution-card img{
+  aspect-ratio:4/5!important;
+}
+.home-reference-v5 .hv4-solution-card strong{
+  font-size:clamp(12px,.95vw,14px)!important;
+}
+.home-reference-v5 .hv4-solution-card em{
+  min-height:32px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin-top:9px!important;
+  padding:0 11px!important;
+  border:1px solid var(--home-ink)!important;
+  background:var(--home-ink)!important;
+  color:#fff!important;
+  font-size:clamp(5.8px,.43vw,6.5px)!important;
+  letter-spacing:.1em!important;
+  font-style:normal!important;
+}
+@media(hover:hover){
+  .home-reference-v5 .hv4-solution-card:hover em{
+    background:#fff!important;
+    color:var(--home-ink)!important;
+  }
+}
+
+/* Brand / boutiques closes the page with one clear action. */
+.home-reference-v5 .hv4-brand-boutiques{
+  min-height:440px!important;
+}
+.home-reference-v5 .hv4-brand-copy{
+  padding:clamp(38px,4.3vw,62px) var(--home-gutter)!important;
+}
+.home-reference-v5 .hv4-brand-copy h2{
+  max-width:390px!important;
+  font:400 clamp(23px,1.8vw,30px)/1.04 var(--serif,"Tenor Sans",sans-serif)!important;
+}
+.home-reference-v5 .hv4-brand-copy p{
+  font-size:clamp(8px,.62vw,9px)!important;
+}
+.home-reference-v5 .hv4-brand-copy button{
+  min-height:36px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin-top:18px!important;
+  padding:0 14px!important;
+  border:1px solid var(--home-ink)!important;
+  background:var(--home-ink)!important;
+  color:#fff!important;
+  font-size:var(--home-cta)!important;
+  letter-spacing:.11em!important;
+  text-decoration:none!important;
+}
+.home-reference-v5 .hv4-brand-media{
+  min-height:440px!important;
+}
+
+@media(max-width:900px){
+  .home-reference-v5{
+    --home-gutter:12px;
+    --home-title:15px;
+    --home-kicker:5.5px;
+    --home-cta:6px;
+  }
+  .view-home .header{
+    height:60px!important;
+    padding-inline:10px!important;
+  }
+  .view-home .header-left,.view-home .header-actions{gap:2px!important}
+  .view-home .header-actions>button,
+  .view-home .header-left>.icon-btn{
+    width:40px!important;
+    height:40px!important;
+  }
+  .view-home .header-actions svg{
+    width:20px!important;
+    height:20px!important;
+  }
+  .view-home .logo{
+    font-size:clamp(16px,4.6vw,20px)!important;
+  }
+  .view-home .boutiques{display:none!important}
+
+  .home-reference-v5 .hv4-hero{
+    height:calc(100svh - 31px)!important;
+    height:calc(100dvh - 31px)!important;
+    min-height:590px!important;
+  }
+  .home-reference-v5 .hv4-hero-copy{
+    left:18px!important;
+    right:18px!important;
+    bottom:92px!important;
+    max-width:78vw!important;
+  }
+  .home-reference-v5 .hv4-hero-copy h1{
+    max-width:76vw!important;
+    font-size:clamp(22px,6.4vw,27px)!important;
+  }
+  .home-reference-v5 .hv4-hero-copy button{
+    min-height:42px!important;
+    margin-top:14px!important;
+    padding:0 16px!important;
+    font-size:6px!important;
+  }
+  .home-reference-v5 .hv4-hero-controls{
+    left:18px!important;
+    right:18px!important;
+    bottom:12px!important;
+  }
+  .home-reference-v5 .hv4-hero-tabs{
+    flex:1 1 auto!important;
+    gap:16px!important;
+    overflow-x:auto!important;
+    scrollbar-width:none!important;
+  }
+  .home-reference-v5 .hv4-hero-tabs::-webkit-scrollbar{display:none!important}
+  .home-reference-v5 .hv4-hero-tabs button{
+    min-height:40px!important;
+    font-size:6px!important;
+    white-space:nowrap!important;
+  }
+  .home-reference-v5 .hv4-hero-arrows{display:none!important}
+
+  .home-reference-v5 .hv4-head,
+  .home-reference-v5 .hv4-traditions-collections-head{
+    margin-bottom:11px!important;
+    gap:7px!important;
+  }
+  .home-reference-v5 .hv4-head-actions .hv4-text-cta{
+    min-height:34px!important;
+    margin-right:3px!important;
+    padding:0 8px!important;
+    display:inline-flex!important;
+  }
+  .home-reference-v5 .hv4-rail-arrow{
+    width:36px!important;
+    height:36px!important;
+  }
+
+  .home-reference-v5 .hv4-categories{
+    padding-top:26px!important;
+    padding-bottom:28px!important;
+  }
+  .home-reference-v5 .hv4-category-rail{
+    gap:7px!important;
+    margin-right:-12px!important;
+    padding-right:12px!important;
+    scroll-snap-type:x mandatory!important;
+  }
+  .home-reference-v5 .hv4-category-card{
+    flex:0 0 calc((100vw - 44px)/3.33)!important;
+    min-width:0!important;
+  }
+
+  .home-reference-v5 .hv4-new{
+    padding-top:34px!important;
+    padding-bottom:38px!important;
+  }
+  .home-reference-v5 .hv4-new .product-rail,
+  .home-reference-v5 .hv4-traditions-collections .product-rail{
+    gap:7px!important;
+    margin-right:-12px!important;
+    padding-right:12px!important;
+    scroll-snap-type:x mandatory!important;
+  }
+  .home-reference-v5 .hv4-new .product-card,
+  .home-reference-v5 .hv4-traditions-collections .product-card{
+    flex:0 0 calc((100vw - 43px)/2.5)!important;
+  }
+  .home-reference-v5 .product-card .heart{
+    width:28px!important;
+    height:28px!important;
+  }
+  .home-reference-v5 .product-card .heart svg{
+    width:16px!important;
+    height:16px!important;
+  }
+  .home-reference-v5 .product-card .quick{
+    width:36px!important;
+    height:36px!important;
+  }
+  .home-reference-v5 .product-card .quick>svg{
+    width:25px!important;
+    height:25px!important;
+  }
+
+  .home-reference-v5 .hv4-traditions-collections{
+    padding-bottom:38px!important;
+  }
+  .home-reference-v5 .hv4-traditions-media{
+    aspect-ratio:9/13!important;
+    min-height:0!important;
+  }
+  .home-reference-v5 .hv4-traditions-copy{
+    left:14px!important;
+    right:14px!important;
+    bottom:14px!important;
+  }
+  .home-reference-v5 .hv4-traditions-copy h2{
+    max-width:70vw!important;
+    font-size:clamp(22px,6vw,27px)!important;
+  }
+  .home-reference-v5 .hv4-video-controls{
+    right:12px!important;
+    bottom:12px!important;
+  }
+
+  .home-reference-v5 .hv4-solutions{
+    padding-top:36px!important;
+    padding-bottom:42px!important;
+  }
+  .home-reference-v5 .hv4-solution-rail{
+    gap:7px!important;
+    margin-right:-12px!important;
+    padding-right:12px!important;
+    scroll-snap-type:x mandatory!important;
+  }
+  .home-reference-v5 .hv4-solution-card{
+    flex:0 0 68vw!important;
+    min-width:0!important;
+  }
+  .home-reference-v5 .hv4-solution-card em{
+    min-height:34px!important;
+  }
+
+  .home-reference-v5 .hv4-brand-copy{
+    padding:34px 18px 40px!important;
+  }
+  .home-reference-v5 .hv4-brand-copy h2{
+    font-size:23px!important;
+  }
+  .home-reference-v5 .hv4-brand-copy button{
+    min-height:40px!important;
+  }
+}
+
+@media(max-width:420px){
+  /* Keep the header legible on narrow devices instead of compressing every icon. */
+  .view-home .header-actions>button:nth-child(2){display:none!important}
+  .view-home .header-actions>button,
+  .view-home .header-left>.icon-btn{
+    width:38px!important;
+    height:38px!important;
+  }
+  .view-home .logo{font-size:16px!important}
+  .home-reference-v5 .hv4-head h2,
+  .home-reference-v5 .hv4-traditions-collections-head h2{font-size:14px!important}
+  .home-reference-v5 .hv4-head-actions .hv4-text-cta{padding-inline:7px!important;font-size:5.5px!important}
+  .home-reference-v5 .hv4-rail-arrow{width:34px!important;height:34px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .home-reference-v5 *,
+  .home-reference-v5 *::before,
+  .home-reference-v5 *::after{
+    scroll-behavior:auto!important;
+  }
+}
