@@ -412,6 +412,9 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
   const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[activeIndex];
   const [traditionsPlaying,setTraditionsPlaying]=useState(true);
+  const traditionsVideoRef=useRef<HTMLVideoElement>(null);
+  const [traditionsProgress,setTraditionsProgress]=useState(0);
+  const [traditionsDuration,setTraditionsDuration]=useState(12.7);
   const [heroPaused,setHeroPaused]=useState(false);
   const heroTouchStart=useRef<number|null>(null);
 
@@ -422,6 +425,13 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
   },[activeIndex,setSlide,heroSlides.length,heroPaused]);
 
   const shiftHero=(direction:-1|1)=>setSlide((activeIndex+direction+heroSlides.length)%heroSlides.length);
+
+  const toggleTraditionsVideo=()=>{
+    const video=traditionsVideoRef.current;
+    if(!video)return;
+    if(video.paused){void video.play();setTraditionsPlaying(true)}
+    else{video.pause();setTraditionsPlaying(false)}
+  };
 
   const scrollHomeRail=(id:string,direction:-1|1)=>{
     const host=document.getElementById(id);
@@ -483,16 +493,20 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     <section className="hv4-traditions-collections" aria-label="Традиции, капсулы и коллекции">
       <div className="hv4-traditions-collections-shell">
         <div className={`hv4-traditions-media ${traditionsPlaying?"is-playing":"is-paused"}`}> 
-          <img src={assetUrl("/images/russian-bedroom.png")} alt="Современная русская спальня"/>
-          <img src={assetUrl("/images/editorial-table.webp")} alt="Сервировка дома"/>
-          <img src={assetUrl("/images/time-hero.png")} alt="Предметы Культура дома"/>
+          <video ref={traditionsVideoRef} className="hv4-traditions-video" autoPlay loop muted playsInline preload="metadata" poster={assetUrl("/images/russian-bedroom.png")}
+            onPlay={()=>setTraditionsPlaying(true)} onPause={()=>setTraditionsPlaying(false)}
+            onLoadedMetadata={event=>setTraditionsDuration(event.currentTarget.duration||12.7)}
+            onTimeUpdate={event=>{const video=event.currentTarget;setTraditionsProgress(video.duration?video.currentTime/video.duration:0)}}>
+            <source media="(max-width: 700px)" src={assetUrl("/videos/home-mobile.mp4")} type="video/mp4"/>
+            <source src={assetUrl("/videos/home-desktop.mp4")} type="video/mp4"/>
+          </video>
           <div className="hv4-traditions-copy"><div><small>BRAND STORY</small><h2>Традиции в каждом доме</h2></div><span>КУЛЬТУРА ДОМА</span></div>
           <div className="hv4-video-controls" aria-label="Управление историей">
-            <button type="button" className="hv4-video-toggle" onClick={()=>setTraditionsPlaying(value=>!value)} aria-label={traditionsPlaying?"Поставить видео на паузу":"Продолжить видео"}>
+            <button type="button" className="hv4-video-toggle" onClick={toggleTraditionsVideo} aria-label={traditionsPlaying?"Поставить видео на паузу":"Продолжить видео"}>
               {traditionsPlaying?<span className="hv4-pause-icon" aria-hidden="true"><i/><i/></span>:<span className="hv4-play-icon" aria-hidden="true"/>}
             </button>
-            <span className="hv4-video-track" aria-hidden="true"><i/></span>
-            <small>0:15</small>
+            <span className="hv4-video-track" aria-hidden="true"><i style={{transform:`scaleX(${traditionsProgress})`}}/></span>
+            <small>{`0:${String(Math.round(traditionsDuration)).padStart(2,"0")}`}</small>
           </div>
         </div>
 
@@ -556,6 +570,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
