@@ -1,0 +1,466 @@
+/* Homepage V5 — clean white storefront based on the supplied reference. */
+
+.home-reference-v5,
+.home-reference-v5 > section,
+.home-reference-v5 .hv4-section,
+.home-reference-v5 .hv4-solutions,
+.home-reference-v5 .hv4-brand-boutiques,
+.home-reference-v5 .hv4-brand-copy,
+.home-reference-v5 .hv4-traditions-collections,
+.home-reference-v5 .hv4-traditions-collections-shell,
+.home-reference-v5 .hv4-traditions-collections-content {
+  background:#fff!important;
+}
+
+.home-reference-v5 img,
+.home-reference-v5 .product-image,
+.home-reference-v5 .product-media-scroll,
+.home-reference-v5 .hv4-category-card,
+.home-reference-v5 .hv4-solution-card img,
+.home-reference-v5 .hv4-brand-media,
+.home-reference-v5 .hv4-traditions-media {
+  background:#fff!important;
+}
+
+.home-reference-v5 .hv4-shell,
+.home-reference-v5 .hv4-traditions-collections-shell {
+  width:min(1480px,calc(100% - 96px))!important;
+}
+
+/* HERO */
+.home-reference-v5 .hv4-hero {
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-hero::after {
+  background:linear-gradient(180deg,rgba(7,8,7,.08) 0%,rgba(7,8,7,.01) 48%,rgba(7,8,7,.38) 100%)!important;
+}
+.home-reference-v5 .hv4-hero-copy {
+  left:clamp(28px,4.5vw,82px)!important;
+  right:auto!important;
+  bottom:70px!important;
+  max-width:520px!important;
+}
+.home-reference-v5 .hv4-hero-copy h1 {
+  max-width:520px!important;
+  margin:0!important;
+  font-size:clamp(38px,3.45vw,54px)!important;
+  line-height:.98!important;
+  letter-spacing:-.035em!important;
+  text-transform:uppercase!important;
+  font-weight:400!important;
+}
+.home-reference-v5 .hv4-hero-copy button {
+  min-width:146px!important;
+  min-height:40px!important;
+  margin-top:24px!important;
+  padding:10px 24px!important;
+  border:1px solid rgba(255,255,255,.88)!important;
+  color:#fff!important;
+  font-size:8px!important;
+  letter-spacing:.11em!important;
+  text-decoration:none!important;
+}
+.home-reference-v5 .hv4-hero-controls {
+  left:0!important;
+  right:0!important;
+  bottom:17px!important;
+  justify-content:center!important;
+}
+.home-reference-v5 .hv4-hero-tabs {
+  justify-content:center!important;
+  gap:28px!important;
+}
+.home-reference-v5 .hv4-hero-tabs button {
+  font-size:7px!important;
+  letter-spacing:.13em!important;
+}
+
+/* SECTION HEADS */
+.home-reference-v5 .hv4-head,
+.home-reference-v5 .hv4-traditions-collections-head {
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:28px!important;
+  min-height:0!important;
+  margin-bottom:22px!important;
+  padding:0!important;
+}
+.home-reference-v5 .hv4-head small,
+.home-reference-v5 .hv4-traditions-collections-head small {
+  display:block!important;
+  margin:0 0 6px!important;
+  color:#82847f!important;
+  font-size:7px!important;
+  line-height:1!important;
+  letter-spacing:.17em!important;
+}
+.home-reference-v5 .hv4-head h2,
+.home-reference-v5 .hv4-traditions-collections-head h2 {
+  max-width:680px!important;
+  margin:0!important;
+  font-size:clamp(24px,1.7vw,30px)!important;
+  line-height:1.03!important;
+  letter-spacing:-.02em!important;
+  text-transform:uppercase!important;
+  font-weight:400!important;
+}
+.home-reference-v5 .hv4-head-actions {
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  flex:0 0 auto!important;
+}
+.home-reference-v5 .hv4-rail-arrow {
+  width:27px!important;
+  height:27px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  border:0!important;
+  background:#fff!important;
+  color:#1b1c1b!important;
+}
+.home-reference-v5 .hv4-rail-arrow svg {
+  width:14px!important;
+  height:14px!important;
+  stroke-width:1.25!important;
+}
+.home-reference-v5 .hv4-rail-arrow.prev svg {
+  transform:rotate(180deg)!important;
+}
+.home-reference-v5 .hv4-text-cta,
+.home-reference-v5 .hv4-head > button,
+.home-reference-v5 .hv4-head > a,
+.home-reference-v5 .hv4-traditions-collections-head > button {
+  padding:0 0 4px!important;
+  border:0!important;
+  border-bottom:1px solid #777!important;
+  background:#fff!important;
+  color:#1b1c1b!important;
+  font-size:7px!important;
+  line-height:1!important;
+  letter-spacing:.12em!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+}
+
+/* CATEGORIES — text navigation, not image cards. */
+.home-reference-v5 .hv4-categories {
+  padding-top:58px!important;
+  padding-bottom:56px!important;
+  border-bottom:1px solid #ececea!important;
+}
+.home-reference-v5 .hv4-category-rail {
+  display:flex!important;
+  align-items:stretch!important;
+  gap:0!important;
+  overflow-x:auto!important;
+  padding:0 0 8px!important;
+  scroll-snap-type:x proximity!important;
+  scrollbar-width:none!important;
+}
+.home-reference-v5 .hv4-category-rail::-webkit-scrollbar {display:none!important}
+.home-reference-v5 .hv4-category-card {
+  position:relative!important;
+  flex:0 0 clamp(178px,14vw,230px)!important;
+  min-height:92px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:flex-end!important;
+  gap:5px!important;
+  padding:18px 34px 17px 0!important;
+  border:0!important;
+  border-bottom:1px solid #dcdcd8!important;
+  text-align:left!important;
+  scroll-snap-align:start!important;
+}
+.home-reference-v5 .hv4-category-card + .hv4-category-card {
+  margin-left:22px!important;
+}
+.home-reference-v5 .hv4-category-card strong {
+  margin:0!important;
+  font-size:12px!important;
+  line-height:1.18!important;
+  font-weight:400!important;
+}
+.home-reference-v5 .hv4-category-card small {
+  margin:0!important;
+  color:#999a96!important;
+  font-size:6px!important;
+  line-height:1!important;
+  letter-spacing:.08em!important;
+}
+.home-reference-v5 .hv4-category-card svg {
+  position:absolute!important;
+  right:3px!important;
+  bottom:18px!important;
+  width:13px!important;
+  height:13px!important;
+  stroke-width:1.2!important;
+}
+
+/* NEW ARRIVALS */
+.home-reference-v5 .hv4-new {
+  padding-top:68px!important;
+  padding-bottom:82px!important;
+}
+.home-reference-v5 .hv4-new .product-rail {
+  gap:12px!important;
+  padding-bottom:10px!important;
+}
+.home-reference-v5 .hv4-new .product-card {
+  flex:0 0 clamp(245px,22vw,342px)!important;
+}
+.home-reference-v5 .hv4-new .product-copy strong {
+  font-size:12px!important;
+  font-weight:400!important;
+}
+.home-reference-v5 .hv4-new .product-copy small {
+  font-size:6.5px!important;
+}
+.home-reference-v5 .hv4-new .price {
+  font-size:10px!important;
+}
+
+/* TRADITIONS + COLLECTION PRODUCTS */
+.home-reference-v5 .hv4-traditions-collections {
+  padding:8px 0 84px!important;
+}
+.home-reference-v5 .hv4-traditions-collections-shell {
+  margin:0 auto!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-traditions-media {
+  aspect-ratio:16/6!important;
+  min-height:360px!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-traditions-copy {
+  left:30px!important;
+  right:30px!important;
+  bottom:25px!important;
+}
+.home-reference-v5 .hv4-traditions-copy h2 {
+  max-width:620px!important;
+  font-size:clamp(29px,2.5vw,40px)!important;
+  line-height:1!important;
+  letter-spacing:-.03em!important;
+}
+.home-reference-v5 .hv4-traditions-copy small,
+.home-reference-v5 .hv4-traditions-copy > span {
+  font-size:6.5px!important;
+}
+.home-reference-v5 .hv4-traditions-collections-content {
+  display:block!important;
+  padding:30px 0 0!important;
+  border-top:0!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-traditions-collections-head {
+  margin-bottom:20px!important;
+}
+.home-reference-v5 .hv4-traditions-collections .product-rail {
+  gap:12px!important;
+  padding-bottom:10px!important;
+}
+.home-reference-v5 .hv4-traditions-collections .product-card {
+  flex:0 0 clamp(205px,17vw,265px)!important;
+}
+
+/* READY SOLUTIONS — white horizontal editorial rail. */
+.home-reference-v5 .hv4-solutions {
+  padding:70px 0 86px!important;
+  border-top:1px solid #ececea!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-solution-rail {
+  display:flex!important;
+  gap:12px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  padding:0 0 10px!important;
+  scroll-snap-type:x proximity!important;
+  scrollbar-width:none!important;
+}
+.home-reference-v5 .hv4-solution-rail::-webkit-scrollbar {display:none!important}
+.home-reference-v5 .hv4-solution-card {
+  flex:0 0 clamp(260px,23vw,350px)!important;
+  scroll-snap-align:start!important;
+}
+.home-reference-v5 .hv4-solution-card img {
+  aspect-ratio:3/4!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-solution-card strong {
+  font-size:15px!important;
+  font-weight:400!important;
+}
+.home-reference-v5 .hv4-solution-card small,
+.home-reference-v5 .hv4-solution-card em {
+  font-size:6px!important;
+}
+
+/* BRAND + BOUTIQUES — no coloured panel. */
+.home-reference-v5 .hv4-brand-boutiques {
+  grid-template-columns:.82fr 1.18fr!important;
+  min-height:520px!important;
+  border-top:1px solid #ececea!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-brand-copy {
+  padding:clamp(48px,5vw,78px)!important;
+  background:#fff!important;
+}
+.home-reference-v5 .hv4-brand-copy h2 {
+  max-width:460px!important;
+  margin-top:14px!important;
+  font-size:clamp(28px,2.4vw,38px)!important;
+  line-height:1.02!important;
+  letter-spacing:-.025em!important;
+  text-transform:uppercase!important;
+}
+.home-reference-v5 .hv4-brand-copy p {
+  max-width:420px!important;
+  margin-top:18px!important;
+  color:#70716d!important;
+  font-size:9px!important;
+  line-height:1.7!important;
+}
+.home-reference-v5 .hv4-boutiques-list {
+  border-top:1px solid #e2e2df!important;
+}
+.home-reference-v5 .hv4-brand-media {
+  min-height:520px!important;
+  background:#fff!important;
+}
+
+@media(max-width:900px){
+  .home-reference-v5 .hv4-shell,
+  .home-reference-v5 .hv4-traditions-collections-shell {
+    width:calc(100% - 24px)!important;
+  }
+  .home-reference-v5 .hv4-hero-copy {
+    left:18px!important;
+    right:18px!important;
+    bottom:88px!important;
+    max-width:80vw!important;
+  }
+  .home-reference-v5 .hv4-hero-copy h1 {
+    max-width:80vw!important;
+    font-size:34px!important;
+  }
+  .home-reference-v5 .hv4-hero-copy button {
+    min-width:126px!important;
+    min-height:38px!important;
+    margin-top:18px!important;
+    padding:9px 20px!important;
+  }
+  .home-reference-v5 .hv4-hero-tabs {
+    max-width:calc(100vw - 36px)!important;
+    gap:18px!important;
+  }
+  .home-reference-v5 .hv4-head,
+  .home-reference-v5 .hv4-traditions-collections-head {
+    align-items:center!important;
+    gap:14px!important;
+    margin-bottom:17px!important;
+  }
+  .home-reference-v5 .hv4-head h2,
+  .home-reference-v5 .hv4-traditions-collections-head h2 {
+    font-size:21px!important;
+  }
+  .home-reference-v5 .hv4-head-actions {
+    gap:5px!important;
+  }
+  .home-reference-v5 .hv4-rail-arrow {
+    width:25px!important;
+    height:25px!important;
+  }
+  .home-reference-v5 .hv4-text-cta {
+    margin-left:3px!important;
+    font-size:6px!important;
+  }
+  .home-reference-v5 .hv4-categories {
+    padding-top:38px!important;
+    padding-bottom:38px!important;
+  }
+  .home-reference-v5 .hv4-category-card {
+    flex-basis:27vw!important;
+    min-width:0!important;
+    min-height:80px!important;
+    padding:14px 22px 14px 0!important;
+  }
+  .home-reference-v5 .hv4-category-card + .hv4-category-card {
+    margin-left:10px!important;
+  }
+  .home-reference-v5 .hv4-category-card strong {
+    font-size:10px!important;
+  }
+  .home-reference-v5 .hv4-category-card svg {
+    right:2px!important;
+    bottom:15px!important;
+    width:11px!important;
+    height:11px!important;
+  }
+  .home-reference-v5 .hv4-new {
+    padding-top:50px!important;
+    padding-bottom:62px!important;
+  }
+  .home-reference-v5 .hv4-new .product-card {
+    flex-basis:35vw!important;
+  }
+  .home-reference-v5 .hv4-traditions-media {
+    aspect-ratio:9/14!important;
+    min-height:0!important;
+  }
+  .home-reference-v5 .hv4-traditions-copy {
+    left:18px!important;
+    right:18px!important;
+    bottom:18px!important;
+  }
+  .home-reference-v5 .hv4-traditions-copy h2 {
+    max-width:78vw!important;
+    font-size:30px!important;
+  }
+  .home-reference-v5 .hv4-traditions-copy > span {
+    display:none!important;
+  }
+  .home-reference-v5 .hv4-traditions-collections-content {
+    padding-top:22px!important;
+  }
+  .home-reference-v5 .hv4-traditions-collections .product-card {
+    flex-basis:39vw!important;
+  }
+  .home-reference-v5 .hv4-solutions {
+    padding-top:52px!important;
+    padding-bottom:64px!important;
+  }
+  .home-reference-v5 .hv4-solution-card {
+    flex-basis:70vw!important;
+  }
+  .home-reference-v5 .hv4-brand-boutiques {
+    display:block!important;
+    min-height:0!important;
+    background:#fff!important;
+  }
+  .home-reference-v5 .hv4-brand-copy {
+    padding:48px 18px!important;
+  }
+  .home-reference-v5 .hv4-brand-copy h2 {
+    font-size:29px!important;
+  }
+  .home-reference-v5 .hv4-brand-media {
+    min-height:62vw!important;
+  }
+}
+
+@media(max-width:520px){
+  .home-reference-v5 .hv4-head h2,
+  .home-reference-v5 .hv4-traditions-collections-head h2 {font-size:19px!important}
+  .home-reference-v5 .hv4-category-card {flex-basis:27.5vw!important}
+  .home-reference-v5 .hv4-new .product-card {flex-basis:39vw!important}
+  .home-reference-v5 .hv4-traditions-collections .product-card {flex-basis:40vw!important}
+}
