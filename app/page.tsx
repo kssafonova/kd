@@ -391,14 +391,14 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
   };
 
   const categories=[
-    {title:"Постельное бельё",meta:"СПАЛЬНЯ",category:"Постельное бельё"},
-    {title:"Пледы и подушки",meta:"ТЕКСТИЛЬ",category:"Пледы и подушки"},
-    {title:"Посуда и сервировка",meta:"СТОЛОВАЯ",category:"Посуда и сервировка"},
-    {title:"Столовый текстиль",meta:"СЕРВИРОВКА",category:"Столовый текстиль"},
-    {title:"Домашняя одежда",meta:"ДЛЯ ДОМА",category:"Домашняя одежда"},
-    {title:"Декор для дома",meta:"ИНТЕРЬЕР",category:"Все товары"},
-    {title:"Ванная",meta:"ТЕКСТИЛЬ",category:"Все товары"},
-    {title:"Подарки",meta:"ИДЕИ",category:"Все товары"},
+    {title:"Постельное бельё",meta:"СПАЛЬНЯ",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
+    {title:"Пледы и подушки",meta:"ТЕКСТИЛЬ",image:"/images/sky-bolster.png",category:"Пледы и подушки"},
+    {title:"Посуда и сервировка",meta:"СТОЛОВАЯ",image:"/images/moon-plate.png",category:"Посуда и сервировка"},
+    {title:"Столовый текстиль",meta:"СЕРВИРОВКА",image:"/images/editorial-table.webp",category:"Столовый текстиль"},
+    {title:"Домашняя одежда",meta:"ДЛЯ ДОМА",image:"/images/classic-bedroom.png",category:"Домашняя одежда"},
+    {title:"Декор для дома",meta:"ИНТЕРЬЕР",image:"/images/beige-bedroom.png",category:"Все товары"},
+    {title:"Ванная",meta:"ТЕКСТИЛЬ",image:"/images/russian-bedroom.png",category:"Все товары"},
+    {title:"Подарки",meta:"ИДЕИ",image:"/images/time-collection.png",category:"Все товары"},
   ];
 
   const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
@@ -426,7 +426,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
 
     <section className="hv4-categories hv4-shell">
       <header className="hv4-head"><div><small>КАТАЛОГ</small><h2>Категории</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Категории назад" onClick={()=>scrollHomeRail("home-category-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Категории вперёд" onClick={()=>scrollHomeRail("home-category-rail",1)}><Icon name="arrow"/></button><button className="hv4-text-cta" type="button" onClick={()=>openCatalog("Все товары")}>ВЕСЬ КАТАЛОГ</button></div></header>
-      <div id="home-category-rail" className="hv4-category-rail" aria-label="Категории товаров">{categories.map(item=><button className="hv4-category-card" type="button" key={item.title} onClick={()=>openCatalog(item.category)}><strong>{item.title}</strong><small>{item.meta}</small><Icon name="arrow"/></button>)}</div>
+      <div id="home-category-rail" className="hv4-category-rail" aria-label="Категории товаров">{categories.map(item=><button className="hv4-category-card" type="button" key={item.title} onClick={()=>openCatalog(item.category)}><img src={assetUrl(item.image)} alt={item.title}/><span><strong>{item.title}</strong><small>{item.meta}</small></span></button>)}</div>
     </section>
 
     <section className="hv4-new hv4-section hv4-shell">
@@ -506,6 +506,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
