@@ -36,7 +36,7 @@ replacement = r'''    <section className="hv4-traditions-collections" aria-label
         <div className="hv4-traditions-collections-content">
           <header className="hv4-traditions-collections-head">
             <div><small>EDITORIAL</small><h2>Капсулы и коллекции</h2></div>
-            <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ</button>
+            <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ EDITORIAL</button>
           </header>
           <ProductRail className="hv4-collection-product-rail" items={collectionProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
         </div>
@@ -53,4 +53,4 @@ if not re.search(pattern, text):
 text = re.sub(pattern, replacement, text, count=1)
 
 PAGE.write_text(text, encoding="utf-8")
-print("Merged traditions with a shoppable collection product rail")
+print("Merged traditions with a shoppable collection product rail and Editorial CTA")
