@@ -32,6 +32,7 @@ scripts = [
     "redesign-home-commerce-v3.py",
     "redesign-home-v4.py",
     "merge-home-traditions-collections-v1.py",
+    "refine-home-v7.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
