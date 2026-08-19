@@ -36,6 +36,7 @@ scripts = [
     "refine-home-v8.py",
     "refine-home-v9.py",
     "refine-home-togas-v10.py",
+    "refine-home-ux-v11.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
