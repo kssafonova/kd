@@ -63,11 +63,83 @@
 .added-gift-option small{font-size:10px;line-height:1.4;color:#858580}
 .cart-gift-options{color:#5f5f5a!important;font-size:10px!important;line-height:1.4!important}
 
+/* Cross-sell inside the post-add step. It deliberately opens the recommendation PDP
+   instead of starting another nested add-to-cart flow. */
+.added-complementary{
+  padding:24px 0 8px;
+  border-bottom:1px solid #deded9;
+}
+.added-complementary-head{margin-bottom:14px}
+.added-complementary-head small{
+  display:block;
+  margin-bottom:5px;
+  color:#777772;
+  font-size:8px;
+  line-height:1.3;
+  letter-spacing:.12em;
+}
+.added-complementary-head h3{
+  margin:0;
+  font:400 17px/1.2 var(--serif,'Tenor Sans',sans-serif);
+}
+.added-complementary-rail{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.added-complementary-card{
+  min-width:0;
+  padding:0;
+  text-align:left;
+  background:#fff;
+}
+.added-complementary-card>img{
+  width:100%;
+  aspect-ratio:1/1.08;
+  object-fit:cover;
+  background:#fff;
+}
+.added-complementary-card>span{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:3px;
+  padding:8px 0 2px;
+}
+.added-complementary-card strong{
+  width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:10.5px;
+  font-weight:400;
+  line-height:1.3;
+  text-transform:uppercase;
+}
+.added-complementary-card small{
+  width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#83837e;
+  font-size:9px;
+  line-height:1.35;
+}
+.added-complementary-card b{
+  margin-top:2px;
+  font-size:10.5px;
+  font-weight:400;
+  line-height:1.3;
+}
+.added-complementary-card:focus-visible{outline:1px solid #263f43;outline-offset:4px}
+
 @media(min-width:901px){
   .plp-added-modal .added-gift-flow{padding-top:24px}
   .plp-added-modal .added-gift-head strong{font-size:15px}
   .plp-added-modal .added-gift-option{min-height:66px}
   .plp-added-modal .added-gift-option b{font-size:12.5px}
+  .plp-added-modal .added-complementary{padding-top:26px}
+  .plp-added-modal .added-complementary-card>img{aspect-ratio:1/1}
 }
 
 @media(max-width:900px){
@@ -78,7 +150,28 @@
   .added-gift-option{min-height:58px;gap:11px;padding:10px 0}
   .added-gift-option b{font-size:12px}
   .added-gift-option small{font-size:9.5px}
-  .plp-added-modal>aside{margin-top:auto!important}
+  .added-complementary{padding:20px 0 8px}
+  .added-complementary-head{margin-bottom:12px}
+  .added-complementary-head h3{font-size:15px}
+  .added-complementary-rail{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    margin-right:-16px;
+    padding-right:16px;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+  }
+  .added-complementary-rail::-webkit-scrollbar{display:none}
+  .added-complementary-card{
+    flex:0 0 calc((100vw - 54px)/2);
+    max-width:190px;
+    scroll-snap-align:start;
+  }
+  .added-complementary-card strong{font-size:10px}
+  .added-complementary-card small{font-size:9px}
+  .added-complementary-card b{font-size:10px}
+  .plp-added-modal>aside{margin-top:18px!important}
   .cart-gift-options{font-size:9px!important}
 }
 
@@ -88,4 +181,6 @@
   .added-gift-option{min-height:54px}
   .added-gift-option b{font-size:11.5px}
   .added-gift-option small{font-size:9px}
+  .added-complementary-card{flex-basis:calc((100vw - 48px)/2)}
+  .added-complementary-head h3{font-size:14px}
 }
