@@ -37,6 +37,7 @@ scripts = [
     "refine-home-v9.py",
     "refine-home-togas-v10.py",
     "refine-home-ux-v11.py",
+    "refine-home-v11-video.py",
     "add-mobile-gift-wrap-flow-v1.py",
 ]
 
