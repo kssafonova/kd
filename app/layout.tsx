@@ -23,6 +23,7 @@ import "./home-ux-v6.css";
 import "./home-ux-v7.css";
 import "./home-ux-v8.css";
 import "./home-ux-v9.css";
+import "./home-togas-v10.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
 export const metadata: Metadata = {
