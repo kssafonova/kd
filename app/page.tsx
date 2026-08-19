@@ -370,9 +370,9 @@ function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, count, favor
 
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   const heroSlides=[
-    {label:"НОВИНКИ",title:"Новинки",cta:"Смотреть новинки",desktopImage:"/images/time-hero.png",mobileImage:"/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
-    {label:"СПАЛЬНЯ",title:"Спальня",cta:"Перейти в спальню",desktopImage:"/images/blue-bedroom.png",mobileImage:"/images/editorial/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
-    {label:"ДЕКОР ДЛЯ ДОМА",title:"Декор для дома",cta:"Смотреть декор",desktopImage:"/images/beige-bedroom.png",mobileImage:"/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
+    {label:"НОВИНКИ",title:"Новинки",cta:"Смотреть",desktopImage:"/images/time-hero.png",mobileImage:"/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
+    {label:"СПАЛЬНЯ",title:"Спальня",cta:"Смотреть",desktopImage:"/images/blue-bedroom.png",mobileImage:"/images/editorial/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
+    {label:"ДЕКОР ДЛЯ ДОМА",title:"Декор для дома",cta:"Смотреть",desktopImage:"/images/beige-bedroom.png",mobileImage:"/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
   ];
   const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[activeIndex];
@@ -418,7 +418,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     {room:"КУХНЯ",title:"Утро в зимнем саду",image:"/images/buyan-editorial.png"},
   ];
 
-  return <main className="home-v4 home-reference-v5">
+  return <main className="home-v4 home-reference-v5 home-togas-v10">
     <section className="hv4-hero" aria-label="Главные разделы"
       onPointerEnter={()=>setHeroPaused(true)} onPointerLeave={()=>setHeroPaused(false)}
       onFocusCapture={()=>setHeroPaused(true)} onBlurCapture={()=>setHeroPaused(false)}
@@ -441,7 +441,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     </section>
 
     <section className="hv4-new hv4-section hv4-shell">
-      <header className="hv4-head"><div><small>НОВОЕ ПОСТУПЛЕНИЕ</small><h2>Новинки</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Новинки назад" onClick={()=>scrollHomeRail("home-new-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Новинки вперёд" onClick={()=>scrollHomeRail("home-new-rail",1)}><Icon name="arrow"/></button><button className="hv4-text-cta" type="button" onClick={()=>openCatalog("Все товары")}>СМОТРЕТЬ ВСЕ</button></div></header>
+      <header className="hv4-head"><div><small>НОВИНКИ</small><h2>Новое поступление</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Новинки назад" onClick={()=>scrollHomeRail("home-new-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Новинки вперёд" onClick={()=>scrollHomeRail("home-new-rail",1)}><Icon name="arrow"/></button><button className="hv4-text-cta" type="button" onClick={()=>openCatalog("Все товары")}>СМОТРЕТЬ ВСЕ</button></div></header>
       <div id="home-new-rail"><ProductRail className="hv4-new-rail" items={newProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></div>
     </section>
 
@@ -463,11 +463,11 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
 
         <div className="hv4-traditions-collections-content">
           <header className="hv4-traditions-collections-head">
-            <div><small>EDITORIAL</small><h2>Капсулы и коллекции</h2></div>
+            <div><small>КОЛЛЕКЦИИ</small><h2>Капсулы и коллекции</h2></div>
             <div className="hv4-head-actions">
               <button className="hv4-rail-arrow prev" type="button" aria-label="Товары коллекций назад" onClick={()=>scrollHomeRail("home-collection-rail",-1)}><Icon name="arrow"/></button>
               <button className="hv4-rail-arrow" type="button" aria-label="Товары коллекций вперёд" onClick={()=>scrollHomeRail("home-collection-rail",1)}><Icon name="arrow"/></button>
-              <button className="hv4-text-cta" type="button" onClick={()=>go("collections")}>СМОТРЕТЬ EDITORIAL</button>
+              <button className="hv4-text-cta" type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ</button>
             </div>
           </header>
           <div id="home-collection-rail"><ProductRail className="hv4-collection-product-rail" items={collectionProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></div>
@@ -477,13 +477,13 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
 
     <section className="hv4-solutions">
       <div className="hv4-shell">
-        <header className="hv4-head"><div><small>ИНТЕРЬЕРНЫЕ СЦЕНАРИИ</small><h2>Готовые решения</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Решения назад" onClick={()=>scrollHomeRail("home-solution-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Решения вперёд" onClick={()=>scrollHomeRail("home-solution-rail",1)}><Icon name="arrow"/></button><a className="hv4-text-cta" href={constructorHref}>СМОТРЕТЬ ВСЕ</a></div></header>
-        <div id="home-solution-rail" className="hv4-solution-rail">{solutions.map(item=><a className="hv4-solution-card" href={constructorHref} key={item.room}><img src={assetUrl(item.image)} alt={`${item.room}: ${item.title}`}/><span><small>{item.room}</small><strong>{item.title}</strong><em>СОБРАТЬ РЕШЕНИЕ</em></span></a>)}</div>
+        <header className="hv4-head"><div><small>ВДОХНОВЕНИЕ</small><h2>Готовые решения для дома</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Решения назад" onClick={()=>scrollHomeRail("home-solution-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Решения вперёд" onClick={()=>scrollHomeRail("home-solution-rail",1)}><Icon name="arrow"/></button><a className="hv4-text-cta" href={constructorHref}>СМОТРЕТЬ ВСЕ</a></div></header>
+        <div id="home-solution-rail" className="hv4-solution-rail">{solutions.map(item=><a className="hv4-solution-card" href={constructorHref} key={item.room}><img src={assetUrl(item.image)} alt={`${item.room}: ${item.title}`}/><span><small>{item.room}</small><strong>{item.title}</strong><em>СМОТРЕТЬ</em></span></a>)}</div>
       </div>
     </section>
 
     <section className="hv4-brand-boutiques">
-      <div className="hv4-brand-copy"><small>О БРЕНДЕ</small><h2>Культура дома</h2><p>Современный взгляд на русские традиции через текстиль, посуду и предметы интерьера.</p><div className="hv4-boutiques-list" aria-label="Бутики"><span>МОСКВА · ПЕТРОВКА</span><span>САНКТ-ПЕТЕРБУРГ · НЕВСКИЙ</span><span>КАЗАНЬ · БАУМАНА</span></div><button type="button" onClick={()=>alert("Бутики: Москва · Петровка, Санкт-Петербург · Невский проспект, Казань · улица Баумана")}>НАШИ БУТИКИ</button></div>
+      <div className="hv4-brand-copy"><small>О БРЕНДЕ</small><h2>Культура дома</h2><p>Современный взгляд на русские традиции через текстиль, посуду и предметы интерьера.</p><div className="hv4-boutiques-list" aria-label="Бутики"><span>МОСКВА · ПЕТРОВКА</span><span>САНКТ-ПЕТЕРБУРГ · НЕВСКИЙ</span><span>КАЗАНЬ · БАУМАНА</span></div><button type="button" onClick={()=>alert("Бутики: Москва · Петровка, Санкт-Петербург · Невский проспект, Казань · улица Баумана")}>СМОТРЕТЬ БУТИКИ</button></div>
       <div className="hv4-brand-media"><img src={assetUrl("/images/russian-bedroom.png")} alt="Культура дома — интерьер"/><span>КУЛЬТУРА ДОМА · БУТИКИ</span></div>
     </section>
   </main>;
@@ -524,6 +524,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
