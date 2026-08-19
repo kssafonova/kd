@@ -338,7 +338,7 @@ export default function Home() {
     <main className={`view-${view}`}>
       <div className="promo">БЕСПЛАТНАЯ ДОСТАВКА ОТ 15 000 ₽ <button onClick={() => go("catalog")}>ПОДРОБНЕЕ</button></div>
       <Header onMenu={() => { setMenuSection(""); setMenu(true); }} onSearch={() => setSearch(true)} onAccount={() => setAccount(true)} onFavorites={() => setFavoritesOpen(true)} onCart={() => setCartOpen(true)} count={cartCount} favoriteCount={favorites.length} go={go} />
-      {view === "home" && <HomeView go={go} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
+      {view === "home" && <HomeView go={go} openCatalog={openCatalog} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
       {view === "collections" && <CollectionsView onProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
       {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
@@ -368,103 +368,95 @@ function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, count, favor
   </header>;
 }
 
-function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
+function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   const heroSlides=[
-    {eyebrow:"КОЛЛЕКЦИЯ · НОВИНКА",title:"Ледяные узоры",description:"Прохладный свет, вышивка и глубокий синий — готовая история для спокойной спальни.",image:"/images/editorial/caps_led.png",editorialId:"ice",nav:"ЛЕДЯНЫЕ УЗОРЫ"},
-    {eyebrow:"КАПСУЛА · СПАЛЬНЯ",title:"Лунная сказка",description:"Ночной синий, мягкий сатин и фарфор для домашних ритуалов после заката.",image:"/images/editorial/caps_luna_postel.png",editorialId:"luna",nav:"ЛУННАЯ СКАЗКА"},
-    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Дом начинается со стола",description:"Посуда, текстиль и детали сервировки, которые собирают пространство в единый образ.",image:"/images/buyan-editorial.png",editorialId:null,nav:"СЕРВИРОВКА"},
+    {label:"НОВИНКИ",eyebrow:"НОВОЕ · КУЛЬТУРА ДОМА",title:"Новые истории дома",description:"Свежие предметы, текстиль и сервировка — спокойная современная интерпретация русской декоративной традиции.",desktopImage:"/images/time-hero.png",mobileImage:"/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
+    {label:"СПАЛЬНЯ",eyebrow:"СПАЛЬНЯ · НОВЫЙ СЕЗОН",title:"Тихая спальня",description:"Мягкие фактуры, холодный свет и спокойная палитра для пространства, в котором хочется замедлиться.",desktopImage:"/images/blue-bedroom.png",mobileImage:"/images/editorial/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
+    {label:"ДЕКОР ДЛЯ ДОМА",eyebrow:"ДЕКОР · ДЕТАЛИ",title:"Дом в деталях",description:"Предметы, которые собирают интерьер: текстиль, посуда и декоративные акценты для ежедневных домашних ритуалов.",desktopImage:"/images/beige-bedroom.png",mobileImage:"/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
   ];
   const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[activeIndex];
-  const newProducts=[2000,2004,2010,2003].map(id=>products.find(product=>product.id===id)!).filter(Boolean);
-  const storyProducts=[2000,2003,2004].map(id=>products.find(product=>product.id===id)!).filter(Boolean);
-  const categoryCards=[
-    {title:"Спальня",meta:"ПОСТЕЛЬНОЕ БЕЛЬЁ · ПЛЕДЫ · ПОДУШКИ",image:"/images/blue-bedroom.png"},
-    {title:"Кухня и столовая",meta:"ПОСУДА · СЕРВИРОВКА",image:"/images/buyan-editorial.png"},
-    {title:"Декор",meta:"АКЦЕНТЫ ДЛЯ ИНТЕРЬЕРА",image:"/images/beige-bedroom.png"},
-    {title:"Ванная",meta:"ТЕКСТИЛЬ · АКСЕССУАРЫ",image:"/images/classic-bedroom.png"},
+
+  useEffect(()=>{
+    const timer=window.setInterval(()=>setSlide((activeIndex+1)%heroSlides.length),6500);
+    return()=>window.clearInterval(timer);
+  },[activeIndex,setSlide,heroSlides.length]);
+
+  const categories=[
+    {title:"Постельное бельё",meta:"СПАЛЬНЯ",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
+    {title:"Пледы и подушки",meta:"ТЕКСТИЛЬ",image:"/images/sky-bolster.png",category:"Пледы и подушки"},
+    {title:"Посуда и сервировка",meta:"СТОЛОВАЯ",image:"/images/moon-plate.png",category:"Посуда и сервировка"},
+    {title:"Столовый текстиль",meta:"СЕРВИРОВКА",image:"/images/editorial-table.webp",category:"Столовый текстиль"},
+    {title:"Домашняя одежда",meta:"ДЛЯ ДОМА",image:"/images/classic-bedroom.png",category:"Домашняя одежда"},
+    {title:"Декор для дома",meta:"ИНТЕРЬЕР",image:"/images/beige-bedroom.png",category:"Все товары"},
+    {title:"Ванная",meta:"ТЕКСТИЛЬ · ДЕТАЛИ",image:"/images/russian-bedroom.png",category:"Все товары"},
+    {title:"Подарки",meta:"ИДЕИ ДЛЯ БЛИЗКИХ",image:"/images/time-collection.png",category:"Все товары"},
   ];
-  const openHeroStory=()=>{
-    if(hero.editorialId){
-      const editorial=editorials.find(item=>item.id===hero.editorialId);
-      if(editorial){openEditorial(editorial);return;}
-    }
-    go("catalog");
-  };
 
-  return <main className="home-commerce-v3">
-    <section className="hc-hero">
-      <div className="hc-hero-media"><img src={assetUrl(hero.image)} alt={hero.title}/></div>
-      <div className="hc-hero-overlay"/>
-      <div className="hc-hero-copy">
-        <small>{hero.eyebrow}</small>
-        <h1>{hero.title}</h1>
-        <p>{hero.description}</p>
-        <div className="hc-hero-actions">
-          <button className="hc-primary-link" type="button" onClick={openHeroStory}>{hero.editorialId?"СМОТРЕТЬ КОЛЛЕКЦИЮ":"СМОТРЕТЬ КАТЕГОРИЮ"} <Icon name="arrow"/></button>
-          <button className="hc-secondary-link" type="button" onClick={()=>go("catalog")}>КУПИТЬ ПРЕДМЕТЫ</button>
-        </div>
-      </div>
-      <nav className="hc-hero-nav" aria-label="Главные истории">
-        <div>{heroSlides.map((item,index)=><button key={item.nav} type="button" className={index===activeIndex?"active":""} onClick={()=>setSlide(index)}><span>{String(index+1).padStart(2,"0")}</span>{item.nav}</button>)}</div>
-        <div className="hc-hero-arrows"><button type="button" aria-label="Предыдущая история" onClick={()=>setSlide((activeIndex+heroSlides.length-1)%heroSlides.length)}><Icon name="arrow"/></button><button type="button" aria-label="Следующая история" onClick={()=>setSlide((activeIndex+1)%heroSlides.length)}><Icon name="arrow"/></button></div>
-      </nav>
-    </section>
+  const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
+  const capsuleCards=[
+    {id:"ice",kind:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",image:"/images/editorial/caps_led_serviz.png"},
+    {id:"luna",kind:"КАПСУЛА",title:"Лунная сказка",image:"/images/editorial/caps_luna_postel2.png"},
+  ];
+  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
+  const solutions=[
+    {room:"ГОСТИНАЯ",title:"Тихая гостиная",image:"/images/beige-bedroom.png"},
+    {room:"СПАЛЬНЯ",title:"Синий бархат ночи",image:"/images/blue-bedroom.png"},
+    {room:"КАБИНЕТ",title:"Кабинетное ретро",image:"/images/time-collection.png"},
+    {room:"КУХНЯ",title:"Утро в зимнем саду",image:"/images/buyan-editorial.png"},
+  ];
 
-    <nav className="hc-quick-nav" aria-label="Быстрый переход по каталогу">
-      {["НОВИНКИ","СПАЛЬНЯ","КУХНЯ И СТОЛОВАЯ","ДЕКОР","ВАННАЯ"].map(item=><button type="button" key={item} onClick={()=>go("catalog")}>{item}<Icon name="arrow"/></button>)}
-    </nav>
-
-    <section className="hc-products hc-new">
-      <header className="hc-section-head">
-        <div><small>НОВОЕ В КОЛЛЕКЦИИ</small><h2>Новинки</h2></div>
-        <button type="button" onClick={()=>go("catalog")}>СМОТРЕТЬ ВСЕ</button>
-      </header>
-      <ProductRail className="hc-product-rail" items={newProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
-    </section>
-
-    <section className="hc-story-shop">
-      <button className="hc-story-media" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/images/editorial/caps_led_podyshka.png")} alt="Коллекция Ледяные узоры"/><span>EDITORIAL · SHOP THE STORY</span></button>
-      <div className="hc-story-copy">
-        <small>КОЛЛЕКЦИЯ · ЛЕДЯНЫЕ УЗОРЫ</small>
-        <h2>Соберите образ целиком</h2>
-        <p>Вещи уже подобраны по цвету, фактуре и настроению. Откройте историю, выберите нужные предметы и размеры — или начните с отдельных товаров.</p>
-        <button className="hc-text-link" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}>СМОТРЕТЬ ИСТОРИЮ <Icon name="arrow"/></button>
-      </div>
-      <div className="hc-story-products"><ProductRail className="hc-story-product-rail" items={storyProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></div>
-    </section>
-
-    <section className="hc-categories">
-      <header className="hc-section-head">
-        <div><small>КАТАЛОГ</small><h2>Для каждой комнаты</h2></div>
-        <button type="button" onClick={()=>go("catalog")}>ВЕСЬ КАТАЛОГ</button>
-      </header>
-      <div className="hc-category-grid">{categoryCards.map((card,index)=><button type="button" className={`hc-category hc-category-${index+1}`} key={card.title} onClick={()=>go("catalog")}><img src={assetUrl(card.image)} alt={card.title}/><span><strong>{card.title}</strong><small>{card.meta}</small><em>СМОТРЕТЬ →</em></span></button>)}</div>
-    </section>
-
-    <section className="hc-editorial">
-      <header className="hc-section-head">
-        <div><small>КАПСУЛЫ И КОЛЛЕКЦИИ</small><h2>Истории, которые можно купить</h2></div>
-        <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ</button>
-      </header>
-      <div className="hc-editorial-grid">
-        <button type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="luna")!)}><img src={assetUrl("/images/editorial/caps_luna_postel2.png")} alt="Лунная сказка"/><span><small>КАПСУЛА</small><strong>Лунная сказка</strong><em>СМОТРЕТЬ ИСТОРИЮ →</em></span></button>
-        <button type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/images/editorial/caps_led_serviz.png")} alt="Ледяные узоры"/><span><small>КОЛЛЕКЦИЯ</small><strong>Ледяные узоры</strong><em>СМОТРЕТЬ ИСТОРИЮ →</em></span></button>
+  return <main className="home-v4">
+    <section className="hv4-hero" aria-label="Главные разделы">
+      <picture className="hv4-hero-media">
+        <source media="(max-width: 700px)" srcSet={assetUrl(hero.mobileImage)}/>
+        <img src={assetUrl(hero.desktopImage)} alt={hero.title}/>
+      </picture>
+      <div className="hv4-hero-copy"><small>{hero.eyebrow}</small><h1>{hero.title}</h1><p>{hero.description}</p><button type="button" onClick={hero.action}>СМОТРЕТЬ <Icon name="arrow"/></button></div>
+      <div className="hv4-hero-controls">
+        <nav className="hv4-hero-tabs" aria-label="Слайды главной">{heroSlides.map((item,index)=><button type="button" key={item.label} className={index===activeIndex?"active":""} onClick={()=>setSlide(index)}>{item.label}</button>)}</nav>
+        <div className="hv4-hero-arrows"><button type="button" aria-label="Предыдущий баннер" onClick={()=>setSlide((activeIndex+heroSlides.length-1)%heroSlides.length)}><Icon name="arrow"/></button><button type="button" aria-label="Следующий баннер" onClick={()=>setSlide((activeIndex+1)%heroSlides.length)}><Icon name="arrow"/></button></div>
       </div>
     </section>
 
-    <section className="hc-solution">
-      <div className="hc-solution-copy"><small>ГОТОВЫЕ РЕШЕНИЯ</small><h2>Не выбирайте по одному. Соберите пространство.</h2><p>Готовые сценарии объединяют предметы в законченный образ. Можно заменить альтернативы, выбрать размеры и добавить весь набор в корзину одним действием.</p><a href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`}>ОТКРЫТЬ ГОТОВЫЕ РЕШЕНИЯ <Icon name="arrow"/></a></div>
-      <div className="hc-solution-media"><img src={assetUrl("/images/editorial/caps_luna_serviz3.png")} alt="Готовые решения для дома"/></div>
+    <section className="hv4-categories hv4-shell">
+      <header className="hv4-head"><div><small>КАТАЛОГ</small><h2>Категории</h2></div><button type="button" onClick={()=>openCatalog("Все товары")}>ВЕСЬ КАТАЛОГ</button></header>
+      <div className="hv4-category-rail" aria-label="Категории товаров">{categories.map(item=><button className="hv4-category-card" type="button" key={item.title} onClick={()=>openCatalog(item.category)}><img src={assetUrl(item.image)} alt={item.title}/><strong>{item.title}</strong><small>{item.meta}</small></button>)}</div>
     </section>
 
-    <section className="hc-service" aria-label="Преимущества сервиса">
-      <div><small>01</small><strong>Бесплатная доставка</strong><span>при заказе от 15 000 ₽</span></div>
-      <div><small>02</small><strong>Наличие в бутиках</strong><span>проверяйте перед покупкой</span></div>
-      <div><small>03</small><strong>Помощь с выбором</strong><span>подбор предметов и готовых образов</span></div>
+    <section className="hv4-new hv4-section hv4-shell">
+      <header className="hv4-head"><div><small>НОВОЕ ПОСТУПЛЕНИЕ</small><h2>Новинки</h2></div><button type="button" onClick={()=>openCatalog("Все товары")}>СМОТРЕТЬ ВСЕ</button></header>
+      <ProductRail className="hv4-new-rail" items={newProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
     </section>
 
-    <section className="hc-brand"><small>КУЛЬТУРА ДОМА</small><h2>Современный дом с культурной памятью.</h2><p>Предметы, текстиль и сервировка, которые соединяются в личные семейные истории.</p><button type="button" onClick={()=>go("collections")}>ОТКРЫТЬ КАПСУЛЫ И КОЛЛЕКЦИИ</button></section>
+    <section className="hv4-traditions" aria-label="Традиции в каждом доме">
+      <div className="hv4-traditions-media">
+        <img src={assetUrl("/images/russian-bedroom.png")} alt="Современная русская спальня"/>
+        <img src={assetUrl("/images/editorial-table.webp")} alt="Сервировка дома"/>
+        <img src={assetUrl("/images/time-hero.png")} alt="Предметы Культура дома"/>
+        <div className="hv4-traditions-copy"><div><small>15 СЕКУНД · BRAND STORY</small><h2>Традиции в каждом доме</h2></div><span>КУЛЬТУРА ДОМА</span></div>
+      </div>
+    </section>
+
+    <section className="hv4-collections hv4-shell">
+      <header className="hv4-head"><div><small>EDITORIAL</small><h2>Капсулы и коллекции</h2></div><button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ</button></header>
+      <div className="hv4-collection-rail">{capsuleCards.map(card=>{
+        const editorial=editorials.find(item=>item.id===card.id);
+        return <button type="button" className="hv4-collection-card" key={card.id} onClick={()=>editorial&&openEditorial(editorial)}><img src={assetUrl(card.image)} alt={card.title}/><span><small>{card.kind}</small><strong>{card.title}</strong><em>СМОТРЕТЬ ИСТОРИЮ</em></span></button>;
+      })}</div>
+    </section>
+
+    <section className="hv4-solutions">
+      <div className="hv4-shell">
+        <header className="hv4-head"><div><small>ГОТОВЫЕ СЦЕНАРИИ</small><h2>Готовые решения для вашего дома</h2></div><a href={constructorHref}>СМОТРЕТЬ ВСЕ</a></header>
+        <div className="hv4-solution-rail">{solutions.map(item=><a className="hv4-solution-card" href={constructorHref} key={item.room}><img src={assetUrl(item.image)} alt={`${item.room}: ${item.title}`}/><span><small>{item.room}</small><strong>{item.title}</strong><em>СОБРАТЬ РЕШЕНИЕ</em></span></a>)}</div>
+      </div>
+    </section>
+
+    <section className="hv4-brand-boutiques">
+      <div className="hv4-brand-copy"><small>О БРЕНДЕ</small><h2>Культура дома — современный взгляд на русские традиции.</h2><p>Мы соединяем текстиль, посуду и предметы интерьера в спокойные, современные истории для дома — без декоративного шума, но с культурной памятью.</p><div className="hv4-boutiques-list" aria-label="Бутики"><span>МОСКВА · ПЕТРОВКА</span><span>САНКТ-ПЕТЕРБУРГ · НЕВСКИЙ</span><span>КАЗАНЬ · БАУМАНА</span></div><button type="button" onClick={()=>alert("Бутики: Москва · Петровка, Санкт-Петербург · Невский проспект, Казань · улица Баумана")}>НАШИ БУТИКИ</button></div>
+      <div className="hv4-brand-media"><img src={assetUrl("/images/russian-bedroom.png")} alt="Культура дома — интерьер"/><span>КУЛЬТУРА ДОМА · БУТИКИ</span></div>
+    </section>
   </main>;
 }
 
@@ -503,6 +495,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3

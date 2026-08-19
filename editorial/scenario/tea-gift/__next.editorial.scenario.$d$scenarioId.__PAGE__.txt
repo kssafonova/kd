@@ -3,5 +3,5 @@
 3:I[97367,["/kd/_next/static/chunks/17~zpoul0y5p3.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
 4:"$Sreact.suspense"
 :HL["/kd/_next/static/chunks/0vqx41a621f2w.css","style"]
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"tea-gift"}],[["$","link","0",{"rel":"stylesheet","href":"/kd/_next/static/chunks/0vqx41a621f2w.css","precedence":"next"}],["$","script","script-0",{"src":"/kd/_next/static/chunks/00or7i~6fn-lo.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"0QtB8qfFklZOBKr9m2IIG"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"tea-gift"}],[["$","link","0",{"rel":"stylesheet","href":"/kd/_next/static/chunks/0vqx41a621f2w.css","precedence":"next"}],["$","script","script-0",{"src":"/kd/_next/static/chunks/00or7i~6fn-lo.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"mFwvgtAL-ZJS988vNWk_S"}
 5:null
