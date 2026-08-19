@@ -36,6 +36,12 @@ if "function isGiftPackagingAvailable(product:Product)" not in page:
         raise SystemExit("PLPAdded anchor not found")
     page = page.replace(anchor, gift_helper + "\n" + anchor, 1)
 
+# Older V2 builds emitted a double-escaped word boundary into TypeScript.
+page = page.replace(
+    r'const beddingSet=/^Комплект\\b/i.test(product.name);',
+    r'const beddingSet=/^Комплект\b/i.test(product.name);',
+)
+
 new_plp_added = r'''function PLPAdded({product,close,openCart,updateGift}:{product:CartItem;close:()=>void;openCart:()=>void;updateGift:(giftWrap:boolean)=>void}){
   const giftAvailable=isGiftPackagingAvailable(product);
   const [giftWrap,setGiftWrap]=useState(Boolean(product.giftWrap));
@@ -70,7 +76,6 @@ page = re.sub(
     page,
     count=1,
 )
-# Idempotent fallback for already-normalized builds.
 page = page.replace(
     '{p.giftWrap&&<span className="cart-gift-options">Подарок: упаковка</span>}',
     '{p.giftWrap&&<span className="cart-gift-options">Подарочная упаковка добавлена</span>}',
