@@ -1,0 +1,593 @@
+/* Homepage V10 — TOGAS-inspired image-first luxury storefront. Loaded last. */
+.home-togas-v10{
+  --tg-ink:#141414;
+  --tg-muted:#7d7d78;
+  --tg-line:#e9e9e5;
+  --tg-gutter:clamp(18px,3.4vw,52px);
+  --tg-header:clamp(58px,5.1vw,72px);
+  --tg-title:clamp(17px,1.2vw,20px);
+  --tg-copy:clamp(9px,.7vw,11px);
+  background:#fff!important;
+  color:var(--tg-ink)!important;
+}
+
+/* Header: calm, slim, proportional. */
+.view-home .header{
+  height:var(--tg-header)!important;
+  padding:0 var(--tg-gutter)!important;
+  border-bottom:1px solid rgba(20,20,20,.08)!important;
+  background:rgba(255,255,255,.97)!important;
+  backdrop-filter:blur(12px)!important;
+}
+.view-home .logo{
+  font-size:clamp(18px,1.55vw,23px)!important;
+  letter-spacing:-.025em!important;
+}
+.view-home .header-actions,
+.view-home .header-left{
+  gap:clamp(5px,1vw,14px)!important;
+}
+.view-home .header-actions>button,
+.view-home .header-left>.icon-btn{
+  width:clamp(38px,3vw,42px)!important;
+  height:clamp(38px,3vw,42px)!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+}
+.view-home .header-actions svg{
+  width:clamp(18px,1.35vw,22px)!important;
+  height:clamp(18px,1.35vw,22px)!important;
+}
+.view-home .boutiques{
+  font-size:clamp(8px,.68vw,10px)!important;
+  letter-spacing:.03em!important;
+}
+
+/* HERO: fills exactly the visible viewport below promo + header. */
+.home-togas-v10 .hv4-hero{
+  height:calc(100svh - 31px - var(--tg-header))!important;
+  height:calc(100dvh - 31px - var(--tg-header))!important;
+  min-height:520px!important;
+  max-height:none!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-hero-media,
+.home-togas-v10 .hv4-hero-media img{
+  width:100%!important;
+  height:100%!important;
+}
+.home-togas-v10 .hv4-hero-media img{
+  object-fit:cover!important;
+  transform:none!important;
+}
+.home-togas-v10 .hv4-hero::after{
+  background:linear-gradient(180deg,rgba(0,0,0,.02) 0%,rgba(0,0,0,.02) 50%,rgba(0,0,0,.38) 100%)!important;
+}
+.home-togas-v10 .hv4-hero-copy{
+  left:var(--tg-gutter)!important;
+  right:auto!important;
+  bottom:clamp(76px,10vh,104px)!important;
+  max-width:430px!important;
+  text-shadow:0 1px 18px rgba(0,0,0,.2)!important;
+}
+.home-togas-v10 .hv4-hero-copy h1{
+  max-width:430px!important;
+  margin:0!important;
+  font:400 clamp(27px,2.55vw,38px)/1.02 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.02em!important;
+  text-transform:none!important;
+}
+.home-togas-v10 .hv4-hero-copy button{
+  min-height:40px!important;
+  margin-top:18px!important;
+  padding:0 18px!important;
+  border:0!important;
+  background:#fff!important;
+  color:#171717!important;
+  box-shadow:none!important;
+  font-size:clamp(7px,.55vw,8px)!important;
+  letter-spacing:.1em!important;
+  text-transform:uppercase!important;
+}
+.home-togas-v10 .hv4-hero-copy button svg{
+  width:11px!important;
+  height:11px!important;
+}
+@media(hover:hover){
+  .home-togas-v10 .hv4-hero-copy button:hover{
+    background:#171717!important;
+    color:#fff!important;
+  }
+}
+.home-togas-v10 .hv4-hero-controls{
+  left:var(--tg-gutter)!important;
+  right:var(--tg-gutter)!important;
+  bottom:12px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+}
+.home-togas-v10 .hv4-hero-tabs{
+  gap:clamp(14px,1.6vw,24px)!important;
+}
+.home-togas-v10 .hv4-hero-tabs button{
+  min-height:38px!important;
+  padding:0!important;
+  border-bottom:1px solid transparent!important;
+  color:rgba(255,255,255,.72)!important;
+  font-size:clamp(6px,.46vw,7px)!important;
+  letter-spacing:.12em!important;
+}
+.home-togas-v10 .hv4-hero-tabs button.active{
+  color:#fff!important;
+  border-color:#fff!important;
+}
+.home-togas-v10 .hv4-hero-arrows{gap:4px!important}
+.home-togas-v10 .hv4-hero-arrows button{
+  width:36px!important;
+  height:36px!important;
+  border:1px solid rgba(255,255,255,.46)!important;
+  background:transparent!important;
+}
+
+/* Global section system — white, compact, editorial. */
+.home-togas-v10 .hv4-shell{
+  width:min(1500px,calc(100% - (var(--tg-gutter) * 2)))!important;
+}
+.home-togas-v10 .hv4-head,
+.home-togas-v10 .hv4-traditions-collections-head{
+  margin:0 0 16px!important;
+  gap:12px!important;
+  align-items:flex-end!important;
+}
+.home-togas-v10 .hv4-head small,
+.home-togas-v10 .hv4-traditions-collections-head small{
+  margin:0 0 4px!important;
+  color:var(--tg-muted)!important;
+  font-size:clamp(5.5px,.42vw,6.5px)!important;
+  letter-spacing:.15em!important;
+}
+.home-togas-v10 .hv4-head h2,
+.home-togas-v10 .hv4-traditions-collections-head h2{
+  margin:0!important;
+  font:400 var(--tg-title)/1.06 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.01em!important;
+  text-transform:none!important;
+}
+.home-togas-v10 .hv4-head-actions{
+  flex:1 1 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:2px!important;
+}
+.home-togas-v10 .hv4-head-actions .hv4-text-cta{
+  order:-1!important;
+  min-height:32px!important;
+  margin:0 8px 0 0!important;
+  padding:0!important;
+  border:0!important;
+  border-bottom:1px solid #171717!important;
+  background:transparent!important;
+  color:#171717!important;
+  font-size:clamp(6.2px,.48vw,7px)!important;
+  letter-spacing:.11em!important;
+}
+.home-togas-v10 .hv4-head-actions .hv4-rail-arrow.prev{margin-left:auto!important}
+.home-togas-v10 .hv4-rail-arrow{
+  width:36px!important;
+  height:36px!important;
+  background:transparent!important;
+}
+.home-togas-v10 .hv4-rail-arrow svg{
+  width:11px!important;
+  height:11px!important;
+}
+@media(hover:hover){
+  .home-togas-v10 .hv4-head-actions .hv4-text-cta:hover{opacity:.55!important}
+  .home-togas-v10 .hv4-rail-arrow:hover{background:#f7f7f5!important}
+}
+
+/* Categories — clean visual entry points, no decorative boxes. */
+.home-togas-v10 .hv4-categories{
+  padding-top:34px!important;
+  padding-bottom:28px!important;
+  border:0!important;
+}
+.home-togas-v10 .hv4-category-rail{
+  gap:8px!important;
+  padding:0!important;
+  border:0!important;
+}
+.home-togas-v10 .hv4-category-card{
+  flex:0 0 clamp(145px,11.3vw,178px)!important;
+  padding:0!important;
+  border:0!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-category-card img{
+  aspect-ratio:1/1!important;
+  object-fit:cover!important;
+}
+.home-togas-v10 .hv4-category-card>span{
+  padding-top:7px!important;
+}
+.home-togas-v10 .hv4-category-card strong{
+  font-size:clamp(9px,.72vw,10.5px)!important;
+  font-weight:400!important;
+  line-height:1.2!important;
+}
+.home-togas-v10 .hv4-category-card small{
+  display:none!important;
+}
+
+/* New arrivals — Togas-like clean product merchandising. */
+.home-togas-v10 .hv4-new{
+  padding-top:34px!important;
+  padding-bottom:44px!important;
+  border:0!important;
+}
+.home-togas-v10 .hv4-new .product-rail{
+  gap:12px!important;
+  padding:0!important;
+}
+.home-togas-v10 .hv4-new .product-card{
+  flex:0 0 clamp(240px,20vw,315px)!important;
+}
+.home-togas-v10 .product-image{
+  background:#fff!important;
+}
+.home-togas-v10 .product-copy{
+  padding-top:8px!important;
+}
+.home-togas-v10 .product-copy strong{
+  font-size:clamp(10px,.8vw,12px)!important;
+  line-height:1.22!important;
+  font-weight:400!important;
+}
+.home-togas-v10 .product-copy small{
+  margin-top:3px!important;
+  color:#8a8a86!important;
+  font-size:clamp(6px,.48vw,7px)!important;
+}
+.home-togas-v10 .price{
+  margin-top:6px!important;
+  font-size:clamp(9.5px,.72vw,11px)!important;
+}
+.home-togas-v10 .product-card .heart{
+  top:8px!important;
+  right:8px!important;
+  width:28px!important;
+  height:28px!important;
+}
+.home-togas-v10 .product-card .heart svg{
+  width:16px!important;
+  height:16px!important;
+}
+.home-togas-v10 .product-card .quick{
+  right:2px!important;
+  bottom:10px!important;
+  width:34px!important;
+  height:34px!important;
+}
+.home-togas-v10 .product-card .quick>svg{
+  width:25px!important;
+  height:25px!important;
+}
+
+/* Brand story / Editorial — full-width campaign, then product strip. */
+.home-togas-v10 .hv4-traditions-collections{
+  padding:0 0 44px!important;
+  border:0!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-traditions-collections-shell{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+}
+.home-togas-v10 .hv4-traditions-media{
+  width:100%!important;
+  min-height:440px!important;
+  aspect-ratio:16/7!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-traditions-copy{
+  left:var(--tg-gutter)!important;
+  right:auto!important;
+  bottom:clamp(38px,5vw,68px)!important;
+  max-width:440px!important;
+}
+.home-togas-v10 .hv4-traditions-copy small{
+  margin-bottom:8px!important;
+  color:#fff!important;
+  font-size:clamp(6px,.46vw,7px)!important;
+  letter-spacing:.15em!important;
+}
+.home-togas-v10 .hv4-traditions-copy h2{
+  max-width:440px!important;
+  margin:0!important;
+  font:400 clamp(27px,2.5vw,38px)/1.02 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.02em!important;
+  text-transform:none!important;
+}
+.home-togas-v10 .hv4-video-controls{
+  right:var(--tg-gutter)!important;
+  bottom:22px!important;
+}
+.home-togas-v10 .hv4-traditions-collections-content{
+  width:min(1500px,calc(100% - (var(--tg-gutter) * 2)))!important;
+  margin:0 auto!important;
+  padding:24px 0 0!important;
+}
+.home-togas-v10 .hv4-traditions-collections .product-rail{
+  gap:10px!important;
+  padding:0!important;
+}
+.home-togas-v10 .hv4-traditions-collections .product-card{
+  flex:0 0 clamp(205px,16.8vw,260px)!important;
+}
+
+/* Ready-made solutions — 2x2 lifestyle campaigns, not small ecommerce tiles. */
+.home-togas-v10 .hv4-solutions{
+  padding:42px 0 48px!important;
+  border:0!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-solution-rail{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  overflow:visible!important;
+  padding:0!important;
+}
+.home-togas-v10 .hv4-solution-card{
+  position:relative!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  color:#fff!important;
+}
+.home-togas-v10 .hv4-solution-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 48%,rgba(0,0,0,.48) 100%);
+  pointer-events:none;
+}
+.home-togas-v10 .hv4-solution-card img{
+  width:100%!important;
+  aspect-ratio:16/9!important;
+  object-fit:cover!important;
+  transition:transform .55s ease!important;
+}
+.home-togas-v10 .hv4-solution-card>span{
+  position:absolute!important;
+  z-index:2!important;
+  left:22px!important;
+  right:22px!important;
+  bottom:20px!important;
+  padding:0!important;
+  color:#fff!important;
+}
+.home-togas-v10 .hv4-solution-card small{
+  color:rgba(255,255,255,.82)!important;
+  font-size:clamp(6px,.45vw,7px)!important;
+  letter-spacing:.14em!important;
+}
+.home-togas-v10 .hv4-solution-card strong{
+  display:block!important;
+  margin-top:6px!important;
+  font:400 clamp(20px,1.6vw,26px)/1.04 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.015em!important;
+}
+.home-togas-v10 .hv4-solution-card em{
+  display:inline-flex!important;
+  min-height:0!important;
+  margin-top:13px!important;
+  padding:0 0 5px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.85)!important;
+  background:transparent!important;
+  color:#fff!important;
+  font-size:clamp(6px,.45vw,7px)!important;
+  letter-spacing:.1em!important;
+}
+@media(hover:hover){
+  .home-togas-v10 .hv4-solution-card:hover img{transform:scale(1.018)!important}
+  .home-togas-v10 .hv4-solution-card:hover em{background:transparent!important;color:#fff!important;opacity:.65!important}
+}
+.home-togas-v10 .hv4-solutions .hv4-head-actions .hv4-rail-arrow{display:none!important}
+
+/* Brand + boutiques — quiet split campaign. */
+.home-togas-v10 .hv4-brand-boutiques{
+  min-height:460px!important;
+  grid-template-columns:minmax(340px,.78fr) minmax(0,1.22fr)!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-brand-copy{
+  padding:clamp(44px,5vw,70px) var(--tg-gutter)!important;
+  background:#fff!important;
+}
+.home-togas-v10 .hv4-brand-copy small{
+  font-size:6px!important;
+  letter-spacing:.15em!important;
+}
+.home-togas-v10 .hv4-brand-copy h2{
+  max-width:380px!important;
+  margin-top:11px!important;
+  font:400 clamp(27px,2.2vw,34px)/1.03 var(--serif,"Tenor Sans",sans-serif)!important;
+  letter-spacing:-.02em!important;
+  text-transform:none!important;
+}
+.home-togas-v10 .hv4-brand-copy p{
+  max-width:390px!important;
+  margin-top:15px!important;
+  color:#686864!important;
+  font-size:clamp(8px,.64vw,9.5px)!important;
+  line-height:1.6!important;
+}
+.home-togas-v10 .hv4-boutiques-list{
+  margin-top:21px!important;
+  padding-top:14px!important;
+  border-top:1px solid var(--tg-line)!important;
+}
+.home-togas-v10 .hv4-brand-copy button{
+  min-height:38px!important;
+  margin-top:19px!important;
+  padding:0 16px!important;
+  border:1px solid #171717!important;
+  background:#171717!important;
+  color:#fff!important;
+  font-size:6.5px!important;
+  letter-spacing:.11em!important;
+}
+.home-togas-v10 .hv4-brand-media{
+  min-height:460px!important;
+}
+
+@media(max-width:900px){
+  .home-togas-v10{
+    --tg-gutter:12px;
+    --tg-header:58px;
+    --tg-title:16px;
+  }
+  .view-home .header{height:var(--tg-header)!important;padding:0 10px!important}
+  .view-home .header-left,.view-home .header-actions{gap:1px!important}
+  .view-home .header-actions>button,.view-home .header-left>.icon-btn{width:39px!important;height:39px!important}
+  .view-home .header-actions svg{width:19px!important;height:19px!important}
+  .view-home .logo{font-size:clamp(16px,4.3vw,19px)!important}
+  .view-home .boutiques{display:none!important}
+
+  .home-togas-v10 .hv4-hero{
+    height:calc(100svh - 31px - var(--tg-header))!important;
+    height:calc(100dvh - 31px - var(--tg-header))!important;
+    min-height:520px!important;
+  }
+  .home-togas-v10 .hv4-hero-copy{
+    left:18px!important;
+    right:18px!important;
+    bottom:84px!important;
+    max-width:78vw!important;
+  }
+  .home-togas-v10 .hv4-hero-copy h1{
+    max-width:78vw!important;
+    font-size:clamp(24px,6.7vw,29px)!important;
+  }
+  .home-togas-v10 .hv4-hero-copy button{
+    min-height:40px!important;
+    margin-top:14px!important;
+    padding:0 16px!important;
+  }
+  .home-togas-v10 .hv4-hero-controls{
+    left:18px!important;
+    right:18px!important;
+    bottom:10px!important;
+  }
+  .home-togas-v10 .hv4-hero-tabs{
+    gap:15px!important;
+    overflow-x:auto!important;
+    scrollbar-width:none!important;
+  }
+  .home-togas-v10 .hv4-hero-tabs::-webkit-scrollbar{display:none!important}
+  .home-togas-v10 .hv4-hero-tabs button{min-height:38px!important;font-size:6px!important;white-space:nowrap!important}
+  .home-togas-v10 .hv4-hero-arrows{display:none!important}
+
+  .home-togas-v10 .hv4-head,
+  .home-togas-v10 .hv4-traditions-collections-head{
+    margin-bottom:12px!important;
+    gap:6px!important;
+  }
+  .home-togas-v10 .hv4-head-actions .hv4-text-cta{
+    min-height:34px!important;
+    margin-right:2px!important;
+    font-size:5.8px!important;
+  }
+  .home-togas-v10 .hv4-rail-arrow{width:34px!important;height:34px!important}
+
+  .home-togas-v10 .hv4-categories{padding-top:24px!important;padding-bottom:24px!important}
+  .home-togas-v10 .hv4-category-rail{gap:7px!important;margin-right:-12px!important;padding-right:12px!important}
+  .home-togas-v10 .hv4-category-card{flex:0 0 27.7vw!important}
+  .home-togas-v10 .hv4-category-card strong{font-size:8.5px!important}
+
+  .home-togas-v10 .hv4-new{padding-top:30px!important;padding-bottom:36px!important}
+  .home-togas-v10 .hv4-new .product-rail,
+  .home-togas-v10 .hv4-traditions-collections .product-rail{
+    gap:8px!important;
+    margin-right:-12px!important;
+    padding-right:12px!important;
+  }
+  .home-togas-v10 .hv4-new .product-card,
+  .home-togas-v10 .hv4-traditions-collections .product-card{
+    flex:0 0 39.5vw!important;
+  }
+  .home-togas-v10 .product-copy strong{font-size:9.5px!important}
+  .home-togas-v10 .product-copy small{font-size:5.7px!important}
+  .home-togas-v10 .price{font-size:9px!important}
+
+  .home-togas-v10 .hv4-traditions-collections{padding-bottom:36px!important}
+  .home-togas-v10 .hv4-traditions-media{
+    min-height:0!important;
+    aspect-ratio:9/14!important;
+  }
+  .home-togas-v10 .hv4-traditions-copy{
+    left:18px!important;
+    right:18px!important;
+    bottom:58px!important;
+  }
+  .home-togas-v10 .hv4-traditions-copy h2{
+    max-width:78vw!important;
+    font-size:clamp(25px,7vw,30px)!important;
+  }
+  .home-togas-v10 .hv4-video-controls{right:14px!important;bottom:14px!important}
+  .home-togas-v10 .hv4-traditions-collections-content{
+    width:calc(100% - 24px)!important;
+    padding-top:20px!important;
+  }
+
+  .home-togas-v10 .hv4-solutions{padding:34px 0 38px!important}
+  .home-togas-v10 .hv4-solution-rail{
+    display:flex!important;
+    gap:8px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    margin-right:-12px!important;
+    padding-right:12px!important;
+    scroll-snap-type:x mandatory!important;
+    scrollbar-width:none!important;
+  }
+  .home-togas-v10 .hv4-solution-rail::-webkit-scrollbar{display:none!important}
+  .home-togas-v10 .hv4-solution-card{
+    flex:0 0 78vw!important;
+    scroll-snap-align:start!important;
+  }
+  .home-togas-v10 .hv4-solution-card img{aspect-ratio:4/5!important}
+  .home-togas-v10 .hv4-solution-card>span{left:16px!important;right:16px!important;bottom:16px!important}
+  .home-togas-v10 .hv4-solution-card strong{font-size:20px!important}
+  .home-togas-v10 .hv4-solutions .hv4-head-actions .hv4-rail-arrow{display:grid!important}
+
+  .home-togas-v10 .hv4-brand-boutiques{
+    display:flex!important;
+    flex-direction:column!important;
+    min-height:0!important;
+  }
+  .home-togas-v10 .hv4-brand-media{
+    order:1!important;
+    min-height:0!important;
+    aspect-ratio:4/3!important;
+  }
+  .home-togas-v10 .hv4-brand-copy{
+    order:2!important;
+    padding:36px 18px 42px!important;
+  }
+  .home-togas-v10 .hv4-brand-copy h2{font-size:25px!important}
+}
+
+@media(max-width:520px){
+  .home-togas-v10 .hv4-head h2,
+  .home-togas-v10 .hv4-traditions-collections-head h2{font-size:15px!important}
+  .home-togas-v10 .hv4-head-actions .hv4-text-cta{font-size:5.5px!important}
+  .home-togas-v10 .hv4-category-card{flex-basis:27.8vw!important}
+  .home-togas-v10 .hv4-new .product-card,
+  .home-togas-v10 .hv4-traditions-collections .product-card{flex-basis:39.5vw!important}
+}
