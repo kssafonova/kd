@@ -1,4 +1,4 @@
-/* Homepage V4 — merged brand story + capsules/collections block. */
+/* Homepage V4 — merged brand story + shoppable collection product rail. */
 .hv4-traditions-collections{
   padding:10px 0 96px;
   background:#fff;
@@ -14,8 +14,8 @@
 }
 .hv4-traditions-collections-content{
   display:grid;
-  grid-template-columns:minmax(220px,.34fr) minmax(0,1.66fr);
-  gap:38px;
+  grid-template-columns:minmax(220px,.30fr) minmax(0,1.70fr);
+  gap:36px;
   align-items:start;
   padding:30px 30px 34px;
   border-top:1px solid rgba(24,25,24,.08);
@@ -49,31 +49,57 @@
   border-bottom:1px solid #777;
   font-size:7px;
   letter-spacing:.13em;
+  white-space:nowrap;
 }
-.hv4-traditions-collections .hv4-collection-rail{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  padding:0 0 4px;
+
+/* Products from all active capsules/collections. Uses the same ProductCard as catalog. */
+.hv4-traditions-collections .product-rail-shell{
+  min-width:0;
+  overflow:visible!important;
+}
+.hv4-traditions-collections .product-rail{
+  display:flex!important;
+  gap:10px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  padding:0 0 8px!important;
   scroll-snap-type:x proximity;
   scrollbar-width:none;
+  overscroll-behavior-x:contain;
 }
-.hv4-traditions-collections .hv4-collection-rail::-webkit-scrollbar{display:none}
-.hv4-traditions-collections .hv4-collection-card{
-  flex:0 0 clamp(245px,22vw,330px);
-  min-width:0;
+.hv4-traditions-collections .product-rail::-webkit-scrollbar{display:none}
+.hv4-traditions-collections .product-card{
+  flex:0 0 clamp(205px,17vw,265px)!important;
+  min-width:0!important;
+  scroll-snap-align:start;
 }
-.hv4-traditions-collections .hv4-collection-card img{
-  aspect-ratio:4/3;
+.hv4-traditions-collections .product-image,
+.hv4-traditions-collections .product-image .product-media-scroll,
+.hv4-traditions-collections .product-image img{
+  aspect-ratio:.92/1!important;
 }
-.hv4-traditions-collections .hv4-collection-card>span{
-  padding-top:10px;
+.hv4-traditions-collections .product-copy{
+  padding-top:8px!important;
 }
-.hv4-traditions-collections .hv4-collection-card strong{
-  font-size:15px;
+.hv4-traditions-collections .product-copy strong{
+  font-size:11px!important;
+  line-height:1.18!important;
 }
-.hv4-traditions-collections .hv4-collection-card em{
-  margin-top:8px;
+.hv4-traditions-collections .product-copy small{
+  font-size:6.5px!important;
+  color:#858782!important;
+}
+.hv4-traditions-collections .price{
+  margin-top:6px!important;
+  font-size:10px!important;
+}
+.hv4-traditions-collections .quick{
+  width:32px!important;
+  height:32px!important;
+}
+.hv4-traditions-collections .heart svg{
+  width:27px!important;
+  height:27px!important;
 }
 
 @media(max-width:900px){
@@ -107,22 +133,31 @@
   }
   .hv4-traditions-collections-head>button{
     flex:0 0 auto;
-    white-space:nowrap;
   }
-  .hv4-traditions-collections .hv4-collection-rail{
-    gap:8px;
+  .hv4-traditions-collections .product-rail{
+    gap:8px!important;
     margin-right:-14px;
-    padding-right:14px;
+    padding-right:14px!important;
   }
-  .hv4-traditions-collections .hv4-collection-card{
-    flex-basis:58vw;
+  .hv4-traditions-collections .product-card{
+    flex:0 0 39vw!important;
   }
-  .hv4-traditions-collections .hv4-collection-card strong{
-    font-size:14px;
+  .hv4-traditions-collections .product-copy strong{
+    font-size:10px!important;
+  }
+  .hv4-traditions-collections .product-copy small{
+    font-size:6px!important;
+  }
+  .hv4-traditions-collections .price{
+    font-size:9px!important;
+  }
+  .hv4-traditions-collections .quick{
+    width:30px!important;
+    height:30px!important;
   }
 }
 
 @media(max-width:520px){
   .hv4-traditions-collections-head h2{font-size:23px}
-  .hv4-traditions-collections .hv4-collection-card{flex-basis:61vw}
+  .hv4-traditions-collections .product-card{flex-basis:40vw!important}
 }
