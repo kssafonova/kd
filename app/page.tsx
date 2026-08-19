@@ -353,7 +353,7 @@ export default function Home() {
       {favoritesOpen&&<Favorites ids={favorites} close={()=>setFavoritesOpen(false)} remove={favorite} choose={(product)=>{setSelected(product);setFavoritesOpen(false);go("product")}} quickAdd={(product)=>{setFavoritesOpen(false);setPlpSize(product)}}/>}
       {filters && <Filters close={() => setFilters(false)} apply={() => { setFilters(false); notice("Фильтры применены"); }} count={products.length} />}
       {plpSize && <PLPSizeFlow product={plpSize} close={() => setPlpSize(null)} add={(chosenSize,quantity,unitPrice) => addFromPLP(plpSize, chosenSize, quantity, unitPrice)} />}
-      {plpAdded && <PLPAdded product={plpAdded} close={()=>setPlpAdded(null)} openCart={()=>{setPlpAdded(null);setCartOpen(true)}} updateGift={(giftWrap)=>{const target=plpAdded;setPlpAdded({...target,giftWrap});setCart(current=>{const next=[...current];for(let i=next.length-1;i>=0;i--){const item=next[i];if(item.id===target.id&&item.selectedSize===target.selectedSize&&item.selectedColor===target.selectedColor){next[i]={...item,giftWrap};break}}return next})}} />}
+      {plpAdded && <PLPAdded product={plpAdded} close={()=>setPlpAdded(null)} openCart={()=>{setPlpAdded(null);setCartOpen(true)}} selectProduct={(product)=>{setPlpAdded(null);openProduct(product)}} updateGift={(giftWrap)=>{const target=plpAdded;setPlpAdded({...target,giftWrap});setCart(current=>{const next=[...current];for(let i=next.length-1;i>=0;i--){const item=next[i];if(item.id===target.id&&item.selectedSize===target.selectedSize&&item.selectedColor===target.selectedColor){next[i]={...item,giftWrap};break}}return next})}} />}
       {sizeSheet && <SizeSheet size={size} setSize={setSize} close={() => setSizeSheet(false)} add={(quantity,unitPrice) => add({...selected,price:unitPrice},size,quantity)} price={selected.price} />}
       {cartOpen && <Cart cart={cart} recentlyViewed={recentlyViewed.map(id=>products.find(product=>product.id===id)!).filter(Boolean)} close={() => setCartOpen(false)} total={total} remove={(i) => setCart((old) => old.filter((_, index) => index !== i))} update={updateCartItem} checkout={() => {setCartOpen(false);setCheckoutOpen(true)}} go={() => { setCartOpen(false); go("catalog"); }} choose={(product)=>{setCartOpen(false);openProduct(product)}} />}
       {checkoutOpen&&<Checkout cart={cart} total={total} profile={profile} close={()=>setCheckoutOpen(false)} editCart={()=>{setCheckoutOpen(false);setCartOpen(true)}} submit={()=>{setCheckoutOpen(false);setCart([]);notice("Заказ оформлен. Подтверждение отправлено на email")}}/>}
@@ -556,6 +556,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
@@ -1136,53 +1137,70 @@ function RichContent({product,selectProduct}:{product:Product;selectProduct:(pro
   </section>;
 }
 
-function ProductRecommendations({product,selectProduct,favorite,recentlyViewed}:{product:Product;selectProduct:(product:Product)=>void;favorite:(id:number)=>void;recentlyViewed:number[]}){
-  void recentlyViewed;
-  const merchGroupOf=(item:Product)=>{
-    const preferred=findProductSku(item,item.selectedColor,item.selectedSize);
-    const rows=preferred?[preferred,...(item.skus??[]).filter(sku=>sku.id!==preferred.id)]:(item.skus??[]);
-    for(const row of rows){
-      const value=(row.collection??row.capsule)?.trim();
-      if(value)return value.toLocaleLowerCase("ru-RU");
-    }
-    return "";
-  };
-  const currentMerchGroup=merchGroupOf(product);
-  const editorialGroup=editorials.find(item=>item.productIds.includes(product.id));
-  const collectionProducts=currentMerchGroup
-    ? products.filter(item=>item.id!==product.id&&merchGroupOf(item)===currentMerchGroup).slice(0,4)
-    : editorialGroup
-      ? editorialGroup.productIds.filter(id=>id!==product.id).map(id=>products.find(item=>item.id===id)).filter((item):item is Product=>Boolean(item)).slice(0,4)
-      : [];
+function productMerchGroup(item:Product){
+  const preferred=findProductSku(item,item.selectedColor,item.selectedSize);
+  const rows=preferred?[preferred,...(item.skus??[]).filter(sku=>sku.id!==preferred.id)]:(item.skus??[]);
+  for(const row of rows){
+    const value=(row.collection??row.capsule)?.trim();
+    if(value)return value.toLocaleLowerCase("ru-RU");
+  }
+  return "";
+}
 
-  const familyOf=(item:Product)=>{
-    const value=`${item.name} ${item.note}`.toLowerCase();
-    if(/комплект|постель|пододеяль|простын|наволоч/.test(value))return "bedding";
-    if(/подуш/.test(value))return "pillow";
-    if(/плед|покрывал|одеял/.test(value))return "throw";
-    if(/тарел|салатник|сервиз|чайная пара|чаш|бокал|стакан|графин|прибор/.test(value))return "table";
-    if(/свеч|аромат|ваза|декор|плейсмат/.test(value))return "decor";
-    if(/халат|пижам|сороч|домашн.*одежд/.test(value))return "homewear";
-    return "other";
-  };
-  const preferences:Record<string,string[]>={
-    bedding:["pillow","throw","decor"],
-    pillow:["bedding","throw","decor"],
-    throw:["pillow","bedding","decor"],
-    table:["table","decor"],
-    decor:["table","bedding","pillow"],
-    homewear:["bedding","decor"],
-    other:["decor","table","pillow","throw"],
-  };
-  const preferredFamilies=preferences[familyOf(product)]??preferences.other;
+function productFamily(item:Product){
+  const value=`${item.name} ${item.note}`.toLowerCase();
+  if(/комплект|постель|пододеяль|простын|наволоч/.test(value))return "bedding";
+  if(/подуш/.test(value))return "pillow";
+  if(/плед|покрывал|одеял/.test(value))return "throw";
+  if(/тарел|салатник|сервиз|чайная пара|чаш|бокал|стакан|графин|прибор/.test(value))return "table";
+  if(/свеч|аромат|ваза|декор|плейсмат/.test(value))return "decor";
+  if(/халат|пижам|сороч|домашн.*одежд/.test(value))return "homewear";
+  return "other";
+}
+
+const complementaryPreferences:Record<string,string[]>={
+  bedding:["pillow","throw","decor"],
+  pillow:["bedding","throw","decor"],
+  throw:["pillow","bedding","decor"],
+  table:["table","decor"],
+  decor:["table","bedding","pillow"],
+  homewear:["bedding","decor"],
+  other:["decor","table","pillow","throw"],
+};
+
+function getCollectionRecommendations(product:Product,limit=4){
+  const currentMerchGroup=productMerchGroup(product);
+  const editorialGroup=editorials.find(item=>item.productIds.includes(product.id));
+  if(currentMerchGroup){
+    return products.filter(item=>item.id!==product.id&&productMerchGroup(item)===currentMerchGroup).slice(0,limit);
+  }
+  if(editorialGroup){
+    return editorialGroup.productIds
+      .filter(id=>id!==product.id)
+      .map(id=>products.find(item=>item.id===id))
+      .filter((item):item is Product=>Boolean(item))
+      .slice(0,limit);
+  }
+  return [];
+}
+
+function getComplementaryRecommendations(product:Product,limit=4){
+  const collectionProducts=getCollectionRecommendations(product,12);
+  const preferredFamilies=complementaryPreferences[productFamily(product)]??complementaryPreferences.other;
   const excludedIds=new Set([product.id,...collectionProducts.map(item=>item.id)]);
-  const complementaryProducts=products
+  return products
     .filter(item=>!excludedIds.has(item.id))
-    .map(item=>({item,rank:preferredFamilies.indexOf(familyOf(item))}))
+    .map(item=>({item,rank:preferredFamilies.indexOf(productFamily(item))}))
     .filter(entry=>entry.rank>=0)
     .sort((a,b)=>a.rank-b.rank||Number(Boolean(b.item.badge))-Number(Boolean(a.item.badge))||a.item.id-b.item.id)
     .map(entry=>entry.item)
-    .slice(0,4);
+    .slice(0,limit);
+}
+
+function ProductRecommendations({product,selectProduct,favorite,recentlyViewed}:{product:Product;selectProduct:(product:Product)=>void;favorite:(id:number)=>void;recentlyViewed:number[]}){
+  void recentlyViewed;
+  const collectionProducts=getCollectionRecommendations(product,4);
+  const complementaryProducts=getComplementaryRecommendations(product,4);
 
   return <>
     {collectionProducts.length>0&&<section className="post-rich-recommendations collection-recommendations"><div className="section-head"><p>КОЛЛЕКЦИЯ / КАПСУЛА</p><h2>Товары из этой коллекции</h2></div><ProductRail className="recommendation-product-rail" items={collectionProducts} onProduct={selectProduct} onQuick={selectProduct} favorite={favorite} favorites={[]}/></section>}
@@ -1279,11 +1297,12 @@ function isGiftPackagingAvailable(product:Product){
   return product.giftPackagingAvailable===true||inEditorial||merchandisingTagged||beddingSet;
 }
 
-function PLPAdded({product,close,openCart,updateGift}:{product:CartItem;close:()=>void;openCart:()=>void;updateGift:(giftWrap:boolean)=>void}){
+function PLPAdded({product,close,openCart,updateGift,selectProduct}:{product:CartItem;close:()=>void;openCart:()=>void;updateGift:(giftWrap:boolean)=>void;selectProduct:(product:Product)=>void}){
   const giftAvailable=isGiftPackagingAvailable(product);
+  const complementaryProducts=getComplementaryRecommendations(product,4);
   const [giftWrap,setGiftWrap]=useState(Boolean(product.giftWrap));
   const toggleWrap=(checked:boolean)=>{setGiftWrap(checked);updateGift(checked)};
-  return <div className="overlay plp-added"><button className="overlay-bg" onClick={close} aria-label="Закрыть"/><section className="plp-added-modal" role="dialog" aria-modal="true" aria-label="Товар добавлен в корзину"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><div className="added-drawer-head"><p className="added-kicker">ДОБАВЛЕНО ТОВАРОВ · {product.quantity}</p><span>КОРЗИНА ОБНОВЛЕНА</span></div><div className="added-product"><ScrollableProductMedia product={product} alt={product.name} className="added-product-media"/><div><h2>{product.name}</h2><span>{product.selectedColor} · {product.selectedSize}</span><span>Количество: {product.quantity}</span><b>{fmt(product.price*product.quantity)}</b></div></div>{giftAvailable&&<section className="added-gift-flow" aria-label="Подарочное оформление"><div className="added-gift-head"><div><strong>Оформить как подарок</strong><small>Для этого товара доступна фирменная подарочная упаковка.</small></div></div><label className="added-gift-option"><input type="checkbox" checked={giftWrap} onChange={event=>toggleWrap(event.target.checked)}/><span><b>Добавить подарочную упаковку</b><small>Фирменная упаковка «Культура дома»</small></span></label></section>}<aside><Icon name="bag"/><span>Бесплатная доставка при заказе от 15 000 ₽</span></aside><div className="added-sticky"><button className="primary" onClick={openCart}>ПОСМОТРЕТЬ КОРЗИНУ</button></div></section></div>;
+  return <div className="overlay plp-added"><button className="overlay-bg" onClick={close} aria-label="Закрыть"/><section className="plp-added-modal" role="dialog" aria-modal="true" aria-label="Товар добавлен в корзину"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><div className="added-drawer-head"><p className="added-kicker">ДОБАВЛЕНО ТОВАРОВ · {product.quantity}</p><span>КОРЗИНА ОБНОВЛЕНА</span></div><div className="added-product"><ScrollableProductMedia product={product} alt={product.name} className="added-product-media"/><div><h2>{product.name}</h2><span>{product.selectedColor} · {product.selectedSize}</span><span>Количество: {product.quantity}</span><b>{fmt(product.price*product.quantity)}</b></div></div>{giftAvailable&&<section className="added-gift-flow" aria-label="Подарочное оформление"><div className="added-gift-head"><div><strong>Оформить как подарок</strong><small>Для этого товара доступна фирменная подарочная упаковка.</small></div></div><label className="added-gift-option"><input type="checkbox" checked={giftWrap} onChange={event=>toggleWrap(event.target.checked)}/><span><b>Добавить подарочную упаковку</b><small>Фирменная упаковка «Культура дома»</small></span></label></section>}{complementaryProducts.length>0&&<section className="added-complementary" aria-label="Дополните образ"><div className="added-complementary-head"><small>ПОДОБРАНО К ТОВАРУ</small><h3>Дополните образ</h3></div><div className="added-complementary-rail">{complementaryProducts.map(item=><button key={item.id} type="button" className="added-complementary-card" onClick={()=>selectProduct(item)}><RemoteImage src={item.image} alt={item.name}/><span><strong>{item.name}</strong><small>{item.note}</small><b>{priceKnown(item.price)?fmt(item.price):"Цена уточняется"}</b></span></button>)}</div></section>}<aside><Icon name="bag"/><span>Бесплатная доставка при заказе от 15 000 ₽</span></aside><div className="added-sticky"><button className="primary" onClick={openCart}>ПОСМОТРЕТЬ КОРЗИНУ</button></div></section></div>;
 }
 
 function SizeSheet({ size, setSize, close, add, price }: { size:string; setSize:(s:string)=>void; close:()=>void; add:(quantity:number,unitPrice:number)=>void; price:number }) {
