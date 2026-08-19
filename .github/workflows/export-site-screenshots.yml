@@ -42,7 +42,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          ignored_parts = {'.git', '.github', '_next', 'node_modules', 'exports'}
+          ignored_parts = {'.git', '.github', '_next', 'node_modules', 'exports', 'export'}
           routes=[]
           for p in Path('.').rglob('index.html'):
               if set(p.parts) & ignored_parts:
@@ -53,26 +53,21 @@ jobs:
               route='/' if parent == '.' else '/' + parent.strip('/') + '/'
               routes.append(route)
           routes=sorted(set(routes), key=lambda x:(x.count('/'), x))
+          if not routes:
+              routes=['/']
           Path('routes.txt').write_text('\n'.join(routes)+'\n', encoding='utf-8')
           print(f'Discovered {len(routes)} routes')
           print('\n'.join(routes))
           PY
 
-      - name: Start static server under Pages base path
-        run: |
-          ln -s . kd
-          python -m http.server 8000 --bind 127.0.0.1 > /tmp/kd-server.log 2>&1 &
-          sleep 2
-          curl --fail http://127.0.0.1:8000/kd/ >/dev/null
-
-      - name: Capture desktop and mobile screenshots
+      - name: Capture desktop and mobile screenshots from published Pages
         run: |
           cat > /tmp/capture.mjs <<'JS'
           const fs = require('fs');
           const path = require('path');
           const { chromium } = require('playwright');
           const routes = fs.readFileSync('routes.txt','utf8').split(/\r?\n/).filter(Boolean);
-          const base = 'http://127.0.0.1:8000/kd';
+          const base = 'https://kssafonova.github.io/kd';
           const safe = r => r === '/' ? 'home' : r.replace(/^\/+|\/+$/g,'').replace(/[^a-zA-Z0-9._-]+/g,'__');
           fs.mkdirSync('export/desktop', {recursive:true});
           fs.mkdirSync('export/mobile', {recursive:true});
@@ -82,14 +77,21 @@ jobs:
             const page = await context.newPage();
             for (let i=0;i<routes.length;i++) {
               const route=routes[i], url=base+route;
-              console.log(`[${mode}] ${i+1}/${routes.length} ${route}`);
-              try { await page.goto(url, {waitUntil:'networkidle', timeout:45000}); }
-              catch { await page.goto(url, {waitUntil:'load', timeout:45000}); await page.waitForTimeout(2000); }
+              console.log(`[${mode}] ${i+1}/${routes.length} ${url}`);
+              await page.goto(url, {waitUntil:'domcontentloaded', timeout:60000});
+              await page.waitForTimeout(2000);
               await page.evaluate(async () => {
-                await Promise.all([...document.images].map(img => img.complete ? null : new Promise(res => { img.addEventListener('load',res,{once:true}); img.addEventListener('error',res,{once:true}); setTimeout(res,5000); })));
+                await Promise.all([...document.images].map(img => img.complete ? null : new Promise(res => {
+                  img.addEventListener('load',res,{once:true});
+                  img.addEventListener('error',res,{once:true});
+                  setTimeout(res,8000);
+                })));
                 if (document.fonts?.ready) await document.fonts.ready;
+                window.scrollTo(0, document.body.scrollHeight);
               });
-              await page.waitForTimeout(500);
+              await page.waitForTimeout(800);
+              await page.evaluate(() => window.scrollTo(0,0));
+              await page.waitForTimeout(300);
               await page.screenshot({path:path.join('export',mode,`${String(i+1).padStart(3,'0')}__${safe(route)}.png`), fullPage:true});
             }
             await context.close();
