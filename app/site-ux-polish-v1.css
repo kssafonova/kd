@@ -1,0 +1,131 @@
+/* Site UX polish V1 — neutral media loading, calmer desktop type scale and tighter menu hierarchy. */
+:root{--cream:#f4f4f2}
+
+/* Neutralize warm/yellow loading surfaces across the storefront. */
+img,
+img[data-image-stage],
+.product-image,
+.product-media-scroll,
+.pdp-main,
+.pdp-product-media,
+.editorial-story-product-image,
+.hv4-category-card img,
+.hv4-solution-card img,
+.hv4-brand-media,
+.hv4-traditions-media,
+.collection-grid img,
+.mini-products img,
+.rich-wide,
+.rich-pair img{
+  background-color:#f3f3f1!important;
+}
+
+img[data-image-stage="direct"],
+img[data-image-stage="fetch"]{
+  color:transparent!important;
+}
+
+/* Replace warm cream panels with a neutral premium grey/white system. */
+.manifest,
+.editorial,
+.hv4-solutions,
+.hv4-brand-boutiques,
+.hv4-traditions-collections-shell,
+.hv4-traditions-collections-content{
+  background:#f5f5f3!important;
+}
+
+/* Desktop heading scale: quieter and more editorial, with consistent left alignment. */
+@media (min-width:901px){
+  .home-v4 .hv4-head{
+    align-items:flex-start!important;
+    margin-bottom:18px!important;
+  }
+  .home-v4 .hv4-head h2{
+    max-width:760px;
+    font-size:clamp(22px,1.75vw,30px)!important;
+    line-height:1.05!important;
+    letter-spacing:-.025em!important;
+  }
+  .home-v4 .hv4-head small{
+    margin-bottom:6px!important;
+  }
+  .home-v4 .hv4-hero-copy{
+    max-width:560px!important;
+    bottom:96px!important;
+  }
+  .home-v4 .hv4-hero-copy h1{
+    max-width:560px!important;
+    font-size:clamp(40px,4vw,62px)!important;
+    line-height:.96!important;
+    letter-spacing:-.035em!important;
+  }
+  .home-v4 .hv4-traditions-copy h2{
+    max-width:620px!important;
+    font-size:clamp(30px,2.9vw,44px)!important;
+    line-height:.98!important;
+  }
+  .home-v4 .hv4-brand-copy h2{
+    max-width:520px!important;
+    font-size:clamp(30px,3vw,44px)!important;
+    line-height:1.02!important;
+  }
+  .section-head{
+    text-align:left!important;
+  }
+  .section-head h1,
+  .section-head h2{
+    font-size:clamp(28px,2.6vw,42px)!important;
+    line-height:1.04!important;
+  }
+  .title-line h1{
+    font-size:38px!important;
+    line-height:1.05!important;
+  }
+  .manifest h2{
+    font-size:40px!important;
+    line-height:1.05!important;
+  }
+  .editorial h2{
+    font-size:42px!important;
+    line-height:1.05!important;
+  }
+  .rich-intro h2{
+    font-size:40px!important;
+  }
+}
+
+/* Menu: smaller category scale, same hierarchy without visual noise. */
+@media (min-width:701px){
+  .premium-menu .premium-menu-new{
+    font-size:15px!important;
+    min-height:39px!important;
+  }
+  .premium-menu .premium-menu-editorial>button,
+  .premium-menu .premium-menu-editorial>a{
+    font-size:15.5px!important;
+    min-height:39px!important;
+  }
+  .premium-menu .premium-menu-catalog>button{
+    font-size:12.5px!important;
+    min-height:35px!important;
+    padding:5px 0!important;
+  }
+  .premium-menu .premium-menu-service>button,
+  .premium-menu .premium-menu-commercial>button{
+    font-size:12px!important;
+    min-height:34px!important;
+    padding:5px 0!important;
+  }
+  .premium-menu .premium-menu-level-two .menu-back{
+    font-size:15px!important;
+  }
+  .premium-menu .premium-menu-level-two>button:not(.menu-back){
+    font-size:12.5px!important;
+    min-height:35px!important;
+    padding:5px 0!important;
+  }
+  .premium-menu .premium-menu-level-two .view-all{
+    font-size:13px!important;
+  }
+}
