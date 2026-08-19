@@ -17,6 +17,7 @@ import "./home-commerce-v3.css";
 import "./menu-zara-premium.css";
 import "./home-v4.css";
 import "./home-v4-traditions-collections.css";
+import "./site-ux-polish-v1.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
 export const metadata: Metadata = {
