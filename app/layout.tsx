@@ -25,6 +25,7 @@ import "./home-ux-v8.css";
 import "./home-ux-v9.css";
 import "./home-togas-v10.css";
 import "./home-ux-v11.css";
+import "./home-ux-v11-mobile.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
 export const metadata: Metadata = {
