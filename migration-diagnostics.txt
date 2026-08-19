@@ -181,7 +181,7 @@ Applied unified responsive gift wrapping post-add flow
 
 ===== add-pdp-cross-sell-v1.py =====
 exit=1
-ProductRecommendations function not found
+ProductRecommendations function anchors not found
 
 
 ## npm install
@@ -189,22 +189,22 @@ npm warn deprecated tsconfck@3.1.6: unmaintained
 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
 npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
 
-added 513 packages in 16s
+added 513 packages in 13s
 
 ## Next build
 ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
 ▲ Next.js 16.2.6 (Turbopack)
 
   Creating an optimized production build ...
-✓ Compiled successfully in 3.6s
+✓ Compiled successfully in 2.4s
   Running TypeScript ...
-  Finished TypeScript in 4.3s ...
+  Finished TypeScript in 3.3s ...
   Collecting page data using 3 workers ...
   Generating static pages using 3 workers (0/32) ...
   Generating static pages using 3 workers (8/32) 
   Generating static pages using 3 workers (16/32) 
   Generating static pages using 3 workers (24/32) 
-✓ Generating static pages using 3 workers (32/32) in 424ms
+✓ Generating static pages using 3 workers (32/32) in 344ms
   Finalizing page optimization ...
 
 Route (app)
