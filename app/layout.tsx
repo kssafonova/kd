@@ -21,6 +21,7 @@ import "./site-ux-polish-v1.css";
 import "./home-reference-v5.css";
 import "./home-ux-v6.css";
 import "./home-ux-v7.css";
+import "./home-ux-v8.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
 export const metadata: Metadata = {
