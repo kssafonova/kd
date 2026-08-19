@@ -394,10 +394,8 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
   ];
 
   const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
-  const capsuleCards=[
-    {id:"ice",kind:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",image:"/images/editorial/caps_led_serviz.png"},
-    {id:"luna",kind:"КАПСУЛА",title:"Лунная сказка",image:"/images/editorial/caps_luna_postel2.png"},
-  ];
+  const collectionProductIds=Array.from(new Set(editorials.flatMap(item=>item.productIds)));
+  const collectionProducts=collectionProductIds.map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
   const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
   const solutions=[
     {room:"ГОСТИНАЯ",title:"Тихая гостиная",image:"/images/beige-bedroom.png"},
@@ -441,12 +439,9 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
         <div className="hv4-traditions-collections-content">
           <header className="hv4-traditions-collections-head">
             <div><small>EDITORIAL</small><h2>Капсулы и коллекции</h2></div>
-            <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ</button>
+            <button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ EDITORIAL</button>
           </header>
-          <div className="hv4-collection-rail">{capsuleCards.map(card=>{
-            const editorial=editorials.find(item=>item.id===card.id);
-            return <button type="button" className="hv4-collection-card" key={card.id} onClick={()=>editorial&&openEditorial(editorial)}><img src={assetUrl(card.image)} alt={card.title}/><span><small>{card.kind}</small><strong>{card.title}</strong><em>СМОТРЕТЬ ИСТОРИЮ</em></span></button>;
-          })}</div>
+          <ProductRail className="hv4-collection-product-rail" items={collectionProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
         </div>
       </div>
     </section>
@@ -500,6 +495,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V1
 // EDITORIAL_STORY_OVERLAY_V2
 // EDITORIAL_STORY_OVERLAY_V2
+// EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
