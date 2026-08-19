@@ -4,17 +4,23 @@ import re
 PAGE = Path("app/page.tsx")
 text = PAGE.read_text(encoding="utf-8")
 
-# Build one shoppable product rail from all active Editorial capsules/collections.
-# Keep the data tied to editorials so the homepage updates automatically when
-# collection assortment changes.
-if "const collectionProducts=" not in text:
-    anchor = '  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;'
-    insert = '''  const collectionProductIds=Array.from(new Set(editorials.flatMap(item=>item.productIds)));
+# Keep the collection-product declaration local to HomeView and deterministic.
+# Older failed builds could leave the identifier elsewhere in the file, so a
+# global string-presence check is not sufficient.
+text = re.sub(
+    r'\n  const collectionProductIds=Array\.from\(new Set\(editorials\.flatMap\(item=>item\.productIds\)\)\);\n  const collectionProducts=collectionProductIds\.map\(id=>products\.find\(product=>product\.id===id\)\)\.filter\(\(product\):product is Product=>Boolean\(product\)\);\n',
+    '\n',
+    text,
+    count=1,
+)
+
+anchor = '  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;'
+insert = '''  const collectionProductIds=Array.from(new Set(editorials.flatMap(item=>item.productIds)));
   const collectionProducts=collectionProductIds.map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
 '''
-    if anchor not in text:
-        raise SystemExit("constructorHref anchor not found")
-    text = text.replace(anchor, insert + anchor, 1)
+if anchor not in text:
+    raise SystemExit("constructorHref anchor not found")
+text = text.replace(anchor, insert + anchor, 1)
 
 # Collection cover cards are no longer used on the homepage.
 text = re.sub(
