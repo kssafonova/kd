@@ -61,10 +61,11 @@ new_recommendations = r'''function ProductRecommendations({product,selectProduct
   </>;
 }'''
 
-pattern = r'function ProductRecommendations\([\s\S]*?\n}\n\nfunction QuantityControl'
-if not re.search(pattern, page):
-    raise SystemExit("ProductRecommendations function not found")
-page = re.sub(pattern, new_recommendations + "\n\nfunction QuantityControl", page, count=1)
+start = page.find("function ProductRecommendations(")
+end = page.find("function QuantityControl", start)
+if start < 0 or end < 0:
+    raise SystemExit("ProductRecommendations function anchors not found")
+page = page[:start] + new_recommendations + "\n\n" + page[end:]
 
 page_path.write_text(page, encoding="utf-8")
 print("Applied PDP complementary merchandising block and removed recently viewed from PDP")
