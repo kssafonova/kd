@@ -1,0 +1,77 @@
+/* Mobile post-add gift wrapping flow */
+.added-gift-flow{display:none}
+.cart-gift-options{color:#5f5f5a!important}
+
+@media(max-width:900px){
+  .added-gift-flow{
+    display:block;
+    padding:18px 0 4px;
+    border-bottom:1px solid #deded9;
+  }
+  .added-gift-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:11px;
+  }
+  .added-gift-head>div{display:flex;flex-direction:column;gap:4px}
+  .added-gift-head strong{
+    font:400 13px/1.25 var(--serif,'Tenor Sans',sans-serif);
+    letter-spacing:.02em;
+    text-transform:uppercase;
+  }
+  .added-gift-head small{
+    color:#7b7b76;
+    font-size:10px;
+    line-height:1.35;
+  }
+  .added-gift-option{
+    min-height:58px;
+    display:grid;
+    grid-template-columns:24px minmax(0,1fr);
+    align-items:center;
+    gap:11px;
+    padding:10px 0;
+    border-top:1px solid #eeeeea;
+    cursor:pointer;
+  }
+  .added-gift-option input{
+    appearance:none;
+    -webkit-appearance:none;
+    width:20px;
+    height:20px;
+    margin:0;
+    border:1px solid #8f8f89;
+    border-radius:0;
+    background:#fff;
+    display:grid;
+    place-items:center;
+  }
+  .added-gift-option input::after{
+    content:'';
+    width:9px;
+    height:5px;
+    border-left:1.5px solid #fff;
+    border-bottom:1.5px solid #fff;
+    transform:rotate(-45deg) scale(0);
+    transition:transform .12s ease;
+    margin-top:-2px;
+  }
+  .added-gift-option input:checked{background:#263f43;border-color:#263f43}
+  .added-gift-option input:checked::after{transform:rotate(-45deg) scale(1)}
+  .added-gift-option input:focus-visible{outline:2px solid #263f43;outline-offset:3px}
+  .added-gift-option>span{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .added-gift-option b{font-size:12px;font-weight:400;line-height:1.3}
+  .added-gift-option small{font-size:9.5px;line-height:1.35;color:#858580}
+  .plp-added-modal>aside{margin-top:auto!important}
+  .cart-gift-options{font-size:9px!important;line-height:1.35!important}
+}
+
+@media(max-width:380px){
+  .added-gift-flow{padding-top:15px}
+  .added-gift-head strong{font-size:12px}
+  .added-gift-option{min-height:54px}
+  .added-gift-option b{font-size:11.5px}
+  .added-gift-option small{font-size:9px}
+}
