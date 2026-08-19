@@ -1,50 +1,46 @@
 /* Homepage V4 — merged brand story + shoppable collection product rail. */
 .hv4-traditions-collections{
-  padding:10px 0 96px;
+  padding:10px 0 88px;
   background:#fff;
 }
 .hv4-traditions-collections-shell{
   width:min(1480px,calc(100% - 48px));
   margin:0 auto;
-  background:#f4f3ef;
+  background:#f5f5f3;
 }
 .hv4-traditions-collections .hv4-traditions-media{
   width:100%;
   margin:0;
 }
 .hv4-traditions-collections-content{
-  display:grid;
-  grid-template-columns:minmax(220px,.30fr) minmax(0,1.70fr);
-  gap:36px;
-  align-items:start;
-  padding:30px 30px 34px;
+  display:block;
+  padding:25px 28px 30px;
   border-top:1px solid rgba(24,25,24,.08);
+  background:#f5f5f3;
 }
 .hv4-traditions-collections-head{
   display:flex;
-  min-height:100%;
-  flex-direction:column;
-  align-items:flex-start;
+  align-items:flex-end;
   justify-content:space-between;
   gap:28px;
-  padding:4px 0 2px;
+  margin-bottom:18px;
 }
 .hv4-traditions-collections-head small{
   display:block;
-  margin-bottom:9px;
+  margin-bottom:6px;
   color:#858782;
   font-size:7px;
   letter-spacing:.2em;
   text-transform:uppercase;
 }
 .hv4-traditions-collections-head h2{
-  max-width:280px;
   margin:0;
-  font:400 clamp(25px,2.2vw,36px)/1.02 var(--serif,"Tenor Sans",sans-serif);
-  letter-spacing:-.035em;
+  font:400 clamp(22px,1.8vw,30px)/1.04 var(--serif,"Tenor Sans",sans-serif);
+  letter-spacing:-.025em;
   text-transform:uppercase;
 }
 .hv4-traditions-collections-head>button{
+  flex:0 0 auto;
   padding:0 0 5px;
   border-bottom:1px solid #777;
   font-size:7px;
@@ -69,7 +65,7 @@
 }
 .hv4-traditions-collections .product-rail::-webkit-scrollbar{display:none}
 .hv4-traditions-collections .product-card{
-  flex:0 0 clamp(205px,17vw,265px)!important;
+  flex:0 0 clamp(205px,17vw,260px)!important;
   min-width:0!important;
   scroll-snap-align:start;
 }
@@ -77,87 +73,40 @@
 .hv4-traditions-collections .product-image .product-media-scroll,
 .hv4-traditions-collections .product-image img{
   aspect-ratio:.92/1!important;
+  background:#f3f3f1!important;
 }
-.hv4-traditions-collections .product-copy{
-  padding-top:8px!important;
-}
-.hv4-traditions-collections .product-copy strong{
-  font-size:11px!important;
-  line-height:1.18!important;
-}
-.hv4-traditions-collections .product-copy small{
-  font-size:6.5px!important;
-  color:#858782!important;
-}
-.hv4-traditions-collections .price{
-  margin-top:6px!important;
-  font-size:10px!important;
-}
-.hv4-traditions-collections .quick{
-  width:32px!important;
-  height:32px!important;
-}
-.hv4-traditions-collections .heart svg{
-  width:27px!important;
-  height:27px!important;
-}
+.hv4-traditions-collections .product-copy{padding-top:8px!important}
+.hv4-traditions-collections .product-copy strong{font-size:11px!important;line-height:1.18!important}
+.hv4-traditions-collections .product-copy small{font-size:6.5px!important;color:#858782!important}
+.hv4-traditions-collections .price{margin-top:6px!important;font-size:10px!important}
+.hv4-traditions-collections .quick{width:32px!important;height:32px!important}
+.hv4-traditions-collections .heart svg{width:27px!important;height:27px!important}
 
 @media(max-width:900px){
-  .hv4-traditions-collections{
-    padding:0 0 70px;
-  }
-  .hv4-traditions-collections-shell{
-    width:calc(100% - 24px);
-  }
-  .hv4-traditions-collections .hv4-traditions-media{
-    aspect-ratio:9/14;
-    min-height:0;
-  }
-  .hv4-traditions-collections-content{
-    display:block;
-    padding:22px 14px 26px;
-  }
+  .hv4-traditions-collections{padding:0 0 70px}
+  .hv4-traditions-collections-shell{width:calc(100% - 24px)}
+  .hv4-traditions-collections .hv4-traditions-media{aspect-ratio:9/14;min-height:0}
+  .hv4-traditions-collections-content{padding:20px 14px 25px}
   .hv4-traditions-collections-head{
-    min-height:0;
-    display:flex;
-    flex-direction:row;
     align-items:flex-end;
-    justify-content:space-between;
-    gap:18px;
-    padding:0;
-    margin-bottom:18px;
+    gap:14px;
+    margin-bottom:16px;
   }
-  .hv4-traditions-collections-head h2{
-    max-width:230px;
-    font-size:25px;
-  }
-  .hv4-traditions-collections-head>button{
-    flex:0 0 auto;
-  }
+  .hv4-traditions-collections-head h2{max-width:220px;font-size:23px}
+  .hv4-traditions-collections-head>button{font-size:6.5px}
   .hv4-traditions-collections .product-rail{
     gap:8px!important;
     margin-right:-14px;
     padding-right:14px!important;
   }
-  .hv4-traditions-collections .product-card{
-    flex:0 0 39vw!important;
-  }
-  .hv4-traditions-collections .product-copy strong{
-    font-size:10px!important;
-  }
-  .hv4-traditions-collections .product-copy small{
-    font-size:6px!important;
-  }
-  .hv4-traditions-collections .price{
-    font-size:9px!important;
-  }
-  .hv4-traditions-collections .quick{
-    width:30px!important;
-    height:30px!important;
-  }
+  .hv4-traditions-collections .product-card{flex:0 0 39vw!important}
+  .hv4-traditions-collections .product-copy strong{font-size:10px!important}
+  .hv4-traditions-collections .product-copy small{font-size:6px!important}
+  .hv4-traditions-collections .price{font-size:9px!important}
+  .hv4-traditions-collections .quick{width:30px!important;height:30px!important}
 }
 
 @media(max-width:520px){
-  .hv4-traditions-collections-head h2{font-size:23px}
+  .hv4-traditions-collections-head h2{font-size:22px}
   .hv4-traditions-collections .product-card{flex-basis:40vw!important}
 }
