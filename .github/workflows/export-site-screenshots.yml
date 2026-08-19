@@ -3,12 +3,16 @@ name: Export site screenshots to PDF
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/export-site-screenshots.yml'
+    paths-ignore:
+      - 'exports/**'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: kd-screenshot-export
+  cancel-in-progress: true
 
 jobs:
   export:
@@ -79,7 +83,7 @@ jobs:
               const route=routes[i], url=base+route;
               console.log(`[${mode}] ${i+1}/${routes.length} ${url}`);
               await page.goto(url, {waitUntil:'domcontentloaded', timeout:60000});
-              await page.waitForTimeout(2000);
+              await page.waitForTimeout(1800);
               await page.evaluate(async () => {
                 await Promise.all([...document.images].map(img => img.complete ? null : new Promise(res => {
                   img.addEventListener('load',res,{once:true});
@@ -89,10 +93,15 @@ jobs:
                 if (document.fonts?.ready) await document.fonts.ready;
                 window.scrollTo(0, document.body.scrollHeight);
               });
-              await page.waitForTimeout(800);
+              await page.waitForTimeout(700);
               await page.evaluate(() => window.scrollTo(0,0));
-              await page.waitForTimeout(300);
-              await page.screenshot({path:path.join('export',mode,`${String(i+1).padStart(3,'0')}__${safe(route)}.png`), fullPage:true});
+              await page.waitForTimeout(250);
+              await page.screenshot({
+                path:path.join('export',mode,`${String(i+1).padStart(3,'0')}__${safe(route)}.jpg`),
+                fullPage:true,
+                type:'jpeg',
+                quality:72
+              });
             }
             await context.close();
           }
@@ -120,8 +129,8 @@ jobs:
                   c.drawImage(ImageReader(str(p)),0,0,width=pw,height=ph,mask='auto')
                   c.showPage()
               if c: c.save()
-          desktop=sorted((ROOT/'desktop').glob('*.png'))
-          mobile=sorted((ROOT/'mobile').glob('*.png'))
+          desktop=sorted((ROOT/'desktop').glob('*.jpg'))
+          mobile=sorted((ROOT/'mobile').glob('*.jpg'))
           write(desktop, ROOT/'kd_all_pages_desktop.pdf')
           write(mobile, ROOT/'kd_all_pages_mobile.pdf')
           write(desktop+mobile, ROOT/'kd_all_pages_desktop_mobile.pdf')
