@@ -40,6 +40,7 @@ import "./auth-flow-v20.css";
 import "./profile-address-book-v16.css";
 import "./profile-address-book-order-v21.css";
 import "./collection-redesign-v23.css";
+import "./collections-zara-kultura-v31.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
