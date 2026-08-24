@@ -8,6 +8,8 @@ export type TableSolution = {
   scrollFile: string;
   collections: string[];
   productNames: string[];
+  /** Optional product names selected when the constructor first opens. */
+  defaultProductNames?: string[];
   /** Optional CSV product types allowed for collection-based matching. */
   allowedProductTypes?: string[];
   /** Disable broad collection pulls and use only explicit CSV products. */
@@ -29,7 +31,67 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     previewFile: "green.jpeg",
     scrollFile: "green2.jpeg",
     collections: ["Петербург", "Многоцвет", "Овация", "Весна"],
-    productNames: [],
+
+    // Final curated assortment from the approved Green Salon screenshot.
+    // The list is explicit so unrelated products from these collections do not
+    // enter the ready solution automatically.
+    productNames: [
+      // Тарелки
+      "Тарелка для яиц Пасхальная Весна",
+      "Тарелка закусочная Весна",
+      "Тарелка обеденная Весна",
+      "Тарелка Петербург",
+      "Тарелка десертная Овация",
+      "Тарелка закусочная Овация",
+      "Тарелка обеденная Овация",
+
+      // Салатники и глубокие тарелки
+      "Салатник Петербург",
+      "Салатник порционный Овация",
+      "Салатник Овация",
+      "Тарелка глубокая Овация",
+
+      // Кружки, чайные и кофейные пары
+      "Кружка Весна",
+      "Кофейная пара Овация",
+      "Кружка Овация",
+      "Чайная пара Овация",
+      "Кружка Петербург",
+      "Чайная пара Петербург",
+
+      // Чайники, сахарницы и молочники
+      "Сахарница Овация",
+      "Сахарница Петербург",
+      "Сливочник Петербург",
+      "Чайник Овация",
+      "Молочник Овация",
+      "Чайник Петербург",
+
+      // Блюда и подача
+      "Блюдо овальное Овация",
+      "Блюдо Петербург",
+      "Подставка для яйца Овация",
+      "Ваза для фруктов Весна",
+
+      // Скатерти, плейсматы и тканевые салфетки
+      "Плейсмат Весна",
+      "Салфетка Весна",
+      "Скатерть Весна",
+      "Дорожка Петербург",
+      "Салфетки Петербург",
+      "Скатерть Петербург",
+      "Дорожка Многоцвет",
+      "Скатерть Многоцвет",
+
+      // Свечи и диффузоры
+      "Свеча Весна",
+      "Свеча Многоцветы",
+    ],
+    includeCollectionProducts: false,
+
+    // Keep the initial state light: the constructor recommends one item from
+    // each practical group instead of selecting the entire assortment at once.
+    defaultProductNames: [],
   },
   {
     id: "table-2",
