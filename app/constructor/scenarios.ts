@@ -10,6 +10,9 @@ export const TABLE_SOLUTION_IDS = [
   "table-1",
   "table-2",
   "table-3",
+  "table-4",
+  "table-5",
+  "table-6",
 ] as const;
 
 export const CONSTRUCTOR_SCENARIO_IDS = [
@@ -20,8 +23,6 @@ export const CONSTRUCTOR_SCENARIO_IDS = [
 export type LegacyConstructorScenarioId = (typeof LEGACY_CONSTRUCTOR_SCENARIO_IDS)[number];
 export type ConstructorScenarioId = (typeof CONSTRUCTOR_SCENARIO_IDS)[number];
 
-// Kept as the legacy guard because SCENARIO_COPY contains copy only for the
-// original five scenarios. New table-driven solutions use their own metadata.
 export const isConstructorScenarioId = (value: string): value is LegacyConstructorScenarioId =>
   LEGACY_CONSTRUCTOR_SCENARIO_IDS.includes(value as LegacyConstructorScenarioId);
 
