@@ -42,10 +42,10 @@ import "./profile-address-book-order-v21.css";
 import "./collection-redesign-v23.css";
 import "./collections-zara-kultura-v31.css";
 import "./collections-zara-kultura-v32.css";
+import "./collections-catalog-parity-v34.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
-import { CollectionsEditorialEnhancerV32 } from "./collections-editorial-enhancer-v32";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
@@ -59,7 +59,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ProductCardGalleryEnhancer />
         <CollectionPurchaseEnhancer />
         <ProfileAddressBookEnhancer />
-        <CollectionsEditorialEnhancerV32 />
         {children}
       </body>
     </html>
