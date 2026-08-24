@@ -54,13 +54,13 @@ jobs:
           set -o pipefail
           npx next build 2>&1 | tee /tmp/storefront-build.log
 
-      - name: Persist migration diagnostics
-        if: always() && (steps.migration.outcome == 'failure' || steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
+      - name: Persist build diagnostics
+        if: always() && (steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
         shell: bash
         run: |
           set -euo pipefail
           {
-            echo "# Site migration diagnostics"
+            echo "# Site build diagnostics"
             echo
             echo "migration=${{ steps.migration.outcome }}"
             echo "dependencies=${{ steps.dependencies.outcome }}"
@@ -94,12 +94,12 @@ jobs:
             git push origin HEAD:main
           fi
 
-      - name: Stop after migration failure
-        if: always() && (steps.migration.outcome == 'failure' || steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
+      - name: Stop after build failure
+        if: always() && (steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
         run: exit 1
 
       - name: Prepare legacy Pages source
-        if: steps.migration.outcome == 'success' && steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
+        if: steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -121,7 +121,7 @@ jobs:
           mv "$names_file" /tmp/pages-output-names
 
       - name: Commit storefront source and static export
-        if: steps.migration.outcome == 'success' && steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
+        if: steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
