@@ -30,16 +30,46 @@ const rowMatchesSolution = (row: CatalogRow, solution: TableSolution) => {
   return collectionMatch || explicitProductMatch;
 };
 
-const baseProductName = (row: CatalogRow) => normalizeSolutionValue(String(row.product_name || "").split(":")[0]);
+const COLOR_WORDS = [
+  "темно-синий", "темно-синяя", "темно-синее", "темно-синие",
+  "ночной синий", "ночная синяя",
+  "белый", "белая", "белое", "белые",
+  "молочный", "молочная", "молочное", "молочные",
+  "синий", "синяя", "синее", "синие",
+  "голубой", "голубая", "голубое", "голубые",
+  "пудровый", "пудровая", "пудровое", "пудровые",
+  "розовый", "розовая", "розовое", "розовые",
+  "льняной", "льняная", "льняное", "льняные",
+  "бежевый", "бежевая", "бежевое", "бежевые",
+  "песочный", "песочная", "песочное", "песочные",
+  "серый", "серая", "серое", "серые",
+  "зеленый", "зеленая", "зеленое", "зеленые",
+  "красный", "красная", "красное", "красные",
+  "бордовый", "бордовая", "бордовое", "бордовые",
+  "желтый", "желтая", "желтое", "желтые",
+  "черный", "черная", "черное", "черные",
+  "золотой", "золотая", "золотое", "золотые",
+  "серебристый", "серебристая", "серебристое", "серебристые",
+];
+
+const canonicalProductName = (row: CatalogRow) => {
+  let value = normalizeSolutionValue(String(row.product_name || "").split(":")[0]);
+  COLOR_WORDS.forEach((word) => {
+    value = value.replace(new RegExp(`(^|\\s)${word.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}(?=\\s|$)`, "g"), " ");
+  });
+  return value.replace(/\s+/g, " ").trim();
+};
 
 /**
- * Product identity intentionally prefers the catalog-facing product name over
- * group_id: the source feed may store different colours as separate 1C groups.
- * This lets one storefront product contain all colour/size variants.
+ * Storefront product identity:
+ * - same collection + same base product => one card;
+ * - colour and size rows become variants inside that card;
+ * - the same generic product name from two different collections stays separate.
  */
 export const logicalProductKey = (row: CatalogRow) => {
-  const name = baseProductName(row);
-  if (name) return `name:${name}`;
+  const name = canonicalProductName(row);
+  const collection = normalizeSolutionValue(row.collection || "");
+  if (name) return `product:${collection || "no-collection"}:${name}`;
   const group = String(row.group_id || "").trim();
   return group ? `group:${group}` : `offer:${row.offer_id}`;
 };
