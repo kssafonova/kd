@@ -4,33 +4,14 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
 import { loadFinalConstructorData } from "./data-client";
-import { findTableSolution, type TableSolution } from "./table-solutions";
+import { findTableSolution } from "./table-solutions";
+import { resolveTableSolutionProducts } from "./table-solution-resolver";
 import type { CatalogRow, FinalConstructorData } from "./types";
 
 const CART_STORAGE_KEY = "kultura-cart";
 const CART_ID_OFFSET = 920000;
 const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
 const toPrice = (value: string | undefined) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
-const normalize = (value: string) => value.trim().toLocaleLowerCase("ru-RU").replace(/ё/g, "е").replace(/\s+/g, " ");
-
-const findProduct = (catalog: CatalogRow[], name: string) => {
-  const target = normalize(name);
-  return catalog.find((row) => normalize(row.product_name) === target);
-};
-
-const rowsForCollections = (catalog: CatalogRow[], solution: TableSolution) => {
-  const targets = solution.collections.map(normalize);
-  const unique = new Map<string, CatalogRow>();
-  catalog.forEach((row) => {
-    const collection = normalize(row.collection || "");
-    const productName = normalize(row.product_name || "");
-    if (targets.some((target) => collection === target || productName.includes(target))) {
-      const key = row.group_id || row.offer_id;
-      if (!unique.has(key)) unique.set(key, row);
-    }
-  });
-  return Array.from(unique.values());
-};
 
 const splitImages = (row?: CatalogRow) => Array.from(new Set([
   row?.primary_image_url,
@@ -98,15 +79,8 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
 
   const productRows = useMemo(() => {
     if (!data || !solution) return [];
-    return solution.productNames
-      .map((name) => findProduct(data.catalog, name))
-      .filter((row): row is CatalogRow => Boolean(row));
+    return resolveTableSolutionProducts(data.catalog, solution);
   }, [data, solution]);
-
-  const representativeRows = useMemo(() => {
-    if (!data || !solution) return [];
-    return productRows.length ? productRows : rowsForCollections(data.catalog, solution);
-  }, [data, solution, productRows]);
 
   if (!solution) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Решение не найдено</h1><Link href="/constructor/">Вернуться к готовым решениям</Link></div></main>;
   if (error) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Не удалось загрузить решение</h1><p>{error}</p></div></main>;
@@ -114,9 +88,10 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
 
   const activeRows = productRows.filter((row) => selected[row.offer_id] !== false);
   const total = activeRows.reduce((sum, row) => sum + toPrice(row.price) * (quantity[row.offer_id] || 1), 0);
-  const previewFallback = representativeRows[0]?.primary_image_url || "/images/image-placeholder.svg";
-  const scrollFallback = representativeRows[1]?.primary_image_url || representativeRows[0]?.all_image_urls?.split("|")[1] || previewFallback;
-  const missingProducts = Math.max(0, solution.productNames.length - productRows.length);
+  const previewFallback = productRows[0]?.primary_image_url || "/images/image-placeholder.svg";
+  const scrollFallback = productRows[1]?.primary_image_url || productRows[0]?.all_image_urls?.split("|")[1] || previewFallback;
+  const previewSrc = solution.previewFile ? `/images/constructor/${solution.previewFile}` : previewFallback;
+  const scrollSrc = solution.scrollFile ? `/images/constructor/${solution.scrollFile}` : scrollFallback;
 
   const addSolution = () => {
     const items: SharedCartItem[] = activeRows.map((row, index) => {
@@ -173,40 +148,35 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
 
         <section className="table-solution-detail-hero">
           <div className="table-solution-hero-media">
-            <RemoteImage src={`/images/ready-solutions/${solution.previewFile}`} fallbackSrc={previewFallback} alt={`${solution.name}: превью`} loading="eager"/>
-            <RemoteImage src={`/images/ready-solutions/${solution.scrollFile}`} fallbackSrc={scrollFallback} alt={`${solution.name}: второй кадр`} loading="eager"/>
+            <RemoteImage src={previewSrc} fallbackSrc={previewFallback} alt={`${solution.name}: превью`} loading="eager"/>
+            <RemoteImage src={scrollSrc} fallbackSrc={scrollFallback} alt={`${solution.name}: второй кадр`} loading="eager"/>
           </div>
           <div className="table-solution-hero-copy">
             <small>ГОТОВОЕ РЕШЕНИЕ · {solution.space.toUpperCase()}</small>
             <h1>{solution.name}</h1>
-            {!solution.sourceName && <p className="table-solution-source-note">Название в исходной таблице не заполнено.</p>}
-            <div className="table-solution-collection-list">
+            {solution.collections.length > 0 && <div className="table-solution-collection-list">
               {solution.collections.map((collection) => <span key={collection}>{collection}</span>)}
-            </div>
-            <p>{solution.productNames.length ? "Состав решения задан в таблице. Можно убрать отдельный товар или изменить его количество перед добавлением всего комплекта в корзину." : "В исходной таблице для этого решения перечислены коллекции, но колонка «Товары» не заполнена. Поэтому состав не подменён случайными товарами."}</p>
-            {solution.productNames.length > 0 && <div className="table-solution-hero-total"><span>{activeRows.length} из {productRows.length} товаров выбрано</span><strong>{formatRub(total)}</strong></div>}
+            </div>}
+            <p>Состав автоматически собран из CSV-каталога: включены все найденные товары указанных коллекций и позиции, явно перечисленные в таблице. Для каждого товара используется его реальное изображение из CSV.</p>
+            <div className="table-solution-hero-total"><span>{activeRows.length} из {productRows.length} товаров выбрано</span><strong>{formatRub(total)}</strong></div>
           </div>
         </section>
 
-        {solution.productNames.length === 0 ? (
+        {productRows.length === 0 ? (
           <section className="table-solution-pending-composition">
-            <div><small>СОСТАВ</small><h2>Товары пока не указаны</h2><p>Для решения №{solution.sourceId} таблица задаёт пространство, изображения и коллекции, но не содержит товарного состава. После заполнения колонки «Товары» сюда можно автоматически добавить покупаемый комплект.</p></div>
-            <div className="table-solution-collection-preview">
-              {representativeRows.slice(0, 4).map((row) => <article key={row.offer_id}><RemoteImage src={row.primary_image_url} alt={row.product_name}/><span>{row.collection || solution.collections.find((item) => normalize(row.product_name).includes(normalize(item))) || "Коллекция"}</span><strong>{row.product_name}</strong></article>)}
-            </div>
+            <div><small>СОСТАВ</small><h2>Товары не найдены в CSV</h2><p>Для этого решения в текущем каталоге не удалось найти позиции по указанным коллекциям или названиям.</p></div>
           </section>
         ) : (
           <div className="table-solution-buy-layout">
             <section className="table-solution-product-list">
-              <header><div><small>СОСТАВ ПО ТАБЛИЦЕ</small><h2>Товары решения</h2></div><p>Все позиции выбраны по умолчанию.</p></header>
-              {missingProducts > 0 && <p className="table-solution-warning">Не удалось сопоставить с каталогом: {missingProducts} поз.</p>}
+              <header><div><small>СОСТАВ ИЗ CSV</small><h2>Все найденные товары</h2></div><p>Все позиции выбраны по умолчанию. Можно убрать лишние и изменить количество.</p></header>
               <div>
                 {productRows.map((row) => {
                   const checked = selected[row.offer_id] !== false;
                   const q = quantity[row.offer_id] || 1;
                   return <article className={`table-solution-product ${checked ? "selected" : "disabled"}`} key={row.offer_id}>
                     <label className="table-solution-product-check"><input type="checkbox" checked={checked} onChange={(event) => setSelected((state) => ({ ...state, [row.offer_id]: event.target.checked }))}/><span/></label>
-                    <div className="table-solution-product-media"><RemoteImage src={row.primary_image_url} alt={row.product_name}/></div>
+                    <div className="table-solution-product-media"><RemoteImage src={row.primary_image_url || "/images/image-placeholder.svg"} alt={row.product_name}/></div>
                     <div className="table-solution-product-copy">
                       <small>{row.collection || "Культура Дома"}</small>
                       <h3>{row.product_name}</h3>
