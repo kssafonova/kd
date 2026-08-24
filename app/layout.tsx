@@ -37,8 +37,10 @@ import "./cart-redesign-v17.css";
 import "./cart-controls-v18.css";
 import "./cart-controls-v19.css";
 import "./auth-flow-v20.css";
+import "./profile-address-book-v16.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
+import { ProfileAddressBookEnhancer } from "./profile-address-book";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
@@ -51,6 +53,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <ProductCardGalleryEnhancer />
         <CollectionPurchaseEnhancer />
+        <ProfileAddressBookEnhancer />
         {children}
       </body>
     </html>
