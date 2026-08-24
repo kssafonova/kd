@@ -12,9 +12,8 @@ import {
   optionColors,
   optionSizes,
   pickOptionVariant,
-  recommendedSlotQuantity,
+  recommendedOptionQuantity,
   type SolutionProductOption,
-  type SolutionSlot,
 } from "./table-solution-builder";
 import type { CatalogRow, ConstructorData, FinalConstructorData } from "./types";
 
@@ -22,6 +21,7 @@ const CART_STORAGE_KEY = "kultura-cart";
 const CART_ID_OFFSET = 920000;
 const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
 const toPrice = (value: string | undefined) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
+const normalize = (value: string) => String(value || "").trim().toLocaleLowerCase("ru-RU").replace(/ё/g, "е").replace(/[«»"']/g, "").replace(/\s+/g, " ");
 
 const splitImages = (row?: CatalogRow) => Array.from(new Set([
   row?.primary_image_url,
@@ -92,8 +92,7 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
   const [ruleData, setRuleData] = useState<ConstructorData | null>(null);
   const [error, setError] = useState("");
   const [guests, setGuests] = useState(2);
-  const [enabledSlots, setEnabledSlots] = useState<Record<string, boolean>>({});
-  const [optionChoice, setOptionChoice] = useState<Record<string, string>>({});
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, boolean>>({});
   const [colorChoice, setColorChoice] = useState<Record<string, string>>({});
   const [sizeChoice, setSizeChoice] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState<Record<string, number>>({});
@@ -117,16 +116,35 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
   }, [data, solution]);
 
   const categories = useMemo(() => solution ? buildSolutionCategories(catalogRows, solution.space) : [], [catalogRows, solution]);
-  const allSlots = useMemo(() => categories.flatMap((category) => category.slots), [categories]);
+  const allOptions = useMemo(() => categories.flatMap((category) => category.slots.flatMap((slot) => slot.options)), [categories]);
   const guestOptions = useMemo(() => solution ? deriveGuestOptions(solution, ruleData) : [1, 2], [solution, ruleData]);
+
+  const defaultSelected = useMemo(() => {
+    const selected = new Set<string>();
+    if (!solution) return selected;
+    const explicitTargets = solution.productNames.map(normalize).filter(Boolean);
+    categories.forEach((category) => {
+      const options = category.slots.flatMap((slot) => slot.options);
+      const explicit = options.filter((option) => explicitTargets.some((target) => {
+        const title = normalize(option.title);
+        return title === target || title.includes(target) || target.includes(title);
+      }));
+      if (explicit.length) {
+        explicit.forEach((option) => selected.add(option.id));
+        return;
+      }
+      // Ready solution starts with one sensible product in core categories.
+      if (!["atmosphere", "vases", "games", "other"].includes(category.id) && options[0]) selected.add(options[0].id);
+    });
+    return selected;
+  }, [categories, solution]);
 
   useEffect(() => {
     if (guestOptions.length && !guestOptions.includes(guests)) setGuests(guestOptions[0]);
   }, [guestOptions, guests]);
 
   useEffect(() => {
-    setEnabledSlots({});
-    setOptionChoice({});
+    setSelectedOptions({});
     setColorChoice({});
     setSizeChoice({});
     setQuantity({});
@@ -136,39 +154,45 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
   if (error) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Не удалось загрузить решение</h1><p>{error}</p></div></main>;
   if (!data) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty">Загружаем решение…</div></main>;
 
-  const isSlotEnabled = (slot: SolutionSlot) => enabledSlots[slot.id] !== false;
-  const selectedOption = (slot: SolutionSlot) => slot.options.find((option) => option.id === optionChoice[slot.id]) || slot.options[0];
-  const selectedRow = (slot: SolutionSlot) => {
-    const option = selectedOption(slot);
-    if (!option) return undefined;
+  const isOptionSelected = (option: SolutionProductOption) => selectedOptions[option.id] ?? defaultSelected.has(option.id);
+  const selectedRow = (option: SolutionProductOption) => {
     const colors = optionColors(option);
     const color = colorChoice[option.id] || colors[0] || "";
     const sizes = optionSizes(option, color);
     const size = sizeChoice[option.id] || sizes[0] || "";
     return pickOptionVariant(option, color, size);
   };
-  const slotQuantity = (slot: SolutionSlot) => quantity[slot.id] ?? recommendedSlotQuantity(slot, guests);
+  const optionQuantity = (option: SolutionProductOption) => quantity[option.id] ?? recommendedOptionQuantity(option, guests);
 
-  const activeSelections = allSlots
-    .filter(isSlotEnabled)
-    .map((slot) => ({ slot, option: selectedOption(slot), row: selectedRow(slot), quantity: slotQuantity(slot) }))
-    .filter((item): item is { slot: SolutionSlot; option: SolutionProductOption; row: CatalogRow; quantity: number } => Boolean(item.option && item.row));
+  const activeSelections = allOptions
+    .filter(isOptionSelected)
+    .map((option) => ({ option, row: selectedRow(option), quantity: optionQuantity(option) }))
+    .filter((item): item is { option: SolutionProductOption; row: CatalogRow; quantity: number } => Boolean(item.row));
 
   const totalUnits = activeSelections.reduce((sum, item) => sum + item.quantity, 0);
   const total = activeSelections.reduce((sum, item) => sum + toPrice(item.row.price) * item.quantity, 0);
+  const selectedCategoryCount = categories.filter((category) => category.slots.some((slot) => slot.options.some(isOptionSelected))).length;
+
   const previewFallback = catalogRows[0]?.primary_image_url || "/images/image-placeholder.svg";
   const scrollFallback = catalogRows[1]?.primary_image_url || catalogRows[0]?.all_image_urls?.split("|")[1] || previewFallback;
   const previewSrc = solution.previewFile ? `/images/constructor/${solution.previewFile}` : previewFallback;
   const scrollSrc = solution.scrollFile ? `/images/constructor/${solution.scrollFile}` : scrollFallback;
 
-  const chooseOption = (slot: SolutionSlot, option: SolutionProductOption) => {
-    setOptionChoice((state) => ({ ...state, [slot.id]: option.id }));
-    setEnabledSlots((state) => ({ ...state, [slot.id]: true }));
-    setQuantity((state) => { const next = { ...state }; delete next[slot.id]; return next; });
+  const toggleOption = (option: SolutionProductOption) => {
+    const next = !isOptionSelected(option);
+    setSelectedOptions((state) => ({ ...state, [option.id]: next }));
+  };
+
+  const toggleCategory = (options: SolutionProductOption[]) => {
+    const allSelected = options.every(isOptionSelected);
+    setSelectedOptions((state) => ({
+      ...state,
+      ...Object.fromEntries(options.map((option) => [option.id, !allSelected])),
+    }));
   };
 
   const addSolution = () => {
-    const items: SharedCartItem[] = activeSelections.map(({ slot, option, row, quantity: itemQty }, index) => {
+    const items: SharedCartItem[] = activeSelections.map(({ option, row, quantity: itemQty }, index) => {
       const numericOffer = Number(String(row.offer_id).split("-")[0]) || index + 1;
       const productId = CART_ID_OFFSET + numericOffer;
       const skuId = `table-solution-${solution.sourceId}-${row.offer_id}`;
@@ -196,8 +220,8 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
       });
       return {
         id: productId,
-        name: row.product_name,
-        note: `Из готового решения «${solution.name}» · ${slot.title} · ${guests} персон`,
+        name: option.title,
+        note: `Из готового решения «${solution.name}» · ${option.collection || "Культура Дома"} · ${guests} персон`,
         price,
         image,
         gallery,
@@ -219,7 +243,7 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
   };
 
   return (
-    <main className="solution-simple-shell table-solution-detail-shell table-builder-v27">
+    <main className="solution-simple-shell table-solution-detail-shell table-builder-v28">
       <div className="solution-simple-wrap">
         <nav className="solution-simple-topbar">
           <Link href="/constructor/">← ГОТОВЫЕ РЕШЕНИЯ</Link>
@@ -235,8 +259,8 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
             <small>ГОТОВОЕ РЕШЕНИЕ · {solution.space.toUpperCase()}</small>
             <h1>{solution.name}</h1>
             {solution.collections.length > 0 && <div className="table-solution-collection-list">{solution.collections.map((collection) => <span key={collection}>{collection}</span>)}</div>}
-            <p>Соберите решение по типам товаров: сначала выберите, какие предметы нужны, затем сравните варианты из разных коллекций и настройте цвет, размер и количество.</p>
-            <div className="table-solution-hero-total"><span>{activeSelections.length} позиций · {totalUnits} шт.</span><strong>{formatRub(total)}</strong></div>
+            <p>Соберите решение по понятным товарным группам. В каждой группе можно выбрать несколько товаров из разных коллекций, а цвет и размер настроить внутри одной карточки.</p>
+            <div className="table-solution-hero-total"><span>{activeSelections.length} товаров · {totalUnits} шт.</span><strong>{formatRub(total)}</strong></div>
           </div>
         </section>
 
@@ -244,94 +268,137 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
           <section className="table-solution-pending-composition"><div><small>СОСТАВ</small><h2>Товары не найдены в CSV</h2><p>Для этого решения не удалось найти позиции по указанным коллекциям или названиям.</p></div></section>
         ) : (
           <>
-            <section className="table-builder-config table-builder-config-v27" aria-label="Настройка готового решения">
-              <div className="table-builder-step table-builder-step-v27">
+            <section className="table-builder-config table-builder-config-v28" aria-label="Настройка готового решения">
+              <div className="table-builder-step table-builder-step-v28">
                 <div className="table-builder-step-number">01</div>
-                <div className="table-builder-step-copy"><small>КОЛИЧЕСТВО ПЕРСОН</small><h2>На сколько человек?</h2><p>Количество тарелок, пар, бокалов, плейсматов и других индивидуальных предметов пересчитывается автоматически.</p></div>
+                <div className="table-builder-step-copy"><small>КОЛИЧЕСТВО ПЕРСОН</small><h2>На сколько человек?</h2><p>Для тарелок, кружек, пар, бокалов, плейсматов и салфеток рекомендуемое количество пересчитывается автоматически.</p></div>
                 <div className="table-builder-guests" role="group" aria-label="Количество персон">
                   {guestOptions.map((value) => <button type="button" key={value} className={guests === value ? "active" : ""} onClick={() => { setGuests(value); setQuantity({}); }}><strong>{value}</strong><span>{value === 1 ? "персона" : value < 5 ? "персоны" : "персон"}</span></button>)}
                 </div>
               </div>
-              <div className="table-builder-step table-builder-step-v27">
+
+              <div className="table-builder-step table-builder-step-v28">
                 <div className="table-builder-step-number">02</div>
-                <div className="table-builder-step-copy"><small>КОНСТРУКТОР</small><h2>Выберите категории</h2><p>Товары сгруппированы по типу, а не по коллекции. Например, все тарелки находятся вместе, все корзины — вместе.</p></div>
-                <nav className="table-builder-category-nav" aria-label="Категории решения">
-                  {categories.map((category) => <a href={`#solution-category-${category.id}`} key={category.id}><span>{category.title}</span><b>{category.slots.length}</b></a>)}
+                <div className="table-builder-step-copy"><small>СОСТАВ РЕШЕНИЯ</small><h2>Выберите нужные группы</h2><p>Внутри каждой группы можно отметить несколько товаров. Коллекция больше не определяет структуру конструктора.</p></div>
+                <nav className="table-builder-category-nav" aria-label="Группы товаров">
+                  {categories.map((category) => {
+                    const options = category.slots.flatMap((slot) => slot.options);
+                    const selectedCount = options.filter(isOptionSelected).length;
+                    return <a href={`#solution-category-${category.id}`} key={category.id}><span>{category.title}</span><b>{selectedCount}/{options.length}</b></a>;
+                  })}
                 </nav>
               </div>
             </section>
 
-            <div className="table-solution-buy-layout table-builder-buy-layout table-builder-buy-layout-v27">
-              <section className="table-builder-category-list">
-                {categories.map((category, categoryIndex) => (
-                  <section className="table-builder-category-v27" id={`solution-category-${category.id}`} key={category.id}>
-                    <header className="table-builder-category-header-v27">
-                      <div><small>{String(categoryIndex + 1).padStart(2, "0")} · КАТЕГОРИЯ</small><h2>{category.title}</h2><p>{category.description}</p></div>
-                      <span>{category.slots.length} {category.slots.length === 1 ? "тип" : "типа"}</span>
-                    </header>
+            <div className="table-solution-buy-layout table-builder-buy-layout table-builder-buy-layout-v28">
+              <section className="table-builder-category-list table-builder-category-list-v28">
+                {categories.map((category, categoryIndex) => {
+                  const options = category.slots.flatMap((slot) => slot.options);
+                  const selectedCount = options.filter(isOptionSelected).length;
+                  const allSelected = selectedCount === options.length && options.length > 0;
+                  return (
+                    <section className="table-builder-category-v28" id={`solution-category-${category.id}`} key={category.id}>
+                      <header className="table-builder-category-header-v28">
+                        <div>
+                          <small>{String(categoryIndex + 1).padStart(2, "0")} · ГРУППА</small>
+                          <h2>{category.title}</h2>
+                          <p>{category.description}</p>
+                        </div>
+                        <div className="table-builder-category-actions-v28">
+                          <span>{selectedCount} из {options.length}</span>
+                          <button type="button" onClick={() => toggleCategory(options)}>{allSelected ? "УБРАТЬ ВСЕ" : "ВЫБРАТЬ ВСЕ"}</button>
+                        </div>
+                      </header>
 
-                    <div className="table-builder-slot-list">
-                      {category.slots.map((slot) => {
-                        const enabled = isSlotEnabled(slot);
-                        const option = selectedOption(slot);
-                        const row = selectedRow(slot);
-                        const colors = option ? optionColors(option) : [];
-                        const activeColor = option ? (colorChoice[option.id] || colors[0] || "") : "";
-                        const sizes = option ? optionSizes(option, activeColor) : [];
-                        const activeSize = option ? (sizeChoice[option.id] || sizes[0] || "") : "";
-                        const q = slotQuantity(slot);
-                        return (
-                          <article className={`table-builder-slot ${enabled ? "enabled" : "disabled"}`} key={slot.id}>
-                            <header className="table-builder-slot-header">
-                              <label className="table-builder-slot-toggle">
-                                <input type="checkbox" checked={enabled} onChange={(event) => setEnabledSlots((state) => ({ ...state, [slot.id]: event.target.checked }))}/>
-                                <span/>
-                              </label>
-                              <div><h3>{slot.title}</h3><p>{slot.description}</p></div>
-                              <div className="table-builder-slot-status"><small>{enabled ? "В РЕШЕНИИ" : "НЕ ДОБАВЛЯТЬ"}</small>{slot.perPerson && enabled && <b>{q} шт. на {guests} персон</b>}</div>
-                            </header>
+                      <div className="table-builder-multi-grid">
+                        {options.map((option) => {
+                          const checked = isOptionSelected(option);
+                          const row = selectedRow(option) || option.variants[0];
+                          const colors = optionColors(option);
+                          const activeColor = colorChoice[option.id] || colors[0] || "";
+                          const sizes = optionSizes(option, activeColor);
+                          const activeSize = sizeChoice[option.id] || sizes[0] || "";
+                          const q = optionQuantity(option);
+                          return (
+                            <article className={`table-builder-multi-card ${checked ? "selected" : ""}`} key={option.id}>
+                              <button className="table-builder-multi-select" type="button" aria-pressed={checked} onClick={() => toggleOption(option)}>
+                                <span className="table-builder-multi-check" aria-hidden="true">{checked ? "✓" : ""}</span>
+                                <span>{checked ? "В РЕШЕНИИ" : "ДОБАВИТЬ"}</span>
+                              </button>
 
-                            {enabled && option && row && <div className="table-builder-slot-body">
-                              <div className="table-builder-option-grid" role="radiogroup" aria-label={`Выбор: ${slot.title}`}>
-                                {slot.options.map((candidate) => {
-                                  const candidateSelected = candidate.id === option.id;
-                                  const candidateRow = candidateSelected ? row : candidate.variants[0];
-                                  return <button type="button" role="radio" aria-checked={candidateSelected} className={candidateSelected ? "active" : ""} key={candidate.id} onClick={() => chooseOption(slot, candidate)}>
-                                    <span className="table-builder-option-media"><RemoteImage src={candidateRow?.primary_image_url || "/images/image-placeholder.svg"} alt={candidate.title}/></span>
-                                    <span className="table-builder-option-copy"><small>{candidate.collection}</small><strong>{candidate.title}</strong><b>{toPrice(candidateRow?.price) ? formatRub(toPrice(candidateRow?.price)) : "Цена уточняется"}</b></span>
-                                    <i aria-hidden="true"/>
-                                  </button>;
-                                })}
+                              <div className="table-builder-multi-media">
+                                <RemoteImage src={row?.primary_image_url || "/images/image-placeholder.svg"} alt={option.title}/>
                               </div>
 
-                              <div className="table-builder-variant-panel">
-                                {colors.length > 1 && <div className="table-builder-variant-row"><span>Цвет</span><div className="table-builder-color-options">{colors.map((color) => <button type="button" className={activeColor === color ? "active" : ""} key={color} onClick={() => { setColorChoice((state) => ({ ...state, [option.id]: color })); setSizeChoice((state) => { const next = { ...state }; delete next[option.id]; return next; }); }}><i style={{ backgroundColor: colorCss(color) }}/><b>{color}</b></button>)}</div></div>}
-                                {sizes.length > 1 && <div className="table-builder-variant-row"><span>Размер</span><div className="table-builder-size-options">{sizes.map((size) => <button type="button" className={activeSize === size ? "active" : ""} key={size} onClick={() => setSizeChoice((state) => ({ ...state, [option.id]: size }))}>{size}</button>)}</div></div>}
-                                <div className="table-builder-variant-row table-builder-quantity-row"><span>Количество</span><div className="table-solution-qty"><button type="button" onClick={() => setQuantity((state) => ({ ...state, [slot.id]: Math.max(1, q - 1) }))}>−</button><span>{q}</span><button type="button" onClick={() => setQuantity((state) => ({ ...state, [slot.id]: q + 1 }))}>+</button></div>{slot.perPerson && <small>Рекомендовано: {guests} шт.</small>}</div>
+                              <div className="table-builder-multi-copy">
+                                <small>{option.collection || "Культура Дома"}</small>
+                                <h3>{option.title}</h3>
+                                <strong>{toPrice(row?.price) ? formatRub(toPrice(row?.price)) : "Цена уточняется"}</strong>
+                                {option.perPerson && <span className="table-builder-person-note">Рекомендуем {guests} шт. · по одной на персону</span>}
                               </div>
-                            </div>}
-                          </article>
-                        );
-                      })}
-                    </div>
-                  </section>
-                ))}
+
+                              {checked && <div className="table-builder-multi-controls">
+                                {colors.length > 1 && <div className="table-builder-control-row">
+                                  <span>Цвет</span>
+                                  <div className="table-builder-color-options">
+                                    {colors.map((color) => <button type="button" key={color} className={activeColor === color ? "active" : ""} title={color} aria-label={`Цвет ${color}`} onClick={() => {
+                                      setColorChoice((state) => ({ ...state, [option.id]: color }));
+                                      setSizeChoice((state) => { const next = { ...state }; delete next[option.id]; return next; });
+                                    }}><i style={{ background: colorCss(color) }}/><b>{color}</b></button>)}
+                                  </div>
+                                </div>}
+
+                                {sizes.length > 1 && <div className="table-builder-control-row">
+                                  <span>Размер</span>
+                                  <div className="table-builder-size-options">
+                                    {sizes.map((size) => <button type="button" key={size} className={activeSize === size ? "active" : ""} onClick={() => setSizeChoice((state) => ({ ...state, [option.id]: size }))}>{size}</button>)}
+                                  </div>
+                                </div>}
+
+                                <div className="table-builder-control-row table-builder-qty-row">
+                                  <span>Количество</span>
+                                  <div className="table-builder-qty-control">
+                                    <button type="button" aria-label="Уменьшить количество" onClick={() => setQuantity((state) => ({ ...state, [option.id]: Math.max(1, q - 1) }))}>−</button>
+                                    <b>{q}</b>
+                                    <button type="button" aria-label="Увеличить количество" onClick={() => setQuantity((state) => ({ ...state, [option.id]: q + 1 }))}>+</button>
+                                  </div>
+                                </div>
+                              </div>}
+                            </article>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  );
+                })}
               </section>
 
-              <aside className="table-solution-purchase-card table-builder-summary table-builder-summary-v27">
+              <aside className="table-solution-summary table-builder-summary table-builder-summary-v28">
                 <small>ВАШЕ РЕШЕНИЕ</small>
                 <h2>{solution.name}</h2>
-                <div><span>Персон</span><b>{guests}</b></div>
-                <div><span>Категорий</span><b>{categories.length}</b></div>
-                <div><span>Выбрано</span><b>{activeSelections.length} позиций · {totalUnits} шт.</b></div>
-                <div className="table-solution-purchase-total"><span>ИТОГО</span><strong>{formatRub(total)}</strong></div>
-                <button type="button" disabled={!activeSelections.length || redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : "ДОБАВИТЬ РЕШЕНИЕ В КОРЗИНУ"}</button>
-                <p>В корзину попадут выбранные товары с указанными цветами, размерами и количеством.</p>
+                <div className="table-builder-summary-meta-v28">
+                  <div><span>Персон</span><b>{guests}</b></div>
+                  <div><span>Групп</span><b>{selectedCategoryCount}</b></div>
+                  <div><span>Товаров</span><b>{activeSelections.length}</b></div>
+                  <div><span>Единиц</span><b>{totalUnits}</b></div>
+                </div>
+                <div className="table-builder-summary-lines-v28">
+                  {activeSelections.slice(0, 8).map(({ option, row, quantity: itemQty }) => <div key={option.id}><span>{option.title}<small>{row.color ? ` · ${row.color}` : ""}</small></span><b>{itemQty} × {formatRub(toPrice(row.price))}</b></div>)}
+                  {activeSelections.length > 8 && <p>+ ещё {activeSelections.length - 8} товаров</p>}
+                </div>
+                <div className="table-solution-summary-total"><span>ИТОГО</span><strong>{formatRub(total)}</strong></div>
+                <button type="button" className="table-solution-add-all" disabled={!activeSelections.length || redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : `ДОБАВИТЬ В КОРЗИНУ · ${activeSelections.length}`}</button>
+                <p className="table-builder-summary-help-v28">Все выбранные товары попадут в корзину отдельными позициями с выбранными цветами, размерами и количеством.</p>
               </aside>
             </div>
           </>
         )}
       </div>
+
+      {activeSelections.length > 0 && <div className="table-builder-mobile-bar-v28">
+        <div><span>{activeSelections.length} товаров · {totalUnits} шт.</span><strong>{formatRub(total)}</strong></div>
+        <button type="button" disabled={redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : "В КОРЗИНУ"}</button>
+      </div>}
     </main>
   );
 }
