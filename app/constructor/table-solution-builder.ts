@@ -11,9 +11,9 @@ export type SolutionProductOption = {
 };
 
 /**
- * Kept as a compatibility layer for the landing page. In V28 every broad
- * shopping category contains one slot and that slot supports MULTIPLE product
- * options in the detail constructor.
+ * Kept as a compatibility layer for the landing page. Every broad shopping
+ * category contains one slot and that slot supports MULTIPLE product options
+ * in the detail constructor.
  */
 export type SolutionSlot = {
   id: string;
@@ -52,6 +52,10 @@ const categoryMeta: Record<string, { title: string; description: string }> = {
   cupsPairs: {
     title: "Кружки, чайные и кофейные пары",
     description: "Кружки, чайные и кофейные пары из разных коллекций показаны вместе. Можно выбрать несколько вариантов.",
+  },
+  greenSalonTeaService: {
+    title: "Чайники, сахарницы и молочники",
+    description: "Чайники, сахарницы, молочники и сливочники собраны в одном блоке, как в сценарии «Зеленый салон».",
   },
   sugarBowls: {
     title: "Сахарницы",
@@ -123,10 +127,30 @@ const categoryMeta: Record<string, { title: string; description: string }> = {
   },
 };
 
-const categoryForRow = (row: CatalogRow, space: string) => {
+const isGreenSalonRows = (rows: CatalogRow[]) => {
+  const names = rows.map((row) => normalize(row.product_name));
+  return names.some((name) => name.includes("пасхальная весна")) &&
+    names.some((name) => name.includes("петербург")) &&
+    names.some((name) => name.includes("овация"));
+};
+
+const categoryForRow = (row: CatalogRow, space: string, greenSalon = false) => {
   const name = normalize(row.product_name);
   const type = normalize(row.product_type);
   const normalizedSpace = normalize(space);
+
+  // Green Salon follows the approved merchandising screenshot: tea pots,
+  // sugar bowls and milk/cream jugs are one comparison group.
+  if (greenSalon && (
+    name.includes("сахарниц") || type.includes("sugar_bowl") ||
+    hasAny(name, ["молочник", "сливочник"]) || type.includes("milk_jug") ||
+    name.includes("чайник") || type.includes("teapot")
+  )) return { id: "greenSalonTeaService", perPerson: false };
+
+  // Egg stands are a serving accessory in the approved Green Salon layout.
+  if (greenSalon && hasAny(name, ["подставка для яйца", "подставка для яиц"])) {
+    return { id: "serving", perPerson: false };
+  }
 
   // The order is intentional: deep plates belong with bowls, not with plates.
   if (hasAny(name, ["тарелка глубок", "салатник"]) || hasAny(type, ["deep_plate", "salad_bowl"])) {
@@ -199,6 +223,7 @@ const categoryOrder = [
   "plates",
   "bowls",
   "cupsPairs",
+  "greenSalonTeaService",
   "sugarBowls",
   "milkJugs",
   "teapots",
@@ -220,9 +245,10 @@ const categoryOrder = [
 
 export const buildSolutionCategories = (rows: CatalogRow[], space: string): SolutionCategory[] => {
   const categoryMap = new Map<string, Map<string, { perPerson: boolean; variants: CatalogRow[] }>>();
+  const greenSalon = isGreenSalonRows(rows);
 
   rows.forEach((row) => {
-    const category = categoryForRow(row, space);
+    const category = categoryForRow(row, space, greenSalon);
     const optionId = logicalProductKey(row);
     if (!categoryMap.has(category.id)) categoryMap.set(category.id, new Map());
     const optionMap = categoryMap.get(category.id)!;
