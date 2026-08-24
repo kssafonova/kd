@@ -1,43 +1,20 @@
-/* V11 narrow-mobile guardrails. Loaded after home-ux-v11.css. */
+/* Narrow-mobile guardrails for the final homepage UX layer.
+   Keep this file small: all primary sizing lives in home-ux-v11.css. */
 @media(max-width:520px){
-  .home-ux-v11 .hv4-head,
-  .home-ux-v11 .hv4-traditions-collections-head{
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) auto!important;
-    align-items:center!important;
-    column-gap:8px!important;
-  }
   .home-ux-v11 .hv4-head>div:first-child,
   .home-ux-v11 .hv4-traditions-collections-head>div:first-child{min-width:0!important}
-  .home-ux-v11 .hv4-head h2,
-  .home-ux-v11 .hv4-traditions-collections-head h2{max-width:190px!important;text-wrap:balance!important}
   .home-ux-v11 .hv4-head-actions{min-width:0!important;justify-content:flex-end!important}
-  .home-ux-v11 .hv4-head-actions .hv4-text-cta{margin-right:0!important;padding-right:3px!important}
-  .home-ux-v11 .hv4-rail-arrow{width:38px!important;height:42px!important}
+  .home-ux-v11 .hv4-head-actions .hv4-text-cta{margin-right:0!important;padding-right:1px!important}
 }
 
 @media(max-width:390px){
-  .view-home .header{padding-left:8px!important;padding-right:8px!important}
-  .view-home .header-actions>button{width:38px!important;height:44px!important}
-  .view-home .header-left>.icon-btn{width:42px!important;height:44px!important}
+  .view-home .header-left,.view-home .header-actions{gap:0!important}
   .view-home .header-actions>button[aria-label="Профиль"]{display:none!important}
-  .view-home .logo{font-size:17px!important;white-space:nowrap!important}
   .home-ux-v11 .hv4-head h2,
-  .home-ux-v11 .hv4-traditions-collections-head h2{max-width:165px!important;font-size:18px!important}
-  .home-ux-v11 .hv4-head-actions .hv4-text-cta{font-size:8.5px!important}
-  .home-ux-v11 .hv4-rail-arrow{width:36px!important}
-  .home-boutique-list>button{grid-template-columns:minmax(0,1fr)!important;gap:5px!important}
-  .home-boutique-list>button small{grid-column:1!important;grid-row:auto!important;white-space:normal!important}
+  .home-ux-v11 .hv4-traditions-collections-head h2{text-wrap:balance!important}
 }
 
 @media(max-width:340px){
-  .view-home .logo{font-size:15.5px!important}
-  .view-home .header-actions>button{width:36px!important}
-  .view-home .header-left>.icon-btn{width:38px!important}
-  .home-ux-v11 .hv4-head,
-  .home-ux-v11 .hv4-traditions-collections-head{grid-template-columns:1fr!important;row-gap:4px!important}
-  .home-ux-v11 .hv4-head h2,
-  .home-ux-v11 .hv4-traditions-collections-head h2{max-width:none!important}
-  .home-ux-v11 .hv4-head-actions{justify-content:space-between!important;width:100%!important}
+  .home-ux-v11 .hv4-head-actions{width:100%!important;justify-content:flex-start!important}
   .home-ux-v11 .hv4-head-actions .hv4-text-cta{order:-1!important}
 }
