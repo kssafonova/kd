@@ -10,10 +10,11 @@ export type TableSolution = {
   productNames: string[];
   /** Optional CSV product types allowed for collection-based matching. */
   allowedProductTypes?: string[];
+  /** Disable broad collection pulls and use only explicit CSV products. */
+  includeCollectionProducts?: boolean;
   /**
-   * Product ids from app/catalog-data.ts. When present, the ready solution is
-   * built from the exact products already added to the GitHub storefront
-   * catalog instead of substituting similarly named rows from constructor CSV.
+   * Product ids from app/catalog-data.ts. These exact products already exist
+   * in the GitHub storefront catalog and can be mixed with explicit CSV items.
    */
   githubProductIds?: number[];
 };
@@ -105,14 +106,31 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     previewFile: "",
     scrollFile: "",
     collections: ["Ледяные узоры", "Лунная сказка", "Нити Времени"],
+
+    // Exact real products from the constructor CSV that are mixed with the
+    // custom GitHub storefront assortment below. Broad collection matching is
+    // intentionally disabled so unrelated tableware does not enter the scene.
     productNames: [
-      "Комплект постельного белья «Лунная сказка»",
-      "Плед «Ледяные узоры»",
-      "Плед из кружева",
-      "Стёганое покрывало «Бархатный ритм»",
-      "Декоративная подушка «Ледяные узоры»",
-      "Подушка с кружевом",
+      "Комплект постельного белья Нити времени",
+      "Подушка декоративная Бархат",
+      "Подушка декоративная Узоры",
+      "Подушка декоративная Нити времени",
+      "Ваза Айсберг",
+      "Ваза Паскаль",
+      "Диффузор Зимняя сказка",
+      "Диффузор Сласти",
+      "Диффузор Уютный вечер",
+      "Свеча Корона высокая, аромат Базилика и Мяты",
+      "Свеча Корона высокая, аромат Нежность",
+      "Свеча Корона высокая, без аромата",
+      "Свеча Корона малая, аромат Серебряный мускус",
+      "Свеча Корона малая, аромат Золотой цветок",
+      "Свеча Корона малая, без аромата",
     ],
+    includeCollectionProducts: false,
+
+    // Exact products previously added to app/catalog-data.ts and GitHub media.
+    // Their local photos, sizes and colour variants remain authoritative.
     githubProductIds: [4, 2003, 6, 7, 2000, 3],
   },
 ] as const;
