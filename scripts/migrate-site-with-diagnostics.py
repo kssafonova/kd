@@ -39,6 +39,7 @@ scripts = [
     "refine-home-ux-v11.py",
     "refine-home-v11-video.py",
     "add-mobile-gift-wrap-flow-v1.py",
+    "fix-cart-controls-v18.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
