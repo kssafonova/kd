@@ -1,6 +1,7 @@
 export type { CatalogSku, CatalogProductOverride } from "./catalog-data-base";
 import { catalogProductOverrides as baseOverrides, type CatalogSku } from "./catalog-data-base";
 
+// KD-PD-1022_MEDIA_V1
 const duvetImageByColor:Record<string,string> = {
   "Белый":"/images/products/KD-PD-1022-WHITE01.png",
   "Льняной":"/images/products/KD-PD-1022-LEN01.png",
