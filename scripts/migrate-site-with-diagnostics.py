@@ -40,6 +40,7 @@ scripts = [
     "refine-home-v11-video.py",
     "add-mobile-gift-wrap-flow-v1.py",
     "refine-cart-controls-v19.py",
+    "apply-auth-flow-v20.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
