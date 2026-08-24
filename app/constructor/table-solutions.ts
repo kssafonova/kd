@@ -8,13 +8,14 @@ export type TableSolution = {
   scrollFile: string;
   collections: string[];
   productNames: string[];
-  /**
-   * Optional storefront catalog product types allowed for collection-based
-   * matching. Explicit productNames are still matched independently so a
-   * solution can add real catalog accessories that do not belong to a named
-   * collection.
-   */
+  /** Optional CSV product types allowed for collection-based matching. */
   allowedProductTypes?: string[];
+  /**
+   * Product ids from app/catalog-data.ts. When present, the ready solution is
+   * built from the exact products already added to the GitHub storefront
+   * catalog instead of substituting similarly named rows from constructor CSV.
+   */
+  githubProductIds?: number[];
 };
 
 export const TABLE_SOLUTIONS: readonly TableSolution[] = [
@@ -104,31 +105,15 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     previewFile: "",
     scrollFile: "",
     collections: ["Ледяные узоры", "Лунная сказка", "Нити Времени"],
-    // Every selector below resolves an existing storefront catalog product.
-    // Prices, photos, colors, sizes and URLs are never hardcoded here.
     productNames: [
-      "Комплект постельного белья Ледяной узор",
-      "Комплект постельного белья Нити времени",
-      "Плед Ажур",
-      "Плед Соты",
-      "Подушка декоративная Пушица",
-      "Ваза Айсберг",
-      "Ваза Паскаль",
-      "Свеча Корона",
-      "Диффузор",
+      "Комплект постельного белья «Лунная сказка»",
+      "Плед «Ледяные узоры»",
+      "Плед из кружева",
+      "Стёганое покрывало «Бархатный ритм»",
+      "Декоративная подушка «Ледяные узоры»",
+      "Подушка с кружевом",
     ],
-    // Collection matching remains available for real catalog items tagged with
-    // the source collections, but it cannot pull unrelated tableware/decor.
-    allowedProductTypes: [
-      "bedding_set",
-      "duvet",
-      "sheet",
-      "pillowcase",
-      "pillowcase_set",
-      "throw",
-      "coverlet",
-      "decorative_pillow",
-    ],
+    githubProductIds: [4, 2003, 6, 7, 2000, 3],
   },
 ] as const;
 
