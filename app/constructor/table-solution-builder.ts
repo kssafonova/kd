@@ -94,24 +94,28 @@ const categoryMeta: Record<string, { title: string; description: string }> = {
     description: "Органайзеры и другие функциональные предметы для хранения.",
   },
   bedding: {
-    title: "Постельный текстиль",
-    description: "Комплекты, пододеяльники, простыни и наволочки. Цвета и размеры объединены внутри одной карточки товара.",
+    title: "Постельное бельё",
+    description: "Комплекты, пододеяльники, простыни и наволочки из каталога сайта. Цвета и размеры объединены внутри одной карточки товара.",
   },
-  soft: {
-    title: "Пледы, покрывала и подушки",
-    description: "Весь мягкий текстиль собран вместе; одинаковые товары разных цветов объединены в цветовые варианты.",
+  throwsCoverlets: {
+    title: "Пледы и покрывала",
+    description: "Пледы и покрывала из каталога сайта, подходящие к выбранным коллекциям решения.",
+  },
+  decorativePillows: {
+    title: "Декоративные подушки",
+    description: "Декоративные подушки из каталога сайта. Цветовые варианты одного товара объединены в одной карточке.",
   },
   bath: {
     title: "Для ванной",
     description: "Халаты, полотенца, коврики и наборы для ванной из предложенного решения.",
   },
+  vases: {
+    title: "Вазы и предметы интерьера",
+    description: "Вазы и интерьерные акценты из каталога сайта — можно выбрать одну или несколько позиций.",
+  },
   atmosphere: {
     title: "Свечи и диффузоры",
-    description: "Все свечи, подсвечники и ароматы для дома собраны в одном атмосферном блоке.",
-  },
-  vases: {
-    title: "Вазы",
-    description: "Все вазы из коллекций решения — можно выбрать несколько форм и размеров.",
+    description: "Свечи, подсвечники и ароматы для дома из каталога сайта собраны в одном атмосферном блоке.",
   },
   other: {
     title: "Дополнения",
@@ -174,8 +178,12 @@ const categoryForRow = (row: CatalogRow, space: string) => {
     return { id: "bedding", perPerson: false };
   }
 
-  if (hasAny(name, ["плед", "покрывал", "подушка"]) || hasAny(type, ["throw", "coverlet", "decorative_pillow"])) {
-    return { id: "soft", perPerson: false };
+  if (name.includes("подушка") || type.includes("decorative_pillow")) {
+    return { id: "decorativePillows", perPerson: false };
+  }
+
+  if (hasAny(name, ["плед", "покрывал"]) || hasAny(type, ["throw", "coverlet"])) {
+    return { id: "throwsCoverlets", perPerson: false };
   }
 
   if (hasAny(name, ["халат", "полотен", "коврик для ванн", "набор для ванн"]) || normalizedSpace.includes("ванн")) {
@@ -202,10 +210,11 @@ const categoryOrder = [
   "games",
   "storage",
   "bedding",
-  "soft",
+  "throwsCoverlets",
+  "decorativePillows",
   "bath",
-  "atmosphere",
   "vases",
+  "atmosphere",
   "other",
 ];
 
