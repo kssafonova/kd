@@ -13,6 +13,7 @@ export const TABLE_SOLUTION_IDS = [
   "table-4",
   "table-5",
   "table-6",
+  "table-7",
 ] as const;
 
 export const CONSTRUCTOR_SCENARIO_IDS = [
