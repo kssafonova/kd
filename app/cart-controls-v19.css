@@ -1,0 +1,71 @@
+/* Cart controls V19
+   Size is read-only and visually identical to color.
+   Gift packaging is a single checkbox attached to each eligible cart item. */
+
+.cart .cart-item-copy>span[data-cart-controls="CART_CONTROLS_V19"]{
+  margin:0!important;
+  padding:0!important;
+  background:none!important;
+  border:0!important;
+  color:#858681!important;
+  font-size:10px!important;
+  line-height:1.4!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+
+.cart .cart-gift-checkbox{
+  width:max-content!important;
+  max-width:100%!important;
+  min-height:32px!important;
+  margin:7px 0 0!important;
+  padding:4px 0!important;
+  display:inline-flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:8px!important;
+  cursor:pointer!important;
+  color:#4e504d!important;
+  font-size:10px!important;
+  line-height:1.35!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+
+.cart .cart-gift-checkbox input{
+  appearance:auto!important;
+  -webkit-appearance:checkbox!important;
+  width:16px!important;
+  height:16px!important;
+  min-width:16px!important;
+  margin:0!important;
+  padding:0!important;
+  accent-color:#40565b!important;
+  cursor:pointer!important;
+}
+
+.cart .cart-gift-checkbox>span{
+  color:#4e504d!important;
+  font-size:10px!important;
+  line-height:1.35!important;
+}
+
+@media(max-width:700px){
+  .cart .cart-item-copy>span[data-cart-controls="CART_CONTROLS_V19"]{
+    font-size:8px!important;
+  }
+  .cart .cart-gift-checkbox{
+    min-height:30px!important;
+    margin-top:5px!important;
+    gap:7px!important;
+    font-size:8px!important;
+  }
+  .cart .cart-gift-checkbox input{
+    width:15px!important;
+    height:15px!important;
+    min-width:15px!important;
+  }
+  .cart .cart-gift-checkbox>span{
+    font-size:8px!important;
+  }
+}
