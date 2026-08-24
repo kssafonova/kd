@@ -96,7 +96,9 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
   const [colorChoice, setColorChoice] = useState<Record<string, string>>({});
   const [sizeChoice, setSizeChoice] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState<Record<string, number>>({});
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
   const [redirecting, setRedirecting] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -133,7 +135,6 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
         explicit.forEach((option) => selected.add(option.id));
         return;
       }
-      // Ready solution starts with one sensible product in core categories.
       if (!["atmosphere", "vases", "games", "other"].includes(category.id) && options[0]) selected.add(options[0].id);
     });
     return selected;
@@ -148,7 +149,14 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
     setColorChoice({});
     setSizeChoice({});
     setQuantity({});
+    setOpenCategories({});
+    setSaved(false);
   }, [scenarioId]);
+
+  useEffect(() => {
+    if (!categories.length) return;
+    setOpenCategories((state) => Object.keys(state).length ? state : { [categories[0].id]: true });
+  }, [categories]);
 
   if (!solution) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Решение не найдено</h1><Link href="/constructor/">Вернуться к готовым решениям</Link></div></main>;
   if (error) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Не удалось загрузить решение</h1><p>{error}</p></div></main>;
@@ -171,12 +179,8 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
 
   const totalUnits = activeSelections.reduce((sum, item) => sum + item.quantity, 0);
   const total = activeSelections.reduce((sum, item) => sum + toPrice(item.row.price) * item.quantity, 0);
-  const selectedCategoryCount = categories.filter((category) => category.slots.some((slot) => slot.options.some(isOptionSelected))).length;
-
   const previewFallback = catalogRows[0]?.primary_image_url || "/images/image-placeholder.svg";
-  const scrollFallback = catalogRows[1]?.primary_image_url || catalogRows[0]?.all_image_urls?.split("|")[1] || previewFallback;
   const previewSrc = solution.previewFile ? `/images/constructor/${solution.previewFile}` : previewFallback;
-  const scrollSrc = solution.scrollFile ? `/images/constructor/${solution.scrollFile}` : scrollFallback;
 
   const toggleOption = (option: SolutionProductOption) => {
     const next = !isOptionSelected(option);
@@ -185,10 +189,14 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
 
   const toggleCategory = (options: SolutionProductOption[]) => {
     const allSelected = options.every(isOptionSelected);
-    setSelectedOptions((state) => ({
-      ...state,
-      ...Object.fromEntries(options.map((option) => [option.id, !allSelected])),
-    }));
+    setSelectedOptions((state) => ({ ...state, ...Object.fromEntries(options.map((option) => [option.id, !allSelected])) }));
+  };
+
+  const saveSolution = () => {
+    try {
+      localStorage.setItem(`kultura-ready-solution-${scenarioId}`, JSON.stringify({ guests, selected: activeSelections.map(({ option, row, quantity: itemQty }) => ({ optionId: option.id, offerId: row.offer_id, quantity: itemQty })) }));
+      setSaved(true);
+    } catch {}
   };
 
   const addSolution = () => {
@@ -243,74 +251,53 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
   };
 
   return (
-    <main className="solution-simple-shell table-solution-detail-shell table-builder-v28">
-      <div className="solution-simple-wrap">
-        <nav className="solution-simple-topbar">
-          <Link href="/constructor/">← ГОТОВЫЕ РЕШЕНИЯ</Link>
+    <main className="solution-simple-shell kd-ready-v29">
+      <div className="solution-simple-wrap kd-ready-wrap-v29">
+        <nav className="kd-ready-breadcrumb-v29">
+          <Link href="/constructor/">← Готовые решения</Link>
           <span>{solution.space}</span>
         </nav>
 
-        <section className="table-solution-detail-hero">
-          <div className="table-solution-hero-media">
-            <RemoteImage src={previewSrc} fallbackSrc={previewFallback} alt={`${solution.name}: превью`} loading="eager"/>
-            <RemoteImage src={scrollSrc} fallbackSrc={scrollFallback} alt={`${solution.name}: второй кадр`} loading="eager"/>
+        <section className="kd-ready-hero-v29">
+          <div className="kd-ready-hero-copy-v29">
+            <small>{solution.name} · {solution.space}</small>
+            <h1>ГОТОВЫЕ РЕШЕНИЯ</h1>
+            <p>Соберите идеальное пространство за несколько кликов — выберите нужные предметы, цвет и количество.</p>
+            {solution.collections.length > 0 && <div className="kd-ready-collections-v29">{solution.collections.map((collection) => <span key={collection}>{collection}</span>)}</div>}
           </div>
-          <div className="table-solution-hero-copy">
-            <small>ГОТОВОЕ РЕШЕНИЕ · {solution.space.toUpperCase()}</small>
-            <h1>{solution.name}</h1>
-            {solution.collections.length > 0 && <div className="table-solution-collection-list">{solution.collections.map((collection) => <span key={collection}>{collection}</span>)}</div>}
-            <p>Соберите решение по понятным товарным группам. В каждой группе можно выбрать несколько товаров из разных коллекций, а цвет и размер настроить внутри одной карточки.</p>
-            <div className="table-solution-hero-total"><span>{activeSelections.length} товаров · {totalUnits} шт.</span><strong>{formatRub(total)}</strong></div>
+          <div className="kd-ready-hero-media-v29"><RemoteImage src={previewSrc} fallbackSrc={previewFallback} alt={solution.name} loading="eager"/></div>
+        </section>
+
+        <section className="kd-ready-guests-v29" aria-label="Количество персон">
+          <span>Сколько персон будет за столом?</span>
+          <div role="group">
+            {guestOptions.map((value) => <button type="button" key={value} className={guests === value ? "active" : ""} onClick={() => { setGuests(value); setQuantity({}); }}><b>{value}</b><em>{value === 1 ? "персона" : value < 5 ? "персоны" : "персон"}</em></button>)}
           </div>
         </section>
 
         {catalogRows.length === 0 ? (
           <section className="table-solution-pending-composition"><div><small>СОСТАВ</small><h2>Товары не найдены в CSV</h2><p>Для этого решения не удалось найти позиции по указанным коллекциям или названиям.</p></div></section>
         ) : (
-          <>
-            <section className="table-builder-config table-builder-config-v28" aria-label="Настройка готового решения">
-              <div className="table-builder-step table-builder-step-v28">
-                <div className="table-builder-step-number">01</div>
-                <div className="table-builder-step-copy"><small>КОЛИЧЕСТВО ПЕРСОН</small><h2>На сколько человек?</h2><p>Для тарелок, кружек, пар, бокалов, плейсматов и салфеток рекомендуемое количество пересчитывается автоматически.</p></div>
-                <div className="table-builder-guests" role="group" aria-label="Количество персон">
-                  {guestOptions.map((value) => <button type="button" key={value} className={guests === value ? "active" : ""} onClick={() => { setGuests(value); setQuantity({}); }}><strong>{value}</strong><span>{value === 1 ? "персона" : value < 5 ? "персоны" : "персон"}</span></button>)}
-                </div>
-              </div>
+          <div className="kd-ready-commerce-v29">
+            <section className="kd-ready-groups-v29">
+              {categories.map((category) => {
+                const options = category.slots.flatMap((slot) => slot.options);
+                const selectedCount = options.filter(isOptionSelected).length;
+                const allSelected = selectedCount === options.length && options.length > 0;
+                const hasPerPerson = options.some((option) => option.perPerson);
+                const isOpen = openCategories[category.id] ?? false;
+                return (
+                  <section className={`kd-ready-group-v29 ${isOpen ? "open" : "collapsed"}`} id={`solution-category-${category.id}`} key={category.id}>
+                    <header className="kd-ready-group-header-v29">
+                      <button className="kd-ready-group-toggle-v29" type="button" aria-expanded={isOpen} onClick={() => setOpenCategories((state) => ({ ...state, [category.id]: !isOpen }))}>
+                        <span><h2>{category.title}</h2><small>{hasPerPerson ? `Рекомендуем ${guests} шт.` : `${selectedCount} выбрано`}</small></span>
+                        <i aria-hidden="true">⌄</i>
+                      </button>
+                      <label className="kd-ready-select-all-v29"><input type="checkbox" checked={allSelected} onChange={() => toggleCategory(options)}/><span>Выбрать все</span></label>
+                    </header>
 
-              <div className="table-builder-step table-builder-step-v28">
-                <div className="table-builder-step-number">02</div>
-                <div className="table-builder-step-copy"><small>СОСТАВ РЕШЕНИЯ</small><h2>Выберите нужные группы</h2><p>Внутри каждой группы можно отметить несколько товаров. Коллекция больше не определяет структуру конструктора.</p></div>
-                <nav className="table-builder-category-nav" aria-label="Группы товаров">
-                  {categories.map((category) => {
-                    const options = category.slots.flatMap((slot) => slot.options);
-                    const selectedCount = options.filter(isOptionSelected).length;
-                    return <a href={`#solution-category-${category.id}`} key={category.id}><span>{category.title}</span><b>{selectedCount}/{options.length}</b></a>;
-                  })}
-                </nav>
-              </div>
-            </section>
-
-            <div className="table-solution-buy-layout table-builder-buy-layout table-builder-buy-layout-v28">
-              <section className="table-builder-category-list table-builder-category-list-v28">
-                {categories.map((category, categoryIndex) => {
-                  const options = category.slots.flatMap((slot) => slot.options);
-                  const selectedCount = options.filter(isOptionSelected).length;
-                  const allSelected = selectedCount === options.length && options.length > 0;
-                  return (
-                    <section className="table-builder-category-v28" id={`solution-category-${category.id}`} key={category.id}>
-                      <header className="table-builder-category-header-v28">
-                        <div>
-                          <small>{String(categoryIndex + 1).padStart(2, "0")} · ГРУППА</small>
-                          <h2>{category.title}</h2>
-                          <p>{category.description}</p>
-                        </div>
-                        <div className="table-builder-category-actions-v28">
-                          <span>{selectedCount} из {options.length}</span>
-                          <button type="button" onClick={() => toggleCategory(options)}>{allSelected ? "УБРАТЬ ВСЕ" : "ВЫБРАТЬ ВСЕ"}</button>
-                        </div>
-                      </header>
-
-                      <div className="table-builder-multi-grid">
+                    <div className="kd-ready-group-body-v29">
+                      <div className="kd-ready-products-v29">
                         {options.map((option) => {
                           const checked = isOptionSelected(option);
                           const row = selectedRow(option) || option.variants[0];
@@ -320,85 +307,59 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
                           const activeSize = sizeChoice[option.id] || sizes[0] || "";
                           const q = optionQuantity(option);
                           return (
-                            <article className={`table-builder-multi-card ${checked ? "selected" : ""}`} key={option.id}>
-                              <button className="table-builder-multi-select" type="button" aria-pressed={checked} onClick={() => toggleOption(option)}>
-                                <span className="table-builder-multi-check" aria-hidden="true">{checked ? "✓" : ""}</span>
-                                <span>{checked ? "В РЕШЕНИИ" : "ДОБАВИТЬ"}</span>
-                              </button>
-
-                              <div className="table-builder-multi-media">
-                                <RemoteImage src={row?.primary_image_url || "/images/image-placeholder.svg"} alt={option.title}/>
-                              </div>
-
-                              <div className="table-builder-multi-copy">
+                            <article className={`kd-ready-product-v29 ${checked ? "selected" : ""}`} key={option.id}>
+                              <button type="button" className="kd-ready-product-check-v29" aria-pressed={checked} aria-label={checked ? `Убрать ${option.title}` : `Добавить ${option.title}`} onClick={() => toggleOption(option)}><span>{checked ? "✓" : ""}</span></button>
+                              <div className="kd-ready-product-media-v29"><RemoteImage src={row?.primary_image_url || "/images/image-placeholder.svg"} alt={option.title}/></div>
+                              <div className="kd-ready-product-copy-v29">
                                 <small>{option.collection || "Культура Дома"}</small>
                                 <h3>{option.title}</h3>
                                 <strong>{toPrice(row?.price) ? formatRub(toPrice(row?.price)) : "Цена уточняется"}</strong>
-                                {option.perPerson && <span className="table-builder-person-note">Рекомендуем {guests} шт. · по одной на персону</span>}
                               </div>
 
-                              {checked && <div className="table-builder-multi-controls">
-                                {colors.length > 1 && <div className="table-builder-control-row">
-                                  <span>Цвет</span>
-                                  <div className="table-builder-color-options">
-                                    {colors.map((color) => <button type="button" key={color} className={activeColor === color ? "active" : ""} title={color} aria-label={`Цвет ${color}`} onClick={() => {
-                                      setColorChoice((state) => ({ ...state, [option.id]: color }));
-                                      setSizeChoice((state) => { const next = { ...state }; delete next[option.id]; return next; });
-                                    }}><i style={{ background: colorCss(color) }}/><b>{color}</b></button>)}
-                                  </div>
+                              {checked && <div className="kd-ready-product-controls-v29">
+                                {colors.length > 1 && <div className="kd-ready-swatches-v29" aria-label="Цвет">
+                                  {colors.map((color) => <button type="button" key={color} className={activeColor === color ? "active" : ""} title={color} aria-label={`Цвет ${color}`} onClick={() => {
+                                    setColorChoice((state) => ({ ...state, [option.id]: color }));
+                                    setSizeChoice((state) => { const next = { ...state }; delete next[option.id]; return next; });
+                                  }}><i style={{ background: colorCss(color) }}/></button>)}
                                 </div>}
-
-                                {sizes.length > 1 && <div className="table-builder-control-row">
-                                  <span>Размер</span>
-                                  <div className="table-builder-size-options">
-                                    {sizes.map((size) => <button type="button" key={size} className={activeSize === size ? "active" : ""} onClick={() => setSizeChoice((state) => ({ ...state, [option.id]: size }))}>{size}</button>)}
-                                  </div>
-                                </div>}
-
-                                <div className="table-builder-control-row table-builder-qty-row">
-                                  <span>Количество</span>
-                                  <div className="table-builder-qty-control">
-                                    <button type="button" aria-label="Уменьшить количество" onClick={() => setQuantity((state) => ({ ...state, [option.id]: Math.max(1, q - 1) }))}>−</button>
-                                    <b>{q}</b>
-                                    <button type="button" aria-label="Увеличить количество" onClick={() => setQuantity((state) => ({ ...state, [option.id]: q + 1 }))}>+</button>
-                                  </div>
-                                </div>
+                                {sizes.length > 1 && <select className="kd-ready-size-v29" value={activeSize} onChange={(event) => setSizeChoice((state) => ({ ...state, [option.id]: event.target.value }))} aria-label={`Размер ${option.title}`}>
+                                  {sizes.map((size) => <option value={size} key={size}>{size}</option>)}
+                                </select>}
+                                <div className="kd-ready-qty-v29"><button type="button" aria-label="Уменьшить" onClick={() => setQuantity((state) => ({ ...state, [option.id]: Math.max(1, q - 1) }))}>−</button><b>{q}</b><button type="button" aria-label="Увеличить" onClick={() => setQuantity((state) => ({ ...state, [option.id]: q + 1 }))}>+</button></div>
                               </div>}
                             </article>
                           );
                         })}
                       </div>
-                    </section>
-                  );
-                })}
-              </section>
+                    </div>
+                  </section>
+                );
+              })}
+            </section>
 
-              <aside className="table-solution-summary table-builder-summary table-builder-summary-v28">
-                <small>ВАШЕ РЕШЕНИЕ</small>
-                <h2>{solution.name}</h2>
-                <div className="table-builder-summary-meta-v28">
-                  <div><span>Персон</span><b>{guests}</b></div>
-                  <div><span>Групп</span><b>{selectedCategoryCount}</b></div>
-                  <div><span>Товаров</span><b>{activeSelections.length}</b></div>
-                  <div><span>Единиц</span><b>{totalUnits}</b></div>
-                </div>
-                <div className="table-builder-summary-lines-v28">
-                  {activeSelections.slice(0, 8).map(({ option, row, quantity: itemQty }) => <div key={option.id}><span>{option.title}<small>{row.color ? ` · ${row.color}` : ""}</small></span><b>{itemQty} × {formatRub(toPrice(row.price))}</b></div>)}
-                  {activeSelections.length > 8 && <p>+ ещё {activeSelections.length - 8} товаров</p>}
-                </div>
-                <div className="table-solution-summary-total"><span>ИТОГО</span><strong>{formatRub(total)}</strong></div>
-                <button type="button" className="table-solution-add-all" disabled={!activeSelections.length || redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : `ДОБАВИТЬ В КОРЗИНУ · ${activeSelections.length}`}</button>
-                <p className="table-builder-summary-help-v28">Все выбранные товары попадут в корзину отдельными позициями с выбранными цветами, размерами и количеством.</p>
-              </aside>
-            </div>
-          </>
+            <aside className="kd-ready-summary-v29">
+              <div className="kd-ready-summary-title-v29"><div><small>Ваше решение</small><h2>{solution.name}</h2></div><a href="#solution-category-${categories[0]?.id || ""}">Изменить</a></div>
+              <dl className="kd-ready-summary-meta-v29"><div><dt>Персон</dt><dd>{guests}</dd></div><div><dt>Предметов</dt><dd>{totalUnits}</dd></div></dl>
+              <h3>Состав решения</h3>
+              <div className="kd-ready-summary-items-v29">
+                {activeSelections.slice(0, 7).map(({ option, row, quantity: itemQty }) => <div className="kd-ready-summary-item-v29" key={option.id}>
+                  <span className="kd-ready-summary-thumb-v29"><RemoteImage src={row.primary_image_url || "/images/image-placeholder.svg"} alt={option.title}/></span>
+                  <span className="kd-ready-summary-copy-v29"><b>{option.title}</b><small>{option.collection || "Культура Дома"}</small><em>{itemQty} шт.</em></span>
+                  <strong>{formatRub(toPrice(row.price) * itemQty)}</strong>
+                </div>)}
+                {activeSelections.length > 7 && <p>+ ещё {activeSelections.length - 7} товаров</p>}
+              </div>
+              <div className="kd-ready-summary-total-v29"><span><b>Итого</b><small>Включая НДС</small></span><strong>{formatRub(total)}</strong></div>
+              <button type="button" className="kd-ready-add-v29" disabled={!activeSelections.length || redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : "ДОБАВИТЬ В КОРЗИНУ"}</button>
+              <button type="button" className={`kd-ready-save-v29 ${saved ? "saved" : ""}`} onClick={saveSolution}>{saved ? "✓ РЕШЕНИЕ СОХРАНЕНО" : "♡ СОХРАНИТЬ РЕШЕНИЕ"}</button>
+              <div className="kd-ready-benefits-v29"><p>◇ Бесплатная доставка от 15 000 ₽</p><p>↺ Лёгкий возврат в течение 30 дней</p></div>
+            </aside>
+          </div>
         )}
       </div>
 
-      {activeSelections.length > 0 && <div className="table-builder-mobile-bar-v28">
-        <div><span>{activeSelections.length} товаров · {totalUnits} шт.</span><strong>{formatRub(total)}</strong></div>
-        <button type="button" disabled={redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : "В КОРЗИНУ"}</button>
-      </div>}
+      {activeSelections.length > 0 && <div className="kd-ready-mobile-total-v29"><div><span>{activeSelections.length} товаров · {totalUnits} шт.</span><strong>{formatRub(total)}</strong></div><button type="button" disabled={redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : "ДОБАВИТЬ В КОРЗИНУ"}</button></div>}
     </main>
   );
 }
