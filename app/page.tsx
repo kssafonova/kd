@@ -624,8 +624,6 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
-// EDITORIAL_STORY_OVERLAY_V3
-// EDITORIAL_STORY_OVERLAY_V3
 function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
   const [storyPreview,setStoryPreview]=useState<Editorial|null>(null);
   const [selectingStory,setSelectingStory]=useState(false);
@@ -1296,44 +1294,106 @@ function Menu({ current, setCurrent, close, go, openCatalog }: { current:string;
 function Search({ close, choose }: { close:()=>void; choose:(p:Product)=>void }) { const [q,setQ]=useState(""); const result=products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())); return <div className="overlay"><button className="overlay-bg" onClick={close}/><div className="search-panel"><div><Icon name="search"/><input autoFocus placeholder="Поиск по каталогу" value={q} onChange={e=>setQ(e.target.value)}/><button onClick={close} aria-label="Закрыть поиск"><Icon name="close"/></button></div><p>{q?`Найдено: ${result.length}`:"Популярные запросы: постельное бельё, посуда, подарки"}</p>{q&&<div className="search-results">{result.map(p=><button key={p.id} onClick={()=>choose(p)}><ScrollableProductMedia product={p} alt={p.name} className="search-item-media"/><span>{p.name}<b>{priceKnown(p.price)?fmt(p.price):"Цена уточняется"}</b></span></button>)}</div>}</div></div> }
 
 function Account({ profile, close, notice, save, logout }: { profile:Profile|null; close:()=>void; notice:(s:string)=>void; save:(profile:Profile)=>void; logout:()=>void }) {
-  // ACCOUNT_COMMERCE_V21
+  // AUTH_FLOW_V20
   type AuthMethod = "phone" | "email";
   type AuthStep = "identify" | "code" | "register";
-  type AccountScreen = "dashboard" | "personal" | "addresses" | "address-form";
-  type AddressDraft = { name:string; surname:string; street:string; apartment:string; district:string; region:string; postal:string; market:string; phone:string };
   const blank:Profile={name:"",surname:"",email:"",phone:"",city:"Москва",address:""};
-  const emptyAddress:AddressDraft={name:profile?.name??"",surname:profile?.surname??"",street:profile?.address??"",apartment:"",district:"",region:"",postal:"",market:"Россия",phone:profile?.phone??""};
   const initialMethod:AuthMethod=profile?.phone?"phone":"email";
   const [mode,setMode]=useState<"auth"|"profile">(profile?"profile":"auth");
-  const [screen,setScreen]=useState<AccountScreen>("dashboard");
   const [method,setMethod]=useState<AuthMethod>(initialMethod);
   const [step,setStep]=useState<AuthStep>("identify");
   const [identifier,setIdentifier]=useState(profile?(initialMethod==="phone"?profile.phone:profile.email):"");
   const [code,setCode]=useState("");
   const [draft,setDraft]=useState<Profile>(profile??blank);
-  const [addressDraft,setAddressDraft]=useState<AddressDraft>(emptyAddress);
-  const [addressSaved,setAddressSaved]=useState(Boolean(profile?.address));
-  const [marketing,setMarketing]=useState(false);
 
-  useEffect(()=>{if(profile){setDraft(profile);setMode("profile");setAddressDraft(current=>({...current,name:profile.name,surname:profile.surname,street:profile.address,phone:profile.phone}));setAddressSaved(Boolean(profile.address))}},[profile]);
+  useEffect(()=>{
+    if(profile){
+      setDraft(profile);
+      setMode("profile");
+    }
+  },[profile]);
 
   const cleanPhone=(value:string)=>value.replace(/[^\d+]/g,"");
   const validEmail=(value:string)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
   const validPhone=(value:string)=>cleanPhone(value).replace(/\D/g,"").length>=10;
   const contactValid=method==="email"?validEmail(identifier):validPhone(identifier);
   const contactLabel=method==="email"?"email":"номер телефона";
-  const switchMethod=(next:AuthMethod)=>{setMethod(next);setIdentifier(next==="email"?(profile?.email??""):(profile?.phone??""));setCode("");setStep("identify")};
-  const requestCode=()=>{if(!contactValid){notice(method==="email"?"Введите корректный email":"Введите корректный номер телефона");return}setStep("code");setCode("");notice(method==="phone"?"Демо: код из SMS — 1234":"Демо: код из письма — 1234")};
-  const verifyCode=()=>{if(code.trim()!=="1234"){notice("Неверный код. Для демо используйте 1234");return}const same=Boolean(profile&&(method==="email"?profile.email.trim().toLowerCase()===identifier.trim().toLowerCase():cleanPhone(profile.phone)===cleanPhone(identifier)));if(same&&profile){setDraft(profile);setMode("profile");setScreen("dashboard");notice("Вход выполнен");return}setDraft(current=>({...current,[method==="email"?"email":"phone"]:identifier.trim()}));setStep("register")};
-  const register=()=>{const next={...draft,[method==="email"?"email":"phone"]:identifier.trim()};if(!next.name.trim()){notice("Введите имя");return}save(next);setDraft(next);setMode("profile");setScreen("dashboard");setStep("identify");notice("Аккаунт создан")};
-  const saveProfile=()=>{if(!draft.name.trim()){notice("Введите имя");return}if(draft.email&&!validEmail(draft.email)){notice("Проверьте email");return}if(draft.phone&&!validPhone(draft.phone)){notice("Проверьте номер телефона");return}save(draft);notice("Данные профиля сохранены")};
-  const saveAddress=()=>{if(!addressDraft.name.trim()||!addressDraft.surname.trim()||!addressDraft.street.trim()||!addressDraft.region.trim()||!addressDraft.postal.trim()||!addressDraft.phone.trim()){notice("Заполните обязательные поля адреса");return}const next={...draft,name:addressDraft.name,surname:addressDraft.surname,address:addressDraft.street,phone:addressDraft.phone};save(next);setDraft(next);setAddressSaved(true);setScreen("addresses");notice("Адрес сохранён")};
-  const signOut=()=>{logout();setDraft(blank);setIdentifier("");setCode("");setStep("identify");setMode("auth");setScreen("dashboard");notice("Вы вышли из аккаунта")};
-  const back=()=>setScreen(screen==="address-form"?"addresses":"dashboard");
-  const AccountNav=()=> <nav className="account-v21-nav"><button className={screen==="personal"?"active":""} onClick={()=>setScreen("personal")}><Icon name="user"/><span>Мои личные данные</span><Icon name="chevron"/></button><button className={screen==="addresses"||screen==="address-form"?"active":""} onClick={()=>setScreen("addresses")}><span className="account-book-icon">▣</span><span>Адресная книга</span><Icon name="chevron"/></button><button><span className="account-return-icon">↩</span><span>Мои возвраты</span><Icon name="chevron"/></button><button><span className="account-help-icon">?</span><span>Справка и контакты</span><Icon name="chevron"/></button><button><span className="account-gear-icon">⚙</span><span>Настройки</span><Icon name="chevron"/></button></nav>;
-  const BottomNav=()=> <div className="account-v21-bottom-nav"><button onClick={close}><span>⌂</span><small>Главная</small></button><button><Icon name="search"/><small>Поиск</small></button><button><span>☰</span><small>Меню</small></button><button><Icon name="bag"/><small>Корзина</small></button><button className="active"><Icon name="user" filled/><small>Аккаунт</small></button></div>;
 
-  return <div className="overlay account-v21-overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть личный кабинет"/><aside className="side-panel account account-v21-shell"><button className="close account-v21-close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button>{mode==="profile"?<div className="account-v21-layout"><aside className="account-v21-sidebar"><div className="account-v21-user"><span>{(draft.name||"К").slice(0,1).toUpperCase()}</span><div><b>{draft.name||"Аккаунт"}</b><small>{draft.email||draft.phone}</small></div></div><AccountNav/><button className="account-v21-logout" onClick={signOut}>↪ <span>Завершить текущий сеанс</span></button></aside><main className="account-v21-main">{screen==="dashboard"&&<section className="account-v21-dashboard"><header><h1>АККАУНТ</h1><span>{draft.email||draft.phone}</span></header><div className="account-v21-tiles"><button><span className="qr-glyph">▦</span><b>QR</b></button><button><Icon name="bag"/><b>Заказы</b></button><button><Icon name="heart"/><b>Избранное</b></button></div><div className="account-v21-mobile-menu"><AccountNav/></div><button className="account-v21-mobile-logout" onClick={signOut}>Завершить текущий сеанс</button></section>}{screen==="personal"&&<section className="account-v21-personal"><header><button onClick={back}>←</button><h1>МОИ ЛИЧНЫЕ ДАННЫЕ</h1></header><AccountFields draft={draft} setDraft={setDraft}/><button className="primary" onClick={saveProfile}>СОХРАНИТЬ</button></section>}{screen==="addresses"&&<section className="account-v21-addresses"><header><button onClick={back}>←</button><h1>АДРЕСА</h1></header>{addressSaved?<article className="account-v21-address-card"><div><b>{addressDraft.name} {addressDraft.surname}</b><span>{addressDraft.street}</span><span>{addressDraft.region}, {addressDraft.postal}</span><span>{addressDraft.phone}</span></div><button onClick={()=>setScreen("address-form")}>ИЗМЕНИТЬ</button></article>:<div className="account-v21-empty-address"><span className="pin-empty">⌖</span><h2>Вы еще не добавили ни одного адреса</h2><p>Добавьте основной адрес, чтобы быстрее оформлять заказы.</p><button onClick={()=>setScreen("address-form")}>+ ДОБАВИТЬ ОСНОВНОЙ АДРЕС</button></div>}</section>}{screen==="address-form"&&<section className="account-v21-address-form"><header><button onClick={back}>×</button><h1>АДРЕС</h1></header><div className="account-v21-form-grid"><label><span>Имя*</span><input value={addressDraft.name} onChange={e=>setAddressDraft({...addressDraft,name:e.target.value})}/></label><label><span>Фамилия*</span><input value={addressDraft.surname} onChange={e=>setAddressDraft({...addressDraft,surname:e.target.value})}/></label><button className="account-v21-location" type="button" onClick={()=>notice("Определение геопозиции доступно после подключения карты")}>⌖ ИСПОЛЬЗОВАТЬ ТЕКУЩУЮ ПОЗИЦИЮ</button><label className="wide"><span>Адрес (улица, дом, квартира...)*</span><input value={addressDraft.street} onChange={e=>setAddressDraft({...addressDraft,street:e.target.value})}/></label><label className="wide"><span>Этаж/Квартира (опционально)</span><input value={addressDraft.apartment} onChange={e=>setAddressDraft({...addressDraft,apartment:e.target.value})}/></label><label><span>Район*</span><input value={addressDraft.district} onChange={e=>setAddressDraft({...addressDraft,district:e.target.value})}/></label><label><span>Регион*</span><input value={addressDraft.region} onChange={e=>setAddressDraft({...addressDraft,region:e.target.value})}/></label><label><span>Почтовый индекс*</span><input value={addressDraft.postal} onChange={e=>setAddressDraft({...addressDraft,postal:e.target.value})}/></label><label><span>Рынок*</span><input value={addressDraft.market} onChange={e=>setAddressDraft({...addressDraft,market:e.target.value})}/></label><label className="wide"><span>Мобильный телефон*</span><input type="tel" value={addressDraft.phone} onChange={e=>setAddressDraft({...addressDraft,phone:e.target.value})}/></label></div><button className="primary account-v21-save" onClick={saveAddress}>СОХРАНИТЬ</button></section>}</main><BottomNav/></div>:<div className="auth-flow auth-v21-flow">{step==="identify"&&<><small>ВХОД И РЕГИСТРАЦИЯ</small><h2>Войти в аккаунт</h2><span>Выберите удобный способ. Пароль не нужен — пришлём одноразовый код.</span><div className="auth-methods"><button className={method==="phone"?"active":""} onClick={()=>switchMethod("phone")}>По телефону</button><button className={method==="email"?"active":""} onClick={()=>switchMethod("email")}>По email</button></div><label className="auth-field"><span>{method==="phone"?"Номер телефона":"Email"}</span><input type={method==="phone"?"tel":"email"} value={identifier} onChange={e=>setIdentifier(e.target.value)} placeholder={method==="phone"?"+7 999 000-00-00":"name@example.com"}/></label><button className="primary auth-primary" onClick={requestCode}>ПОЛУЧИТЬ КОД</button></>}{step==="code"&&<><button className="auth-back" onClick={()=>setStep("identify")}>← Назад</button><small>ПОДТВЕРЖДЕНИЕ</small><h2>Введите код</h2><span>Код отправлен на {contactLabel} <b>{identifier}</b>.</span><label className="auth-field auth-code-field"><span>Код подтверждения</span><input autoFocus inputMode="numeric" maxLength={4} value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,"").slice(0,4))} placeholder="0000"/></label><button className="primary auth-primary" onClick={verifyCode}>ПРОДОЛЖИТЬ</button><p className="auth-demo-note">Демо-код: 1234</p></>}{step==="register"&&<div className="auth-v21-register"><small>ЗАВЕРШИТЕ РЕГИСТРАЦИЮ</small><h2>Завершите регистрацию</h2><p>Чтобы создать ваш аккаунт КУЛЬТУРА ДОМА, нам нужна дополнительная информация о вас.</p><label className="auth-field"><span>Имя*</span><input value={draft.name} onChange={e=>setDraft({...draft,name:e.target.value})}/></label><label className="auth-field"><span>Фамилия</span><input value={draft.surname} onChange={e=>setDraft({...draft,surname:e.target.value})}/></label><p className="auth-v21-legal">Нажимая кнопку «Создать аккаунт», вы принимаете условия покупки и политику конфиденциальности.</p><label className="auth-v21-marketing"><input type="checkbox" checked={marketing} onChange={e=>setMarketing(e.target.checked)}/><span>Я хочу получать информацию о новинках КУЛЬТУРА ДОМА по электронной почте.</span></label><button className="auth-v21-create" disabled={!draft.name.trim()} onClick={register}>СОЗДАТЬ АККАУНТ</button></div>}</div>}</aside></div>;
+  const switchMethod=(next:AuthMethod)=>{
+    setMethod(next);
+    setIdentifier(next==="email"?(profile?.email??""):(profile?.phone??""));
+    setCode("");
+    setStep("identify");
+  };
+
+  const requestCode=()=>{
+    if(!contactValid){
+      notice(method==="email"?"Введите корректный email":"Введите корректный номер телефона");
+      return;
+    }
+    setStep("code");
+    setCode("");
+    notice(method==="phone"?"Демо: код из SMS — 1234":"Демо: код из письма — 1234");
+  };
+
+  const verifyCode=()=>{
+    if(code.trim()!=="1234"){
+      notice("Неверный код. Для демо используйте 1234");
+      return;
+    }
+    const sameProfile=Boolean(profile&&(method==="email"?profile.email.trim().toLowerCase()===identifier.trim().toLowerCase():cleanPhone(profile.phone)===cleanPhone(identifier)));
+    if(sameProfile&&profile){
+      setDraft(profile);
+      setMode("profile");
+      setStep("identify");
+      notice("Вход выполнен");
+      return;
+    }
+    setDraft(current=>({...current,[method==="email"?"email":"phone"]:identifier.trim()}));
+    setStep("register");
+  };
+
+  const register=()=>{
+    const next={...draft,[method==="email"?"email":"phone"]:identifier.trim()};
+    if(!next.name.trim()){
+      notice("Введите имя");
+      return;
+    }
+    save(next);
+    setDraft(next);
+    setMode("profile");
+    setStep("identify");
+    notice("Аккаунт создан");
+  };
+
+  const saveProfile=()=>{
+    if(!draft.name.trim()){
+      notice("Введите имя");
+      return;
+    }
+    if(draft.email&&!validEmail(draft.email)){
+      notice("Проверьте email");
+      return;
+    }
+    if(draft.phone&&!validPhone(draft.phone)){
+      notice("Проверьте номер телефона");
+      return;
+    }
+    save(draft);
+    notice("Данные профиля сохранены");
+  };
+
+  const signOut=()=>{
+    logout();
+    setDraft(blank);
+    setIdentifier("");
+    setCode("");
+    setStep("identify");
+    setMode("auth");
+    notice("Вы вышли из аккаунта");
+  };
+
+  return <div className="overlay auth-overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть личный кабинет"/><aside className="side-panel account auth-v20"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>ЛИЧНЫЙ КАБИНЕТ</p>{mode==="profile"?<div className="auth-profile"><small>ПРОФИЛЬ</small><h2>{draft.name}, добро пожаловать</h2><span>Контакты и адрес подставятся при оформлении заказа.</span><AccountFields draft={draft} setDraft={setDraft}/><button className="primary auth-primary" onClick={saveProfile}>СОХРАНИТЬ ДАННЫЕ</button><button className="link auth-logout" onClick={signOut}>ВЫЙТИ</button></div>:<div className="auth-flow">{step==="identify"&&<><small>ВХОД И РЕГИСТРАЦИЯ</small><h2>Войти в аккаунт</h2><span>Выберите удобный способ. Пароль не нужен — пришлём одноразовый код.</span><div className="auth-methods" role="tablist" aria-label="Способ входа"><button type="button" role="tab" aria-selected={method==="phone"} className={method==="phone"?"active":""} onClick={()=>switchMethod("phone")}>По телефону</button><button type="button" role="tab" aria-selected={method==="email"} className={method==="email"?"active":""} onClick={()=>switchMethod("email")}>По email</button></div><label className="auth-field"><span>{method==="phone"?"Номер телефона":"Email"}</span><input type={method==="phone"?"tel":"email"} autoComplete={method==="phone"?"tel":"email"} inputMode={method==="phone"?"tel":"email"} value={identifier} onChange={event=>setIdentifier(event.target.value)} placeholder={method==="phone"?"+7 999 000-00-00":"name@example.com"} onKeyDown={event=>{if(event.key==="Enter")requestCode()}}/></label><button className="primary auth-primary" disabled={!identifier.trim()} onClick={requestCode}>ПОЛУЧИТЬ КОД</button><p className="auth-legal">Продолжая, вы соглашаетесь с условиями обработки персональных данных.</p></>}{step==="code"&&<><button className="auth-back" type="button" onClick={()=>{setStep("identify");setCode("")}}>← Назад</button><small>ПОДТВЕРЖДЕНИЕ</small><h2>Введите код</h2><span>Код отправлен на {contactLabel} <b>{identifier}</b>.</span><label className="auth-field auth-code-field"><span>Код подтверждения</span><input autoFocus inputMode="numeric" autoComplete="one-time-code" maxLength={4} value={code} onChange={event=>setCode(event.target.value.replace(/\D/g,"").slice(0,4))} placeholder="0000" onKeyDown={event=>{if(event.key==="Enter")verifyCode()}}/></label><button className="primary auth-primary" disabled={code.length!==4} onClick={verifyCode}>ПРОДОЛЖИТЬ</button><button className="link auth-resend" type="button" onClick={requestCode}>ОТПРАВИТЬ КОД ЕЩЁ РАЗ</button><p className="auth-demo-note">Демо-код: 1234</p></>}{step==="register"&&<><button className="auth-back" type="button" onClick={()=>setStep("code")}>← Назад</button><small>НОВЫЙ АККАУНТ</small><h2>Остался один шаг</h2><span>{method==="phone"?"Телефон подтверждён.":"Email подтверждён."} Укажите имя — остальные данные можно заполнить позже.</span><div className="auth-register-fields"><label className="auth-field"><span>Имя</span><input autoFocus value={draft.name} onChange={event=>setDraft({...draft,name:event.target.value})} placeholder="Имя"/></label><label className="auth-field"><span>Фамилия</span><input value={draft.surname} onChange={event=>setDraft({...draft,surname:event.target.value})} placeholder="Необязательно"/></label>{method==="phone"?<label className="auth-field"><span>Email</span><input type="email" value={draft.email} onChange={event=>setDraft({...draft,email:event.target.value})} placeholder="Необязательно"/></label>:<label className="auth-field"><span>Телефон</span><input type="tel" value={draft.phone} onChange={event=>setDraft({...draft,phone:event.target.value})} placeholder="Необязательно"/></label>}</div><button className="primary auth-primary" disabled={!draft.name.trim()} onClick={register}>СОЗДАТЬ АККАУНТ</button></>}</div>}</aside></div>;
 }
 
 function AccountFields({draft,setDraft}:{draft:Profile;setDraft:(profile:Profile)=>void}){
@@ -1392,10 +1452,8 @@ function SizeSheet({ size, setSize, close, add, price }: { size:string; setSize:
 }
 
 function Cart({ cart, recentlyViewed, close, total, remove, update, checkout, go, choose }: { cart:CartItem[]; recentlyViewed:Product[]; close:()=>void; total:number; remove:(i:number)=>void; update:(index:number,patch:Partial<CartItem>)=>void; checkout:()=>void; go:()=>void; choose:(product:Product)=>void }) {
-  // CART_REFERENCE_V21
-  const recentItems=(recentlyViewed.length?recentlyViewed:products.filter(product=>!cart.some(item=>item.id===product.id))).slice(0,4);
-  const count=cart.reduce((sum,item)=>sum+item.quantity,0);
-  return <div className="overlay cart-v21-overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть корзину"/><aside className="side-panel cart cart-v21-shell"><header className="cart-v21-header"><button className="cart-v21-close" onClick={close}><Icon name="close"/></button><h1>КОРЗИНА ({count})</h1><div><button aria-label="Дополнительно">•••</button><button aria-label="Поделиться"><Icon name="share"/></button></div></header>{cart.length===0?<div className="empty"><h2>Здесь пока пусто</h2><span>Добавьте предметы, которые сделают дом вашим.</span><button className="primary" onClick={go}>ПЕРЕЙТИ В КАТАЛОГ</button></div>:<div className="cart-v21-layout"><main className="cart-v21-content"><p className="cart-v21-reserve">Товары из вашей корзины не зарезервированы, пока покупка не завершена.</p><div className="cart-items cart-v21-items">{cart.map((p,i)=><article key={`${p.id}-${i}`}><ScrollableProductMedia product={p} alt={`${p.name}, ${p.selectedColor}`} className="cart-item-media"/><div className="cart-item-copy"><strong>{p.name}</strong><span>Цвет: {p.selectedColor}</span><span>Размер: {p.selectedSize}</span>{p.article&&<small>Арт. {p.article}</small>}{isGiftPackagingAvailable(p)&&<label className="cart-gift-checkbox"><input type="checkbox" checked={Boolean(p.giftWrap)} onChange={e=>update(i,{giftWrap:e.target.checked})}/><span>Подарочная упаковка</span></label>}<div className="cart-item-bottom"><QuantityControl quantity={p.quantity} setQuantity={quantity=>update(i,{quantity})}/><b>{fmt(p.price*p.quantity)}</b></div></div><button className="cart-v21-remove" onClick={()=>remove(i)} aria-label="Удалить товар">×</button></article>)}</div>{recentItems.length>0&&<section className="cart-v21-recommend"><header><h2>ВАС ТАКЖЕ МОЖЕТ ЗАИНТЕРЕСОВАТЬ</h2><span>{recentItems.length} ТОВАРА</span></header><div>{recentItems.map(product=><button key={product.id} onClick={()=>choose(product)}><ScrollableProductMedia product={product} alt={product.name} className="recent-item-media"/><strong>{product.name}</strong><b>{fmt(product.price)}</b></button>)}</div></section>}</main><aside className="cart-v21-summary"><h2>ИТОГО</h2><div><span>Товары ({count})</span><b>{fmt(total)}</b></div><div><span>Доставка</span><small>Рассчитывается на следующем шаге</small></div><hr/><div className="cart-v21-total"><b>ИТОГО</b><strong>{fmt(total)}</strong></div><p>{total>=15000?"Бесплатная доставка включена":`До бесплатной доставки ${fmt(15000-total)}`}</p><button className="primary checkout-cta" onClick={checkout}>ОФОРМИТЬ ЗАКАЗ</button><small className="cart-v21-safe">⌑ Безопасная оплата</small></aside></div>}</aside></div>;
+  const recentItems=recentlyViewed.slice(0,6);
+  return <div className="overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть корзину"/><aside className="side-panel cart"><button className="close" onClick={close} aria-label="Закрыть"><Icon name="close"/></button><p>{cart.length?`КОРЗИНА · ${cart.reduce((sum,item)=>sum+item.quantity,0)}`:"КОРЗИНА"}</p>{cart.length===0?<>{recentItems.length?<section className="recent-cart"><div><p>НЕДАВНО ПРОСМОТРЕННЫЕ</p><span>Предметы, к которым вы возвращались</span></div><div>{recentItems.map(product=><button key={product.id} onClick={()=>choose(product)}><ScrollableProductMedia product={product} alt={product.name} className="recent-item-media"/><strong>{product.name}</strong><small>{product.note}</small><b>{fmt(product.price)}</b></button>)}</div><button className="secondary" onClick={go}>ПРОДОЛЖИТЬ ПОКУПКИ</button></section>:<div className="empty"><h2>Здесь пока пусто</h2><span>Добавьте предметы, которые сделают дом вашим.</span><button className="primary" onClick={go}>ПЕРЕЙТИ В КАТАЛОГ</button></div>}</>:<><div className="cart-items">{cart.map((p,i)=><article key={`${p.id}-${i}`}><ScrollableProductMedia product={p} alt={`${p.name}, ${p.selectedColor}`} className="cart-item-media"/><div className="cart-item-copy"><strong>{p.name}</strong><span>Цвет: {p.selectedColor}</span><span data-cart-controls="CART_CONTROLS_V19">Размер: {p.selectedSize}</span>{isGiftPackagingAvailable(p)&&<label className="cart-gift-checkbox"><input type="checkbox" checked={Boolean(p.giftWrap)} onChange={event=>update(i,{giftWrap:event.target.checked})} aria-label={`Подарочная упаковка для ${p.name}`}/><span>Подарочная упаковка</span></label>}<div className="cart-item-bottom"><QuantityControl quantity={p.quantity} setQuantity={quantity=>update(i,{quantity})}/><b>{fmt(p.price*p.quantity)}</b></div></div><button onClick={()=>remove(i)} aria-label="Удалить товар"><Icon name="close"/></button></article>)}</div><div className="delivery">{total>=15000?"Бесплатная доставка включена":`До бесплатной доставки ${fmt(15000-total)}`}</div><div className="cart-total"><span>ИТОГО</span><b>{fmt(total)}</b></div><button className="primary checkout-cta" onClick={checkout}>ОФОРМИТЬ ЗАКАЗ</button></>}</aside></div>;
 }
 
 function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];total:number;profile:Profile|null;close:()=>void;editCart:()=>void;submit:()=>void}){

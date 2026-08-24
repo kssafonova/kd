@@ -41,7 +41,6 @@ scripts = [
     "add-mobile-gift-wrap-flow-v1.py",
     "refine-cart-controls-v19.py",
     "apply-auth-flow-v20.py",
-    "apply-account-commerce-v21.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
@@ -50,6 +49,10 @@ log_path = root / "migration-errors.txt"
 results = []
 failed = []
 
+# catalog-data.ts is now a lightweight runtime overlay over catalog-data-base.ts.
+# These older one-off catalog migration scripts expect the full productList to live
+# directly in catalog-data.ts, so rerunning them is no longer valid. Their changes
+# are already present in catalog-data-base.ts and the current source tree.
 legacy_catalog_patches = {
     "sync-updated-product-image-urls.py",
     "apply-product-catalog-rules-v1.py",
@@ -70,6 +73,7 @@ for name in scripts:
         results.append(f"\n===== {name} =====\nSKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts\n")
         continue
 
+    # The story builder patch is intentionally conditional in the old workflow.
     if name == "apply-story-builder-v2.py":
         page = (root / "app" / "page.tsx").read_text(encoding="utf-8")
         if "story-v2-layer" in page:
