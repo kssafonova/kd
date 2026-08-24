@@ -34,7 +34,7 @@ const rowMatchesSolution = (row: CatalogRow, solution: TableSolution) => {
     (target) => matchesLoose(collection, target) || productName.includes(target),
   );
   const typeMatch = !typeTargets.length || typeTargets.some((target) => matchesLoose(productType, target));
-  const collectionMatch = rawCollectionMatch && typeMatch;
+  const collectionMatch = solution.includeCollectionProducts !== false && rawCollectionMatch && typeMatch;
   const explicitProductMatch = productTargets.some((target) => matchesLoose(productName, target));
 
   return collectionMatch || explicitProductMatch;
@@ -145,14 +145,19 @@ export const logicalProductKey = (row: CatalogRow) => {
 
 /**
  * All matching rows, including colour and size variants.
- * Solutions with githubProductIds use the exact products already added to the
- * storefront's GitHub catalog and intentionally do not substitute CSV items.
+ * A ready solution may combine exact products from the GitHub storefront
+ * catalog with explicit products from constructor CSV. When the same logical
+ * product exists in both sources, the GitHub storefront version wins so its
+ * local imagery and variants stay authoritative.
  */
 export const resolveTableSolutionCatalogRows = (catalog: CatalogRow[], solution: TableSolution) => {
   const collectionTargets = solution.collections.map(normalizeSolutionValue).filter(Boolean);
-  const sourceRows = solution.githubProductIds?.length
-    ? githubProductRows(solution)
-    : catalog.filter((row) => rowMatchesSolution(row, solution));
+  const csvRows = catalog.filter((row) => rowMatchesSolution(row, solution));
+  const githubRows = solution.githubProductIds?.length ? githubProductRows(solution) : [];
+  const githubKeys = new Set(githubRows.map(logicalProductKey));
+  const sourceRows = githubRows.length
+    ? [...githubRows, ...csvRows.filter((row) => !githubKeys.has(logicalProductKey(row)))]
+    : csvRows;
 
   return sourceRows.sort((a, b) => {
     const collectionDiff = collectionOrder(a, collectionTargets) - collectionOrder(b, collectionTargets);
