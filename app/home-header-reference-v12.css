@@ -1,0 +1,235 @@
+/* Homepage header V12 — matches the approved clean white header reference.
+   Scoped to the homepage so catalog/PDP overlays keep their own header behavior. */
+
+/* The reference uses a thin brand line instead of a promotional message. */
+.view-home .promo{
+  height:3px!important;
+  min-height:3px!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background:#3f585c!important;
+  color:transparent!important;
+  line-height:0!important;
+  border:0!important;
+}
+.view-home .promo>*{display:none!important}
+
+/* Desktop composition: menu + boutiques / centered wordmark / utilities. */
+.view-home .header{
+  position:relative!important;
+  top:auto!important;
+  left:auto!important;
+  right:auto!important;
+  z-index:80!important;
+  width:100%!important;
+  height:108px!important;
+  min-height:108px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  padding:0 44px!important;
+  border:0!important;
+  border-bottom:1px solid #e9e9e6!important;
+  background:#fff!important;
+  color:#1a1a18!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+.view-home .header button,
+.view-home .header .logo{color:#1a1a18!important}
+
+.view-home .header-left,
+.view-home .header-actions{
+  display:flex!important;
+  align-items:center!important;
+  min-width:0!important;
+}
+.view-home .header-left{gap:18px!important}
+.view-home .header-actions{gap:18px!important}
+
+/* Hamburger: generous hit area with the compact three-line mark from the reference. */
+.view-home .header .hamburger{
+  width:40px!important;
+  height:48px!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  flex:0 0 40px!important;
+}
+.view-home .header .hamburger i{
+  display:block!important;
+  width:27px!important;
+  height:1.5px!important;
+  margin:0!important;
+  border:0!important;
+  background:#1a1a18!important;
+}
+
+.view-home .header .boutiques{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-height:48px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  font-size:15px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+  white-space:nowrap!important;
+}
+.view-home .header .boutiques svg{
+  width:25px!important;
+  height:25px!important;
+  flex:0 0 25px!important;
+}
+
+/* The logo remains mathematically centered regardless of side-control widths. */
+.view-home .logo{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  width:auto!important;
+  max-width:none!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  font-size:31px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  letter-spacing:.015em!important;
+  white-space:nowrap!important;
+}
+
+.view-home .header-actions>button{
+  position:relative!important;
+  width:50px!important;
+  height:50px!important;
+  min-width:50px!important;
+  min-height:50px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+.view-home .header-actions svg{
+  width:28px!important;
+  height:28px!important;
+}
+.view-home .header-actions .favorite-header svg,
+.view-home .header-actions .bag svg{
+  width:30px!important;
+  height:30px!important;
+}
+.view-home .header-actions .favorite-header:has(>b){color:#a66f4c!important}
+
+/* Small warm counters sit above/right of the icon, as in the supplied reference. */
+.view-home .favorite-header>b,
+.view-home .bag>b{
+  position:absolute!important;
+  top:-3px!important;
+  right:-1px!important;
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:#ad774f!important;
+  color:#fff!important;
+  font-size:10px!important;
+  font-weight:500!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  box-shadow:0 0 0 2px #fff!important;
+}
+
+/* Header + 3 px top line are now part of the document flow. */
+.home-ux-v11 .hv4-hero{
+  height:calc(100svh - 111px)!important;
+  height:calc(100dvh - 111px)!important;
+  min-height:560px!important;
+}
+
+@media(max-width:1100px) and (min-width:901px){
+  .view-home .header{padding:0 28px!important}
+  .view-home .header-left,.view-home .header-actions{gap:10px!important}
+  .view-home .logo{font-size:27px!important}
+  .view-home .header .boutiques{font-size:14px!important}
+  .view-home .header-actions>button{width:46px!important;min-width:46px!important}
+}
+
+/* Mobile keeps the same visual language, with compact controls and safe 44 px targets. */
+@media(max-width:900px){
+  .view-home .promo{
+    height:3px!important;
+    min-height:3px!important;
+  }
+  .view-home .header{
+    height:68px!important;
+    min-height:68px!important;
+    padding:0 12px!important;
+  }
+  .view-home .header-left{gap:0!important}
+  .view-home .header .boutiques{display:none!important}
+  .view-home .header .hamburger{
+    width:44px!important;
+    height:44px!important;
+    flex-basis:44px!important;
+  }
+  .view-home .header .hamburger i{width:24px!important}
+  .view-home .logo{
+    font-size:18px!important;
+    letter-spacing:0!important;
+  }
+  .view-home .header-actions{gap:0!important}
+  .view-home .header-actions>button{
+    width:44px!important;
+    height:44px!important;
+    min-width:44px!important;
+    min-height:44px!important;
+  }
+  .view-home .header-actions svg{width:21px!important;height:21px!important}
+  .view-home .header-actions .favorite-header svg,
+  .view-home .header-actions .bag svg{width:22px!important;height:22px!important}
+  .view-home .favorite-header>b,
+  .view-home .bag>b{
+    top:-1px!important;
+    right:0!important;
+    width:18px!important;
+    height:18px!important;
+    min-width:18px!important;
+    font-size:9px!important;
+    box-shadow:0 0 0 1.5px #fff!important;
+  }
+  .home-ux-v11 .hv4-hero{
+    height:calc(100svh - 71px)!important;
+    height:calc(100dvh - 71px)!important;
+    min-height:520px!important;
+  }
+}
+
+@media(max-width:520px){
+  .view-home .header-actions>button[aria-label="Профиль"]{display:none!important}
+  .view-home .logo{font-size:17px!important}
+  .view-home .header-actions>button{
+    width:41px!important;
+    min-width:41px!important;
+  }
+}
+
+@media(max-width:370px){
+  .view-home .header{padding:0 8px!important}
+  .view-home .header .hamburger{width:40px!important;flex-basis:40px!important}
+  .view-home .logo{font-size:15.5px!important}
+  .view-home .header-actions>button{width:38px!important;min-width:38px!important}
+}
