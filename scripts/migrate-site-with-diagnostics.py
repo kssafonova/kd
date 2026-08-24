@@ -41,6 +41,7 @@ scripts = [
     "add-mobile-gift-wrap-flow-v1.py",
     "refine-cart-controls-v19.py",
     "apply-auth-flow-v20.py",
+    "redesign-collections-v23.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
