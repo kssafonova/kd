@@ -193,10 +193,10 @@ Collections redesign V23 already applied
 
 ## npm install
 npm warn deprecated tsconfck@3.1.6: unmaintained
-npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
 
-added 513 packages in 12s
+added 513 packages in 17s
 
 ## Next build
 ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
