@@ -4,6 +4,7 @@ import "./simple-flow-v22.css";
 import "./table-solutions-v24.css";
 import "./table-solution-builder-v25.css";
 import "./table-solutions-finder-v26.css";
+import "./table-solution-type-constructor-v27.css";
 
 export default function ConstructorLayout({ children }: { children: ReactNode }) {
   return children;
