@@ -7,6 +7,7 @@ import "./table-solutions-finder-v26.css";
 import "./table-solution-type-constructor-v27.css";
 import "./table-solution-multiselect-v28.css";
 import "./table-solution-kultura-editorial-v29.css";
+import "./ready-solutions-landing-v30.css";
 
 export default function ConstructorLayout({ children }: { children: ReactNode }) {
   return children;
