@@ -14,57 +14,62 @@ const matchesLoose = (value: string, target: string) => {
   return value === target || value.includes(target) || target.includes(value);
 };
 
-const logicalProductKey = (row: CatalogRow) => {
-  const group = String(row.group_id || "").trim();
-  if (group) return `group:${group}`;
-  return `name:${normalizeSolutionValue(row.product_name || "")}`;
+const collectionOrder = (row: CatalogRow, targets: string[]) => {
+  const collection = normalizeSolutionValue(row.collection || "");
+  const index = targets.findIndex((target) => matchesLoose(collection, target));
+  return index < 0 ? 999 : index;
 };
 
-/**
- * Returns every logical product we can ground in the CSV catalog for a ready
- * solution. Collection membership is the primary rule. Explicit names from
- * the source table are additive, so a manually listed item is never lost.
- * Size/SKU variants are collapsed to one representative product row.
- */
-export const resolveTableSolutionProducts = (catalog: CatalogRow[], solution: TableSolution) => {
+const rowMatchesSolution = (row: CatalogRow, solution: TableSolution) => {
   const collectionTargets = solution.collections.map(normalizeSolutionValue).filter(Boolean);
   const productTargets = solution.productNames.map(normalizeSolutionValue).filter(Boolean);
+  const collection = normalizeSolutionValue(row.collection || "");
+  const productName = normalizeSolutionValue(row.product_name || "");
+  const collectionMatch = collectionTargets.some((target) => matchesLoose(collection, target) || productName.includes(target));
+  const explicitProductMatch = productTargets.some((target) => matchesLoose(productName, target));
+  return collectionMatch || explicitProductMatch;
+};
+
+const baseProductName = (row: CatalogRow) => normalizeSolutionValue(String(row.product_name || "").split(":")[0]);
+
+export const logicalProductKey = (row: CatalogRow) => {
+  const group = String(row.group_id || "").trim();
+  if (group) return `group:${group}`;
+  return `name:${baseProductName(row)}`;
+};
+
+/** All matching CSV rows, including color and size variants. */
+export const resolveTableSolutionCatalogRows = (catalog: CatalogRow[], solution: TableSolution) => {
+  const collectionTargets = solution.collections.map(normalizeSolutionValue).filter(Boolean);
+  return catalog
+    .filter((row) => rowMatchesSolution(row, solution))
+    .sort((a, b) => {
+      const collectionDiff = collectionOrder(a, collectionTargets) - collectionOrder(b, collectionTargets);
+      if (collectionDiff) return collectionDiff;
+      const nameDiff = String(a.product_name || "").localeCompare(String(b.product_name || ""), "ru");
+      if (nameDiff) return nameDiff;
+      const colorDiff = String(a.color || "").localeCompare(String(b.color || ""), "ru");
+      if (colorDiff) return colorDiff;
+      return String(a.size || "").localeCompare(String(b.size || ""), "ru");
+    });
+};
+
+/** One representative per logical product; used on the ready-solutions landing. */
+export const resolveTableSolutionProducts = (catalog: CatalogRow[], solution: TableSolution) => {
+  const rows = resolveTableSolutionCatalogRows(catalog, solution);
   const unique = new Map<string, CatalogRow>();
 
-  catalog.forEach((row) => {
-    const collection = normalizeSolutionValue(row.collection || "");
-    const productName = normalizeSolutionValue(row.product_name || "");
-
-    const collectionMatch = collectionTargets.some((target) =>
-      matchesLoose(collection, target) || productName.includes(target)
-    );
-    const explicitProductMatch = productTargets.some((target) =>
-      matchesLoose(productName, target)
-    );
-
-    if (!collectionMatch && !explicitProductMatch) return;
-
+  rows.forEach((row) => {
     const key = logicalProductKey(row);
     const current = unique.get(key);
     if (!current) {
       unique.set(key, row);
       return;
     }
-
-    // Prefer a representative with a usable image and price.
     const currentScore = Number(Boolean(current.primary_image_url)) + Number(Boolean(current.price));
     const nextScore = Number(Boolean(row.primary_image_url)) + Number(Boolean(row.price));
     if (nextScore > currentScore) unique.set(key, row);
   });
 
-  return Array.from(unique.values()).sort((a, b) => {
-    const aCollection = normalizeSolutionValue(a.collection || "");
-    const bCollection = normalizeSolutionValue(b.collection || "");
-    const aCollectionIndex = collectionTargets.findIndex((target) => matchesLoose(aCollection, target));
-    const bCollectionIndex = collectionTargets.findIndex((target) => matchesLoose(bCollection, target));
-    const ai = aCollectionIndex < 0 ? 999 : aCollectionIndex;
-    const bi = bCollectionIndex < 0 ? 999 : bCollectionIndex;
-    if (ai !== bi) return ai - bi;
-    return String(a.product_name || "").localeCompare(String(b.product_name || ""), "ru");
-  });
+  return Array.from(unique.values());
 };
