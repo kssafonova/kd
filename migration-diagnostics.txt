@@ -1,0 +1,228 @@
+# Site build diagnostics
+
+migration=failure
+dependencies=success
+build=failure
+
+## Migration patches
+
+===== sync-workbook-product-specs.py =====
+exit=0
+Synced workbook product characteristics to PDP
+
+
+===== restore-quick-add-flow.py =====
+exit=0
+Restored previous quick-add navigation flow and desktop drawer dimensions
+
+
+===== add-remote-image-loader.py =====
+exit=0
+Remote URL image loader wired into storefront media
+
+
+===== sync-updated-product-image-urls.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-pdp-reference-gallery.py =====
+exit=0
+Applied reference-style PDP gallery: page-scroll desktop, sticky thumbnails, mobile swipe
+
+
+===== normalize-single-color-swatches.py =====
+exit=0
+Normalized product swatches: 1
+
+
+===== apply-story-builder-v2.py =====
+exit=1
+LunaEditorialView block not found
+
+
+===== refine-story-builder-v2.py =====
+exit=1
+Story quick-buy handler not found
+
+
+===== redesign-home-reference.py =====
+exit=0
+Applied screenshot-inspired homepage redesign
+
+
+===== add-home-bedroom-feature.py =====
+exit=0
+Added direct bedroom collection story links for Luna and Ice Patterns
+
+
+===== refine-homepage-editorial.py =====
+exit=0
+Refined homepage to the supplied editorial reference
+
+
+===== remove-editorial-tabs.py =====
+exit=1
+CollectionsView block not found
+
+
+===== add-editorial-scenario-navigation.py =====
+exit=1
+CollectionsView boundaries were not found
+
+
+===== add-constructor-home-cta.py =====
+exit=0
+Added constructor CTA to homepage
+
+
+===== apply-product-catalog-rules-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-catalog-category-mapping.py =====
+exit=0
+Applied strict catalog category mapping
+
+
+===== apply-product-pricing-merchandising-v1.py =====
+exit=0
+Applied product pricing, sale presentation and handmade badges
+
+
+===== apply-pdp-collection-recommendations-v1.py =====
+exit=0
+Applied shared collection and complementary recommendation logic; recently viewed stays in empty cart
+
+
+===== highlight-menu-solutions-v1.py =====
+exit=0
+Applied Zara Home premium navigation menu
+
+
+===== remove-retired-editorials-v1.py =====
+exit=0
+Removed retired Editorial capsules/collections and their named promo slides
+
+
+===== refine-editorial-tabs-v1.py =====
+exit=0
+Skipped legacy Editorial tab refinement: fullscreen story overlay already owns CollectionsView
+
+
+===== add-ice-pattern-products-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== fix-ice-pattern-2000-2004-types.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-product-preview-rules-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== add-editorial-story-overlay-v1.py =====
+exit=1
+Could not locate CollectionsView block
+
+
+===== redesign-home-magazine-v2.py =====
+exit=0
+Applied final editorial magazine homepage redesign
+
+
+===== redesign-home-commerce-v3.py =====
+exit=0
+Applied premium conversion-focused homepage V3
+
+
+===== redesign-home-v4.py =====
+exit=0
+Applied clean white homepage V5 reference redesign
+
+
+===== merge-home-traditions-collections-v1.py =====
+exit=0
+Merged traditions with white shoppable collection product rail, controls and Editorial CTA
+
+
+===== refine-home-v7.py =====
+exit=0
+Refined homepage V7: square category cards and compact header grouping
+
+
+===== refine-home-v8.py =====
+exit=0
+Refined homepage V8: smaller hero, catalog-style favorite and subtle 15s story player
+
+
+===== refine-home-v9.py =====
+exit=0
+Refined homepage V9: full-screen commercial hero, interaction-aware slider and responsive ecommerce behavior
+
+
+===== refine-home-togas-v10.py =====
+exit=0
+Applied TOGAS-inspired homepage V10 structure and copy
+
+
+===== refine-home-ux-v11.py =====
+exit=0
+Homepage UX V11 patch applied
+
+
+===== refine-home-v11-video.py =====
+exit=0
+Homepage V11: responsive desktop/mobile video replaces CSS motion story
+
+
+===== add-mobile-gift-wrap-flow-v1.py =====
+exit=0
+Applied unified post-add flow with gift wrapping and complementary products
+
+
+===== refine-cart-controls-v19.py =====
+exit=0
+Cart controls V19 already applied
+
+
+===== apply-auth-flow-v20.py =====
+exit=0
+Auth flow V20 already applied
+
+
+===== redesign-collections-v23.py =====
+exit=0
+Collections redesign V23 already applied
+
+
+## npm install
+npm warn deprecated tsconfck@3.1.6: unmaintained
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
+
+added 513 packages in 12s
+
+## Next build
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./app/constructor/table-solution-client.tsx:342:184
+Expected '</', got 'string literal'
+  [90m340 |[0m ...
+  [90m341 |[0m ...
+[31m[1m>[0m [90m342 |[0m ...[35msolution-category-${categories[0]?.id || ""}">Изменить</a[0m></div>
+  [90m    |[0m                                              [31m[1m^^^[0m
+  [90m343 |[0m ...{totalUnits}<[35m/dd></div[0m></dl>
+  [90m344 |[0m ...
+  [90m345 |[0m ...
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+    at <unknown> (./app/constructor/table-solution-client.tsx:342:184)
+
