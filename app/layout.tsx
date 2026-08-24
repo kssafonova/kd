@@ -30,6 +30,7 @@ import "./home-video-v11.css";
 import "./gift-wrap-flow.css";
 import "./home-header-reference-v12.css";
 import "./home-responsive-system-v13.css";
+import "./home-card-type-v14.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 
 export const metadata: Metadata = {
