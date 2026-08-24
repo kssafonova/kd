@@ -104,21 +104,27 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     previewFile: "",
     scrollFile: "",
     collections: ["Ледяные узоры", "Лунная сказка", "Нити Времени"],
-    // These are selectors for real storefront catalog accessories. Their
-    // image, price, variants and availability always come from the CSV feed.
+    // Every selector below resolves an existing storefront catalog product.
+    // Prices, photos, colors, sizes and URLs are never hardcoded here.
     productNames: [
+      "Комплект постельного белья Ледяной узор",
+      "Комплект постельного белья Нити времени",
+      "Плед Ажур",
+      "Плед Соты",
+      "Подушка декоративная Пушица",
       "Ваза Айсберг",
       "Ваза Паскаль",
       "Свеча Корона",
       "Диффузор",
     ],
-    // Collection matching is intentionally limited to the five source-table
-    // categories instead of pulling unrelated products from the collections.
+    // Collection matching remains available for real catalog items tagged with
+    // the source collections, but it cannot pull unrelated tableware/decor.
     allowedProductTypes: [
       "bedding_set",
       "duvet",
       "sheet",
       "pillowcase",
+      "pillowcase_set",
       "throw",
       "coverlet",
       "decorative_pillow",
