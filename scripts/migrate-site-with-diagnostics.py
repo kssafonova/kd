@@ -47,11 +47,28 @@ log_path = root / "migration-errors.txt"
 results = []
 failed = []
 
+# catalog-data.ts is now a lightweight runtime overlay over catalog-data-base.ts.
+# These older one-off catalog migration scripts expect the full productList to live
+# directly in catalog-data.ts, so rerunning them is no longer valid. Their changes
+# are already present in catalog-data-base.ts and the current source tree.
+legacy_catalog_patches = {
+    "sync-updated-product-image-urls.py",
+    "apply-product-catalog-rules-v1.py",
+    "add-ice-pattern-products-v1.py",
+    "fix-ice-pattern-2000-2004-types.py",
+    "apply-product-preview-rules-v1.py",
+}
+uses_catalog_overlay = (root / "app" / "catalog-data-base.ts").exists()
+
 for name in scripts:
     path = script_dir / name
     if not path.exists():
         failed.append(name)
         results.append(f"\n===== {name} =====\nERROR: script not found\n")
+        continue
+
+    if uses_catalog_overlay and name in legacy_catalog_patches:
+        results.append(f"\n===== {name} =====\nSKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts\n")
         continue
 
     # The story builder patch is intentionally conditional in the old workflow.
