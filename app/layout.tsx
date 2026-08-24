@@ -32,7 +32,9 @@ import "./home-header-reference-v12.css";
 import "./home-responsive-system-v13.css";
 import "./home-card-type-v14.css";
 import "./image-square-system-v15.css";
+import "./collection-purchase-v16.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
+import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
@@ -44,6 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ru">
       <body>
         <ProductCardGalleryEnhancer />
+        <CollectionPurchaseEnhancer />
         {children}
       </body>
     </html>
