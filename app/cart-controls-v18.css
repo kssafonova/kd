@@ -1,0 +1,137 @@
+/* Cart controls V18
+   Size is read-only after adding to cart. Quantity and gift wrapping remain editable. */
+
+.cart .cart-item-variant{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin-top:8px!important;
+  padding:10px 12px!important;
+  border:1px solid #e2e2dd!important;
+  background:#fafaf8!important;
+}
+.cart .cart-item-variant>span{
+  color:#858681!important;
+  font-size:8px!important;
+  letter-spacing:.1em!important;
+  text-transform:uppercase!important;
+}
+.cart .cart-item-variant>b{
+  color:#242625!important;
+  font-size:10px!important;
+  font-weight:400!important;
+  line-height:1.3!important;
+  text-align:right!important;
+}
+
+.cart .cart-gift-toggle{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:20px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin-top:8px!important;
+  padding:10px 38px 10px 11px!important;
+  border:1px solid #e2e2dd!important;
+  background:#fff!important;
+  color:#242625!important;
+  cursor:pointer!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+}
+.cart .cart-gift-toggle input{
+  position:absolute!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.cart .cart-gift-toggle::before{
+  content:"";
+  width:18px;
+  height:18px;
+  border:1px solid #cfd1cc;
+  background:#fff;
+  grid-column:1;
+  grid-row:1;
+}
+.cart .cart-gift-toggle:has(input:checked)::before{
+  border-color:#40565b;
+  background:#40565b;
+}
+.cart .cart-gift-toggle:has(input:checked)::after{
+  content:"✓";
+  position:absolute;
+  left:15px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#fff;
+  font-size:11px;
+  line-height:1;
+}
+.cart .cart-gift-toggle>span{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:2px!important;
+  color:#242625!important;
+}
+.cart .cart-gift-toggle>span>b{
+  font-size:9px!important;
+  font-weight:400!important;
+  line-height:1.3!important;
+}
+.cart .cart-gift-toggle>span>small{
+  color:#8a8b87!important;
+  font-size:8px!important;
+  line-height:1.3!important;
+}
+.cart .cart-gift-toggle>i{
+  position:absolute!important;
+  right:12px!important;
+  top:50%!important;
+  width:24px!important;
+  height:14px!important;
+  transform:translateY(-50%)!important;
+  border-radius:999px!important;
+  background:#dadcd7!important;
+}
+.cart .cart-gift-toggle>i::after{
+  content:"";
+  position:absolute;
+  left:2px;
+  top:2px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#fff;
+  transition:transform .18s ease;
+}
+.cart .cart-gift-toggle:has(input:checked)>i{background:#40565b!important}
+.cart .cart-gift-toggle:has(input:checked)>i::after{transform:translateX(10px)}
+
+/* The old editable size-select styling must not leak into V18. */
+.cart .cart-item-copy>label.cart-gift-toggle{
+  grid-template-columns:20px minmax(0,1fr)!important;
+  font-size:inherit!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+}
+
+@media(max-width:700px){
+  .cart .cart-item-variant{
+    margin-top:5px!important;
+    padding:8px 9px!important;
+  }
+  .cart .cart-item-variant>span{font-size:7px!important}
+  .cart .cart-item-variant>b{font-size:8px!important}
+  .cart .cart-gift-toggle{
+    grid-template-columns:18px minmax(0,1fr)!important;
+    gap:8px!important;
+    margin-top:5px!important;
+    padding:8px 35px 8px 9px!important;
+  }
+  .cart .cart-gift-toggle::before{width:16px;height:16px}
+  .cart .cart-gift-toggle:has(input:checked)::after{left:12px;font-size:10px}
+  .cart .cart-gift-toggle>span>b{font-size:8px!important}
+  .cart .cart-gift-toggle>span>small{font-size:7px!important}
+  .cart .cart-gift-toggle>i{right:9px!important}
+}
