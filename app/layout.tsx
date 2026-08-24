@@ -33,6 +33,7 @@ import "./home-responsive-system-v13.css";
 import "./home-card-type-v14.css";
 import "./image-square-system-v15.css";
 import "./collection-purchase-v16.css";
+import "./cart-redesign-v17.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 
