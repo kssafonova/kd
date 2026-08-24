@@ -1,5 +1,5 @@
 export type TableSolution = {
-  id: "table-1" | "table-2" | "table-3";
+  id: "table-1" | "table-2" | "table-3" | "table-4" | "table-5" | "table-6";
   sourceId: number;
   space: string;
   name: string;
@@ -48,15 +48,45 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     id: "table-3",
     sourceId: 3,
     space: "Кухня и столовая",
-    // В исходной таблице название решения не заполнено. Не придумываем
-    // маркетинговое название: используем нейтральный заголовок, а коллекции
-    // показываем отдельно и дословно по смыслу источника.
-    name: "Решение №3",
-    sourceName: "",
+    name: "Доброе утро",
+    sourceName: "Доброе утро",
     previewFile: "bluegold.jpeg",
     scrollFile: "bluegold2.jpeg",
-    collections: ["Дияф", "Фейерверк"],
+    collections: ["Дияф", "Фейерверк", "Овация", "Александр"],
     productNames: [],
+  },
+  {
+    id: "table-4",
+    sourceId: 4,
+    space: "Спальня",
+    name: "Тихий сон",
+    sourceName: "Тихий сон",
+    previewFile: "",
+    scrollFile: "",
+    collections: [],
+    productNames: ["Тихий сон"],
+  },
+  {
+    id: "table-5",
+    sourceId: 5,
+    space: "Кабинет",
+    name: "Ретро",
+    sourceName: "Ретро",
+    previewFile: "",
+    scrollFile: "",
+    collections: ["Текстура", "Юрма"],
+    productNames: ["Игры", "Тарелка Юрма", "Корзина", "Плейсмат"],
+  },
+  {
+    id: "table-6",
+    sourceId: 6,
+    space: "Ванная",
+    name: "Уют",
+    sourceName: "Уют",
+    previewFile: "",
+    scrollFile: "",
+    collections: ["Текстура", "Уют"],
+    productNames: ["Набор для ванной", "Халат", "Корзина"],
   },
 ] as const;
 
