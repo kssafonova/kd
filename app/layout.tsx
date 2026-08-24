@@ -36,6 +36,7 @@ import "./collection-purchase-v16.css";
 import "./cart-redesign-v17.css";
 import "./cart-controls-v18.css";
 import "./cart-controls-v19.css";
+import "./auth-flow-v20.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 
