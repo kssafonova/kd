@@ -11,10 +11,7 @@ import type { CatalogRow, FinalConstructorData, FinalScenarioVariantRow } from "
 
 const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
 const toPrice = (value: string | undefined) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
-
 const CART_STORAGE_KEY = "kultura-cart";
-// Offset keeps synthetic ids for constructor items clear of the storefront's
-// own hardcoded product ids (which stay well under this range).
 const CART_ID_OFFSET = 900000;
 
 const makeCatalogIndex = (rows: CatalogRow[]) => {
@@ -33,13 +30,6 @@ const splitImages = (catalog?: CatalogRow) => Array.from(new Set([
 
 const cleanRole = (role: string) => role.replace(/\s+/g, " ").trim();
 
-/**
- * A cart line item shaped to match app/page.tsx's own Product/CartItem
- * contract exactly (id, skus, selectedColor/Size, etc.) so the storefront
- * cart drawer, quantity controls and checkout can render it with no
- * special-casing. The two apps only share this shape through
- * localStorage — there is no compile-time import between them.
- */
 type SharedCartItem = {
   id: number;
   name: string;
@@ -88,15 +78,13 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
   const [enabled, setEnabled] = useState<Record<string, boolean>>({});
   const [quantity, setQuantity] = useState<Record<string, number>>({});
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
-  const [galleryOffer, setGalleryOffer] = useState<string | null>(null);
-  const [added, setAdded] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     let active = true;
     loadFinalConstructorData()
       .then((loaded) => active && setData(loaded))
-      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Не удалось загрузить сценарий"));
+      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Не удалось загрузить решение"));
     return () => { active = false; };
   }, []);
 
@@ -133,32 +121,23 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
     setEnabled(nextEnabled);
     setQuantity(nextQuantity);
     setExpandedRole(null);
-    setGalleryOffer(null);
-    setAdded(false);
     setRedirecting(false);
   }, [scenarioId, groups.length]);
 
   const selectedRows = useMemo(() => groups.map(({ role, options }) => {
     const row = options.find((option) => option.offer_id === selected[role]) ?? options.find((option) => option.type === "Основной") ?? options[0];
-    const hasMain = options.some((option) => option.type === "Основной");
-    return row ? { role, row, enabled: enabled[role] !== false, quantity: quantity[role] || 1, hasMain } : null;
-  }).filter(Boolean) as Array<{ role: string; row: FinalScenarioVariantRow; enabled: boolean; quantity: number; hasMain: boolean }>, [groups, selected, enabled, quantity]);
+    return row ? { role, row, enabled: enabled[role] !== false, quantity: quantity[role] || 1, options } : null;
+  }).filter(Boolean) as Array<{ role: string; row: FinalScenarioVariantRow; enabled: boolean; quantity: number; options: FinalScenarioVariantRow[] }>, [groups, selected, enabled, quantity]);
 
   const activeRows = selectedRows.filter((item) => item.enabled);
   const total = activeRows.reduce((sum, item) => sum + toPrice(item.row.price_rub) * item.quantity, 0);
-  const savings = activeRows.reduce((sum, item) => {
-    const catalogOldPrice = toPrice(catalogIndex.get(String(item.row.offer_id))?.old_price);
-    const price = toPrice(item.row.price_rub);
-    return catalogOldPrice > price ? sum + (catalogOldPrice - price) * item.quantity : sum;
-  }, 0);
-  const mainImages = activeRows.map((item) => catalogIndex.get(String(item.row.offer_id))?.primary_image_url).filter((value): value is string => Boolean(value)).slice(0, 5);
-  const galleryRow = rows.find((row) => row.offer_id === galleryOffer);
-  const galleryCatalog = galleryRow ? catalogIndex.get(String(galleryRow.offer_id)) : undefined;
-  const galleryImages = splitImages(galleryCatalog);
+  const heroImage = activeRows
+    .map((item) => catalogIndex.get(String(item.row.offer_id))?.primary_image_url)
+    .find((value): value is string => Boolean(value)) ?? "";
 
-  if (error) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Не удалось загрузить сценарий</h1><p>{error}</p></div></main>;
-  if (!data) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty">Загружаем решение…</div></main>;
-  if (!summary) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Сценарий не найден</h1><Link href="/constructor/">Вернуться к готовым решениям</Link></div></main>;
+  if (error) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Не удалось загрузить решение</h1><p>{error}</p></div></main>;
+  if (!data) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty">Загружаем решение…</div></main>;
+  if (!summary) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Решение не найдено</h1><Link href="/constructor/">Вернуться к готовым решениям</Link></div></main>;
 
   const addSolution = () => {
     const items: SharedCartItem[] = activeRows.map((item) => {
@@ -171,7 +150,7 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
       return {
         id: numericId,
         name: item.row.product_name,
-        note: `Из решения «${summary.scenario_name}»`,
+        note: `Из готового решения «${summary.scenario_name}»`,
         price: unitPrice,
         image,
         gallery,
@@ -197,128 +176,99 @@ export function ScenarioConstructor({ scenarioId }: { scenarioId: string }) {
 
     mergeIntoSharedCart(items);
     trackConstructorEvent("constructor:add_solution", { scenario_id: scenarioId, items: items.length, total });
-    setAdded(true);
     setRedirecting(true);
     window.setTimeout(() => {
       const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
       window.location.href = `${base}/?cart=open`;
-    }, 850);
+    }, 500);
   };
 
   return (
-    <main className="constructor-shell constructor-detail">
-      <div className="constructor-wrap">
-        <nav className="constructor-topline">
-          <Link className="constructor-back" href="/constructor/">← ВСЕ ГОТОВЫЕ РЕШЕНИЯ</Link>
+    <main className="solution-simple-shell solution-detail-shell">
+      <div className="solution-simple-wrap">
+        <nav className="solution-simple-topbar">
+          <Link href="/constructor/">← ГОТОВЫЕ РЕШЕНИЯ</Link>
           <span>{copy?.space ?? summary.space}</span>
         </nav>
 
-        <header className="constructor-page-head">
-          <div>
-            <p className="constructor-kicker">ГОТОВОЕ РЕШЕНИЕ · {(copy?.space ?? summary.space).toUpperCase()}</p>
-            <h1 className="constructor-title">{summary.scenario_name}</h1>
-            <p className="constructor-occasion">{summary.occasion}</p>
-            {copy && <p className="constructor-mood">«{copy.mood}»</p>}
-            <p className="constructor-lead">{copy?.narrative ?? "Основная сборка уже выбрана — меняйте только те предметы, для которых в сценарии предусмотрены альтернативы."}</p>
+        <section className="solution-detail-hero">
+          <div className="solution-detail-hero-media">
+            {heroImage ? <RemoteImage src={heroImage} alt={summary.scenario_name} loading="eager"/> : <span>Фото решения</span>}
           </div>
-          <div className="constructor-head-stat"><span>СОСТАВ</span><strong>{groups.length}</strong><small>групп предметов</small></div>
-        </header>
-
-        <section className="constructor-hero-collage" aria-label="Выбранные предметы сценария">
-          {Array.from({ length: Math.max(4, Math.min(5, mainImages.length)) }, (_, index) => {
-            const image = mainImages[index];
-            return image ? <div key={`${image}-${index}`}><RemoteImage src={image} alt={`${summary.scenario_name}: выбранный предмет ${index + 1}`} loading={index < 3 ? "eager" : "lazy"}/></div> : <div className="constructor-image-fallback" key={index}>Фото товара</div>;
-          })}
+          <div className="solution-detail-hero-copy">
+            <small>ГОТОВОЕ РЕШЕНИЕ · {(copy?.space ?? summary.space).toUpperCase()}</small>
+            <h1>{summary.scenario_name}</h1>
+            {summary.occasion && <p className="solution-detail-occasion">{summary.occasion}</p>}
+            <p>{copy?.narrative ?? "Все предметы уже подобраны друг к другу. Оставьте комплект как есть или измените только нужные позиции."}</p>
+            <div className="solution-detail-hero-meta"><span>{activeRows.length} товаров выбрано</span><strong>{formatRub(total)}</strong></div>
+            <a className="solution-detail-anchor" href="#solution-products">СМОТРЕТЬ СОСТАВ ↓</a>
+          </div>
         </section>
 
-        <div className="constructor-scroll-cue">
-          <a href="#constructor-builder">Собрать это решение <span aria-hidden="true">↓</span></a>
-        </div>
-
-        <div className="constructor-layout" id="constructor-builder">
-          <section className="constructor-builder">
-            <header className="constructor-section-head">
-              <div><p className="constructor-kicker">СОСТАВ РЕШЕНИЯ</p><h2>Настройте под себя</h2></div>
-              <p>Основа решения зафиксирована куратором. Предметы «по желанию» можно включать и выключать, а альтернативы — менять на совместимые варианты.</p>
+        <div className="solution-detail-layout" id="solution-products">
+          <section className="solution-detail-products">
+            <header className="solution-detail-section-head">
+              <div><small>СОСТАВ</small><h2>Что входит в комплект</h2></div>
+              <p>Снимите галочку, если товар не нужен. Количество и замену можно изменить прямо здесь.</p>
             </header>
 
-            <div className="constructor-role-list">
-              {groups.map(({ role, options }, index) => {
-                const current = options.find((option) => option.offer_id === selected[role]) ?? options.find((option) => option.type === "Основной") ?? options[0];
-                if (!current) return null;
-                const catalog = catalogIndex.get(String(current.offer_id));
+            <div className="solution-product-list">
+              {selectedRows.map(({ role, row, enabled: isEnabled, quantity: q, options }) => {
+                const catalog = catalogIndex.get(String(row.offer_id));
                 const image = catalog?.primary_image_url;
-                const isEnabled = enabled[role] !== false;
-                const hasMain = options.some((option) => option.type === "Основной");
                 const hasAlternatives = options.length > 1;
-                const q = quantity[role] || 1;
-                return <article className={`constructor-role ${isEnabled ? "active" : "inactive"}`} key={role}>
-                  <div className="constructor-role-number">{String(index + 1).padStart(2, "0")}</div>
-                  <button className="constructor-role-image" onClick={() => setGalleryOffer(current.offer_id)} aria-label={`Открыть изображения ${current.product_name}`}>
-                    {image ? <RemoteImage src={image} alt={current.product_name}/> : <span className="constructor-image-fallback">Фото товара</span>}
-                  </button>
-                  <div className="constructor-role-copy">
-                    <div className="constructor-role-heading">
-                      <div><p>{role}</p><h3>{current.product_name}</h3></div>
-                      {hasMain
-                        ? <span className="constructor-core-badge">ОСНОВА РЕШЕНИЯ</span>
-                        : <button className={`constructor-inclusion ${isEnabled ? "active" : ""}`} onClick={() => setEnabled((state) => ({ ...state, [role]: !isEnabled }))}>{isEnabled ? "ПО ЖЕЛАНИЮ ✓" : "+ ДОБАВИТЬ"}</button>}
+                return (
+                  <article className={`solution-product-row ${isEnabled ? "selected" : "disabled"}`} key={role}>
+                    <label className="solution-product-check" aria-label={isEnabled ? `Убрать ${row.product_name}` : `Добавить ${row.product_name}`}>
+                      <input type="checkbox" checked={isEnabled} onChange={(event) => setEnabled((state) => ({ ...state, [role]: event.target.checked }))}/>
+                      <span/>
+                    </label>
+                    <div className="solution-product-image">
+                      {image ? <RemoteImage src={image} alt={row.product_name}/> : <span>Фото</span>}
                     </div>
-                    <div className="constructor-product-facts">
-                      {current.material && <span>{current.material}</span>}
-                      {current.color && <span>Цвет: {current.color}</span>}
-                      <span>Арт. {current.offer_id}</span>
-                    </div>
-                    {current.note && <p className="constructor-note"><span className="constructor-note-mark">Стилист</span>{current.note}</p>}
-                    <div className="constructor-role-bottom">
-                      <div className="constructor-price">{toPrice(current.price_rub) ? formatRub(toPrice(current.price_rub)) : "Цена уточняется"}</div>
-                      <div className="constructor-qty" aria-label="Количество"><button onClick={() => setQuantity((state) => ({ ...state, [role]: Math.max(1, q - 1) }))}>−</button><span>{q}</span><button onClick={() => setQuantity((state) => ({ ...state, [role]: q + 1 }))}>+</button></div>
-                      {hasAlternatives && <button className="constructor-change" onClick={() => setExpandedRole(expandedRole === role ? null : role)}>{expandedRole === role ? "СКРЫТЬ ВАРИАНТЫ" : `ДРУГОЙ ВАРИАНТ · ${options.length - 1}`}</button>}
+                    <div className="solution-product-copy">
+                      <small>{role}</small>
+                      <h3>{row.product_name}</h3>
+                      <div className="solution-product-facts">
+                        {row.color && <span>Цвет: {row.color}</span>}
+                        {row.material && <span>{row.material}</span>}
+                        <span>Арт. {row.offer_id}</span>
+                      </div>
+                      <div className="solution-product-controls">
+                        <strong>{toPrice(row.price_rub) ? formatRub(toPrice(row.price_rub)) : "Цена уточняется"}</strong>
+                        {isEnabled && <div className="solution-product-qty"><button type="button" onClick={() => setQuantity((state) => ({ ...state, [role]: Math.max(1, q - 1) }))} aria-label="Уменьшить количество">−</button><span>{q}</span><button type="button" onClick={() => setQuantity((state) => ({ ...state, [role]: q + 1 }))} aria-label="Увеличить количество">+</button></div>}
+                        {hasAlternatives && <button className="solution-replace-button" type="button" onClick={() => setExpandedRole(expandedRole === role ? null : role)}>{expandedRole === role ? "СКРЫТЬ" : "ЗАМЕНИТЬ"}</button>}
+                      </div>
                     </div>
 
-                    {expandedRole === role && <div className="constructor-alternatives">
-                      {options.map((option) => {
+                    {expandedRole === role && <div className="solution-replacements">
+                      <p>Выберите другой вариант</p>
+                      <div>{options.map((option) => {
                         const optionCatalog = catalogIndex.get(String(option.offer_id));
                         const optionImage = optionCatalog?.primary_image_url;
-                        const picked = current.offer_id === option.offer_id;
-                        return <button key={option.offer_id} className={picked ? "selected" : ""} onClick={() => { setSelected((state) => ({ ...state, [role]: option.offer_id })); setEnabled((state) => ({ ...state, [role]: true })); setAdded(false); }}>
-                          <span className="constructor-alt-image">{optionImage ? <RemoteImage src={optionImage} alt={option.product_name}/> : <i/>}</span>
-                          <span className="constructor-alt-copy"><small>{option.type === "Основной" ? "ОСНОВНОЙ" : "АЛЬТЕРНАТИВА"}</small><strong>{option.product_name}</strong><em>{formatRub(toPrice(option.price_rub))}</em></span>
-                          <b>{picked ? "✓" : ""}</b>
+                        const active = option.offer_id === row.offer_id;
+                        return <button type="button" className={active ? "active" : ""} key={option.offer_id} onClick={() => { setSelected((state) => ({ ...state, [role]: option.offer_id })); setEnabled((state) => ({ ...state, [role]: true })); setExpandedRole(null); }}>
+                          <span className="solution-replacement-image">{optionImage ? <RemoteImage src={optionImage} alt={option.product_name}/> : <i>Фото</i>}</span>
+                          <span><b>{option.product_name}</b><small>{option.color || option.material || `Арт. ${option.offer_id}`}</small><strong>{toPrice(option.price_rub) ? formatRub(toPrice(option.price_rub)) : "Цена уточняется"}</strong></span>
                         </button>;
-                      })}
+                      })}</div>
                     </div>}
-                  </div>
-                </article>;
+                  </article>
+                );
               })}
             </div>
           </section>
 
-          <aside className="constructor-summary">
-            <p>ВАШЕ РЕШЕНИЕ</p>
+          <aside className="solution-purchase-card">
+            <small>ВАШ КОМПЛЕКТ</small>
             <h2>{summary.scenario_name}</h2>
-            <div className="constructor-summary-list">
-              {activeRows.map((item) => <div className="constructor-summary-item" key={item.role}><span>{item.row.product_name}<small>{item.quantity} шт.</small></span><b>{formatRub(toPrice(item.row.price_rub) * item.quantity)}</b></div>)}
-            </div>
-            <div className="constructor-summary-total">
-              <span>ИТОГО</span><strong>{formatRub(total)}</strong>
-              <small>{activeRows.length} позиций в выбранной сборке</small>
-              {savings > 0 && <small className="constructor-summary-savings">Экономия {formatRub(savings)}</small>}
-            </div>
-            <button className="constructor-primary" disabled={!activeRows.length || redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : `ДОБАВИТЬ РЕШЕНИЕ · ${formatRub(total)}`}</button>
-            <p className="constructor-summary-hint">Решение попадает в вашу обычную корзину — состав можно изменить до оформления заказа.</p>
-            {added && <div className="constructor-success"><b>Решение добавлено</b><span>Переходим в корзину…</span></div>}
+            <div className="solution-purchase-count"><span>Выбрано</span><b>{activeRows.length} из {selectedRows.length}</b></div>
+            <div className="solution-purchase-total"><span>ИТОГО</span><strong>{formatRub(total)}</strong></div>
+            <button type="button" disabled={!activeRows.length || redirecting} onClick={addSolution}>{redirecting ? "ДОБАВЛЯЕМ…" : "ДОБАВИТЬ КОМПЛЕКТ В КОРЗИНУ"}</button>
+            <p>Все выбранные товары попадут в обычную корзину отдельными позициями.</p>
           </aside>
         </div>
       </div>
-
-      {galleryRow && galleryImages.length > 0 && <div className="constructor-overlay center" role="dialog" aria-modal="true" aria-label={`Галерея ${galleryRow.product_name}`}>
-        <button className="constructor-overlay-bg" onClick={() => setGalleryOffer(null)} aria-label="Закрыть"/>
-        <div className="constructor-modal constructor-gallery-modal">
-          <div className="constructor-panel-head"><div><p className="constructor-kicker">{galleryRow.role}</p><h2>{galleryRow.product_name}</h2></div><button className="constructor-panel-close" onClick={() => setGalleryOffer(null)}>×</button></div>
-          <div className="constructor-gallery-grid">{galleryImages.map((image, index) => <div key={`${image}-${index}`}><RemoteImage src={image} alt={`${galleryRow.product_name}, фото ${index + 1}`}/></div>)}</div>
-        </div>
-      </div>}
     </main>
   );
 }
