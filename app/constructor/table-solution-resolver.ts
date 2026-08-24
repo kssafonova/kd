@@ -32,10 +32,16 @@ const rowMatchesSolution = (row: CatalogRow, solution: TableSolution) => {
 
 const baseProductName = (row: CatalogRow) => normalizeSolutionValue(String(row.product_name || "").split(":")[0]);
 
+/**
+ * Product identity intentionally prefers the catalog-facing product name over
+ * group_id: the source feed may store different colours as separate 1C groups.
+ * This lets one storefront product contain all colour/size variants.
+ */
 export const logicalProductKey = (row: CatalogRow) => {
+  const name = baseProductName(row);
+  if (name) return `name:${name}`;
   const group = String(row.group_id || "").trim();
-  if (group) return `group:${group}`;
-  return `name:${baseProductName(row)}`;
+  return group ? `group:${group}` : `offer:${row.offer_id}`;
 };
 
 /** All matching CSV rows, including color and size variants. */
