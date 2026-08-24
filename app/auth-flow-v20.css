@@ -1,0 +1,219 @@
+/* Auth flow V20 — passwordless phone/email login + registration */
+.overlay:has(.auth-v20) .overlay-bg{
+  background:rgba(18,22,21,.42)!important;
+  backdrop-filter:blur(2px);
+}
+
+.side-panel.account.auth-v20{
+  width:min(520px,94vw)!important;
+  max-width:520px!important;
+  height:100dvh!important;
+  padding:0 42px 42px!important;
+  background:#fff!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  box-shadow:-24px 0 70px rgba(20,24,22,.12);
+}
+.auth-v20>.close{
+  position:sticky!important;
+  z-index:8!important;
+  top:18px!important;
+  margin-left:auto!important;
+  right:auto!important;
+  width:44px!important;
+  height:44px!important;
+  display:grid!important;
+  place-items:center!important;
+  background:#fff!important;
+  border:1px solid #e9e9e5!important;
+  border-radius:50%!important;
+}
+.auth-v20>.close svg{width:19px!important;height:19px!important}
+.auth-v20>p{
+  margin:2px 58px 46px 0!important;
+  color:#6f716d!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+  letter-spacing:.16em!important;
+}
+
+.auth-flow,.auth-profile{max-width:430px;margin:0 auto}
+.auth-flow>small,.auth-profile>small{
+  display:block;
+  margin:0 0 12px;
+  color:#7c7e79;
+  font-size:8px;
+  letter-spacing:.16em;
+}
+.auth-flow>h2,.auth-profile>h2{
+  margin:0!important;
+  color:#191b1a!important;
+  font:400 34px/1.08 var(--serif,"Tenor Sans",Arial,sans-serif)!important;
+  letter-spacing:-.025em!important;
+}
+.auth-flow>span,.auth-profile>span{
+  display:block!important;
+  margin:14px 0 28px!important;
+  color:#777974!important;
+  font-size:11px!important;
+  line-height:1.65!important;
+}
+.auth-flow>span b{color:#333532;font-weight:400;word-break:break-word}
+
+.auth-methods{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  margin:0 0 24px;
+  border-bottom:1px solid #dcded9;
+}
+.auth-methods button{
+  position:relative;
+  min-height:46px;
+  padding:0 8px;
+  color:#8a8c87;
+  font-size:10px;
+  letter-spacing:.06em;
+}
+.auth-methods button.active{color:#1d1f1e}
+.auth-methods button.active::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-1px;
+  height:1px;
+  background:#40565b;
+}
+
+.auth-field{
+  display:block!important;
+  margin:0 0 16px!important;
+  color:#70726e!important;
+  font-size:9px!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase;
+}
+.auth-field>span{display:block;margin-bottom:7px}
+.auth-v20 .auth-field input,
+.auth-v20 .auth-register-fields input{
+  display:block!important;
+  width:100%!important;
+  height:52px!important;
+  margin:0!important;
+  padding:0 14px!important;
+  border:1px solid #dfe0dc!important;
+  border-radius:0!important;
+  background:#fff!important;
+  color:#1c1e1d!important;
+  outline:none!important;
+  font-size:13px!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+.auth-v20 .auth-field input:focus{border-color:#40565b!important}
+.auth-v20 .auth-field input::placeholder{color:#a2a39f}
+.auth-code-field input{
+  height:64px!important;
+  text-align:center!important;
+  font-size:24px!important;
+  letter-spacing:.4em!important;
+  padding-left:calc(14px + .4em)!important;
+}
+
+.auth-primary{
+  min-height:54px!important;
+  margin-top:8px!important;
+  background:#40565b!important;
+  color:#fff!important;
+  border:0!important;
+  font-size:9px!important;
+  letter-spacing:.12em!important;
+}
+.auth-primary:hover{background:#344a4f!important}
+.auth-primary:disabled{
+  opacity:1!important;
+  background:#d9dddc!important;
+  color:#8a8c88!important;
+  cursor:default!important;
+}
+.auth-legal,.auth-demo-note{
+  margin:15px 0 0!important;
+  color:#9a9b97!important;
+  font-size:8px!important;
+  line-height:1.55!important;
+  text-align:center!important;
+}
+.auth-demo-note{
+  padding:9px 12px!important;
+  background:#f4f5f3!important;
+  color:#6d716d!important;
+}
+.auth-back{
+  display:block;
+  margin:0 0 24px;
+  padding:0;
+  color:#5f625e;
+  font-size:9px;
+  letter-spacing:.06em;
+}
+.auth-resend,.auth-logout{
+  width:100%!important;
+  min-height:48px!important;
+  padding:14px 0!important;
+  color:#40565b!important;
+  font-size:9px!important;
+  letter-spacing:.1em!important;
+  text-decoration:none!important;
+}
+
+.auth-register-fields{display:grid;gap:0}
+
+/* Existing profile fields inside the new account surface */
+.auth-v20 .account-fields{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:24px;
+}
+.auth-v20 .account-fields input{
+  width:100%!important;
+  height:48px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  border:1px solid #e0e1dd!important;
+  background:#fff!important;
+  font-size:11px!important;
+}
+.auth-v20 .account-fields input:nth-child(5),
+.auth-v20 .account-fields input:nth-child(6){grid-column:1/-1}
+
+@media(max-width:700px){
+  .overlay:has(.auth-v20){align-items:stretch!important}
+  .side-panel.account.auth-v20{
+    width:100vw!important;
+    max-width:none!important;
+    height:100dvh!important;
+    margin:0!important;
+    padding:0 18px 32px!important;
+    animation:none!important;
+    box-shadow:none!important;
+  }
+  .auth-v20>.close{
+    top:10px!important;
+    width:40px!important;
+    height:40px!important;
+    border-color:transparent!important;
+  }
+  .auth-v20>p{margin:0 48px 42px 0!important;padding-top:1px!important;font-size:8px!important}
+  .auth-flow,.auth-profile{max-width:none}
+  .auth-flow>h2,.auth-profile>h2{font-size:29px!important}
+  .auth-flow>span,.auth-profile>span{font-size:10px!important;margin:12px 0 24px!important}
+  .auth-methods{margin-bottom:20px}
+  .auth-methods button{min-height:48px;font-size:9px}
+  .auth-v20 .auth-field input,.auth-v20 .auth-register-fields input{height:52px!important;font-size:13px!important}
+  .auth-code-field input{height:62px!important;font-size:23px!important}
+  .auth-primary{min-height:56px!important}
+  .auth-v20 .account-fields{grid-template-columns:1fr;gap:10px}
+  .auth-v20 .account-fields input:nth-child(5),.auth-v20 .account-fields input:nth-child(6){grid-column:auto}
+}
