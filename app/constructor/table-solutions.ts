@@ -107,14 +107,13 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     scrollFile: "",
     collections: ["Ледяные узоры", "Лунная сказка", "Нити Времени"],
 
-    // Exact real products from the constructor CSV that are mixed with the
-    // custom GitHub storefront assortment below. Broad collection matching is
-    // intentionally disabled so unrelated tableware does not enter the scene.
+    // Final approved CSV additions for the Winter Fairy Tale scenario.
+    // Broad collection matching remains disabled so only these exact catalog
+    // items are mixed with the GitHub storefront products below.
     productNames: [
       "Комплект постельного белья Нити времени",
       "Подушка декоративная Бархат",
       "Подушка декоративная Узоры",
-      "Подушка декоративная Нити времени",
       "Ваза Айсберг",
       "Ваза Паскаль",
       "Диффузор Зимняя сказка",
@@ -124,13 +123,12 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
       "Свеча Корона высокая, аромат Нежность",
       "Свеча Корона высокая, без аромата",
       "Свеча Корона малая, аромат Серебряный мускус",
-      "Свеча Корона малая, аромат Золотой цветок",
       "Свеча Корона малая, без аромата",
     ],
     includeCollectionProducts: false,
 
-    // Exact products previously added to app/catalog-data.ts and GitHub media.
-    // Their local photos, sizes and colour variants remain authoritative.
+    // Exact products previously added to app/catalog-data.ts and GitHub media:
+    // Лунная сказка, Ледяные узоры, кружево and Бархатный ритм.
     githubProductIds: [4, 2003, 6, 7, 2000, 3],
   },
 ] as const;
