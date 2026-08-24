@@ -1,0 +1,271 @@
+/* Global square image system V15
+   All product imagery and image-led content blocks render in a consistent 1:1 frame.
+   This file is intentionally imported last so legacy card, PDP, modal and constructor
+   ratios cannot override the square media system. */
+
+:root{--site-media-ratio:1/1}
+
+/* --------------------------------------------------------------------------
+   Product cards, rails and product media used across homepage/catalog/search.
+   -------------------------------------------------------------------------- */
+.product-card .product-image,
+.product-image .product-media-scroll,
+.home-product-rail .product-image,
+.recommendation-product-rail .product-image,
+.post-rich-recommendations .product-image{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+  overflow:hidden!important;
+}
+
+.product-image .product-media-scroll>img,
+.home-product-rail .product-media-scroll>img,
+.recommendation-product-rail .product-media-scroll>img,
+.post-rich-recommendations .product-media-scroll>img{
+  flex:0 0 100%!important;
+  width:100%!important;
+  min-width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+/* --------------------------------------------------------------------------
+   PDP gallery. Every photo is square on desktop and mobile; mobile remains swipeable.
+   -------------------------------------------------------------------------- */
+.product-page .thumbs button,
+.product-page .thumbs img{
+  aspect-ratio:var(--site-media-ratio)!important;
+}
+.product-page .thumbs button{
+  height:auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.product-page .thumbs img{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  object-fit:cover!important;
+}
+
+.pdp-main .pdp-product-media.vertical-media>img{
+  width:100%!important;
+  min-width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  background:#f2f0ef;
+}
+
+@media(max-width:900px){
+  .pdp-main .pdp-product-media.vertical-media{
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:var(--site-media-ratio)!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+  }
+  .pdp-main .pdp-product-media.vertical-media>img{
+    flex:0 0 100%!important;
+    width:100%!important;
+    min-width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    aspect-ratio:var(--site-media-ratio)!important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Quick add, size chooser and other commerce forms/drawers.
+   -------------------------------------------------------------------------- */
+.plp-modal-media,
+.plp-modal-media .product-media-scroll,
+.added-product-media,
+.cart-item-media,
+.checkout-item-media,
+.favorite-item-media,
+.search-item-media,
+.recent-item-media{
+  aspect-ratio:var(--site-media-ratio)!important;
+  height:auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+
+.plp-modal-media .product-media-scroll>img,
+.added-product-media img,
+.cart-item-media img,
+.checkout-item-media img,
+.favorite-item-media img,
+.search-item-media img,
+.recent-item-media img{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+/* --------------------------------------------------------------------------
+   Homepage image cards / visual blocks (hero intentionally stays editorial).
+   -------------------------------------------------------------------------- */
+.hv4-category-card>img,
+.hv4-solution-card>img{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+/* --------------------------------------------------------------------------
+   Collections, editorial story cards and shop-the-story blocks.
+   -------------------------------------------------------------------------- */
+.collection-grid article>button>img,
+.editorial-story-visual figure,
+.editorial-story-visual figure>img,
+.editorial-story-catalog-item .product-image,
+.luna-story-v2-media-grid>img,
+.story-v2-landing-gallery>img,
+.lookbook-shop-grid>button>img,
+.pdp-story-entry-media>img{
+  aspect-ratio:var(--site-media-ratio)!important;
+}
+
+.collection-grid article>button>img,
+.editorial-story-visual figure>img,
+.luna-story-v2-media-grid>img,
+.story-v2-landing-gallery>img,
+.lookbook-shop-grid>button>img,
+.pdp-story-entry-media>img{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+.editorial-story-visual figure{
+  height:auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+.editorial-story-visual figure>img{
+  height:100%!important;
+}
+
+/* --------------------------------------------------------------------------
+   Story / set-builder forms. Product thumbnails remain compact but square.
+   -------------------------------------------------------------------------- */
+.story-v2-product-row>img,
+.story-v2-quick-title>img,
+.story-v2-toggle-row>img,
+.story-v2-base-card>img,
+.story-v2-addon-media,
+.story-v2-addon-media>img,
+.story-v2-table-addon>img{
+  aspect-ratio:var(--site-media-ratio)!important;
+}
+
+.story-v2-product-row>img,
+.story-v2-quick-title>img,
+.story-v2-toggle-row>img,
+.story-v2-base-card>img,
+.story-v2-addon-media>img,
+.story-v2-table-addon>img{
+  height:auto!important;
+  min-height:0!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+.story-v2-addon-media{
+  overflow:hidden!important;
+}
+.story-v2-addon-media>img{
+  width:100%!important;
+  height:100%!important;
+}
+
+/* --------------------------------------------------------------------------
+   Constructor landing + all constructor forms, alternatives and gallery.
+   -------------------------------------------------------------------------- */
+.constructor-scenario-collage,
+.constructor-hero-collage{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+}
+
+.constructor-scenario-collage>div,
+.constructor-hero-collage>div,
+.constructor-role-image,
+.constructor-alt-image,
+.constructor-gallery-grid>div{
+  aspect-ratio:var(--site-media-ratio)!important;
+  height:auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+
+.constructor-scenario-collage img,
+.constructor-hero-collage img,
+.constructor-role-image img,
+.constructor-alt-image img,
+.constructor-gallery-grid img{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+.constructor-role-image{aspect-ratio:var(--site-media-ratio)!important}
+.constructor-alt-image{height:auto!important;aspect-ratio:var(--site-media-ratio)!important}
+
+/* Landing collage keeps three products but uses an overall square card. */
+.constructor-scenario-collage{
+  grid-template-columns:1fr 1fr!important;
+  grid-template-rows:1fr 1fr!important;
+}
+.constructor-scenario-collage>div:first-child{grid-row:1/3!important}
+
+/* Detail collage becomes a square mosaic without a viewport-height dependency. */
+.constructor-hero-collage{
+  grid-template-columns:2fr 1fr 1fr!important;
+  grid-template-rows:1fr 1fr!important;
+}
+
+/* Fallback placeholders follow the same geometry as real images. */
+.constructor-image-fallback{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  aspect-ratio:var(--site-media-ratio)!important;
+}
+
+/* --------------------------------------------------------------------------
+   Narrow screens: preserve 1:1 without restoring legacy fixed heights.
+   -------------------------------------------------------------------------- */
+@media(max-width:700px){
+  .product-card .product-image,
+  .product-image .product-media-scroll,
+  .plp-modal-media,
+  .plp-modal-media .product-media-scroll,
+  .constructor-scenario-collage,
+  .constructor-hero-collage{
+    aspect-ratio:var(--site-media-ratio)!important;
+    height:auto!important;
+    min-height:0!important;
+  }
+}
