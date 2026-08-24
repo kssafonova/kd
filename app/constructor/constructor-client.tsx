@@ -4,31 +4,12 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
 import { loadFinalConstructorData } from "./data-client";
-import { TABLE_SOLUTIONS, type TableSolution } from "./table-solutions";
-import type { CatalogRow, FinalConstructorData } from "./types";
+import { TABLE_SOLUTIONS } from "./table-solutions";
+import { resolveTableSolutionProducts } from "./table-solution-resolver";
+import type { FinalConstructorData } from "./types";
 
 const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
 const toPrice = (value: string | undefined) => Number(String(value || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
-const normalize = (value: string) => value.trim().toLocaleLowerCase("ru-RU").replace(/ё/g, "е").replace(/\s+/g, " ");
-
-const findProduct = (catalog: CatalogRow[], name: string) => {
-  const target = normalize(name);
-  return catalog.find((row) => normalize(row.product_name) === target);
-};
-
-const representativeRows = (catalog: CatalogRow[], solution: TableSolution) => {
-  const exact = solution.productNames
-    .map((name) => findProduct(catalog, name))
-    .filter((row): row is CatalogRow => Boolean(row));
-  if (exact.length) return exact;
-
-  const collectionNames = solution.collections.map(normalize);
-  return catalog.filter((row) => {
-    const collection = normalize(row.collection || "");
-    const product = normalize(row.product_name || "");
-    return collectionNames.some((name) => collection === name || product.includes(name));
-  });
-};
 
 export function ConstructorLanding() {
   const [data, setData] = useState<FinalConstructorData | null>(null);
@@ -46,14 +27,11 @@ export function ConstructorLanding() {
   const cards = useMemo(() => {
     if (!data) return [];
     return TABLE_SOLUTIONS.map((solution) => {
-      const rows = solution.productNames
-        .map((name) => findProduct(data.catalog, name))
-        .filter((row): row is CatalogRow => Boolean(row));
-      const mediaRows = representativeRows(data.catalog, solution);
+      const rows = resolveTableSolutionProducts(data.catalog, solution);
       return {
         ...solution,
         rows,
-        fallbackImage: mediaRows[0]?.primary_image_url || "/images/image-placeholder.svg",
+        fallbackImage: rows[0]?.primary_image_url || "/images/image-placeholder.svg",
         price: rows.reduce((sum, row) => sum + toPrice(row.price), 0),
       };
     });
@@ -76,7 +54,7 @@ export function ConstructorLanding() {
         <header className="solution-simple-heading table-solutions-heading">
           <small>ГОТОВЫЕ РЕШЕНИЯ</small>
           <h1>Решения для пространства</h1>
-          <p>Сценарии собраны по таблице: пространство, коллекции и заданный состав товаров. Там, где состав в источнике не указан, мы не подменяем его случайными товарами.</p>
+          <p>Для каждого решения автоматически собраны все товары из указанных коллекций, найденные в CSV-каталоге. Изображения, цены и характеристики берутся из тех же данных.</p>
         </header>
 
         {spaces.length > 2 && <div className="solution-simple-filters" role="tablist" aria-label="Пространство">
@@ -84,31 +62,29 @@ export function ConstructorLanding() {
         </div>}
 
         <section className="solution-simple-grid table-solution-grid" aria-label="Готовые решения">
-          {visible.map((card, index) => (
-            <Link className="solution-simple-card table-solution-card" href={`/constructor/${card.id}/`} key={card.id}>
-              <div className="solution-simple-card-media table-solution-card-media">
-                <RemoteImage
-                  src={`/images/ready-solutions/${card.previewFile}`}
-                  fallbackSrc={card.fallbackImage}
-                  alt={card.name}
-                  loading={index < 4 ? "eager" : "lazy"}
-                />
-                <span className="table-solution-number">{String(card.sourceId).padStart(2, "0")}</span>
-              </div>
-              <div className="solution-simple-card-copy table-solution-card-copy">
-                <small>{card.space}</small>
-                <h2>{card.name}</h2>
-                <div className="table-solution-collections" aria-label="Коллекции">
-                  {card.collections.map((collection) => <span key={collection}>{collection}</span>)}
+          {visible.map((card, index) => {
+            const source = card.previewFile ? `/images/constructor/${card.previewFile}` : card.fallbackImage;
+            return (
+              <Link className="solution-simple-card table-solution-card" href={`/constructor/${card.id}/`} key={card.id}>
+                <div className="solution-simple-card-media table-solution-card-media">
+                  <RemoteImage src={source} fallbackSrc={card.fallbackImage} alt={card.name} loading={index < 4 ? "eager" : "lazy"}/>
+                  <span className="table-solution-number">{String(card.sourceId).padStart(2, "0")}</span>
                 </div>
-                <div className="solution-simple-card-meta">
-                  <span>{card.productNames.length ? `${card.productNames.length} товаров` : "Состав уточняется"}</span>
-                  <strong>{card.price ? formatRub(card.price) : "—"}</strong>
+                <div className="solution-simple-card-copy table-solution-card-copy">
+                  <small>{card.space}</small>
+                  <h2>{card.name}</h2>
+                  {card.collections.length > 0 && <div className="table-solution-collections" aria-label="Коллекции">
+                    {card.collections.map((collection) => <span key={collection}>{collection}</span>)}
+                  </div>}
+                  <div className="solution-simple-card-meta">
+                    <span>{card.rows.length ? `${card.rows.length} товаров` : "Товары не найдены"}</span>
+                    <strong>{card.price ? formatRub(card.price) : "—"}</strong>
+                  </div>
+                  <span className="solution-simple-card-cta">СМОТРЕТЬ РЕШЕНИЕ <b>→</b></span>
                 </div>
-                <span className="solution-simple-card-cta">СМОТРЕТЬ РЕШЕНИЕ <b>→</b></span>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </section>
       </div>
     </main>
