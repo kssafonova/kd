@@ -1,4 +1,4 @@
-import type { ConstructorScenarioId } from "./scenarios";
+import type { LegacyConstructorScenarioId } from "./scenarios";
 
 /**
  * Canonical, commercially-facing space taxonomy for the storefront —
@@ -25,7 +25,7 @@ export type ScenarioCopy = {
  * There is no narrative field in the data source itself, so this is
  * authored copy grounded in the actual products each scenario contains.
  */
-export const SCENARIO_COPY: Record<ConstructorScenarioId, ScenarioCopy> = {
+export const SCENARIO_COPY: Record<LegacyConstructorScenarioId, ScenarioCopy> = {
   "retro-cabinet": {
     space: "Кабинет",
     mood: "Кожа, керамика цвета обожжённой глины и утро, которое не торопится.",
