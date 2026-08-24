@@ -1,0 +1,763 @@
+# Site build diagnostics
+
+migration=failure
+dependencies=success
+build=failure
+
+## Migration patches
+
+===== sync-workbook-product-specs.py =====
+exit=0
+Synced workbook product characteristics to PDP
+
+
+===== restore-quick-add-flow.py =====
+exit=0
+Restored previous quick-add navigation flow and desktop drawer dimensions
+
+
+===== add-remote-image-loader.py =====
+exit=0
+Remote URL image loader wired into storefront media
+
+
+===== sync-updated-product-image-urls.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-pdp-reference-gallery.py =====
+exit=0
+Applied reference-style PDP gallery: page-scroll desktop, sticky thumbnails, mobile swipe
+
+
+===== normalize-single-color-swatches.py =====
+exit=0
+Normalized product swatches: 1
+
+
+===== apply-story-builder-v2.py =====
+exit=1
+LunaEditorialView block not found
+
+
+===== refine-story-builder-v2.py =====
+exit=1
+Story quick-buy handler not found
+
+
+===== redesign-home-reference.py =====
+exit=0
+Applied screenshot-inspired homepage redesign
+
+
+===== add-home-bedroom-feature.py =====
+exit=0
+Added direct bedroom collection story links for Luna and Ice Patterns
+
+
+===== refine-homepage-editorial.py =====
+exit=0
+Refined homepage to the supplied editorial reference
+
+
+===== remove-editorial-tabs.py =====
+exit=1
+CollectionsView block not found
+
+
+===== add-editorial-scenario-navigation.py =====
+exit=1
+CollectionsView boundaries were not found
+
+
+===== add-constructor-home-cta.py =====
+exit=0
+Added constructor CTA to homepage
+
+
+===== apply-product-catalog-rules-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-catalog-category-mapping.py =====
+exit=0
+Applied strict catalog category mapping
+
+
+===== apply-product-pricing-merchandising-v1.py =====
+exit=0
+Applied product pricing, sale presentation and handmade badges
+
+
+===== apply-pdp-collection-recommendations-v1.py =====
+exit=0
+Applied shared collection and complementary recommendation logic; recently viewed stays in empty cart
+
+
+===== highlight-menu-solutions-v1.py =====
+exit=0
+Applied Zara Home premium navigation menu
+
+
+===== remove-retired-editorials-v1.py =====
+exit=0
+Removed retired Editorial capsules/collections and their named promo slides
+
+
+===== refine-editorial-tabs-v1.py =====
+exit=0
+Skipped legacy Editorial tab refinement: fullscreen story overlay already owns CollectionsView
+
+
+===== add-ice-pattern-products-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== fix-ice-pattern-2000-2004-types.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-product-preview-rules-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== add-editorial-story-overlay-v1.py =====
+exit=1
+Could not locate CollectionsView block
+
+
+===== redesign-home-magazine-v2.py =====
+exit=0
+Applied final editorial magazine homepage redesign
+
+
+===== redesign-home-commerce-v3.py =====
+exit=0
+Applied premium conversion-focused homepage V3
+
+
+===== redesign-home-v4.py =====
+exit=0
+Applied clean white homepage V5 reference redesign
+
+
+===== merge-home-traditions-collections-v1.py =====
+exit=0
+Merged traditions with white shoppable collection product rail, controls and Editorial CTA
+
+
+===== refine-home-v7.py =====
+exit=0
+Refined homepage V7: square category cards and compact header grouping
+
+
+===== refine-home-v8.py =====
+exit=0
+Refined homepage V8: smaller hero, catalog-style favorite and subtle 15s story player
+
+
+===== refine-home-v9.py =====
+exit=0
+Refined homepage V9: full-screen commercial hero, interaction-aware slider and responsive ecommerce behavior
+
+
+===== refine-home-togas-v10.py =====
+exit=0
+Applied TOGAS-inspired homepage V10 structure and copy
+
+
+===== refine-home-ux-v11.py =====
+exit=0
+Homepage UX V11 patch applied
+
+
+===== refine-home-v11-video.py =====
+exit=0
+Homepage V11: responsive desktop/mobile video replaces CSS motion story
+
+
+===== add-mobile-gift-wrap-flow-v1.py =====
+exit=0
+Applied unified post-add flow with gift wrapping and complementary products
+
+
+===== refine-cart-controls-v19.py =====
+exit=0
+Cart controls V19 already applied
+
+
+===== apply-auth-flow-v20.py =====
+exit=0
+Auth flow V20 already applied
+
+
+===== redesign-collections-v23.py =====
+exit=0
+Collections redesign V23 already applied
+
+
+## npm install
+npm warn deprecated tsconfck@3.1.6: unmaintained
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
+
+added 513 packages in 15s
+
+## Next build
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 16 errors:
+./app/constructor/table-solution-client.tsx:10:1
+Export SOLUTION_PRESETS doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export SOLUTION_PRESETS was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import optionSizes?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export SOLUTION_PRESETS doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export SOLUTION_PRESETS was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import optionSizes?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/constructor-client.tsx:9:1
+Export buildSolutionGroups doesn't exist in target module
+  [90m 7 |[0m [36mimport[0m { [33mTABLE_SOLUTIONS[0m } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 8 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m16 |[0m
+  [90m17 |[0m [36mconst[0m formatRub = (value: number) => [32m`[0m${[36mnew[0m [33mIntl[0m.[33mNumberFormat[0m([32m"ru-RU"[0m).format(value)[32m} ₽`[0m;
+
+The export buildSolutionGroups was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import buildSolutionCategories?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/constructor-client.tsx
+    ./app/constructor/page.tsx
+
+
+./app/constructor/constructor-client.tsx:9:1
+Export buildSolutionGroups doesn't exist in target module
+  [90m 7 |[0m [36mimport[0m { [33mTABLE_SOLUTIONS[0m } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 8 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m16 |[0m
+  [90m17 |[0m [36mconst[0m formatRub = (value: number) => [32m`[0m${[36mnew[0m [33mIntl[0m.[33mNumberFormat[0m([32m"ru-RU"[0m).format(value)[32m} ₽`[0m;
+
+The export buildSolutionGroups was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import buildSolutionCategories?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/constructor-client.tsx
+    ./app/constructor/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export buildSolutionGroups doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export buildSolutionGroups was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import buildSolutionCategories?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export buildSolutionGroups doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export buildSolutionGroups was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import buildSolutionCategories?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export isPerPersonProduct doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export isPerPersonProduct was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import buildSolutionCategories?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export isPerPersonProduct doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export isPerPersonProduct was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import buildSolutionCategories?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/constructor-client.tsx:9:1
+Export recommendedProductQuantity doesn't exist in target module
+  [90m 7 |[0m [36mimport[0m { [33mTABLE_SOLUTIONS[0m } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 8 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m16 |[0m
+  [90m17 |[0m [36mconst[0m formatRub = (value: number) => [32m`[0m${[36mnew[0m [33mIntl[0m.[33mNumberFormat[0m([32m"ru-RU"[0m).format(value)[32m} ₽`[0m;
+
+The export recommendedProductQuantity was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import recommendedSlotQuantity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/constructor-client.tsx
+    ./app/constructor/page.tsx
+
+
+./app/constructor/constructor-client.tsx:9:1
+Export recommendedProductQuantity doesn't exist in target module
+  [90m 7 |[0m [36mimport[0m { [33mTABLE_SOLUTIONS[0m } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 8 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m16 |[0m
+  [90m17 |[0m [36mconst[0m formatRub = (value: number) => [32m`[0m${[36mnew[0m [33mIntl[0m.[33mNumberFormat[0m([32m"ru-RU"[0m).format(value)[32m} ₽`[0m;
+
+The export recommendedProductQuantity was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import recommendedSlotQuantity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/constructor-client.tsx
+    ./app/constructor/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export recommendedProductQuantity doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export recommendedProductQuantity was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import recommendedSlotQuantity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export recommendedProductQuantity doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export recommendedProductQuantity was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import recommendedSlotQuantity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/constructor-client.tsx:9:1
+Export selectionForPreset doesn't exist in target module
+  [90m 7 |[0m [36mimport[0m { [33mTABLE_SOLUTIONS[0m } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 8 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m16 |[0m
+  [90m17 |[0m [36mconst[0m formatRub = (value: number) => [32m`[0m${[36mnew[0m [33mIntl[0m.[33mNumberFormat[0m([32m"ru-RU"[0m).format(value)[32m} ₽`[0m;
+
+The export selectionForPreset was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import optionColors?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/constructor-client.tsx
+    ./app/constructor/page.tsx
+
+
+./app/constructor/constructor-client.tsx:9:1
+Export selectionForPreset doesn't exist in target module
+  [90m 7 |[0m [36mimport[0m { [33mTABLE_SOLUTIONS[0m } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 8 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m16 |[0m
+  [90m17 |[0m [36mconst[0m formatRub = (value: number) => [32m`[0m${[36mnew[0m [33mIntl[0m.[33mNumberFormat[0m([32m"ru-RU"[0m).format(value)[32m} ₽`[0m;
+
+The export selectionForPreset was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import optionColors?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/constructor-client.tsx
+    ./app/constructor/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export selectionForPreset doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export selectionForPreset was not found in module [project]/app/constructor/table-solution-builder.ts [app-client] (ecmascript).
+Did you mean to import optionColors?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+./app/constructor/table-solution-client.tsx:10:1
+Export selectionForPreset doesn't exist in target module
+  [90m 8 |[0m [36mimport[0m { findTableSolution } [36mfrom[0m [32m"./table-solutions"[0m;
+  [90m 9 |[0m [36mimport[0m { resolveTableSolutionProducts } [36mfrom[0m [32m"./table-solution-resolver"[0m;
+[31m[1m>[0m [90m10 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mSOLUTION_PRESETS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   buildSolutionGroups,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   deriveGuestOptions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   isPerPersonProduct,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   recommendedProductQuantity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   selectionForPreset,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [36mtype[0m [33mSolutionPreset[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m } [36mfrom[0m [32m"./table-solution-builder"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m19 |[0m [36mimport[0m [36mtype[0m { [33mCatalogRow[0m, [33mConstructorData[0m, [33mFinalConstructorData[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m20 |[0m
+  [90m21 |[0m [36mconst[0m [33mCART_STORAGE_KEY[0m = [32m"kultura-cart"[0m;
+
+The export selectionForPreset was not found in module [project]/app/constructor/table-solution-builder.ts [app-ssr] (ecmascript).
+Did you mean to import optionColors?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./app/constructor/table-solution-client.tsx
+    ./app/constructor/[scenarioId]/page.tsx
+
+
+    at <unknown> (./app/constructor/table-solution-client.tsx:10:1)
+    at <unknown> (./app/constructor/table-solution-client.tsx:10:1)
+    at <unknown> (./app/constructor/constructor-client.tsx:9:1)
+    at <unknown> (./app/constructor/constructor-client.tsx:9:1)
+    at <unknown> (./app/constructor/table-solution-client.tsx:10:1)
+    ... collapsed 3 duplicate lines matching above 1 lines 3 times...
+    at <unknown> (./app/constructor/constructor-client.tsx:9:1)
+    at <unknown> (./app/constructor/constructor-client.tsx:9:1)
+    at <unknown> (./app/constructor/table-solution-client.tsx:10:1)
+    at <unknown> (./app/constructor/table-solution-client.tsx:10:1)
+    at <unknown> (./app/constructor/constructor-client.tsx:9:1)
+    at <unknown> (./app/constructor/constructor-client.tsx:9:1)
+    at <unknown> (./app/constructor/table-solution-client.tsx:10:1)
+    at <unknown> (./app/constructor/table-solution-client.tsx:10:1)
+
