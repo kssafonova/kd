@@ -1,0 +1,12 @@
+/* Keep account identity controls separate from delivery address book. */
+.auth-profile.profile-book-enhanced{
+  display:flex;
+  flex-direction:column;
+}
+.auth-profile.profile-book-enhanced>small{order:1}
+.auth-profile.profile-book-enhanced>h2{order:2}
+.auth-profile.profile-book-enhanced>span{order:3}
+.auth-profile.profile-book-enhanced>.account-fields{order:4}
+.auth-profile.profile-book-enhanced>.auth-primary{order:5}
+.auth-profile.profile-book-enhanced>.profile-address-book{order:6}
+.auth-profile.profile-book-enhanced>.auth-logout{order:7}
