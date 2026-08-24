@@ -327,3 +327,14 @@
   .view-home .favorite-header{display:none!important}
   .view-home .logo{font-size:16px!important}
 }
+
+/* ---------- Choose size CTA ---------- */
+.primary.total-cta.choose-size-disabled,
+.primary.purchase-cta.total-cta.needs-size,
+.story-v2-sheet-footer .story-v2-primary:disabled,
+.story-v2-builder-nav .story-v2-primary.compact:disabled{
+  background:#40565bbd!important;
+  border-color:#40565bbd!important;
+  color:#fff!important;
+  opacity:1!important;
+}
