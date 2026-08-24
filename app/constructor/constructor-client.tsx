@@ -23,7 +23,7 @@ const defaultRows = (rows: FinalScenarioVariantRow[]) => {
   const groups = new Map<string, FinalScenarioVariantRow[]>();
   rows.forEach((row) => groups.set(row.role, [...(groups.get(row.role) ?? []), row]));
   return Array.from(groups.values())
-    .map((group) => group.find((row) => row.type === "Основной"))
+    .map((group) => group.find((row) => row.type === "Основной") ?? group[0])
     .filter((row): row is FinalScenarioVariantRow => Boolean(row));
 };
 
@@ -36,7 +36,7 @@ export function ConstructorLanding() {
     let active = true;
     loadFinalConstructorData()
       .then((loaded) => active && setData(loaded))
-      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Не удалось загрузить сценарии"));
+      .catch((reason: unknown) => active && setError(reason instanceof Error ? reason.message : "Не удалось загрузить решения"));
     return () => { active = false; };
   }, []);
 
@@ -48,34 +48,23 @@ export function ConstructorLanding() {
       if (!summary) return null;
       const rows = data.variants.filter((row) => row.scenario_name === summary.scenario_name);
       const defaults = defaultRows(rows);
-      const images = Array.from(new Set(defaults
+      const image = defaults
         .map((row) => imageIndex.get(String(row.offer_id))?.primary_image_url)
-        .filter((value): value is string => Boolean(value)))).slice(0, 3);
+        .find((value): value is string => Boolean(value)) ?? "";
       const price = defaults.reduce((sum, row) => sum + toPrice(row.price_rub), 0);
-      const savings = defaults.reduce((sum, row) => {
-        const oldPrice = toPrice(imageIndex.get(String(row.offer_id))?.old_price);
-        const rowPrice = toPrice(row.price_rub);
-        return oldPrice > rowPrice ? sum + (oldPrice - rowPrice) : sum;
-      }, 0);
       const copy = isConstructorScenarioId(scenarioId) ? SCENARIO_COPY[scenarioId] : undefined;
       return {
         id: scenarioId,
         name: summary.scenario_name,
-        space: copy?.space ?? "",
+        space: copy?.space ?? summary.space ?? "",
         occasion: summary.occasion,
-        mood: copy?.mood ?? "",
-        images,
+        image,
         price,
-        savings,
-        roles: new Set(rows.map((row) => row.role)).size,
-        alternatives: rows.filter((row) => row.type === "Альтернатива").length,
+        items: defaults.length,
       };
-    }).filter(Boolean) as Array<{id:string;name:string;space:string;occasion:string;mood:string;images:string[];price:number;savings:number;roles:number;alternatives:number}>;
+    }).filter(Boolean) as Array<{id:string;name:string;space:string;occasion:string;image:string;price:number;items:number}>;
   }, [data]);
 
-  // Only offer a filter tab for a space that at least one live scenario
-  // actually belongs to — "Гостиная"/"Ванная" join automatically the day a
-  // scenario is added there, no empty dead-end tabs in the meantime.
   const spaces = useMemo(() => {
     const present = new Set(cards.map((card) => card.space));
     return ["Все", ...SPACE_TAXONOMY.filter((label) => present.has(label))];
@@ -83,52 +72,41 @@ export function ConstructorLanding() {
 
   const visible = cards.filter((card) => space === "Все" || card.space === space);
 
-  if (error) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty"><h1>Не удалось загрузить сценарии</h1><p>{error}</p></div></main>;
-  if (!data) return <main className="constructor-shell"><div className="constructor-wrap constructor-empty">Загружаем готовые решения…</div></main>;
+  if (error) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty"><h1>Не удалось загрузить готовые решения</h1><p>{error}</p></div></main>;
+  if (!data) return <main className="solution-simple-shell"><div className="solution-simple-wrap solution-simple-empty">Загружаем готовые решения…</div></main>;
 
   return (
-    <main className="constructor-shell constructor-landing">
-      <div className="constructor-wrap">
-        <nav className="constructor-topline">
-          <Link className="constructor-back" href="/">КУЛЬТУРА ДОМА</Link>
+    <main className="solution-simple-shell">
+      <div className="solution-simple-wrap">
+        <nav className="solution-simple-topbar">
+          <Link href="/">КУЛЬТУРА ДОМА</Link>
           <span>ГОТОВЫЕ РЕШЕНИЯ</span>
         </nav>
 
-        <header className="constructor-landing-head">
-          <p className="constructor-kicker">EDITORIAL · ГОТОВЫЕ РЕШЕНИЯ</p>
-          <h1 className="constructor-title">Соберите атмосферу дома</h1>
-          <p className="constructor-lead">Каждое решение — реальная сервировка или спальный сценарий, собранный куратором. Оставьте состав как есть или замените отдельные предметы на совместимые альтернативы.</p>
+        <header className="solution-simple-heading">
+          <small>ГОТОВЫЕ КОМПЛЕКТЫ</small>
+          <h1>Выберите готовое решение</h1>
+          <p>Мы уже собрали совместимые предметы. Откройте комплект, при необходимости измените состав и добавьте всё в корзину одним действием.</p>
         </header>
 
-        <div className="constructor-filter" role="tablist" aria-label="Фильтр по пространству">
-          {spaces.map((item) => <button key={item} className={space === item ? "active" : ""} onClick={() => setSpace(item)}>{item.toUpperCase()}</button>)}
-        </div>
+        {spaces.length > 2 && <div className="solution-simple-filters" role="tablist" aria-label="Пространство">
+          {spaces.map((item) => <button key={item} className={space === item ? "active" : ""} onClick={() => setSpace(item)}>{item}</button>)}
+        </div>}
 
-        <section className="constructor-scenario-grid" aria-label="Готовые решения">
+        <section className="solution-simple-grid" aria-label="Готовые решения">
           {visible.map((card, index) => (
-            <article className="constructor-scenario-card" key={card.id}>
-              <Link className="constructor-scenario-media" href={`/constructor/${card.id}/`} aria-label={`Открыть ${card.name}`}>
-                <div className="constructor-scenario-collage">
-                  {Array.from({ length: 3 }, (_, imageIndex) => {
-                    const image = card.images[imageIndex];
-                    return image ? <div key={image}><RemoteImage src={image} alt={`${card.name}: предмет ${imageIndex + 1}`} loading={index < 2 ? "eager" : "lazy"}/></div> : <div className="constructor-image-fallback" key={imageIndex}>Фото товара</div>;
-                  })}
-                </div>
-              </Link>
-              <div className="constructor-scenario-copy">
-                <div className="constructor-card-labels"><span>{card.space}</span><span>{card.occasion}</span></div>
-                <h2>{card.name}</h2>
-                {card.mood && <p className="constructor-card-mood">{card.mood}</p>}
-                <div className="constructor-scenario-meta">
-                  <div>
-                    <small>{card.roles} групп · {card.alternatives} альтернатив</small>
-                    <strong>{card.price ? `от ${formatRub(card.price)}` : "Цена уточняется"}</strong>
-                    {card.savings > 0 && <em className="constructor-card-savings">Экономия от {formatRub(card.savings)}</em>}
-                  </div>
-                  <Link className="constructor-primary-link" href={`/constructor/${card.id}/`}>СОБРАТЬ РЕШЕНИЕ <span>→</span></Link>
-                </div>
+            <Link className="solution-simple-card" href={`/constructor/${card.id}/`} key={card.id}>
+              <div className="solution-simple-card-media">
+                {card.image ? <RemoteImage src={card.image} alt={card.name} loading={index < 4 ? "eager" : "lazy"}/> : <span>Фото решения</span>}
               </div>
-            </article>
+              <div className="solution-simple-card-copy">
+                <small>{card.space}</small>
+                <h2>{card.name}</h2>
+                {card.occasion && <p>{card.occasion}</p>}
+                <div className="solution-simple-card-meta"><span>{card.items} товаров</span><strong>{card.price ? `от ${formatRub(card.price)}` : "Цена уточняется"}</strong></div>
+                <span className="solution-simple-card-cta">СМОТРЕТЬ КОМПЛЕКТ <b>→</b></span>
+              </div>
+            </Link>
           ))}
         </section>
       </div>
