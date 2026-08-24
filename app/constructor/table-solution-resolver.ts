@@ -23,10 +23,21 @@ const collectionOrder = (row: CatalogRow, targets: string[]) => {
 const rowMatchesSolution = (row: CatalogRow, solution: TableSolution) => {
   const collectionTargets = solution.collections.map(normalizeSolutionValue).filter(Boolean);
   const productTargets = solution.productNames.map(normalizeSolutionValue).filter(Boolean);
+  const typeTargets = (solution.allowedProductTypes || []).map(normalizeSolutionValue).filter(Boolean);
+
   const collection = normalizeSolutionValue(row.collection || "");
   const productName = normalizeSolutionValue(row.product_name || "");
-  const collectionMatch = collectionTargets.some((target) => matchesLoose(collection, target) || productName.includes(target));
+  const productType = normalizeSolutionValue(row.product_type || "");
+
+  const rawCollectionMatch = collectionTargets.some(
+    (target) => matchesLoose(collection, target) || productName.includes(target),
+  );
+  const typeMatch = !typeTargets.length || typeTargets.some((target) => matchesLoose(productType, target));
+  const collectionMatch = rawCollectionMatch && typeMatch;
   const explicitProductMatch = productTargets.some((target) => matchesLoose(productName, target));
+
+  // Explicit product names are always resolved against the real storefront
+  // catalog. The optional type filter applies only to broad collection pulls.
   return collectionMatch || explicitProductMatch;
 };
 
