@@ -5,13 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { RemoteImage } from "../remote-image";
 import { loadConstructorData, loadFinalConstructorData } from "./data-client";
 import { TABLE_SOLUTIONS } from "./table-solutions";
-import { resolveTableSolutionProducts } from "./table-solution-resolver";
-import {
-  buildSolutionGroups,
-  deriveGuestOptions,
-  recommendedProductQuantity,
-  selectionForPreset,
-} from "./table-solution-builder";
+import { resolveTableSolutionCatalogRows } from "./table-solution-resolver";
+import { buildSolutionCategories, deriveGuestOptions, pickOptionVariant, recommendedSlotQuantity } from "./table-solution-builder";
 import type { ConstructorData, FinalConstructorData } from "./types";
 
 const formatRub = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
@@ -26,10 +21,7 @@ export function ConstructorLanding() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([
-      loadFinalConstructorData(),
-      loadConstructorData().catch(() => null),
-    ])
+    Promise.all([loadFinalConstructorData(), loadConstructorData().catch(() => null)])
       .then(([loaded, rules]) => {
         if (!active) return;
         setData(loaded);
@@ -42,20 +34,25 @@ export function ConstructorLanding() {
   const cards = useMemo(() => {
     if (!data) return [];
     return TABLE_SOLUTIONS.map((solution) => {
-      const rows = resolveTableSolutionProducts(data.catalog, solution);
+      const catalogRows = resolveTableSolutionCatalogRows(data.catalog, solution);
       const guestOptions = deriveGuestOptions(solution, ruleData);
       const targetPeople = people && guestOptions.includes(people) ? people : guestOptions[0] || 1;
-      const groups = buildSolutionGroups(rows, solution.space);
-      const balanced = selectionForPreset(groups, "balanced");
-      const scenarioRows = rows.filter((row) => balanced.has(row.offer_id));
-      const price = scenarioRows.reduce((sum, row) => sum + toPrice(row.price) * recommendedProductQuantity(row, solution.space, targetPeople), 0);
+      const categories = buildSolutionCategories(catalogRows, solution.space);
+      const slots = categories.flatMap((category) => category.slots);
+      const defaultRows = slots.map((slot) => {
+        const option = slot.options[0];
+        const row = option ? pickOptionVariant(option) : undefined;
+        return row ? { row, quantity: recommendedSlotQuantity(slot, targetPeople) } : null;
+      }).filter((item): item is { row: NonNullable<typeof item> extends { row: infer R } ? R : never; quantity: number } => Boolean(item));
+      const price = defaultRows.reduce((sum, item) => sum + toPrice(item.row.price) * item.quantity, 0);
       return {
         ...solution,
-        rows,
-        scenarioRows,
+        catalogRows,
+        categories,
+        slots,
         guestOptions,
         targetPeople,
-        fallbackImage: rows[0]?.primary_image_url || "/images/image-placeholder.svg",
+        fallbackImage: catalogRows[0]?.primary_image_url || "/images/image-placeholder.svg",
         price,
       };
     });
@@ -79,15 +76,13 @@ export function ConstructorLanding() {
         <header className="solution-simple-heading table-solutions-heading">
           <small>ГОТОВЫЕ РЕШЕНИЯ</small>
           <h1>Соберите пространство под свой сценарий</h1>
-          <p>Выберите пространство и количество персон. Мы покажем подходящие решения, а внутри предложим базовую, оптимальную и полную комплектацию из реальных товаров каталога.</p>
+          <p>Выберите пространство и количество персон. Внутри каждого решения товары уже сгруппированы по типам: тарелки с тарелками, корзины с корзинами, чайные пары с чайными парами. Останется выбрать нужные предметы, коллекцию и цвет.</p>
         </header>
 
         <section className="table-solution-finder" aria-label="Подбор готового решения">
           <div className="table-solution-finder-block">
             <small>01 · ПРОСТРАНСТВО</small>
-            <div className="table-solution-finder-options">
-              {spaces.map((item) => <button type="button" key={item} className={space === item ? "active" : ""} onClick={() => setSpace(item)}>{item}</button>)}
-            </div>
+            <div className="table-solution-finder-options">{spaces.map((item) => <button type="button" key={item} className={space === item ? "active" : ""} onClick={() => setSpace(item)}>{item}</button>)}</div>
           </div>
           <div className="table-solution-finder-block">
             <small>02 · КОЛИЧЕСТВО ПЕРСОН</small>
@@ -107,29 +102,25 @@ export function ConstructorLanding() {
                 <div className="solution-simple-card-media table-solution-card-media">
                   <RemoteImage src={source} fallbackSrc={card.fallbackImage} alt={card.name} loading={index < 4 ? "eager" : "lazy"}/>
                   <span className="table-solution-number">{String(card.sourceId).padStart(2, "0")}</span>
-                  <span className="table-solution-card-scenario">ОПТИМАЛЬНЫЙ СЦЕНАРИЙ</span>
+                  <span className="table-solution-card-scenario">КОНСТРУКТОР</span>
                 </div>
                 <div className="solution-simple-card-copy table-solution-card-copy">
                   <small>{card.space}</small>
                   <h2>{card.name}</h2>
-                  <div className="table-solution-card-guests" aria-label="Количество персон">
-                    {card.guestOptions.map((value) => <span className={people === value ? "active" : ""} key={value}>{value} {value === 1 ? "персона" : value < 5 ? "персоны" : "персон"}</span>)}
-                  </div>
-                  {card.collections.length > 0 && <div className="table-solution-collections" aria-label="Коллекции">
-                    {card.collections.map((collection) => <span key={collection}>{collection}</span>)}
-                  </div>}
+                  <div className="table-solution-card-guests" aria-label="Количество персон">{card.guestOptions.map((value) => <span className={people === value ? "active" : ""} key={value}>{value} {value === 1 ? "персона" : value < 5 ? "персоны" : "персон"}</span>)}</div>
+                  {card.collections.length > 0 && <div className="table-solution-collections" aria-label="Коллекции">{card.collections.map((collection) => <span key={collection}>{collection}</span>)}</div>}
                   <div className="table-solution-finder-card-summary">
-                    <div><small>РЕКОМЕНДУЕМ</small><span>{card.scenarioRows.length} из {card.rows.length} товаров</span></div>
+                    <div><small>В КОНСТРУКТОРЕ</small><span>{card.categories.length} категорий · {card.slots.length} типов товаров</span></div>
                     <strong>{card.price ? `от ${formatRub(card.price)}` : "—"}</strong>
                   </div>
-                  <span className="solution-simple-card-cta">НАСТРОИТЬ РЕШЕНИЕ <b>→</b></span>
+                  <span className="solution-simple-card-cta">СОБРАТЬ РЕШЕНИЕ <b>→</b></span>
                 </div>
               </Link>
             );
           })}
         </section>
 
-        {visible.length === 0 && <section className="table-solution-finder-empty"><h2>Нет точного совпадения</h2><p>Измените количество персон или пространство — состав любого решения всё равно можно настроить вручную внутри конструктора.</p><button type="button" onClick={() => { setSpace("Все"); setPeople(0); }}>ПОКАЗАТЬ ВСЕ РЕШЕНИЯ</button></section>}
+        {visible.length === 0 && <section className="table-solution-finder-empty"><h2>Нет точного совпадения</h2><p>Измените количество персон или пространство — внутри любого решения состав можно настроить вручную.</p><button type="button" onClick={() => { setSpace("Все"); setPeople(0); }}>ПОКАЗАТЬ ВСЕ РЕШЕНИЯ</button></section>}
       </div>
     </main>
   );
