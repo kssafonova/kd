@@ -8,6 +8,13 @@ export type TableSolution = {
   scrollFile: string;
   collections: string[];
   productNames: string[];
+  /**
+   * Optional storefront catalog product types allowed for collection-based
+   * matching. Explicit productNames are still matched independently so a
+   * solution can add real catalog accessories that do not belong to a named
+   * collection.
+   */
+  allowedProductTypes?: string[];
 };
 
 export const TABLE_SOLUTIONS: readonly TableSolution[] = [
@@ -97,22 +104,24 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     previewFile: "",
     scrollFile: "",
     collections: ["Ледяные узоры", "Лунная сказка", "Нити Времени"],
+    // These are selectors for real storefront catalog accessories. Their
+    // image, price, variants and availability always come from the CSV feed.
     productNames: [
-      "Плед ледяные узоры",
-      "Подушка ледяные узоры",
-      "Плед из кружева",
-      "Подушка с кружевом",
-      "Подушка декоративная нити времени",
-      "Подушка декоративная узоры голубой",
-      "Подушка декоративная бархат голубой",
-      "Стёганое покрывало «Бархатный ритм»",
-      "Комплект постельного белья Голубая светлица",
-      "Комплект постельного белья Лунная сказка",
-      "Ваза Айсберг белый",
-      "Ваза Паскаль синий",
-      "Свеча Корона малая",
-      "Свеча Корона высокая",
+      "Ваза Айсберг",
+      "Ваза Паскаль",
+      "Свеча Корона",
       "Диффузор",
+    ],
+    // Collection matching is intentionally limited to the five source-table
+    // categories instead of pulling unrelated products from the collections.
+    allowedProductTypes: [
+      "bedding_set",
+      "duvet",
+      "sheet",
+      "pillowcase",
+      "throw",
+      "coverlet",
+      "decorative_pillow",
     ],
   },
 ] as const;
