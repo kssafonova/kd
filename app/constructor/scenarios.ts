@@ -9,10 +9,6 @@ export const LEGACY_CONSTRUCTOR_SCENARIO_IDS = [
 export const TABLE_SOLUTION_IDS = [
   "table-1",
   "table-2",
-  "table-3",
-  "table-4",
-  "table-5",
-  "table-6",
   "table-7",
 ] as const;
 
