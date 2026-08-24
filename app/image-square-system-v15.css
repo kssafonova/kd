@@ -116,7 +116,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   Homepage image cards / visual blocks (hero intentionally stays editorial).
+   Homepage image cards / visual blocks. The full-width editorial hero/video is
+   intentionally not treated as product media; all merchandising cards are square.
    -------------------------------------------------------------------------- */
 .hv4-category-card>img,
 .hv4-solution-card>img{
@@ -197,13 +198,19 @@
 
 /* --------------------------------------------------------------------------
    Constructor landing + all constructor forms, alternatives and gallery.
+   Each image tile is independently square; no legacy two-row image stretching.
    -------------------------------------------------------------------------- */
 .constructor-scenario-collage,
 .constructor-hero-collage{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:none!important;
+  grid-auto-rows:auto!important;
   width:100%!important;
   height:auto!important;
   min-height:0!important;
-  aspect-ratio:var(--site-media-ratio)!important;
+  aspect-ratio:auto!important;
+  gap:8px!important;
 }
 
 .constructor-scenario-collage>div,
@@ -211,10 +218,19 @@
 .constructor-role-image,
 .constructor-alt-image,
 .constructor-gallery-grid>div{
+  grid-row:auto!important;
+  grid-column:auto!important;
   aspect-ratio:var(--site-media-ratio)!important;
   height:auto!important;
   min-height:0!important;
   overflow:hidden!important;
+}
+
+.constructor-scenario-collage>div:first-child,
+.constructor-hero-collage>div:first-child,
+.constructor-hero-collage>div:nth-child(4){
+  grid-row:auto!important;
+  grid-column:auto!important;
 }
 
 .constructor-scenario-collage img,
@@ -233,19 +249,6 @@
 .constructor-role-image{aspect-ratio:var(--site-media-ratio)!important}
 .constructor-alt-image{height:auto!important;aspect-ratio:var(--site-media-ratio)!important}
 
-/* Landing collage keeps three products but uses an overall square card. */
-.constructor-scenario-collage{
-  grid-template-columns:1fr 1fr!important;
-  grid-template-rows:1fr 1fr!important;
-}
-.constructor-scenario-collage>div:first-child{grid-row:1/3!important}
-
-/* Detail collage becomes a square mosaic without a viewport-height dependency. */
-.constructor-hero-collage{
-  grid-template-columns:2fr 1fr 1fr!important;
-  grid-template-rows:1fr 1fr!important;
-}
-
 /* Fallback placeholders follow the same geometry as real images. */
 .constructor-image-fallback{
   width:100%!important;
@@ -261,10 +264,14 @@
   .product-card .product-image,
   .product-image .product-media-scroll,
   .plp-modal-media,
-  .plp-modal-media .product-media-scroll,
+  .plp-modal-media .product-media-scroll{
+    aspect-ratio:var(--site-media-ratio)!important;
+    height:auto!important;
+    min-height:0!important;
+  }
   .constructor-scenario-collage,
   .constructor-hero-collage{
-    aspect-ratio:var(--site-media-ratio)!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
     height:auto!important;
     min-height:0!important;
   }
