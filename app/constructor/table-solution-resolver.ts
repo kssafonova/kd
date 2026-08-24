@@ -1,3 +1,4 @@
+import { catalogProductOverrides, type CatalogProductOverride, type CatalogSku } from "../catalog-data";
 import type { CatalogRow } from "./types";
 import type { TableSolution } from "./table-solutions";
 
@@ -36,9 +37,72 @@ const rowMatchesSolution = (row: CatalogRow, solution: TableSolution) => {
   const collectionMatch = rawCollectionMatch && typeMatch;
   const explicitProductMatch = productTargets.some((target) => matchesLoose(productName, target));
 
-  // Explicit product names are always resolved against the real storefront
-  // catalog. The optional type filter applies only to broad collection pulls.
   return collectionMatch || explicitProductMatch;
+};
+
+const normalizeLocalImage = (value: string) => {
+  const path = String(value || "").trim();
+  return path.startsWith("/kd/images/") ? path.slice(3) : path;
+};
+
+const inferGithubProductType = (product: CatalogProductOverride) => {
+  const name = normalizeSolutionValue(product.name);
+  if (name.includes("комплект постельного белья")) return "bedding_set";
+  if (name.includes("пододеяльник")) return "duvet";
+  if (name.includes("простын")) return "sheet";
+  if (name.includes("наволоч")) return "pillowcase";
+  if (name.includes("покрывал")) return "coverlet";
+  if (name.includes("плед")) return "throw";
+  if (name.includes("подушка")) return "decorative_pillow";
+  if (name.includes("тарел")) return "plate";
+  if (name.includes("салатник")) return "salad_bowl";
+  if (name.includes("чайная пара")) return "tea_pair";
+  return "other";
+};
+
+const fallbackGithubCollection = (product: CatalogProductOverride, sku: CatalogSku) => {
+  if (sku.collection) return sku.collection;
+  const name = normalizeSolutionValue(product.name);
+  if (name.includes("ледяные узоры")) return "Ледяные узоры";
+  if (name.includes("лунная сказка")) return "Лунная сказка";
+  return "Культура Дома";
+};
+
+const githubProductRows = (solution: TableSolution): CatalogRow[] => {
+  const ids = solution.githubProductIds || [];
+  return ids.flatMap((productId) => {
+    const product = catalogProductOverrides[productId];
+    if (!product) return [];
+    const productType = inferGithubProductType(product);
+
+    return product.skus.map((sku) => {
+      const image = normalizeLocalImage(sku.image);
+      const gallery = Array.from(new Set([image, ...sku.gallery.map(normalizeLocalImage)].filter(Boolean)));
+      return {
+        offer_id: sku.id,
+        group_id: String(product.id),
+        vendor_code: sku.article || product.article,
+        collection: fallbackGithubCollection(product, sku),
+        product_name: product.name,
+        product_url: "",
+        product_type: productType,
+        constructor_role: "bedroom_layer",
+        mix_role: "",
+        builder_domain: "bedroom",
+        palette: "",
+        style_tags: "",
+        price: String(sku.price || 0),
+        old_price: "",
+        color: sku.color || "",
+        size: sku.size || "",
+        material: sku.material || "",
+        volume: "",
+        availability_status: sku.available === false ? "out_of_stock" : "available",
+        primary_image_url: image,
+        all_image_urls: gallery.join("|"),
+      } satisfies CatalogRow;
+    });
+  });
 };
 
 const COLOR_WORDS = [
@@ -71,12 +135,6 @@ const canonicalProductName = (row: CatalogRow) => {
   return value.replace(/\s+/g, " ").trim();
 };
 
-/**
- * Storefront product identity:
- * - same collection + same base product => one card;
- * - colour and size rows become variants inside that card;
- * - the same generic product name from two different collections stays separate.
- */
 export const logicalProductKey = (row: CatalogRow) => {
   const name = canonicalProductName(row);
   const collection = normalizeSolutionValue(row.collection || "");
@@ -85,20 +143,26 @@ export const logicalProductKey = (row: CatalogRow) => {
   return group ? `group:${group}` : `offer:${row.offer_id}`;
 };
 
-/** All matching CSV rows, including color and size variants. */
+/**
+ * All matching rows, including colour and size variants.
+ * Solutions with githubProductIds use the exact products already added to the
+ * storefront's GitHub catalog and intentionally do not substitute CSV items.
+ */
 export const resolveTableSolutionCatalogRows = (catalog: CatalogRow[], solution: TableSolution) => {
   const collectionTargets = solution.collections.map(normalizeSolutionValue).filter(Boolean);
-  return catalog
-    .filter((row) => rowMatchesSolution(row, solution))
-    .sort((a, b) => {
-      const collectionDiff = collectionOrder(a, collectionTargets) - collectionOrder(b, collectionTargets);
-      if (collectionDiff) return collectionDiff;
-      const nameDiff = String(a.product_name || "").localeCompare(String(b.product_name || ""), "ru");
-      if (nameDiff) return nameDiff;
-      const colorDiff = String(a.color || "").localeCompare(String(b.color || ""), "ru");
-      if (colorDiff) return colorDiff;
-      return String(a.size || "").localeCompare(String(b.size || ""), "ru");
-    });
+  const sourceRows = solution.githubProductIds?.length
+    ? githubProductRows(solution)
+    : catalog.filter((row) => rowMatchesSolution(row, solution));
+
+  return sourceRows.sort((a, b) => {
+    const collectionDiff = collectionOrder(a, collectionTargets) - collectionOrder(b, collectionTargets);
+    if (collectionDiff) return collectionDiff;
+    const nameDiff = String(a.product_name || "").localeCompare(String(b.product_name || ""), "ru");
+    if (nameDiff) return nameDiff;
+    const colorDiff = String(a.color || "").localeCompare(String(b.color || ""), "ru");
+    if (colorDiff) return colorDiff;
+    return String(a.size || "").localeCompare(String(b.size || ""), "ru");
+  });
 };
 
 /** One representative per logical product; used on the ready-solutions landing. */
