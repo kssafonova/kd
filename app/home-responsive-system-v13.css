@@ -1,0 +1,327 @@
+/* Homepage responsive system V13
+   Align the homepage with the storefront typography, icon scale and spacing.
+   Desktop H1 is fixed at 32px to match PDP/page hierarchy; smaller screens use
+   dedicated responsive sizes instead of scaling the desktop layout proportionally. */
+
+.home-ux-v11{
+  --home-gutter:clamp(20px,2.4vw,32px);
+  --home-section:clamp(48px,4.6vw,68px);
+  --home-h1:32px;
+  --home-h2:24px;
+  --home-body:14px;
+  --home-meta:11px;
+  --home-touch:44px;
+}
+
+/* ---------- Type hierarchy: same language as catalog / PDP ---------- */
+.home-ux-v11 .hv4-hero-copy{
+  max-width:440px!important;
+}
+.home-ux-v11 .hv4-hero-copy h1{
+  max-width:440px!important;
+  font:400 var(--home-h1)/1.1 var(--serif,"Tenor Sans",Arial,sans-serif)!important;
+  letter-spacing:-.02em!important;
+  text-transform:none!important;
+}
+.home-ux-v11 .hv4-head h2,
+.home-ux-v11 .hv4-traditions-collections-head h2{
+  font:400 var(--home-h2)/1.12 var(--serif,"Tenor Sans",Arial,sans-serif)!important;
+  letter-spacing:-.015em!important;
+}
+.home-ux-v11 .hv4-traditions-copy h2{
+  max-width:520px!important;
+  font:400 30px/1.08 var(--serif,"Tenor Sans",Arial,sans-serif)!important;
+  letter-spacing:-.02em!important;
+}
+.home-ux-v11 .hv4-solution-card strong{
+  font:400 24px/1.1 var(--serif,"Tenor Sans",Arial,sans-serif)!important;
+  letter-spacing:-.015em!important;
+}
+.home-boutiques-copy>h2{
+  font:400 24px/1.12 var(--serif,"Tenor Sans",Arial,sans-serif)!important;
+  letter-spacing:-.015em!important;
+}
+.home-boutiques-copy>p{
+  font-size:var(--home-body)!important;
+  line-height:1.55!important;
+}
+.home-ux-v11 .product-copy strong{
+  font-size:14px!important;
+  line-height:1.35!important;
+}
+.home-ux-v11 .product-copy small,
+.home-ux-v11 .price{
+  font-size:12px!important;
+}
+
+/* ---------- Header: same proportions as the rest of storefront ---------- */
+.view-home .header{
+  padding-left:32px!important;
+  padding-right:32px!important;
+}
+.view-home .header-left,
+.view-home .header-actions{
+  gap:18px!important;
+}
+.view-home .header .hamburger,
+.view-home .header-actions>button{
+  width:var(--home-touch)!important;
+  min-width:var(--home-touch)!important;
+  height:var(--home-touch)!important;
+  min-height:var(--home-touch)!important;
+}
+.view-home .header-actions svg{
+  width:24px!important;
+  height:24px!important;
+}
+.view-home .header-actions .bag svg{
+  width:25px!important;
+  height:25px!important;
+}
+.view-home .header .boutiques svg{
+  width:21px!important;
+  height:21px!important;
+  flex-basis:21px!important;
+}
+.view-home .logo{
+  font-size:24px!important;
+  line-height:1!important;
+}
+
+/* ---------- Shared homepage rhythm ---------- */
+.home-ux-v11 .hv4-shell,
+.home-ux-v11 .hv4-traditions-collections-content{
+  width:min(1440px,calc(100% - (var(--home-gutter) * 2)))!important;
+}
+.home-ux-v11 .hv4-head,
+.home-ux-v11 .hv4-traditions-collections-head{
+  margin-bottom:20px!important;
+}
+.home-ux-v11 .hv4-head small,
+.home-ux-v11 .hv4-traditions-collections-head small,
+.home-ux-v11 .hv4-traditions-copy small,
+.home-boutiques-copy>small{
+  font-size:10px!important;
+  line-height:1.2!important;
+  letter-spacing:.12em!important;
+}
+.home-ux-v11 .hv4-category-card strong{
+  font-size:13px!important;
+  line-height:1.35!important;
+}
+
+/* CTA and icon controls keep a real touch/click target while the visual glyph stays compact. */
+.home-ux-v11 .hv4-hero-copy button,
+.home-ux-v11 .hv4-head-actions,
+.home-ux-v11 .hv4-head-actions .hv4-text-cta,
+.home-ux-v11 .hv4-rail-arrow,
+.home-ux-v11 .hv4-video-controls button{
+  min-height:var(--home-touch)!important;
+}
+.home-ux-v11 .hv4-rail-arrow{
+  width:var(--home-touch)!important;
+  height:var(--home-touch)!important;
+  min-width:var(--home-touch)!important;
+}
+.home-ux-v11 .hv4-rail-arrow svg,
+.home-ux-v11 .hv4-hero-copy button svg{
+  width:15px!important;
+  height:15px!important;
+}
+
+/* ---------- Tablet ---------- */
+@media(max-width:1100px) and (min-width:701px){
+  .home-ux-v11{
+    --home-gutter:24px;
+    --home-section:52px;
+    --home-h2:23px;
+  }
+  .view-home .header{
+    padding-left:24px!important;
+    padding-right:24px!important;
+  }
+  .view-home .header-left,
+  .view-home .header-actions{
+    gap:12px!important;
+  }
+  .view-home .header-actions svg{
+    width:23px!important;
+    height:23px!important;
+  }
+  .view-home .header-actions .bag svg{
+    width:24px!important;
+    height:24px!important;
+  }
+  .view-home .logo{font-size:22px!important}
+  .home-ux-v11 .hv4-traditions-copy h2{font-size:28px!important}
+  .home-ux-v11 .hv4-solution-card strong{font-size:23px!important}
+}
+
+/* ---------- Mobile ---------- */
+@media(max-width:700px){
+  .home-ux-v11{
+    --home-gutter:16px;
+    --home-section:42px;
+    --home-h1:28px;
+    --home-h2:21px;
+    --home-body:13px;
+    --home-meta:10px;
+  }
+
+  .view-home .promo{
+    padding:0 12px!important;
+    gap:7px!important;
+    font-size:9px!important;
+    letter-spacing:.05em!important;
+  }
+  .view-home .promo button{
+    font-size:9px!important;
+    letter-spacing:.04em!important;
+  }
+
+  .view-home .header{
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  .view-home .header-left,
+  .view-home .header-actions{
+    gap:0!important;
+  }
+  .view-home .header .hamburger,
+  .view-home .header-actions>button{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+  }
+  .view-home .header-actions svg{
+    width:21px!important;
+    height:21px!important;
+  }
+  .view-home .header-actions .bag svg{
+    width:22px!important;
+    height:22px!important;
+  }
+  .view-home .header .hamburger i{width:21px!important}
+  .view-home .logo{
+    font-size:18px!important;
+    letter-spacing:-.025em!important;
+  }
+
+  .home-ux-v11 .hv4-hero-copy{
+    left:16px!important;
+    right:16px!important;
+    bottom:82px!important;
+    max-width:min(86vw,360px)!important;
+  }
+  .home-ux-v11 .hv4-hero-copy h1{
+    max-width:360px!important;
+    font-size:var(--home-h1)!important;
+    line-height:1.12!important;
+    letter-spacing:-.015em!important;
+  }
+  .home-ux-v11 .hv4-hero-copy button{
+    min-height:44px!important;
+    margin-top:14px!important;
+    padding:0 16px!important;
+    font-size:10px!important;
+  }
+  .home-ux-v11 .hv4-hero-controls{
+    left:16px!important;
+    right:16px!important;
+  }
+  .home-ux-v11 .hv4-hero-tabs button{
+    min-height:44px!important;
+    font-size:9px!important;
+  }
+
+  .home-ux-v11 .hv4-head,
+  .home-ux-v11 .hv4-traditions-collections-head{
+    margin-bottom:14px!important;
+  }
+  .home-ux-v11 .hv4-head h2,
+  .home-ux-v11 .hv4-traditions-collections-head h2{
+    max-width:230px!important;
+    font-size:var(--home-h2)!important;
+    line-height:1.15!important;
+  }
+  .home-ux-v11 .hv4-head-actions .hv4-text-cta{
+    font-size:9px!important;
+    letter-spacing:.06em!important;
+  }
+
+  .home-ux-v11 .hv4-category-rail,
+  .home-ux-v11 .hv4-new .product-rail,
+  .home-ux-v11 .hv4-traditions-collections .product-rail,
+  .home-ux-v11 .hv4-solution-rail{
+    margin-right:-16px!important;
+    padding-right:16px!important;
+  }
+  .home-ux-v11 .hv4-category-card{flex-basis:31vw!important}
+  .home-ux-v11 .hv4-category-card strong{font-size:12px!important}
+  .home-ux-v11 .hv4-new .product-card,
+  .home-ux-v11 .hv4-traditions-collections .product-card{flex-basis:44vw!important}
+  .home-ux-v11 .product-copy strong{font-size:13px!important}
+  .home-ux-v11 .product-copy small,
+  .home-ux-v11 .price{font-size:11px!important}
+
+  .home-ux-v11 .hv4-traditions-copy{
+    left:16px!important;
+    right:16px!important;
+  }
+  .home-ux-v11 .hv4-traditions-copy h2{
+    max-width:86vw!important;
+    font-size:26px!important;
+    line-height:1.1!important;
+  }
+  .home-ux-v11 .hv4-solution-card strong{
+    font-size:21px!important;
+    line-height:1.12!important;
+  }
+  .home-boutiques-copy{
+    padding-left:16px!important;
+    padding-right:16px!important;
+  }
+  .home-boutiques-copy>h2{
+    font-size:22px!important;
+    line-height:1.14!important;
+  }
+  .home-boutiques-copy>p{font-size:13px!important}
+}
+
+/* ---------- Narrow mobile ---------- */
+@media(max-width:390px){
+  .home-ux-v11{
+    --home-gutter:14px;
+    --home-h1:27px;
+    --home-h2:20px;
+  }
+  .view-home .header{
+    padding-left:6px!important;
+    padding-right:6px!important;
+  }
+  .view-home .header .hamburger,
+  .view-home .header-actions>button{
+    width:40px!important;
+    min-width:40px!important;
+  }
+  .view-home .header-actions svg{
+    width:20px!important;
+    height:20px!important;
+  }
+  .view-home .header-actions .bag svg{
+    width:21px!important;
+    height:21px!important;
+  }
+  .view-home .logo{font-size:17px!important}
+  .home-ux-v11 .hv4-hero-copy{left:14px!important;right:14px!important}
+  .home-ux-v11 .hv4-hero-controls{left:14px!important;right:14px!important}
+  .home-ux-v11 .hv4-head h2,
+  .home-ux-v11 .hv4-traditions-collections-head h2{max-width:205px!important}
+}
+
+@media(max-width:340px){
+  .home-ux-v11{--home-h1:26px;--home-h2:19px}
+  .view-home .favorite-header{display:none!important}
+  .view-home .logo{font-size:16px!important}
+}
