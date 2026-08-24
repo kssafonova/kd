@@ -6,9 +6,15 @@ export type SolutionProductOption = {
   id: string;
   title: string;
   collection: string;
+  perPerson: boolean;
   variants: CatalogRow[];
 };
 
+/**
+ * Kept as a compatibility layer for the landing page. In V28 every broad
+ * shopping category contains one slot and that slot supports MULTIPLE product
+ * options in the detail constructor.
+ */
 export type SolutionSlot = {
   id: string;
   title: string;
@@ -32,122 +38,238 @@ const normalize = (value: string) => String(value || "")
   .replace(/\s+/g, " ");
 
 const hasAny = (value: string, tokens: string[]) => tokens.some((token) => value.includes(token));
-const slug = (value: string) => normalize(value).replace(/[^a-zа-я0-9]+/g, "-").replace(/^-|-$/g, "");
 const baseName = (row: CatalogRow) => String(row.product_name || "Товар").split(":")[0].trim();
 
 const categoryMeta: Record<string, { title: string; description: string }> = {
-  plates: { title: "Тарелки", description: "Все тарелки собраны вместе независимо от коллекции — выберите подходящую серию для каждого типа." },
-  teaPairs: { title: "Чайные и кофейные пары", description: "Выберите пары из предложенных коллекций. Количество рассчитывается на число персон." },
-  teaAccessories: { title: "Чай и кофе — дополнения", description: "Чайники, сахарницы, молочники и другие предметы можно подключить по необходимости." },
-  serving: { title: "Сервировка и подача", description: "Салатники, блюда, подносы и другие предметы для общей подачи." },
-  drinkware: { title: "Бокалы и стекло", description: "Бокалы, стаканы, графины и декантеры из подходящих коллекций." },
-  tableTextile: { title: "Столовый текстиль", description: "Скатерти, дорожки, плейсматы и салфетки для выбранного сценария." },
-  baskets: { title: "Корзины", description: "Все корзины показаны рядом, чтобы удобно сравнить форму, материал и коллекцию." },
-  storage: { title: "Хранение", description: "Органайзеры и другие функциональные предметы для порядка." },
-  bedding: { title: "Постельный текстиль", description: "Комплекты, пододеяльники, простыни и наволочки. Цвета и размеры объединены внутри товара." },
-  soft: { title: "Пледы и подушки", description: "Мягкий текстиль для завершения решения. Цветовые варианты объединены внутри одной карточки." },
-  bath: { title: "Для ванной", description: "Халаты, полотенца, коврики и наборы для ванной." },
-  decor: { title: "Декор и атмосфера", description: "Вазы, свечи и декоративные акценты — добавляйте только если они нужны." },
-  other: { title: "Дополнения", description: "Остальные найденные предметы решения." },
+  plates: {
+    title: "Тарелки",
+    description: "Все обычные, десертные и закусочные тарелки из коллекций решения — можно выбрать несколько одновременно.",
+  },
+  bowls: {
+    title: "Салатники и глубокие тарелки",
+    description: "Все салатники и глубокие тарелки собраны в одном блоке для сравнения и множественного выбора.",
+  },
+  cupsPairs: {
+    title: "Кружки, чайные и кофейные пары",
+    description: "Кружки, чайные и кофейные пары из разных коллекций показаны вместе. Можно выбрать несколько вариантов.",
+  },
+  sugarBowls: {
+    title: "Сахарницы",
+    description: "Все сахарницы из предложенных коллекций — выберите одну, несколько или не добавляйте ни одной.",
+  },
+  milkJugs: {
+    title: "Молочники и сливочники",
+    description: "Все молочники и сливочники собраны вместе независимо от коллекции.",
+  },
+  teapots: {
+    title: "Чайники",
+    description: "Все заварочные и сервировочные чайники из сценария в одном блоке.",
+  },
+  serving: {
+    title: "Блюда и подача",
+    description: "Блюда, подносы, супницы, менажницы и другие общие предметы для подачи.",
+  },
+  drinkware: {
+    title: "Бокалы, стаканы и графины",
+    description: "Стекло и предметы для напитков из разных коллекций — можно комбинировать несколько позиций.",
+  },
+  cutlery: {
+    title: "Столовые приборы",
+    description: "Вилки, ложки, ножи и другие столовые приборы, найденные в коллекциях решения.",
+  },
+  tableTextile: {
+    title: "Скатерти, плейсматы и тканевые салфетки",
+    description: "Скатерти, дорожки, плейсматы и тканевые салфетки собраны вместе — выбирайте нужные элементы сервировки.",
+  },
+  baskets: {
+    title: "Корзины",
+    description: "Все корзины показаны рядом, чтобы удобно сравнить форму, материал, размер и коллекцию.",
+  },
+  games: {
+    title: "Игры",
+    description: "Все настольные игры, шахматы, нарды и игровые аксессуары, найденные в сценарии.",
+  },
+  storage: {
+    title: "Хранение и организация",
+    description: "Органайзеры и другие функциональные предметы для хранения.",
+  },
+  bedding: {
+    title: "Постельный текстиль",
+    description: "Комплекты, пододеяльники, простыни и наволочки. Цвета и размеры объединены внутри одной карточки товара.",
+  },
+  soft: {
+    title: "Пледы, покрывала и подушки",
+    description: "Весь мягкий текстиль собран вместе; одинаковые товары разных цветов объединены в цветовые варианты.",
+  },
+  bath: {
+    title: "Для ванной",
+    description: "Халаты, полотенца, коврики и наборы для ванной из предложенного решения.",
+  },
+  atmosphere: {
+    title: "Свечи и диффузоры",
+    description: "Все свечи, подсвечники и ароматы для дома собраны в одном атмосферном блоке.",
+  },
+  vases: {
+    title: "Вазы",
+    description: "Все вазы из коллекций решения — можно выбрать несколько форм и размеров.",
+  },
+  other: {
+    title: "Дополнения",
+    description: "Остальные найденные предметы, которые можно добавить к решению по желанию.",
+  },
 };
 
-const slotMeta = (row: CatalogRow, space: string) => {
+const categoryForRow = (row: CatalogRow, space: string) => {
   const name = normalize(row.product_name);
   const type = normalize(row.product_type);
   const normalizedSpace = normalize(space);
 
-  if (hasAny(name, ["тарелка десерт"]) || type.includes("dessert_plate")) return { categoryId: "plates", id: "dessert-plate", title: "Десертная тарелка", perPerson: true };
-  if (hasAny(name, ["тарелка глубок"]) || type.includes("deep_plate")) return { categoryId: "plates", id: "deep-plate", title: "Глубокая тарелка", perPerson: true };
-  if (hasAny(name, ["тарелка закус"]) || type.includes("snack_plate")) return { categoryId: "plates", id: "snack-plate", title: "Закусочная тарелка", perPerson: true };
-  if (hasAny(name, ["тарелка", "блюдце"]) || hasAny(type, ["dinner_plate", "plate"])) return { categoryId: "plates", id: "plate", title: "Тарелка", perPerson: true };
+  // The order is intentional: deep plates belong with bowls, not with plates.
+  if (hasAny(name, ["тарелка глубок", "салатник"]) || hasAny(type, ["deep_plate", "salad_bowl"])) {
+    return { id: "bowls", perPerson: name.includes("тарелка глубок") || type.includes("deep_plate") };
+  }
 
-  if (name.includes("чайная пара") || type.includes("tea_pair")) return { categoryId: "teaPairs", id: "tea-pair", title: "Чайная пара", perPerson: true };
-  if (name.includes("кофейная пара") || type.includes("coffee_pair")) return { categoryId: "teaPairs", id: "coffee-pair", title: "Кофейная пара", perPerson: true };
-  if (name.includes("круж") || type.includes("mug")) return { categoryId: "teaPairs", id: "mug", title: "Кружка", perPerson: true };
+  if (hasAny(name, ["тарелка", "блюдце"]) || hasAny(type, ["dinner_plate", "dessert_plate", "snack_plate", "plate"])) {
+    return { id: "plates", perPerson: true };
+  }
 
-  if (name.includes("сахарниц") || type.includes("sugar_bowl")) return { categoryId: "teaAccessories", id: "sugar-bowl", title: "Сахарница", perPerson: false };
-  if (hasAny(name, ["молочник", "сливочник"]) || type.includes("milk_jug")) return { categoryId: "teaAccessories", id: "milk-jug", title: "Молочник / сливочник", perPerson: false };
-  if (name.includes("чайник") || type.includes("teapot")) return { categoryId: "teaAccessories", id: "teapot", title: "Чайник", perPerson: false };
+  if (hasAny(name, ["круж", "чашк", "чайная пара", "кофейная пара"]) || hasAny(type, ["mug", "tea_pair", "coffee_pair"])) {
+    return { id: "cupsPairs", perPerson: true };
+  }
 
-  if (name.includes("салатник") || type.includes("salad_bowl")) return { categoryId: "serving", id: "salad-bowl", title: "Салатник", perPerson: false };
-  if (name.includes("поднос")) return { categoryId: "serving", id: "tray", title: "Поднос", perPerson: false };
-  if (name.includes("супниц")) return { categoryId: "serving", id: "soup-tureen", title: "Супница", perPerson: false };
-  if (hasAny(name, ["блюдо", "менажниц", "икорниц", "масленк"]) || type.includes("serving_dish")) return { categoryId: "serving", id: "serving-dish", title: "Блюдо для подачи", perPerson: false };
+  if (name.includes("сахарниц") || type.includes("sugar_bowl")) return { id: "sugarBowls", perPerson: false };
+  if (hasAny(name, ["молочник", "сливочник"]) || type.includes("milk_jug")) return { id: "milkJugs", perPerson: false };
+  if (name.includes("чайник") || type.includes("teapot")) return { id: "teapots", perPerson: false };
 
-  if (hasAny(name, ["бокал", "рюм"]) || type.includes("wine_glass")) return { categoryId: "drinkware", id: "wine-glass", title: "Бокалы", perPerson: true };
-  if (name.includes("стакан") || type.includes("glassware")) return { categoryId: "drinkware", id: "glass", title: "Стаканы", perPerson: true };
-  if (hasAny(name, ["графин", "декантер"]) || type.includes("decanter")) return { categoryId: "drinkware", id: "decanter", title: "Графин / декантер", perPerson: false };
+  if (hasAny(name, ["скатерт", "плейсмат", "салфет", "дорожк", "раннер"]) || hasAny(type, ["tablecloth", "placemat", "napkin", "table_runner"])) {
+    return { id: "tableTextile", perPerson: hasAny(name, ["плейсмат", "салфет"]) || hasAny(type, ["placemat", "napkin"]) };
+  }
 
-  if (name.includes("скатерт") || type.includes("tablecloth")) return { categoryId: "tableTextile", id: "tablecloth", title: "Скатерть", perPerson: false };
-  if (name.includes("дорожк") || type.includes("table_runner")) return { categoryId: "tableTextile", id: "runner", title: "Дорожка", perPerson: false };
-  if (name.includes("плейсмат") || type.includes("placemat")) return { categoryId: "tableTextile", id: "placemat", title: "Плейсмат", perPerson: true };
-  if (name.includes("салфет") || type.includes("napkin")) return { categoryId: "tableTextile", id: "napkin", title: "Салфетка", perPerson: true };
+  if (name.includes("корзин")) return { id: "baskets", perPerson: false };
 
-  if (name.includes("корзин")) return { categoryId: "baskets", id: "basket", title: "Корзина", perPerson: false };
-  if (hasAny(name, ["органайзер", "хранени"])) return { categoryId: "storage", id: "storage", title: "Хранение", perPerson: false };
+  if (hasAny(name, ["игра", "шахмат", "нарды", "домино", "лото"]) || hasAny(type, ["game", "board_game"])) {
+    return { id: "games", perPerson: false };
+  }
 
-  if (hasAny(name, ["комплект постель", "постельное белье"]) || type.includes("bedding_set")) return { categoryId: "bedding", id: "bedding-set", title: "Комплект постельного белья", perPerson: false };
-  if (name.includes("пододеяльник") || type.includes("duvet")) return { categoryId: "bedding", id: "duvet", title: "Пододеяльник", perPerson: false };
-  if (name.includes("простын") || type.includes("sheet")) return { categoryId: "bedding", id: "sheet", title: "Простыня", perPerson: false };
-  if (name.includes("наволоч") || type.includes("pillowcase")) return { categoryId: "bedding", id: "pillowcase", title: "Наволочка", perPerson: false };
+  if (hasAny(name, ["свеч", "диффузор", "аромат для дома", "аромадиффузор", "подсвечник"]) || hasAny(type, ["candle", "candle_holder", "diffuser"])) {
+    return { id: "atmosphere", perPerson: false };
+  }
 
-  if (name.includes("подушка") || type.includes("decorative_pillow")) return { categoryId: "soft", id: "pillow", title: "Подушка", perPerson: false };
-  if (name.includes("плед") || type.includes("throw")) return { categoryId: "soft", id: "throw", title: "Плед", perPerson: false };
-  if (name.includes("покрывал") || type.includes("coverlet")) return { categoryId: "soft", id: "coverlet", title: "Покрывало", perPerson: false };
+  if (name.includes("ваза") || type.includes("vase")) return { id: "vases", perPerson: false };
 
-  if (name.includes("халат")) return { categoryId: "bath", id: "robe", title: "Халат", perPerson: normalizedSpace.includes("ванн") };
-  if (name.includes("полотен")) return { categoryId: "bath", id: "towel", title: "Полотенце", perPerson: normalizedSpace.includes("ванн") };
-  if (name.includes("коврик") && normalizedSpace.includes("ванн")) return { categoryId: "bath", id: "bath-mat", title: "Коврик для ванной", perPerson: false };
-  if (name.includes("набор для ванн")) return { categoryId: "bath", id: "bath-set", title: "Набор для ванной", perPerson: false };
+  if (hasAny(name, ["вилка", "ложка", "нож", "прибор"]) || hasAny(type, ["cutlery", "fork", "spoon", "knife"])) {
+    return { id: "cutlery", perPerson: true };
+  }
 
-  if (hasAny(name, ["ваза", "свеч", "диффузор"]) || hasAny(type, ["vase", "candle", "candle_holder"])) return { categoryId: "decor", id: slug(type || baseName(row)) || "decor", title: baseName(row), perPerson: false };
+  if (hasAny(name, ["бокал", "стакан", "рюм", "графин", "декантер"]) || hasAny(type, ["wine_glass", "glassware", "decanter"])) {
+    const shared = hasAny(name, ["графин", "декантер"]) || type.includes("decanter");
+    return { id: "drinkware", perPerson: !shared };
+  }
 
-  return { categoryId: "other", id: slug(type || baseName(row)) || "other", title: baseName(row), perPerson: false };
+  if (hasAny(name, ["блюдо", "поднос", "супниц", "менажниц", "икорниц", "масленк"]) || hasAny(type, ["serving_dish", "tray", "tureen"])) {
+    return { id: "serving", perPerson: false };
+  }
+
+  if (hasAny(name, ["комплект постель", "постельное белье", "пододеяльник", "простын", "наволоч"]) || hasAny(type, ["bedding_set", "duvet", "sheet", "pillowcase"])) {
+    return { id: "bedding", perPerson: false };
+  }
+
+  if (hasAny(name, ["плед", "покрывал", "подушка"]) || hasAny(type, ["throw", "coverlet", "decorative_pillow"])) {
+    return { id: "soft", perPerson: false };
+  }
+
+  if (hasAny(name, ["халат", "полотен", "коврик для ванн", "набор для ванн"]) || normalizedSpace.includes("ванн")) {
+    return { id: "bath", perPerson: hasAny(name, ["халат", "полотен"]) };
+  }
+
+  if (hasAny(name, ["органайзер", "хранени"])) return { id: "storage", perPerson: false };
+
+  return { id: "other", perPerson: false };
 };
 
-const categoryOrder = ["plates", "teaPairs", "teaAccessories", "serving", "drinkware", "tableTextile", "baskets", "storage", "bedding", "soft", "bath", "decor", "other"];
+const categoryOrder = [
+  "plates",
+  "bowls",
+  "cupsPairs",
+  "sugarBowls",
+  "milkJugs",
+  "teapots",
+  "serving",
+  "drinkware",
+  "cutlery",
+  "tableTextile",
+  "baskets",
+  "games",
+  "storage",
+  "bedding",
+  "soft",
+  "bath",
+  "atmosphere",
+  "vases",
+  "other",
+];
 
 export const buildSolutionCategories = (rows: CatalogRow[], space: string): SolutionCategory[] => {
-  const categoryMap = new Map<string, Map<string, Map<string, CatalogRow[]>>>();
-  const slotTitles = new Map<string, { title: string; perPerson: boolean }>();
+  const categoryMap = new Map<string, Map<string, { perPerson: boolean; variants: CatalogRow[] }>>();
 
   rows.forEach((row) => {
-    const meta = slotMeta(row, space);
+    const category = categoryForRow(row, space);
     const optionId = logicalProductKey(row);
-    if (!categoryMap.has(meta.categoryId)) categoryMap.set(meta.categoryId, new Map());
-    const slotMap = categoryMap.get(meta.categoryId)!;
-    if (!slotMap.has(meta.id)) slotMap.set(meta.id, new Map());
-    const optionMap = slotMap.get(meta.id)!;
-    optionMap.set(optionId, [...(optionMap.get(optionId) || []), row]);
-    slotTitles.set(`${meta.categoryId}:${meta.id}`, { title: meta.title, perPerson: meta.perPerson });
+    if (!categoryMap.has(category.id)) categoryMap.set(category.id, new Map());
+    const optionMap = categoryMap.get(category.id)!;
+    const current = optionMap.get(optionId) || { perPerson: category.perPerson, variants: [] };
+    current.perPerson = current.perPerson || category.perPerson;
+    current.variants.push(row);
+    optionMap.set(optionId, current);
   });
 
-  return categoryOrder.filter((categoryId) => categoryMap.has(categoryId)).map((categoryId) => {
-    const slotMap = categoryMap.get(categoryId)!;
-    const slots: SolutionSlot[] = Array.from(slotMap.entries()).map(([slotId, optionMap]) => {
-      const slotInfo = slotTitles.get(`${categoryId}:${slotId}`)!;
-      const options: SolutionProductOption[] = Array.from(optionMap.entries()).map(([optionId, variants]) => ({
-        id: optionId,
-        title: baseName(variants[0]),
-        collection: variants[0]?.collection || "Культура Дома",
-        variants: Array.from(new Map(variants.map((row) => [row.offer_id, row])).values()),
-      })).sort((a, b) => a.collection.localeCompare(b.collection, "ru") || a.title.localeCompare(b.title, "ru"));
-      return {
-        id: `${categoryId}-${slotId}`,
-        title: slotInfo.title,
-        description: options.length > 1 ? `Выберите один вариант из ${options.length} предложенных товаров.` : "Можно добавить в решение или убрать.",
-        perPerson: slotInfo.perPerson,
+  return categoryOrder
+    .filter((categoryId) => categoryMap.has(categoryId))
+    .map((categoryId) => {
+      const optionMap = categoryMap.get(categoryId)!;
+      const options: SolutionProductOption[] = Array.from(optionMap.entries())
+        .map(([optionId, value]) => {
+          const variants = Array.from(new Map(value.variants.map((row) => [row.offer_id, row])).values());
+          const representative = variants.find((row) => row.primary_image_url && row.price) || variants.find((row) => row.primary_image_url) || variants[0];
+          return {
+            id: optionId,
+            title: baseName(representative),
+            collection: representative?.collection || "Культура Дома",
+            perPerson: value.perPerson,
+            variants,
+          };
+        })
+        .sort((a, b) => a.collection.localeCompare(b.collection, "ru") || a.title.localeCompare(b.title, "ru"));
+
+      const meta = categoryMeta[categoryId];
+      const slot: SolutionSlot = {
+        id: categoryId,
+        title: meta.title,
+        description: "Выберите один или несколько товаров из предложенных вариантов.",
+        perPerson: options[0]?.perPerson || false,
         options,
       };
+      return { id: categoryId, ...meta, slots: [slot] };
     });
-    return { id: categoryId, ...categoryMeta[categoryId], slots };
-  });
 };
 
-export const recommendedSlotQuantity = (slot: SolutionSlot, guests: number) => slot.perPerson ? Math.max(1, guests) : 1;
+export const recommendedOptionQuantity = (option: SolutionProductOption, guests: number) => {
+  if (option.perPerson) return Math.max(1, guests);
+  const name = normalize(option.title);
+  if (name.includes("подушка") && guests > 1) return 2;
+  return 1;
+};
+
+export const recommendedSlotQuantity = (slot: SolutionSlot, guests: number) => {
+  const option = slot.options[0];
+  return option ? recommendedOptionQuantity(option, guests) : 1;
+};
 
 export const optionColors = (option: SolutionProductOption) => Array.from(new Set(option.variants.map((row) => row.color).filter(Boolean)));
-export const optionSizes = (option: SolutionProductOption, color = "") => Array.from(new Set(option.variants.filter((row) => !color || row.color === color).map((row) => row.size || row.volume).filter(Boolean)));
+export const optionSizes = (option: SolutionProductOption, color = "") => Array.from(new Set(option.variants
+  .filter((row) => !color || row.color === color)
+  .map((row) => row.size || row.volume)
+  .filter(Boolean)));
 
 export const pickOptionVariant = (option: SolutionProductOption, color = "", size = "") => {
   const byColor = color ? option.variants.filter((row) => row.color === color) : option.variants;
@@ -155,18 +277,26 @@ export const pickOptionVariant = (option: SolutionProductOption, color = "", siz
   return bySize[0] || byColor[0] || option.variants[0];
 };
 
-const parseGuestList = (value: string) => String(value || "").split("|").map((item) => Number(item.trim())).filter((item) => Number.isFinite(item) && item > 0);
-const collectionTokens = (value: string) => String(value || "").split("|").map(normalize).filter(Boolean);
+const parseGuestList = (value: string) => String(value || "")
+  .split("|")
+  .map((item) => Number(item.trim()))
+  .filter((item) => Number.isFinite(item) && item > 0);
+
+const collectionTokens = (value: string) => String(value || "")
+  .split("|")
+  .map(normalize)
+  .filter(Boolean);
 
 export const deriveGuestOptions = (solution: TableSolution, data: ConstructorData | null) => {
-  const space = normalize(solution.space);
-  const fallback = space.includes("кух") || space.includes("столов") ? [2, 4, 6] : [1, 2];
+  const fallback = normalize(solution.space).includes("кух") ? [2, 4, 6] : [1, 2];
   if (!data) return fallback;
 
   const solutionCollections = solution.collections.map(normalize).filter(Boolean);
   const solutionName = normalize(solution.name);
   const candidates: Array<{ score: number; guests: number[] }> = [];
-  const scoreCollections = (values: string[]) => values.reduce((score, value) => score + (solutionCollections.some((collection) => value.includes(collection) || collection.includes(value)) ? 10 : 0), 0);
+
+  const scoreCollections = (values: string[]) => values.reduce((score, value) =>
+    score + (solutionCollections.some((collection) => value.includes(collection) || collection.includes(value)) ? 10 : 0), 0);
 
   const scenarioGroups = new Map<string, { name: string; guests: string; collections: string[] }>();
   data.scenarios.forEach((row) => {
@@ -175,6 +305,7 @@ export const deriveGuestOptions = (solution: TableSolution, data: ConstructorDat
     if (!entry.guests) entry.guests = row.guests_supported;
     scenarioGroups.set(row.scenario_id, entry);
   });
+
   scenarioGroups.forEach((entry) => {
     const guests = parseGuestList(entry.guests);
     if (!guests.length) return;
@@ -182,11 +313,25 @@ export const deriveGuestOptions = (solution: TableSolution, data: ConstructorDat
     if (score > 0) candidates.push({ score, guests });
   });
 
+  const expansionGroups = new Map<string, { name: string; guests: string; collections: string[]; spaces: string[] }>();
   data.expansionRules.forEach((row) => {
-    const guests = parseGuestList(row.guests_supported);
+    const entry = expansionGroups.get(row.scenario_id) || { name: row.scenario_name, guests: row.guests_supported, collections: [], spaces: [] };
+    entry.collections.push(...collectionTokens(row.lead_collections), ...collectionTokens(row.allowed_collections));
+    entry.spaces.push(...collectionTokens(row.space));
+    expansionGroups.set(row.scenario_id, entry);
+  });
+
+  expansionGroups.forEach((entry) => {
+    const guests = parseGuestList(entry.guests);
     if (!guests.length) return;
-    const collections = [...collectionTokens(row.lead_collections), ...collectionTokens(row.allowed_collections)];
-    const score = (normalize(row.scenario_name) === solutionName ? 100 : 0) + scoreCollections(collections);
+    const space = normalize(solution.space);
+    const spaceScore = entry.spaces.some((candidate) =>
+      (space.includes("кух") && candidate.includes("kitchen")) ||
+      (space.includes("столов") && candidate.includes("dining")) ||
+      (space.includes("спаль") && candidate.includes("bedroom")) ||
+      (space.includes("кабин") && candidate.includes("living"))
+    ) ? 3 : 0;
+    const score = (normalize(entry.name) === solutionName ? 100 : 0) + scoreCollections(entry.collections.filter(Boolean)) + spaceScore;
     if (score > 0) candidates.push({ score, guests });
   });
 
