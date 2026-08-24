@@ -43,6 +43,7 @@ scripts = [
     "apply-auth-flow-v20.py",
     "redesign-collections-v23.py",
     "redesign-collections-v34.py",
+    "refine-green-salon-v35.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
