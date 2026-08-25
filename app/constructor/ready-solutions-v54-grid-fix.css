@@ -1,0 +1,4 @@
+/* V54 desktop grid guarantee: 4 product cards until the mobile breakpoint. */
+@media (min-width:821px) and (max-width:1180px){
+  .v54-product-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
