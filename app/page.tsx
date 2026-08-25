@@ -495,7 +495,7 @@ function HomeBoutiques(){
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   // HOME_SKETCH_ZARA_KULTURA_V45
   const heroSlides=[
-    {label:"КОЛЛЕКЦИЯ",title:"Лунная сказка",subtitle:"Тихая история для спальни и позднего чаепития",desktopImage:"/images/editorial/caps_luna_postel2.png",mobileImage:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[1])},
+    {label:"КАПСУЛА",title:"Лунная сказка",subtitle:"Тихая история для спальни и позднего чаепития",desktopImage:"/images/editorial/caps_luna_postel2.png",mobileImage:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[1])},
     {label:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",subtitle:"Светлая зимняя палитра, вышивка и мягкие фактуры",desktopImage:"/images/editorial/caps_led.png",mobileImage:"/images/editorial/caps_led_podyshka.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[0])},
     {label:"ПОСУДА И СЕРВИРОВКА",title:"Дом начинается с ритуалов",subtitle:"Фарфор, текстиль и предметы для красивой повседневности",desktopImage:"/images/time-table.png",mobileImage:"/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
   ];
@@ -970,7 +970,7 @@ function Menu({ current, setCurrent, close, go, openCatalog }: { current:string;
 
     <section className="premium-menu-editorial" aria-label="Editorial и готовые решения">
       <small>EDITORIAL</small>
-      <button type="button" onClick={()=>go("collections")}><span>КОЛЛЕКЦИИ</span><Icon name="arrow"/></button>
+      <button type="button" onClick={()=>go("collections")}><span>КАПСУЛЫ И КОЛЛЕКЦИИ</span><Icon name="arrow"/></button>
       <a href={constructorHref} onClick={close}><span>ГОТОВЫЕ РЕШЕНИЯ</span><Icon name="arrow"/></a>
     </section>
 
