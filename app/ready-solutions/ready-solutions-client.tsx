@@ -18,7 +18,8 @@ import {
 } from "../constructor/table-solution-builder";
 import type { CatalogRow, ConstructorData, FinalConstructorData } from "../constructor/types";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const basePath = "";
+const browserBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const CART_KEY = "kultura-cart";
 const SAVED_KEY = "kultura-ready-solution-v55";
 const CART_OFFSET = 997000;
@@ -234,7 +235,7 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
   const addToCart = () => {
     if (!selectedRows.length) return;
     addRowsToSharedCart(selectedRows.map(({ row, quantity }) => ({ row, quantity })));
-    window.location.href = `${basePath}/?open=cart`;
+    window.location.href = `${browserBasePath}/?open=cart`;
   };
 
   const stepTitle = step === 1 ? "Количество персон" : step === 2 ? "Что входит в решение" : step === 3 ? "Выберите товары" : "Проверьте решение";
