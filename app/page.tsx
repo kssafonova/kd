@@ -520,7 +520,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
   ];
   const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
   const collection=editorials[1]??editorials[0];
-  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
+  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/ready-solutions/`;
   const solutions=[
     {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
     {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
@@ -963,14 +963,14 @@ function Menu({ current, setCurrent, close, go, openCatalog }: { current:string;
   const list=subs[current]||[];
   const catalogMap:Record<string,string>={"Спальня":"Постельное бельё","Кухня и столовая":"Посуда и сервировка","Декор":"Пледы и подушки","Ванная":"Все товары","Одежда для дома":"Домашняя одежда","РАСПРОДАЖА":"Все товары","Идеи подарков":"Все товары","Аутлет":"Все товары"};
   const subcategoryMap:Record<string,string>={"Комплекты постельного белья":"Постельное бельё","Пододеяльники":"Постельное бельё","Простыни":"Постельное бельё","Наматрасники":"Постельное бельё","Одеяла и подушки":"Пледы и подушки","Пледы и покрывала":"Пледы и подушки","Наволочки":"Пледы и подушки","Блюда и тарелки":"Посуда и сервировка","Салатники":"Посуда и сервировка","Стаканы и бокалы":"Посуда и сервировка","Графины":"Посуда и сервировка","Чашки":"Посуда и сервировка","Столовые приборы":"Посуда и сервировка","Пижамы":"Домашняя одежда","Халаты":"Домашняя одежда","Домашние костюмы":"Домашняя одежда"};
-  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
+  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/ready-solutions/`;
 
   return <div className="overlay navigation-overlay"><button className="overlay-bg" onClick={close} aria-label="Закрыть"/><aside className="menu-panel zara-menu premium-menu"><div className="menu-top"><button onClick={close} aria-label="Закрыть меню"><Icon name="close"/></button><span><Icon name="pin"/> Бутики</span><b>КУЛЬТУРА ДОМА</b></div><div className="menu-body">{!current?<div className="menu-first level-one premium-menu-root">
     <button className="premium-menu-new" onClick={()=>openCatalog("Все товары")}><span>НОВИНКИ</span><Icon name="arrow"/></button>
 
     <section className="premium-menu-editorial" aria-label="Editorial и готовые решения">
       <small>EDITORIAL</small>
-      <button type="button" onClick={()=>go("collections")}><span>КАПСУЛЫ И КОЛЛЕКЦИИ</span><Icon name="arrow"/></button>
+      <button type="button" onClick={()=>go("collections")}><span>КОЛЛЕКЦИИ</span><Icon name="arrow"/></button>
       <a href={constructorHref} onClick={close}><span>ГОТОВЫЕ РЕШЕНИЯ</span><Icon name="arrow"/></a>
     </section>
 

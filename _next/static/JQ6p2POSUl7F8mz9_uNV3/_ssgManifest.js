@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fconstructor\u002F[scenarioId]","\u002Feditorial\u002Fscenario\u002F[scenarioId]","\u002Fready-solutions\u002F[scenarioId]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
