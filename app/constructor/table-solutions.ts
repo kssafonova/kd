@@ -10,6 +10,16 @@ export type TableSolution = {
   productNames: string[];
   /** Optional product names selected when the constructor first opens. */
   defaultProductNames?: string[];
+  /** Optional default quantities keyed by product display name. */
+  defaultQuantities?: Record<string, number>;
+  /** Optional default colours keyed by product display name. */
+  defaultColors?: Record<string, string>;
+  /** Optional default sizes keyed by product display name. */
+  defaultSizes?: Record<string, string>;
+  /** Optional exact merchandising order for products within constructor groups. */
+  productOrder?: string[];
+  /** Optional direct hero image path from the storefront catalog. */
+  heroImage?: string;
   /** Optional CSV product types allowed for collection-based matching. */
   allowedProductTypes?: string[];
   /** Disable broad collection pulls and use only explicit CSV products. */
@@ -159,9 +169,12 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     sourceName: "Зимняя сказка",
     previewFile: "",
     scrollFile: "",
+    heroImage: "/images/products/KD-PD-2000-WHITE01.png",
     collections: ["Ледяные узоры", "Лунная сказка", "Нити Времени"],
 
-    // Final approved CSV additions for the Winter Fairy Tale scenario.
+    // Exact assortment from the approved Winter Fairy Tale screenshot.
+    // GitHub storefront products are mixed with only these explicit CSV rows;
+    // broad collection matching stays disabled.
     productNames: [
       "Комплект постельного белья Нити времени",
       "Подушка декоративная Бархат",
@@ -179,6 +192,60 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     ],
     includeCollectionProducts: false,
     githubProductIds: [4, 2003, 6, 7, 2000, 3],
+
+    // Strict screenshot grouping/order:
+    // 1) Постельное бельё — 2
+    // 2) Пледы и покрывала — 3
+    // 3) Декоративные подушки — 4
+    // 4) Вазы и предметы интерьера — 2
+    // 5) Свечи и диффузоры — 8
+    productOrder: [
+      "Комплект постельного белья «Лунная сказка»",
+      "Комплект постельного белья Нити времени",
+      "Плед из кружева",
+      "Стёганое покрывало «Бархатный ритм»",
+      "Плед «Ледяные узоры»",
+      "Подушка с кружевом",
+      "Подушка декоративная Бархат",
+      "Подушка декоративная Узоры",
+      "Декоративная подушка «Ледяные узоры»",
+      "Ваза Айсберг",
+      "Ваза Паскаль",
+      "Диффузор Зимняя сказка",
+      "Диффузор Сласти",
+      "Диффузор Уютный вечер",
+      "Свеча Корона высокая, аромат Базилика и Мяты",
+      "Свеча Корона высокая, аромат Нежность",
+      "Свеча Корона высокая, без аромата",
+      "Свеча Корона малая, аромат Серебряный мускус",
+      "Свеча Корона малая, без аромата",
+    ],
+
+    // Checked cards exactly as in the approved screenshot.
+    defaultProductNames: [
+      "Комплект постельного белья «Лунная сказка»",
+      "Стёганое покрывало «Бархатный ритм»",
+      "Плед «Ледяные узоры»",
+      "Подушка с кружевом",
+      "Декоративная подушка «Ледяные узоры»",
+      "Ваза Паскаль",
+      "Свеча Корона высокая, без аромата",
+    ],
+    defaultQuantities: {
+      "Подушка с кружевом": 2,
+      "Декоративная подушка «Ледяные узоры»": 2,
+      "Свеча Корона высокая, без аромата": 2,
+    },
+    defaultColors: {
+      "Комплект постельного белья «Лунная сказка»": "Ночной синий",
+      "Стёганое покрывало «Бархатный ритм»": "Молочный",
+      "Подушка с кружевом": "Белый",
+      "Декоративная подушка «Ледяные узоры»": "Ночной синий",
+    },
+    defaultSizes: {
+      "Комплект постельного белья «Лунная сказка»": "Кинг сайз 220×240 см",
+      "Стёганое покрывало «Бархатный ритм»": "Кинг сайз 220×240 см",
+    },
   },
 ] as const;
 
