@@ -8,6 +8,8 @@ import "./table-solution-type-constructor-v27.css";
 import "./table-solution-multiselect-v28.css";
 import "./table-solution-kultura-editorial-v29.css";
 import "./ready-solutions-v52.css";
+import "./ready-solutions-v54.css";
+import "./ready-solutions-v54-grid-fix.css";
 
 export default function ConstructorLayout({ children }: { children: ReactNode }) {
   return children;
