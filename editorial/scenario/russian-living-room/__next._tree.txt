@@ -1,7 +1,7 @@
 :HL["/kd/_next/static/chunks/16du79g_p-dm-.css","style"]
 :HL["/kd/_next/static/chunks/0tmnyyiibjdut.css","style"]
 :HL["/kd/_next/static/chunks/01lmfg~ex2zuo.css","style"]
-:HL["/kd/_next/static/chunks/07seu4o4hzdcz.css","style"]
+:HL["/kd/_next/static/chunks/0yy1cc8egvjr3.css","style"]
 :HL["/kd/_next/static/chunks/0j-6y~cy1p0qi.css","style"]
 :HL["/kd/_next/static/chunks/0vqx41a621f2w.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"editorial","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenario","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"russian-living-room","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"oU2ytGzwCFKvQ1HEujyTM"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"editorial","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenario","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"russian-living-room","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"chqUhkXqP1o7eWiRXdH0Q"}
