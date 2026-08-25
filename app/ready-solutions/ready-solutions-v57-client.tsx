@@ -143,9 +143,8 @@ const collectionHref = (collection: string) => `/?section=collections&collection
 
 export function ReadySolutionsLanding() {
   const { catalog, rules, error } = useData();
+  // READY_SOLUTIONS_SIMPLIFIED_V60
   const [space, setSpace] = useState("all");
-  const [guests, setGuests] = useState("all");
-  const [category, setCategory] = useState("all");
   // COLLECTION_CONTEXT_V58
   const [collectionContext, setCollectionContext] = useState("");
   useEffect(() => {
@@ -163,26 +162,21 @@ export function ReadySolutionsLanding() {
     return { solution, rows, groups, guestOptions, image: solutionImage(solution, rows), from: prices.length ? Math.min(...prices) : 0 };
   });
   const spaces = Array.from(new Set(cards.map((card) => card.solution.space)));
-  const guestValues = Array.from(new Set(cards.flatMap((card) => card.guestOptions))).sort((a, b) => a - b);
-  const categories = Array.from(new Set(cards.flatMap((card) => card.groups.map((group) => group.title))));
-  const visible = cards.filter((card) => (!collectionContext || card.solution.collections.some((value) => norm(value) === norm(collectionContext))) && (space === "all" || card.solution.space === space) && (guests === "all" || card.guestOptions.includes(Number(guests))) && (category === "all" || card.groups.some((group) => group.title === category)));
-  const reset = () => { setSpace("all"); setGuests("all"); setCategory("all"); };
+  const visible = cards.filter((card) => (!collectionContext || card.solution.collections.some((value) => norm(value) === norm(collectionContext))) && (space === "all" || card.solution.space === space));
+  const reset = () => { setSpace("all"); };
 
   return <div className="rs57-page">
     <StoreHeader/>
     <main className="rs57-landing">
-      <section className="rs57-intro">
-        <div><small>ГОТОВЫЕ РЕШЕНИЯ</small><h1>Пространство, которое легко собрать</h1><p>Выберите зону и готовый сценарий. Мы уже совместили предметы по стилю и цвету — вам остаётся настроить количество персон, состав и варианты товаров.</p></div>
-        <ol><li><b>01</b><span><strong>Выберите решение</strong><small>по пространству и задаче</small></span></li><li><b>02</b><span><strong>Настройте состав</strong><small>те же товары, что в каталоге</small></span></li><li><b>03</b><span><strong>Проверьте результат</strong><small>замените или удалите предметы</small></span></li></ol>
+      <section className="rs57-intro rs60-intro">
+        <div><small>ГОТОВЫЕ РЕШЕНИЯ</small><h1>Соберите пространство целиком</h1><p>Выберите пространство. Внутри можно настроить количество, состав, цвет и заменить любой предмет.</p></div>
       </section>
 
       <section className="rs57-index" aria-labelledby="rs57-index-title">
         <header className="rs57-index-head"><div><small>ПОДБОР</small><h2 id="rs57-index-title">Найдите своё решение</h2></div><span>{visible.length} из {cards.length}</span></header>
-        <div className="rs57-filterbar" aria-label="Фильтры готовых решений">
+        <div className="rs57-filterbar rs60-space-filter" aria-label="Фильтр по пространству">
           <label><span>Пространство</span><select value={space} onChange={(event) => setSpace(event.target.value)}><option value="all">Все пространства</option>{spaces.map((value) => <option key={value}>{value}</option>)}</select></label>
-          <label><span>Количество персон</span><select value={guests} onChange={(event) => setGuests(event.target.value)}><option value="all">Любое</option>{guestValues.map((value) => <option value={value} key={value}>{value} {value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</option>)}</select></label>
-          <label><span>Категория</span><select value={category} onChange={(event) => setCategory(event.target.value)}><option value="all">Все категории</option>{categories.map((value) => <option key={value}>{value}</option>)}</select></label>
-          {(space !== "all" || guests !== "all" || category !== "all") && <button type="button" onClick={reset}>Сбросить</button>}
+          {space !== "all" && <button type="button" onClick={reset}>Сбросить</button>}
         </div>
 
         {collectionContext && <div className="rs57-context-filter"><span>Коллекция</span><b>{collectionContext}</b><button type="button" onClick={() => setCollectionContext("")}>Снять фильтр</button></div>}
@@ -211,6 +205,7 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
   const [sizes, setSizes] = useState<Record<string, string>>({});
   const [qty, setQty] = useState<Record<string, number>>({});
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [collectionFilters, setCollectionFilters] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
   const [replaceOptionId, setReplaceOptionId] = useState<string | null>(null);
   const [replaceGroupId, setReplaceGroupId] = useState<string | null>(null);
@@ -298,34 +293,25 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
           <header className="rs57-stage-head"><small>ШАГ 2 ИЗ 3</small><h2>{replaceOptionId ? "Выберите замену" : "Состав решения"}</h2><p>{replaceOptionId && currentReplacing ? `Заменяем «${currentReplacing.title}». Выберите другой предмет в этой категории — после выбора вернём вас к результату.` : "Категории и товары находятся в одном месте. Переключайтесь между категориями, отмечайте нужные предметы и сразу выбирайте цвет, размер и количество."}</p></header>
           {replaceOptionId && <div className="rs57-replace-banner"><span><b>Режим замены</b><small>{currentReplacing?.title}</small></span><button type="button" onClick={cancelReplace}>Отменить</button></div>}
           <nav className="rs57-group-tabs" aria-label="Категории решения">{groups.filter((group) => !replaceGroupId || group.id === replaceGroupId).map((group) => <button type="button" key={group.id} className={active.id === group.id ? "is-active" : ""} onClick={() => setActiveGroup(group.id)}><span>{group.title}</span><em>{group.items.filter(({ option }) => selected[option.id]).length}/{group.items.length}</em></button>)}</nav>
-          <ProductGroup group={active} filter={filters[active.id] || "all"} onFilter={(value) => setFilters((current) => ({ ...current, [active.id]: value }))} selected={selected} colors={colors} sizes={sizes} qty={qty} guests={guests} replacingId={replaceOptionId} onSelected={handleSelect} onColor={(id, value) => { setColors((current) => ({ ...current, [id]: value })); const option = active.items.find((item) => item.option.id === id)?.option; if (option) setSizes((current) => ({ ...current, [id]: optionSizes(option, value)[0] || "" })); }} onSize={(id, value) => setSizes((current) => ({ ...current, [id]: value }))} onQty={(id, value) => setQty((current) => ({ ...current, [id]: Math.max(1, value) }))}/>
+          <ProductGroup group={active} filter={filters[active.id] || "all"} onFilter={(value) => setFilters((current) => ({ ...current, [active.id]: value }))} collectionFilter={collectionFilters[active.id] || "all"} onCollectionFilter={(value) => setCollectionFilters((current) => ({ ...current, [active.id]: value }))} selected={selected} colors={colors} sizes={sizes} qty={qty} guests={guests} replacingId={replaceOptionId} onSelected={handleSelect} onColor={(id, value) => { setColors((current) => ({ ...current, [id]: value })); const option = active.items.find((item) => item.option.id === id)?.option; if (option) setSizes((current) => ({ ...current, [id]: optionSizes(option, value)[0] || "" })); }} onSize={(id, value) => setSizes((current) => ({ ...current, [id]: value }))} onQty={(id, value) => setQty((current) => ({ ...current, [id]: Math.max(1, value) }))}/>
         </section>
         <aside className="rs57-summary-card rs57-sticky-summary"><small>ВАШ ВЫБОР</small><h3>{selectedRows.length ? `${selectedRows.length} позиций` : "Начните с товаров"}</h3><div className="rs57-summary-lines">{selectedRows.slice(0, 5).map(({ option, quantity }) => <p key={option.id}><span>{option.title}</span><em>× {quantity}</em></p>)}{selectedRows.length > 5 && <p><span>И ещё</span><em>+{selectedRows.length - 5}</em></p>}</div><footer><span>Итого</span><strong>{money(total)}</strong></footer><button type="button" className="rs57-primary" onClick={() => setStep(3)} disabled={!selectedRows.length}>ПЕРЕЙТИ К РЕЗУЛЬТАТУ</button></aside>
       </div>}
 
-      {step === 3 && <div className="rs57-stage rs57-result-stage">
-        <section><header className="rs57-stage-head"><small>ШАГ 3 ИЗ 3</small><h2>Результат</h2><p>Сначала оцените решение как цельный образ, затем проверьте точный состав. Любой предмет можно заменить или удалить прямо из результата.</p></header>
-          {selectedRows.length ? <>
-            {/* RESULT_MOODBOARD_V59 */}
-            <section className="rs59-moodboard" aria-labelledby="rs59-moodboard-title">
-              <header className="rs59-moodboard-head"><div><small>ВАШЕ ПРОСТРАНСТВО</small><h3 id="rs59-moodboard-title">Собранный образ</h3><p>{selectedRows.length} {selectedRows.length === 1 ? "позиция" : selectedRows.length < 5 ? "позиции" : "позиций"} · {guests} {guests === 1 ? "персона" : guests <= 4 ? "персоны" : "персон"}</p></div><button type="button" onClick={goComposition}>Изменить состав</button></header>
-              <div className="rs59-moodboard-grid">
-                {selectedRows.slice(0, 4).map(({ row, option, group }, index) => <article className={`rs59-moodboard-tile rs59-tile-${index}`} key={`mood-${option.id}`}><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/><div className="rs59-tile-overlay"><span><small>{group.title}</small><strong>{option.title}</strong></span><div><button type="button" onClick={() => startReplace(option, group)}>Заменить</button><button type="button" onClick={() => removeItem(option.id)}>Удалить</button></div></div></article>)}
-                <figure className="rs59-moodboard-tile rs59-moodboard-scene"><RemoteImage src={solutionImage(solution, rows)} fallbackSrc="/images/image-placeholder.svg" alt={`${solution.name} — интерьер`}/><figcaption><small>{solution.space}</small><strong>{solution.name}</strong></figcaption></figure>
-                {selectedRows.slice(4, 8).map(({ row, option, group }, index) => <article className={`rs59-moodboard-tile rs59-tile-${index + 5}`} key={`mood-${option.id}`}><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/><div className="rs59-tile-overlay"><span><small>{group.title}</small><strong>{option.title}</strong></span><div><button type="button" onClick={() => startReplace(option, group)}>Заменить</button><button type="button" onClick={() => removeItem(option.id)}>Удалить</button></div></div></article>)}
-                {selectedRows.length > 8 && <button type="button" className="rs59-moodboard-more" onClick={() => document.getElementById("rs59-result-products")?.scrollIntoView({ behavior: "smooth", block: "start" })}><small>ЕЩЁ В РЕШЕНИИ</small><strong>+{selectedRows.length - 8}</strong><span>Смотреть состав</span></button>}
-              </div>
-              <footer className="rs59-moodboard-footer"><span>Коллекции</span><p>{solution.collections.join(" · ")}</p><strong>{money(total)}</strong></footer>
-            </section>
-
-            <section className="rs59-result-products" id="rs59-result-products">
-              <header><div><small>СОСТАВ РЕШЕНИЯ</small><h3>Выбранные товары</h3></div><span>{selectedRows.length} позиций</span></header>
-              <div className="rs57-result-list">{selectedRows.map(({ row, quantity, option, group }) => <article key={`${option.id}-${row.offer_id}`} className="rs57-result-item"><div className="rs57-result-media"><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/></div><div className="rs57-result-copy"><small>{group.title}</small><strong>{option.title}</strong><p>{[row.color, row.size || row.volume].filter(Boolean).join(" · ") || "Единый вариант"}</p><span>{money(priceOf(row))}</span></div><div className="rs57-result-qty"><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: Math.max(1, quantity - 1) }))}>−</button><b>{quantity}</b><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: quantity + 1 }))}>+</button></div><b className="rs57-result-total">{money(priceOf(row) * quantity)}</b><div className="rs57-result-actions"><button type="button" onClick={() => startReplace(option, group)}>Заменить</button><button type="button" onClick={() => removeItem(option.id)}>Удалить</button></div></article>)}</div>
-            </section>
-          </> : <div className="rs57-empty-result"><h3>В решении пока нет товаров</h3><p>Вернитесь к составу и выберите предметы.</p><button type="button" onClick={goComposition}>Выбрать товары</button></div>}
-          <button type="button" className="rs57-add-more" onClick={goComposition}>+ Добавить или изменить предметы</button>
+      {step === 3 && <div className="rs57-stage rs57-result-stage rs60-result-stage">
+        <section className="rs60-result-main"><header className="rs57-stage-head rs60-result-head"><small>ШАГ 3 ИЗ 3</small><h2>Результат</h2><p>Ваше решение собрано в одном визуальном поле. Меняйте количество, заменяйте, удаляйте или добавляйте предметы прямо здесь.</p></header>
+          {selectedRows.length ? <section className="rs60-moodboard" aria-label="Выбранные товары">
+            <div className="rs60-moodboard-grid">
+              {selectedRows.map(({ row, quantity, option, group }, index) => <article className={`rs60-moodboard-card rs60-mood-${index % 7}`} key={`mood-${option.id}-${row.offer_id}`}>
+                <div className="rs60-moodboard-media"><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/></div>
+                <div className="rs60-moodboard-copy"><small>{group.title}</small><strong>{option.title}</strong><span>{money(priceOf(row))}</span></div>
+                <div className="rs60-moodboard-controls"><div className="rs60-qty"><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: Math.max(1, quantity - 1) }))} aria-label="Уменьшить количество">−</button><b>{quantity}</b><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: quantity + 1 }))} aria-label="Увеличить количество">+</button></div><div className="rs60-card-actions"><button type="button" onClick={() => startReplace(option, group)}>Заменить</button><button type="button" onClick={() => removeItem(option.id)}>Удалить</button></div></div>
+              </article>)}
+              <button type="button" className="rs60-add-card" onClick={goComposition}><span>+</span><strong>Добавить предмет</strong><small>из доступных категорий и коллекций</small></button>
+            </div>
+            <footer className="rs60-result-total"><div><span>{selectedRows.length} позиций</span><strong>{money(total)}</strong></div><button type="button" className="rs57-primary" onClick={addToCart}>ДОБАВИТЬ ВСЁ В КОРЗИНУ</button></footer>
+          </section> : <div className="rs57-empty-result"><h3>В решении пока нет товаров</h3><button type="button" onClick={goComposition}>Добавить предмет</button></div>}
         </section>
-        <aside className="rs57-summary-card rs57-result-summary"><small>ГОТОВОЕ РЕШЕНИЕ</small><h3>{solution.name}</h3><dl><div><dt>Персон</dt><dd>{guests}</dd></div><div><dt>Позиций</dt><dd>{selectedRows.length}</dd></div><div><dt>Коллекций</dt><dd>{solution.collections.length}</dd></div></dl><footer><span>Итого</span><strong>{money(total)}</strong></footer><button type="button" className="rs57-primary" onClick={addToCart} disabled={!selectedRows.length}>ДОБАВИТЬ В КОРЗИНУ</button><button type="button" className="rs57-save" onClick={saveSolution}>{saved ? "Сохранено ✓" : "Сохранить решение"}</button><p className="rs57-summary-note">Все выбранные товары попадут в общую корзину сайта с выбранными цветами, размерами и количеством.</p></aside>
       </div>}
     </main>
 
@@ -334,13 +320,17 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
   </div>;
 }
 
-function ProductGroup({ group, filter, onFilter, selected, colors, sizes, qty, guests, replacingId, onSelected, onColor, onSize, onQty }: { group: FormGroup; filter: string; onFilter: (value: string) => void; selected: Record<string, boolean>; colors: Record<string, string>; sizes: Record<string, string>; qty: Record<string, number>; guests: number; replacingId: string | null; onSelected: (id: string, value: boolean) => void; onColor: (id: string, value: string) => void; onSize: (id: string, value: string) => void; onQty: (id: string, value: number) => void }) {
+function ProductGroup({ group, filter, onFilter, collectionFilter, onCollectionFilter, selected, colors, sizes, qty, guests, replacingId, onSelected, onColor, onSize, onQty }: { group: FormGroup; filter: string; onFilter: (value: string) => void; collectionFilter: string; onCollectionFilter: (value: string) => void; selected: Record<string, boolean>; colors: Record<string, string>; sizes: Record<string, string>; qty: Record<string, number>; guests: number; replacingId: string | null; onSelected: (id: string, value: boolean) => void; onColor: (id: string, value: string) => void; onSize: (id: string, value: string) => void; onQty: (id: string, value: number) => void }) {
   const subcategories = Array.from(new Map(group.items.map((item) => [item.subcategoryId, item.subcategoryTitle])).entries());
-  const visible = filter === "all" ? group.items : group.items.filter((item) => item.subcategoryId === filter);
+  const collections = Array.from(new Set(group.items.map((item) => item.option.collection).filter(Boolean))).sort((a, b) => a.localeCompare(b, "ru"));
+  const visible = group.items.filter((item) => (filter === "all" || item.subcategoryId === filter) && (collectionFilter === "all" || norm(item.option.collection) === norm(collectionFilter)));
   const allVisibleSelected = visible.length > 0 && visible.every(({ option }) => selected[option.id]);
-  return <section className="rs57-product-group">
-    <header><div><small>КАТЕГОРИЯ</small><h3>{group.title}</h3><p>{group.description}</p></div>{!replacingId && <button type="button" onClick={() => visible.forEach(({ option }) => onSelected(option.id, !allVisibleSelected))}>{allVisibleSelected ? "Снять всё" : "Выбрать всё"}</button>}</header>
-    {subcategories.length > 1 && <div className="rs57-subfilters"><button type="button" className={filter === "all" ? "is-active" : ""} onClick={() => onFilter("all")}>Все</button>{subcategories.map(([id, title]) => <button type="button" key={id} className={filter === id ? "is-active" : ""} onClick={() => onFilter(id)}>{title}</button>)}</div>}
+  return <section className="rs57-product-group rs60-product-group">
+    <header><div><small>КАТЕГОРИЯ</small><h3>{group.title}</h3></div>{!replacingId && <button type="button" onClick={() => visible.forEach(({ option }) => onSelected(option.id, !allVisibleSelected))}>{allVisibleSelected ? "Снять всё" : "Выбрать всё"}</button>}</header>
+    <div className="rs60-product-filters">
+      <label><span>Тип товара</span><select value={filter} onChange={(event) => onFilter(event.target.value)}><option value="all">Все</option>{subcategories.map(([id, title]) => <option key={id} value={id}>{title}</option>)}</select></label>
+      <label><span>Коллекция</span><select value={collectionFilter} onChange={(event) => onCollectionFilter(event.target.value)}><option value="all">Все коллекции</option>{collections.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
+    </div>
     <div className="product-grid rs57-product-grid">{visible.map((item) => <ReadyCatalogCard key={item.option.id} option={item.option} selected={Boolean(selected[item.option.id])} color={colors[item.option.id] || ""} size={sizes[item.option.id] || ""} quantity={qty[item.option.id] || recommendedOptionQuantity(item.option, guests)} guests={guests} replacing={Boolean(replacingId)} replacingSelf={replacingId === item.option.id} onToggle={() => onSelected(item.option.id, !selected[item.option.id])} onColor={(value) => onColor(item.option.id, value)} onSize={(value) => onSize(item.option.id, value)} onQty={(value) => onQty(item.option.id, value)}/>)}</div>
   </section>;
 }
