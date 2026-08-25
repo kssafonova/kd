@@ -1,0 +1,470 @@
+/* V66 — Collections: Zara Home editorial rhythm, Kultura Doma identity. */
+.collections-v66-zara{
+  --v66-ink:#171714;
+  --v66-muted:#77756f;
+  --v66-line:#e7e4de;
+  --v66-paper:#fff;
+  --v66-soft:#f1efe9;
+  --v66-warm:#ebe7df;
+  padding:0 24px 120px!important;
+  background:var(--v66-paper)!important;
+  color:var(--v66-ink)!important;
+}
+
+/* Landing — not a catalogue of cards, but an editorial index. */
+.collections-v66-zara .collections-v52-intro{
+  max-width:1500px!important;
+  min-height:290px!important;
+  margin:0 auto!important;
+  padding:82px 0 34px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1.2fr) minmax(320px,.55fr)!important;
+  gap:8vw!important;
+  align-items:end!important;
+  border-bottom:1px solid var(--v66-line)!important;
+}
+.collections-v66-zara .collections-v52-intro small{
+  color:#7d7b75!important;
+  font-size:8px!important;
+  letter-spacing:.18em!important;
+}
+.collections-v66-zara .collections-v52-intro h1{
+  margin:12px 0 0!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(52px,5vw,78px)!important;
+  line-height:.94!important;
+  font-weight:400!important;
+  letter-spacing:-.035em!important;
+}
+.collections-v66-zara .collections-v52-intro p{
+  max-width:520px!important;
+  margin:0 0 3px auto!important;
+  color:#66645f!important;
+  font-size:11px!important;
+  line-height:1.75!important;
+}
+
+.collections-v66-zara .collections-v52-index{
+  max-width:1500px!important;
+  margin:36px auto 0!important;
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:72px 18px!important;
+  align-items:start!important;
+}
+.collections-v66-zara .collections-v52-card{
+  min-width:0!important;
+  border:0!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.collections-v66-zara .collections-v52-card:nth-child(1){grid-column:span 8!important}
+.collections-v66-zara .collections-v52-card:nth-child(2){grid-column:span 4!important;padding-top:12vw!important}
+.collections-v66-zara .collections-v52-card:nth-child(3){grid-column:span 5!important}
+.collections-v66-zara .collections-v52-card:nth-child(4){grid-column:span 7!important;padding-top:7vw!important}
+.collections-v66-zara .collections-v52-card:nth-child(5){grid-column:3 / span 8!important}
+.collections-v66-zara .collections-v52-card-media{
+  width:100%!important;
+  border:0!important;
+  background:var(--v66-soft)!important;
+  overflow:hidden!important;
+}
+.collections-v66-zara .collections-v52-card:nth-child(1) .collections-v52-card-media{aspect-ratio:16/10!important}
+.collections-v66-zara .collections-v52-card:nth-child(2) .collections-v52-card-media{aspect-ratio:3/4!important}
+.collections-v66-zara .collections-v52-card:nth-child(3) .collections-v52-card-media{aspect-ratio:4/5!important}
+.collections-v66-zara .collections-v52-card:nth-child(4) .collections-v52-card-media{aspect-ratio:16/10!important}
+.collections-v66-zara .collections-v52-card:nth-child(5) .collections-v52-card-media{aspect-ratio:16/9!important}
+.collections-v66-zara .collections-v52-card-media img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  transform:scale(1)!important;
+  transition:transform .9s cubic-bezier(.22,.61,.36,1)!important;
+}
+.collections-v66-zara .collections-v52-card:hover .collections-v52-card-media img{transform:scale(1.018)!important}
+.collections-v66-zara .collections-v52-card-copy{
+  max-width:580px!important;
+  padding:14px 0 0!important;
+}
+.collections-v66-zara .collections-v52-card-copy>small{
+  color:#8a8882!important;
+  font-size:8px!important;
+  letter-spacing:.16em!important;
+}
+.collections-v66-zara .collections-v52-card-copy>button{margin:6px 0 0!important}
+.collections-v66-zara .collections-v52-card-copy h2{
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(23px,2.1vw,34px)!important;
+  line-height:1!important;
+  font-weight:400!important;
+  letter-spacing:-.015em!important;
+}
+.collections-v66-zara .collections-v52-card-copy p{
+  max-width:500px!important;
+  margin:9px 0 13px!important;
+  color:#73716b!important;
+  font-size:10px!important;
+  line-height:1.65!important;
+}
+.collections-v66-zara .collections-v52-card-copy>div{
+  display:flex!important;
+  justify-content:flex-start!important;
+  gap:22px!important;
+  padding:0!important;
+  border:0!important;
+  color:#7b7973!important;
+  font-size:9px!important;
+}
+.collections-v66-zara .collections-v52-card-copy strong{font-weight:400!important;color:#292824!important}
+
+/* Detail — one continuous editorial page instead of two competing scroll areas. */
+.collections-v66-zara .v52-story-backdrop,
+.collections-v66-zara .v52-story-modal{background:#fff!important}
+.collections-v66-zara .v52-story-modal{
+  width:100vw!important;
+  height:100dvh!important;
+  max-width:none!important;
+  overflow:hidden!important;
+}
+.collections-v66-zara .v52-story-topbar{
+  height:58px!important;
+  min-height:58px!important;
+  padding:0 24px!important;
+  border-bottom:1px solid rgba(228,225,218,.9)!important;
+  background:rgba(255,255,255,.975)!important;
+  backdrop-filter:blur(16px)!important;
+}
+.collections-v66-zara .v52-story-topbar>button:first-child{
+  font-size:8px!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+}
+.collections-v66-zara .v52-story-topbar strong{
+  font-family:"Tenor Sans",serif!important;
+  font-size:14px!important;
+  font-weight:400!important;
+  letter-spacing:.08em!important;
+}
+.collections-v66-zara .v52-story-columns{
+  display:block!important;
+  height:calc(100dvh - 58px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:none!important;
+  background:#fff!important;
+}
+.collections-v66-zara .v52-story-columns::-webkit-scrollbar{display:none!important}
+.collections-v66-zara .v52-story-editorial{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:18px!important;
+  width:100%!important;
+  min-height:0!important;
+  padding:0 24px 90px!important;
+  overflow:visible!important;
+  border:0!important;
+  background:#fff!important;
+  scroll-snap-type:none!important;
+}
+.collections-v66-zara .v52-story-title{
+  grid-column:1/-1!important;
+  min-height:48vh!important;
+  height:auto!important;
+  margin:0 -24px!important;
+  padding:clamp(64px,8vw,120px) clamp(30px,7vw,110px) clamp(54px,7vw,100px)!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1.1fr) minmax(320px,.55fr)!important;
+  gap:8vw!important;
+  align-content:end!important;
+  align-items:end!important;
+  border-radius:0!important;
+  background:#ede9e1!important;
+}
+.collections-v66-zara .v52-story-title small,
+.collections-v66-zara .v52-story-title h1{grid-column:1!important}
+.collections-v66-zara .v52-story-title small{align-self:end!important}
+.collections-v66-zara .v52-story-title h1{
+  max-width:900px!important;
+  margin:12px 0 0!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(58px,7vw,108px)!important;
+  line-height:.9!important;
+  font-weight:400!important;
+  letter-spacing:-.045em!important;
+}
+.collections-v66-zara .v52-story-title p{
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  align-self:end!important;
+  max-width:520px!important;
+  margin:0!important;
+  color:#57554f!important;
+  font-size:12px!important;
+  line-height:1.75!important;
+}
+.collections-v66-zara .v52-story-title span{
+  grid-column:2!important;
+  margin-top:15px!important;
+  color:#77756f!important;
+  font-size:8px!important;
+  letter-spacing:.11em!important;
+}
+.collections-v66-zara .v52-story-editorial figure{
+  min-height:0!important;
+  height:auto!important;
+  margin:0!important;
+  border-radius:0!important;
+  background:var(--v66-soft)!important;
+  overflow:hidden!important;
+  scroll-snap-align:none!important;
+}
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(1){grid-column:1/-1!important}
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(2){grid-column:1/span 5!important;margin-top:52px!important}
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(3){grid-column:6/-1!important;margin-top:150px!important}
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(4){grid-column:2/span 8!important;margin-top:64px!important}
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(n+5){grid-column:span 6!important;margin-top:44px!important}
+.collections-v66-zara .v52-story-editorial figure img{
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  object-fit:cover!important;
+  background:var(--v66-soft)!important;
+}
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(1) img{height:min(78vh,900px)!important;object-fit:cover!important}
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(2) img,
+.collections-v66-zara .v52-story-editorial figure:nth-of-type(3) img{aspect-ratio:4/5!important}
+.collections-v66-zara .v52-story-editorial figcaption{
+  left:32px!important;
+  right:auto!important;
+  bottom:28px!important;
+  max-width:560px!important;
+  padding:18px 20px!important;
+  background:rgba(255,255,255,.92)!important;
+  color:#22211d!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(17px,1.5vw,24px)!important;
+  line-height:1.42!important;
+  backdrop-filter:blur(12px)!important;
+}
+.collections-v66-zara .v52-story-note{
+  grid-column:4/span 7!important;
+  min-height:0!important;
+  height:auto!important;
+  margin:86px 0 0!important;
+  padding:70px 0 0!important;
+  border-top:1px solid var(--v66-line)!important;
+  border-radius:0!important;
+  background:#fff!important;
+  justify-content:flex-start!important;
+}
+.collections-v66-zara .v52-story-note p{
+  max-width:760px!important;
+  margin:15px 0 0!important;
+  color:#3e3d38!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(24px,2.7vw,42px)!important;
+  line-height:1.36!important;
+  font-weight:400!important;
+}
+.collections-v66-zara .v58-ready-solution-link{
+  width:max-content!important;
+  min-height:0!important;
+  margin-top:28px!important;
+  padding:0 0 5px!important;
+  border:0!important;
+  border-bottom:1px solid #1d1d1f!important;
+  background:transparent!important;
+  color:#1d1d1f!important;
+  font-size:9px!important;
+  letter-spacing:.08em!important;
+}
+
+/* Commerce — same grammar as the Kultura Doma catalogue. */
+.collections-v66-zara .v52-story-commerce{
+  max-width:1500px!important;
+  margin:0 auto!important;
+  padding:70px 24px 130px!important;
+  overflow:visible!important;
+  background:#fff!important;
+}
+.collections-v66-zara .v52-commerce-head{
+  position:relative!important;
+  top:auto!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:34px!important;
+  align-items:end!important;
+  padding:0 0 22px!important;
+  border-bottom:1px solid var(--v66-line)!important;
+  background:#fff!important;
+  backdrop-filter:none!important;
+}
+.collections-v66-zara .v52-commerce-head h2{
+  margin:7px 0 6px!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(30px,3vw,44px)!important;
+  line-height:1!important;
+  font-weight:400!important;
+}
+.collections-v66-zara .v52-commerce-head p{
+  max-width:560px!important;
+  font-size:10px!important;
+  line-height:1.65!important;
+  color:#77756f!important;
+}
+.collections-v66-zara .v65-commerce-actions button{
+  padding:0 0 4px!important;
+  border:0!important;
+  border-bottom:1px solid #1d1d1f!important;
+  background:transparent!important;
+  color:#1d1d1f!important;
+  font-size:9px!important;
+}
+.collections-v66-zara .v52-story-products{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:56px 18px!important;
+  padding-top:28px!important;
+}
+.collections-v66-zara .v52-story-product,
+.collections-v66-zara .v52-story-product.selected,
+.collections-v66-zara .v52-story-product .product-card{
+  border:0!important;
+  outline:0!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.collections-v66-zara .v52-story-product .product-image{aspect-ratio:1/1!important;background:#f3f2ef!important}
+.collections-v66-zara .v52-story-product .product-copy{padding-top:11px!important}
+.collections-v66-zara .v52-story-product .product-copy strong{font-size:16px!important;font-weight:400!important}
+.collections-v66-zara .v52-story-product .product-copy small{font-size:12px!important;color:#85837d!important}
+.collections-v66-zara .v52-story-product .price{font-size:14px!important}
+.collections-v66-zara .v52-story-products .selection-check.quick{
+  right:4px!important;
+  bottom:8px!important;
+  width:32px!important;
+  height:32px!important;
+  border:1px solid #171714!important;
+  border-radius:0!important;
+  background:#fff!important;
+  color:transparent!important;
+  box-shadow:none!important;
+}
+.collections-v66-zara .v52-story-products .selection-check.quick.selected{
+  background:#171714!important;
+  border-color:#171714!important;
+  color:#fff!important;
+}
+.collections-v66-zara .v52-inline-size{
+  margin-top:9px!important;
+  padding-top:10px!important;
+  border-top:1px solid #ece9e3!important;
+  font-size:9px!important;
+}
+.collections-v66-zara .v52-inline-size select{
+  border:0!important;
+  border-bottom:1px solid #1d1d1f!important;
+  border-radius:0!important;
+  background:#fff!important;
+}
+.collections-v66-zara .v52-purchase-bar{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:30!important;
+  margin-top:52px!important;
+  padding:13px 0 17px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:24px!important;
+  border-top:1px solid #d7d5cf!important;
+  background:rgba(255,255,255,.985)!important;
+  backdrop-filter:blur(16px)!important;
+}
+.collections-v66-zara .v52-purchase-bar>div{display:flex!important;gap:16px!important;align-items:baseline!important}
+.collections-v66-zara .v52-purchase-bar span{font-size:9px!important;color:#77756f!important}
+.collections-v66-zara .v52-purchase-bar strong{font-family:"Tenor Sans",serif!important;font-size:22px!important;font-weight:400!important}
+.collections-v66-zara .v52-purchase-bar>button{
+  min-width:210px!important;
+  min-height:48px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#171714!important;
+  color:#fff!important;
+  font-size:9px!important;
+  letter-spacing:.12em!important;
+}
+
+@media(max-width:1000px){
+  .collections-v66-zara .collections-v52-card:nth-child(n){padding-top:0!important}
+  .collections-v66-zara .collections-v52-card:nth-child(1){grid-column:span 7!important}
+  .collections-v66-zara .collections-v52-card:nth-child(2){grid-column:span 5!important}
+  .collections-v66-zara .collections-v52-card:nth-child(3),
+  .collections-v66-zara .collections-v52-card:nth-child(4){grid-column:span 6!important}
+  .collections-v66-zara .collections-v52-card:nth-child(5){grid-column:2/span 10!important}
+  .collections-v66-zara .v52-story-title{grid-template-columns:1fr!important}
+  .collections-v66-zara .v52-story-title p,
+  .collections-v66-zara .v52-story-title span{grid-column:1!important;grid-row:auto!important}
+  .collections-v66-zara .v52-story-title p{margin-top:24px!important}
+}
+
+@media(max-width:820px){
+  .collections-v66-zara{padding:0 14px 80px!important}
+  .collections-v66-zara .collections-v52-intro{
+    min-height:0!important;
+    display:block!important;
+    padding:50px 0 28px!important;
+  }
+  .collections-v66-zara .collections-v52-intro h1{font-size:44px!important}
+  .collections-v66-zara .collections-v52-intro p{margin:18px 0 0!important;max-width:440px!important;font-size:10px!important}
+  .collections-v66-zara .collections-v52-index{
+    display:block!important;
+    margin-top:22px!important;
+  }
+  .collections-v66-zara .collections-v52-card:nth-child(n){margin:0 0 48px!important;padding:0!important}
+  .collections-v66-zara .collections-v52-card-media,
+  .collections-v66-zara .collections-v52-card:nth-child(n) .collections-v52-card-media{aspect-ratio:4/5!important}
+  .collections-v66-zara .collections-v52-card-copy h2{font-size:24px!important}
+  .collections-v66-zara .collections-v52-card-copy p{font-size:10px!important}
+
+  .collections-v66-zara .v52-story-topbar{height:54px!important;min-height:54px!important;padding:0 14px!important}
+  .collections-v66-zara .v52-story-columns{height:calc(100dvh - 54px)!important}
+  .collections-v66-zara .v52-story-editorial{
+    display:block!important;
+    padding:0 10px 54px!important;
+  }
+  .collections-v66-zara .v52-story-title{
+    min-height:52vh!important;
+    margin:0 -10px 10px!important;
+    padding:38px 22px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-end!important;
+  }
+  .collections-v66-zara .v52-story-title h1{font-size:48px!important;line-height:.92!important}
+  .collections-v66-zara .v52-story-title p{margin-top:18px!important;font-size:11px!important}
+  .collections-v66-zara .v52-story-editorial figure:nth-of-type(n){margin:0 0 10px!important}
+  .collections-v66-zara .v52-story-editorial figure:nth-of-type(n) img{width:100%!important;height:auto!important;aspect-ratio:4/5!important;object-fit:cover!important}
+  .collections-v66-zara .v52-story-editorial figure:nth-of-type(1) img{height:68svh!important;aspect-ratio:auto!important}
+  .collections-v66-zara .v52-story-editorial figcaption{left:12px!important;right:12px!important;bottom:12px!important;font-size:16px!important;padding:13px 14px!important}
+  .collections-v66-zara .v52-story-note{margin:28px 12px 0!important;padding:34px 0 0!important}
+  .collections-v66-zara .v52-story-note p{font-size:24px!important}
+  .collections-v66-zara .v52-story-commerce{padding:46px 12px 94px!important}
+  .collections-v66-zara .v52-commerce-head{grid-template-columns:1fr auto!important;padding-bottom:15px!important}
+  .collections-v66-zara .v52-commerce-head h2{font-size:28px!important}
+  .collections-v66-zara .v52-commerce-head p{font-size:9px!important;max-width:280px!important}
+  .collections-v66-zara .v52-story-products{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:34px 8px!important;padding-top:18px!important}
+  .collections-v66-zara .v52-story-product .product-copy strong{font-size:13px!important}
+  .collections-v66-zara .v52-story-product .product-copy small{font-size:10px!important}
+  .collections-v66-zara .v52-story-product .price{font-size:12px!important}
+  .collections-v66-zara .v52-story-products .selection-check.quick{width:28px!important;height:28px!important;right:2px!important;bottom:4px!important}
+  .collections-v66-zara .v52-purchase-bar{
+    margin-left:-12px!important;
+    margin-right:-12px!important;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;
+    grid-template-columns:minmax(0,.88fr) minmax(142px,1.12fr)!important;
+  }
+  .collections-v66-zara .v52-purchase-bar>div{display:block!important}
+  .collections-v66-zara .v52-purchase-bar strong{display:block!important;margin-top:2px!important;font-size:18px!important}
+  .collections-v66-zara .v52-purchase-bar>button{min-width:0!important;width:100%!important;min-height:46px!important}
+}
