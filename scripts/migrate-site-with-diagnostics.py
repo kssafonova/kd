@@ -44,6 +44,7 @@ scripts = [
     "redesign-collections-v23.py",
     "redesign-collections-v34.py",
     "refine-green-salon-v35.py",
+    "refine-red-lines-v36.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
