@@ -5,10 +5,11 @@ client_path = root / "app" / "ready-solutions" / "ready-solutions-client.tsx"
 layout_path = root / "app" / "ready-solutions" / "layout.tsx"
 page_path = root / "app" / "page.tsx"
 
-# V57 is a clean implementation that deliberately reuses the storefront's native
-# product-card classes and global header system instead of maintaining a second UI.
+# V71 is the active responsive wizard. Keep the landing on the proven V57
+# implementation, but route scenario pages to V71 so later migrations cannot
+# silently restore the old wizard.
 client_path.write_text(
-    'export { ReadySolutionsLanding, ReadySolutionWizard } from "./ready-solutions-v57-client";\n',
+    'export { ReadySolutionsLanding } from "./ready-solutions-v57-client";\nexport { ReadySolutionWizard } from "./ready-solutions-v71-client";\n',
     encoding="utf-8",
 )
 
@@ -18,21 +19,21 @@ if 'ready-solutions-v57.css' not in layout:
         'import "./ready-solutions.css";',
         'import "./ready-solutions.css";\nimport "./ready-solutions-v57.css";',
     )
+if 'ready-solutions-v71.css' not in layout:
+    layout = layout.replace(
+        'import "./ready-solutions-v57.css";',
+        'import "./ready-solutions-v57.css";\nimport "./ready-solutions-v71.css";',
+    )
 layout_path.write_text(layout, encoding="utf-8")
 
 page = page_path.read_text(encoding="utf-8")
 
-# Ready Solutions header uses the same menu / boutique entry points as the main
-# storefront. Support those query actions when returning to the SPA shell.
 if 'if(open==="menu")' not in page:
     page = page.replace(
         '    if(open==="favorites")setFavoritesOpen(true);',
         '    if(open==="favorites")setFavoritesOpen(true);\n    if(open==="menu"){setMenuSection("");setMenu(true)}\n    if(open==="boutiques")setBoutiquesOpen(true);',
     )
 
-# Collection chips in a ready solution open the corresponding collection whenever
-# that collection has a current editorial alias; otherwise they fall back to the
-# collection index without breaking navigation.
 if 'const requestedCollection=params.get("collection")' not in page:
     page = page.replace(
         '    const open=params.get("open");',
@@ -54,7 +55,6 @@ if 'const requestedCollection=params.get("collection")' not in page:
         '    if(section||open||requestedCollection)window.history.replaceState({},"",window.location.pathname);',
     )
 
-# Keep the home merchandising module in sync with the fourth live solution.
 if 'title:"Тёплый брутализм"' not in page:
     page = page.replace(
         '    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/products/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},',
@@ -62,4 +62,4 @@ if 'title:"Тёплый брутализм"' not in page:
     )
 
 page_path.write_text(page, encoding="utf-8")
-print("Ready Solutions V57 commerce UX applied")
+print("Ready Solutions V71 route preserved during migration")
