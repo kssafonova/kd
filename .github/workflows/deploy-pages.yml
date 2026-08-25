@@ -127,7 +127,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- app/page.tsx app/globals.css app/catalog-data.ts
+          git add -- app/page.tsx app/globals.css app/catalog-data.ts app/ready-solutions
           while IFS= read -r name; do
             git add -A -- "$name"
           done < /tmp/pages-output-names
