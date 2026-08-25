@@ -14,8 +14,9 @@ export function ReadySolutionMockupV70() {
     const summary = page?.querySelector<HTMLElement>(".v54-summary");
     if (!page || !hero || !person || !groups || !summary || page.classList.contains("v70-ready")) return;
 
+    const readyPage = page;
     const readyGroups = groups;
-    page.classList.add("v70-ready");
+    readyPage.classList.add("v70-ready");
     let step = 1;
 
     const nav = document.createElement("nav");
@@ -54,7 +55,7 @@ export function ReadySolutionMockupV70() {
       <div class="v70-flowbar-copy"><small></small><strong></strong></div>
       <button type="button"></button>
     `;
-    page.appendChild(flowbar);
+    readyPage.appendChild(flowbar);
     const flowbarSmall = flowbar.querySelector("small")!;
     const flowbarStrong = flowbar.querySelector("strong")!;
     const flowbarButton = flowbar.querySelector<HTMLButtonElement>("button")!;
@@ -168,7 +169,7 @@ export function ReadySolutionMockupV70() {
     function setStep(next: number) {
       if (next === 3 && selectedCards().length === 0) return;
       step = next;
-      page.dataset.v70Step = String(step);
+      readyPage.dataset.v70Step = String(step);
       nav.querySelectorAll<HTMLButtonElement>("button").forEach((button) => {
         button.classList.toggle("is-active", Number(button.dataset.step) === step);
       });
