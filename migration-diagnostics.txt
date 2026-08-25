@@ -1,0 +1,369 @@
+# Site build diagnostics
+
+migration=failure
+dependencies=success
+build=failure
+
+## Migration patches
+
+===== sync-workbook-product-specs.py =====
+exit=0
+Synced workbook product characteristics to PDP
+
+
+===== restore-quick-add-flow.py =====
+exit=0
+Restored previous quick-add navigation flow and desktop drawer dimensions
+
+
+===== add-remote-image-loader.py =====
+exit=0
+Remote URL image loader wired into storefront media
+
+
+===== sync-updated-product-image-urls.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-pdp-reference-gallery.py =====
+exit=0
+Applied reference-style PDP gallery: page-scroll desktop, sticky thumbnails, mobile swipe
+
+
+===== normalize-single-color-swatches.py =====
+exit=0
+Normalized product swatches: 1
+
+
+===== apply-story-builder-v2.py =====
+exit=1
+LunaEditorialView block not found
+
+
+===== refine-story-builder-v2.py =====
+exit=1
+Story quick-buy handler not found
+
+
+===== redesign-home-reference.py =====
+exit=0
+Applied screenshot-inspired homepage redesign
+
+
+===== add-home-bedroom-feature.py =====
+exit=0
+Added direct bedroom collection story links for Luna and Ice Patterns
+
+
+===== refine-homepage-editorial.py =====
+exit=0
+Refined homepage to the supplied editorial reference
+
+
+===== remove-editorial-tabs.py =====
+exit=1
+CollectionsView block not found
+
+
+===== add-editorial-scenario-navigation.py =====
+exit=1
+CollectionsView boundaries were not found
+
+
+===== add-constructor-home-cta.py =====
+exit=0
+Added constructor CTA to homepage
+
+
+===== apply-product-catalog-rules-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-catalog-category-mapping.py =====
+exit=0
+Applied strict catalog category mapping
+
+
+===== apply-product-pricing-merchandising-v1.py =====
+exit=0
+Applied product pricing, sale presentation and handmade badges
+
+
+===== apply-pdp-collection-recommendations-v1.py =====
+exit=0
+Applied shared collection and complementary recommendation logic; recently viewed stays in empty cart
+
+
+===== highlight-menu-solutions-v1.py =====
+exit=0
+Applied Zara Home premium navigation menu
+
+
+===== remove-retired-editorials-v1.py =====
+exit=0
+Removed retired Editorial capsules/collections and their named promo slides
+
+
+===== refine-editorial-tabs-v1.py =====
+exit=0
+Skipped legacy Editorial tab refinement: fullscreen story overlay already owns CollectionsView
+
+
+===== add-ice-pattern-products-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== fix-ice-pattern-2000-2004-types.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== apply-product-preview-rules-v1.py =====
+SKIPPED: catalog-data runtime overlay is active; legacy catalog patch already materialized in catalog-data-base.ts
+
+===== add-editorial-story-overlay-v1.py =====
+exit=1
+Could not locate CollectionsView block
+
+
+===== redesign-home-magazine-v2.py =====
+exit=0
+Applied final editorial magazine homepage redesign
+
+
+===== redesign-home-commerce-v3.py =====
+exit=0
+Applied premium conversion-focused homepage V3
+
+
+===== redesign-home-v4.py =====
+exit=0
+Applied clean white homepage V5 reference redesign
+
+
+===== merge-home-traditions-collections-v1.py =====
+exit=0
+Merged traditions with white shoppable collection product rail, controls and Editorial CTA
+
+
+===== refine-home-v7.py =====
+exit=0
+Refined homepage V7: square category cards and compact header grouping
+
+
+===== refine-home-v8.py =====
+exit=0
+Refined homepage V8: smaller hero, catalog-style favorite and subtle 15s story player
+
+
+===== refine-home-v9.py =====
+exit=0
+Refined homepage V9: full-screen commercial hero, interaction-aware slider and responsive ecommerce behavior
+
+
+===== refine-home-togas-v10.py =====
+exit=0
+Applied TOGAS-inspired homepage V10 structure and copy
+
+
+===== refine-home-ux-v11.py =====
+exit=0
+Homepage UX V11 patch applied
+
+
+===== refine-home-v11-video.py =====
+exit=0
+Homepage V11: responsive desktop/mobile video replaces CSS motion story
+
+
+===== add-mobile-gift-wrap-flow-v1.py =====
+exit=0
+Applied unified post-add flow with gift wrapping and complementary products
+
+
+===== refine-cart-controls-v19.py =====
+exit=0
+Cart controls V19 already applied
+
+
+===== apply-auth-flow-v20.py =====
+exit=0
+Auth flow V20 already applied
+
+
+===== redesign-collections-v23.py =====
+exit=0
+Applied collections redesign V23
+
+
+===== redesign-collections-v34.py =====
+exit=0
+Collections V34 applied
+
+
+===== refine-green-salon-v35.py =====
+exit=0
+Green Salon V35 detail refinements applied
+
+
+===== refine-red-lines-v36.py =====
+exit=0
+Red Lines V36 screenshot refinements applied
+
+
+===== refine-winter-fairy-v37.py =====
+exit=0
+Winter Fairy Tale V37 screenshot refinements applied
+
+
+===== redesign-ready-solutions-v38.py =====
+exit=0
+Ready solutions V38 editorial copy applied
+
+
+===== redesign-ready-solutions-hero-v39.py =====
+exit=0
+Ready solutions V39 integrated hero and steps applied
+
+
+===== redesign-commerce-zara-kultura-v41.py =====
+exit=0
+Commerce Zara Kultura V41 applied
+
+
+===== redesign-commerce-hypotheses-v42.py =====
+exit=0
+Applied hypothesis-driven commerce V42
+
+
+===== fix-commerce-v42-crosssell.py =====
+exit=0
+Refined V42 cross-sell matcher
+
+
+## npm install
+npm warn deprecated tsconfck@3.1.6: unmaintained
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
+
+added 513 packages in 19s
+
+## Next build
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 5 errors:
+./app/page.tsx:1032:10
+the name `AddressSuggestField` is defined multiple times
+  [90m1030 |[0m }
+  [90m1031 |[0m
+[31m[1m>[0m [90m1032 |[0m [36mfunction[0m [33mAddressSuggestField[0m({city,value,onChange,label=[32m"Адрес"[0m,required=[36mfalse[0m}:{city:st...
+  [90m     |[0m          [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+  [90m1033 |[0m   [36mconst[0m [open,setOpen]=useState([36mfalse[0m);
+  [90m1034 |[0m   [36mconst[0m source=[33mKD_ADDRESS_SUGGESTIONS[0m[city]??[];
+  [90m1035 |[0m   [36mconst[0m query=value.trim().toLowerCase();
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./app/page.tsx [Client Component Browser]
+    ./app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/page.tsx [Client Component SSR]
+    ./app/page.tsx [Server Component]
+
+
+./app/page.tsx:1025:10
+the name `CitySuggestField` is defined multiple times
+  [90m1023 |[0m };
+  [90m1024 |[0m
+[31m[1m>[0m [90m1025 |[0m [36mfunction[0m [33mCitySuggestField[0m({value,onChange,label=[32m"Город"[0m,required=[36mfalse[0m}:{value:string;on...
+  [90m     |[0m          [31m[1m^^^^^^^^^^^^^^^^[0m
+  [90m1026 |[0m   [36mconst[0m [open,setOpen]=useState([36mfalse[0m);
+  [90m1027 |[0m   [36mconst[0m query=value.trim().toLowerCase();
+  [90m1028 |[0m   [36mconst[0m items=[33mKD_CITY_SUGGESTIONS[0m.filter(city=>!query||city.toLowerCase().includes(query...
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./app/page.tsx [Client Component Browser]
+    ./app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/page.tsx [Client Component SSR]
+    ./app/page.tsx [Server Component]
+
+
+./app/page.tsx:1008:7
+the name `KD_ADDRESS_SUGGESTIONS` is defined multiple times
+  [90m1006 |[0m
+  [90m1007 |[0m [36mconst[0m [33mKD_CITY_SUGGESTIONS[0m=[[32m"Москва"[0m,[32m"Санкт-Петербург"[0m,[32m"Казань"[0m,[32m"Екатеринбург"[0m,"Новосибир...
+[31m[1m>[0m [90m1008 |[0m [36mconst[0m [33mKD_ADDRESS_SUGGESTIONS[0m:[33mRecord[0m<string,string[]>={
+  [90m     |[0m       [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m1009 |[0m   [32m"Москва"[0m:[[32m"ул. Петровка, 12"[0m,[32m"Тверская ул., 18"[0m,[32m"Большая Дмитровка ул., 9"[0m,"Ленинградс...
+  [90m1010 |[0m   [32m"Санкт-Петербург"[0m:[[32m"Невский проспект, 28"[0m,[32m"Большая Конюшенная ул., 15"[0m,"Литейный просп...
+  [90m1011 |[0m   [32m"Казань"[0m:[[32m"ул. Баумана, 44"[0m,[32m"ул. Пушкина, 17"[0m,[32m"проспект [0mЯмашева, 46"],
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./app/page.tsx [Client Component Browser]
+    ./app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/page.tsx [Client Component SSR]
+    ./app/page.tsx [Server Component]
+
+
+./app/page.tsx:1007:7
+the name `KD_CITY_SUGGESTIONS` is defined multiple times
+  [90m1005 |[0m }
+  [90m1006 |[0m
+[31m[1m>[0m [90m1007 |[0m [36mconst[0m [33mKD_CITY_SUGGESTIONS[0m=[[32m"Москва"[0m,[32m"Санкт-Петербург"[0m,[32m"Казань"[0m,[32m"Екатеринбург"[0m,"Новосибир...
+  [90m     |[0m       [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+  [90m1008 |[0m [36mconst[0m [33mKD_ADDRESS_SUGGESTIONS[0m:[33mRecord[0m<string,string[]>={
+  [90m1009 |[0m   [32m"Москва"[0m:[[32m"ул. Петровка, 12"[0m,[32m"Тверская ул., 18"[0m,[32m"Большая Дмитровка ул., 9"[0m,"Ленинградс...
+  [90m1010 |[0m   [32m"Санкт-Петербург"[0m:[[32m"Невский проспект, 28"[0m,[32m"Большая К[0mонюшенная ул., 15","Литейный просп...
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./app/page.tsx [Client Component Browser]
+    ./app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/page.tsx [Client Component SSR]
+    ./app/page.tsx [Server Component]
+
+
+./app/page.tsx:1016:7
+the name `KD_PVZ_POINTS` is defined multiple times
+  [90m1014 |[0m   [32m"Омск"[0m:[[32m"ул. Ленина, 20"[0m,[32m"проспект Карла Маркса, 24"[0m,[32m"ул. Гагарина, 8"[0m],
+  [90m1015 |[0m };
+[31m[1m>[0m [90m1016 |[0m [36mconst[0m [33mKD_PVZ_POINTS[0m:[33mRecord[0m<string,string[]>={
+  [90m     |[0m       [31m[1m^^^^^^^^^^^^^[0m
+  [90m1017 |[0m   [32m"Москва"[0m:[[32m"Петровка, 12"[0m,[32m"Тверская, 18"[0m,[32m"Кутузовский проспект, 22"[0m],
+  [90m1018 |[0m   [32m"Санкт-Петербург"[0m:[[32m"Невский проспект, 28"[0m,[32m"Московский проспект, 73"[0m],
+  [90m1019 |[0m   [32m"Казань"[0m:[[32m"Баумана, 44"[0m,[32m"Ямашева, 46"[0m],
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./app/page.tsx [Client Component Browser]
+    ./app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/page.tsx [Client Component SSR]
+    ./app/page.tsx [Server Component]
+
+
+    at <unknown> (./app/page.tsx:1032:10)
+    at <unknown> (./app/page.tsx:1025:10)
+    at <unknown> (./app/page.tsx:1008:7)
+    at <unknown> (./app/page.tsx:1007:7)
+    at <unknown> (./app/page.tsx:1016:7)
+
