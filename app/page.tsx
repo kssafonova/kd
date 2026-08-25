@@ -335,9 +335,6 @@ type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦ
 const editorials:Editorial[] = [
   { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле. Белый, ледяной голубой и деликатный орнамент создают ощущение тихого зимнего утра.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/images/editorial/caps_led.png","/images/editorial/caps_led_podyshka.png","/images/editorial/caps_led_podyshka2.png","/images/editorial/caps_led_serviz.png"], productIds:[2000,2001,2003,2004,2010] },
   { id:"luna", name:"Лунная сказка", kind:"КОЛЛЕКЦИЯ", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю: вышитый текстиль, кружево, кобальтовый фарфор и свет, который делает дом почти театральным.", description:"Коллекция о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_postel3.png","/images/editorial/caps_luna_serviz.png","/images/editorial/caps_luna_serviz2.png","/images/editorial/caps_luna_serviz3.png"], productIds:[4,10,5,6,3] },
-  { id:"white-chapter", name:"Белая глава", kind:"КОЛЛЕКЦИЯ", lead:"Белый сатин, спокойный свет и мягкие фактуры для спальни, в которой ничего не отвлекает.", detail:"Белая глава строится на чистой палитре и тактильности. Постельный текстиль, подушки и мягкие предметы объединены так, чтобы интерьер оставался светлым, спокойным и цельным.", description:"Светлая коллекция текстиля для тихой современной спальни.", images:["/images/russian-bedroom.png","/images/classic-bedroom.png","/images/zip-product-bed.png","/images/beige-bedroom.png"], productIds:[2,8,11,12,3] },
-  { id:"home-in-bloom", name:"Дом в цвету", kind:"КОЛЛЕКЦИЯ", lead:"Фарфор, вазы и сервировка для стола, который выглядит празднично даже в обычный день.", detail:"Коллекция соединяет посуду, вазы и предметы сервировки в лёгкую композицию. Цвет и прозрачные фактуры добавляют дому выразительности, но не превращают стол в парадную декорацию.", description:"Коллекция для сервировки и домашних встреч — выразительная, но повседневная.", images:["/images/editorial-vases.webp","/images/editorial-table.webp","/images/russian-service-blue.png","/images/time-table.png"], productIds:[5,10,2001,2004,2010] },
-  { id:"velvet-rhythm", name:"Бархатный ритм", kind:"КОЛЛЕКЦИЯ", lead:"Молочные и холодные синие оттенки, стёганые поверхности и мягкий текстиль для многослойной спальни.", detail:"Бархатный ритм собран вокруг покрывал, пледов и декоративных подушек. Разные фактуры остаются в одной спокойной гамме и позволяют менять настроение спальни без полного обновления интерьера.", description:"Тактильная коллекция пледов, покрывал и декоративных подушек.", images:["/images/beige-bedroom.png","/images/classic-bedroom.png","/images/blue-bedroom.png","/images/products/KD-PD-1027-MOL01.png"], productIds:[7,6,3,2000,2003] },
 ];
 
 export default function Home() {
@@ -363,6 +360,18 @@ export default function Home() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [recentlyViewed,setRecentlyViewed]=useState<number[]>([]);
   const [slide, setSlide] = useState(0);
+  // UNIFIED_SITE_QUERY_BRIDGE_V52
+  useEffect(()=>{
+    const params=new URLSearchParams(window.location.search);
+    const section=params.get("section");
+    const open=params.get("open");
+    if(section==="collections")setView("collections");
+    if(open==="cart")setCartOpen(true);
+    if(open==="search")setSearch(true);
+    if(open==="account")setAccount(true);
+    if(open==="favorites")setFavoritesOpen(true);
+    if(section||open)window.history.replaceState({},"",window.location.pathname);
+  },[]);
   const [toast, setToast] = useState("");
 
   useEffect(() => {
@@ -423,7 +432,7 @@ export default function Home() {
       {view === "home" && <HomeView go={go} openCatalog={openCatalog} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
       {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
       {view === "collections" && <CollectionsView onProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
-      {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
+      {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
       {view === "product" && <ProductView product={selected} favorite={favorite} liked={favorites.includes(selected.id)} chooseSize={() => setSizeSheet(true)} add={(p) => add(p,p.selectedSize,p.quantity)} selectProduct={openProduct} recentlyViewed={recentlyViewed} />}
       <Footer go={go} notice={notice} />
 
@@ -655,99 +664,96 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
-function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
-  // COLLECTIONS_EDITORIAL_V50
-  const [active,setActive]=useState<Editorial|null>(null);
+function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initialEditorial }: { onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void; initialEditorial?:Editorial }) {
+  // COLLECTIONS_UNIFIED_V52
+  const [active,setActive]=useState<Editorial|null>(initialEditorial??null);
+  const [purchaseMode,setPurchaseMode]=useState(false);
   const [selectedIds,setSelectedIds]=useState<number[]>([]);
   const [sizes,setSizes]=useState<Record<number,string>>({});
   const [variants,setVariants]=useState<Record<number,Product>>({});
 
-  const featured=editorials.find(item=>item.id==="luna")??editorials[0];
-  const rest=editorials.filter(item=>item.id!==featured.id);
-  const items=(active?.productIds??[]).map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
-  const baseProduct=(product:Product)=>variants[product.id]??product;
-  const sizeOptions=(product:Product)=>{
-    const base=baseProduct(product);
-    const color=base.selectedColor??base.skus?.[0]?.color??base.colorVariants?.[0]?.name;
-    return getProductSizeOptions(base,color).map(([name])=>name);
+  useEffect(()=>{
+    if(initialEditorial){
+      setActive(initialEditorial);
+      setPurchaseMode(false);
+      setSelectedIds([]);
+      setSizes({});
+      setVariants({});
+    }
+  },[initialEditorial?.id]);
+
+  useEffect(()=>{
+    if(!active)return;
+    const previous=document.body.style.overflow;
+    document.body.style.overflow="hidden";
+    return()=>{document.body.style.overflow=previous};
+  },[active]);
+
+  const collectionPrice=(editorial:Editorial)=>{
+    const values=editorial.productIds.map(id=>products.find(item=>item.id===id)?.price||0).filter(Boolean);
+    return values.length?Math.min(...values):0;
   };
-  const prepare=(product:Product)=>{
-    const base=baseProduct(product);
-    const color=base.selectedColor??base.skus?.[0]?.color??base.colorVariants?.[0]?.name??"";
-    const options=sizeOptions(product);
-    const chosenSize=options.length===1?options[0]:options.length>1?(sizes[product.id]??""):(base.selectedSize??base.skus?.[0]?.size??"Единый размер");
-    const sku=findProductSku(base,color,chosenSize||undefined);
-    return {...base,price:sku?.price??base.price,image:sku?.image??base.image,gallery:sku?.gallery??base.gallery,selectedColor:color,selectedSize:chosenSize||sku?.size||"Единый размер",selectedSkuId:sku?.id,quantity:1};
-  };
-  const selectedProducts=items.filter(item=>selectedIds.includes(item.id)).map(prepare);
-  const pending=items.filter(item=>selectedIds.includes(item.id)&&sizeOptions(item).length>1&&!sizes[item.id]);
+  const items=useMemo(()=>active?active.productIds.map(id=>products.find(item=>item.id===id)).filter((item):item is Product=>Boolean(item)):[],[active]);
+  const open=(editorial:Editorial)=>{setActive(editorial);setPurchaseMode(false);setSelectedIds([]);setSizes({});setVariants({})};
+  const close=()=>{setActive(null);setPurchaseMode(false);setSelectedIds([]);setSizes({});setVariants({})};
+  const toggle=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(item=>item!==id):[...current,id]);
+  const currentProduct=(item:Product)=>variants[item.id]??item;
+  const colorOf=(item:Product)=>{const current=currentProduct(item);return current.selectedColor??current.colorVariants?.[0]?.name??current.skus?.[0]?.color??""};
+  const sizeOptions=(item:Product)=>getProductSizeOptions(currentProduct(item),colorOf(item));
+  const pending=selectedIds.filter(id=>{
+    const item=items.find(product=>product.id===id);
+    if(!item)return false;
+    return sizeOptions(item).length>1&&!sizes[id];
+  });
+  const selectedProducts=selectedIds.map(id=>items.find(item=>item.id===id)).filter((item):item is Product=>Boolean(item)).map(item=>{
+    const current=currentProduct(item);
+    const color=colorOf(item);
+    const options=sizeOptions(item);
+    const selectedSize=sizes[item.id]??(options.length===1?options[0][0]:"");
+    const sku=selectedSize?findProductSku(current,color,selectedSize):findProductSku(current,color);
+    return {...current,selectedColor:color,selectedSize:selectedSize||sku?.size||"",selectedSkuId:sku?.id,price:sku?.price??current.price};
+  });
   const total=selectedProducts.reduce((sum,item)=>sum+item.price,0);
   const allSelected=items.length>0&&selectedIds.length===items.length;
-  const collectionPrice=(editorial:Editorial)=>editorial.productIds.map(id=>products.find(product=>product.id===id)).filter((p):p is Product=>Boolean(p)).reduce((sum,p)=>sum+p.price,0);
-  const open=(editorial:Editorial)=>{setActive(editorial);setSelectedIds([]);setSizes({});setVariants({})};
-  const close=()=>{setActive(null);setSelectedIds([]);setSizes({});setVariants({})};
-  const toggle=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(item=>item!==id):[...current,id]);
+  const startPurchase=()=>{setPurchaseMode(true);setSelectedIds([]);setSizes({})};
+  const finishPurchase=()=>{setPurchaseMode(false);setSelectedIds([]);setSizes({})};
   const addSelected=()=>{if(selectedProducts.length&&pending.length===0){buyBundle(selectedProducts);close()}};
-  const scrollToProducts=()=>document.getElementById("collection-v50-products")?.scrollIntoView({behavior:"smooth",block:"start"});
 
-  return <main className="collections-v50">
-    <header className="collections-v50-intro">
+  return <main className="collections-v52">
+    <header className="collections-v52-intro">
       <div><small>КУЛЬТУРА ДОМА · EDITORIAL</small><h1>Коллекции</h1></div>
-      <p>Истории для дома, в которых текстиль, посуда и декор собраны в единую палитру. Выберите настроение, а затем — только те предметы, которые нужны именно вам.</p>
+      <p>Истории для дома, собранные вокруг цвета, орнамента и ритуала. Откройте коллекцию как журнал — и выбирайте предметы только тогда, когда они действительно нужны.</p>
     </header>
-
-    <section className="collections-v50-featured" aria-label={`Главная коллекция ${featured.name}`}>
-      <button type="button" className="collections-v50-featured-media" onClick={()=>open(featured)}><img src={assetUrl(featured.images[0])} alt={featured.name}/></button>
-      <div className="collections-v50-featured-copy"><small>КОЛЛЕКЦИЯ · В ФОКУСЕ</small><h2>{featured.name}</h2><p>{featured.lead}</p><div className="collections-v50-featured-meta"><span>{productCountLabel(featured.productIds.length)} · от {fmt(collectionPrice(featured))}</span><button type="button" onClick={()=>open(featured)}>Смотреть коллекцию →</button></div></div>
+    <section className="collections-v52-index" aria-label="Коллекции Культура Дома">
+      {editorials.map(editorial=><article className="collections-v52-card" key={editorial.id}>
+        <button className="collections-v52-card-media" type="button" onClick={()=>open(editorial)}><img src={assetUrl(editorial.images[0])} alt={editorial.name}/></button>
+        <div className="collections-v52-card-copy"><small>КОЛЛЕКЦИЯ</small><button type="button" onClick={()=>open(editorial)}><h2>{editorial.name}</h2></button><p>{editorial.lead}</p><div><span>{productCountLabel(editorial.productIds.length)}</span><strong>{collectionPrice(editorial)?`от ${fmt(collectionPrice(editorial))}`:""}</strong></div></div>
+      </article>)}
     </section>
 
-    <section className="collections-v50-index" aria-labelledby="collections-v50-title">
-      <header className="collections-v50-section-head"><div><small>ВСЕ ИСТОРИИ</small><h2 id="collections-v50-title">Коллекции для дома</h2></div><span>{editorials.length} коллекций</span></header>
-      <div className="collections-v50-grid">{rest.map(editorial=><article className="collections-v50-card" key={editorial.id}>
-        <button className="collections-v50-card-media" type="button" onClick={()=>open(editorial)}><img src={assetUrl(editorial.images[0])} alt={editorial.name}/></button>
-        <div className="collections-v50-card-copy"><small>КОЛЛЕКЦИЯ</small><button type="button" onClick={()=>open(editorial)}><h3>{editorial.name}</h3></button><p>{editorial.lead}</p><div className="collections-v50-card-meta"><span>{productCountLabel(editorial.productIds.length)}</span><strong>от {fmt(collectionPrice(editorial))}</strong></div></div>
-      </article>)}</div>
-    </section>
-
-    {active&&<section className="collection-v50-layer" role="dialog" aria-modal="true" aria-label={active.name}>
-      <header className="collection-v50-topbar"><button type="button" onClick={close}>← Коллекции</button><strong>КУЛЬТУРА ДОМА</strong><span>КОЛЛЕКЦИЯ</span></header>
-      <section className="collection-v50-hero"><img src={assetUrl(active.images[0])} alt={active.name}/><div className="collection-v50-hero-copy"><small className="collection-v50-kicker">КОЛЛЕКЦИЯ</small><h1>{active.name}</h1><p>{active.lead}</p><div className="collection-v50-hero-actions"><button type="button" onClick={scrollToProducts}>Смотреть товары ↓</button><span>{productCountLabel(active.productIds.length)}</span></div></div></section>
-      <section className="collection-v50-story"><div className="collection-v50-story-copy"><small>О КОЛЛЕКЦИИ</small><h2>История пространства</h2><p>{active.detail}</p></div>{active.images.slice(1,3).map((image,index)=><img src={assetUrl(image)} alt={`${active.name}, ${index+1}`} key={`${active.id}-${image}`}/>)}</section>
-      <section className="collection-v50-products" id="collection-v50-products">
-        <header className="collection-v50-products-head"><div><small className="collection-v50-kicker">КУПИТЬ ИСТОРИЮ</small><h2>Товары коллекции</h2><p>Можно выбрать отдельные предметы или собрать всю коллекцию.</p></div><button type="button" onClick={()=>setSelectedIds(allSelected?[]:items.map(item=>item.id))}>{allSelected?"Снять выбор":"Выбрать всю коллекцию"}</button></header>
-        <div className="product-grid collection-v50-grid-products">{items.map(item=>{const selected=selectedIds.includes(item.id);const options=sizeOptions(item);return <div className={`collection-v50-item ${selected?"selected":""}`} key={item.id}><ProductCard product={baseProduct(item)} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)} onVariantChange={product=>{setVariants(current=>({...current,[item.id]:product}));setSizes(current=>{const next={...current};delete next[item.id];return next})}}/><label className="collection-v50-select" title={selected?"Убрать из выбора":"Добавить в выбор"}><input type="checkbox" checked={selected} onChange={()=>toggle(item.id)}/><span>{selected?"✓":""}</span></label>{selected&&options.length>1&&<label className="collection-v50-size"><span>Размер</span><select value={sizes[item.id]??""} onChange={event=>setSizes(current=>({...current,[item.id]:event.target.value}))}><option value="">Выбрать размер</option>{options.map(option=><option value={option} key={option}>{option}</option>)}</select></label>}</div>})}</div>
+    {active&&<div className="v52-story-backdrop" role="presentation"><button className="v52-story-dismiss" type="button" onClick={close} aria-label="Закрыть коллекцию"/>
+      <section className="v52-story-modal" role="dialog" aria-modal="true" aria-label={`Коллекция ${active.name}`}>
+        <header className="v52-story-topbar"><button type="button" onClick={close}>← Коллекции</button><strong>КУЛЬТУРА ДОМА</strong><button type="button" onClick={close} aria-label="Закрыть">×</button></header>
+        <div className="v52-story-columns">
+          <aside className="v52-story-editorial" aria-label="История коллекции">
+            <div className="v52-story-title"><small>КОЛЛЕКЦИЯ</small><h1>{active.name}</h1><p>{active.lead}</p><span>{productCountLabel(items.length)}</span></div>
+            {active.images.map((image,index)=><figure key={`${active.id}-${image}`}><img src={assetUrl(image)} alt={`${active.name}, кадр ${index+1}`}/>{index===0&&<figcaption>{active.detail}</figcaption>}</figure>)}
+            <div className="v52-story-note"><small>О КОЛЛЕКЦИИ</small><p>{active.description}</p></div>
+          </aside>
+          <section className="v52-story-commerce" aria-label="Товары коллекции">
+            <header className="v52-commerce-head"><div><small>{purchaseMode?"СОБЕРИТЕ СВОЮ ИСТОРИЮ":"ТОВАРЫ КОЛЛЕКЦИИ"}</small><h2>{purchaseMode?"Выберите предметы":"Предметы истории"}</h2><p>{purchaseMode?"Отметьте нужные позиции. Для товаров с несколькими размерами размер можно выбрать после отметки.":"Каждый предмет можно добавить отдельно — привычной кнопкой корзины, как в каталоге."}</p></div>{purchaseMode?<div className="v52-commerce-actions"><button type="button" className="v52-secondary-action" onClick={()=>setSelectedIds(allSelected?[]:items.map(item=>item.id))}>{allSelected?"Снять выбор":"Выбрать всё"}</button><button type="button" className="v52-text-action" onClick={finishPurchase}>Отменить</button></div>:<button type="button" className="v52-buy-story" onClick={startPurchase}>КУПИТЬ КОЛЛЕКЦИЮ</button>}</header>
+            <div className={`product-grid v52-story-products ${purchaseMode?"is-selection-mode":""}`}>{items.map(item=>{const current=currentProduct(item);const selected=selectedIds.includes(item.id);const options=sizeOptions(item);const needsSize=selected&&options.length>1&&!sizes[item.id];return <div className={`v52-story-product ${selected?"selected":""}`} key={item.id}><ProductCard product={current} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)} selectionMode={purchaseMode} selected={selected} pending={needsSize} onSelect={()=>toggle(item.id)} onVariantChange={product=>{setVariants(state=>({...state,[item.id]:product}));setSizes(state=>{const next={...state};delete next[item.id];return next})}}/>{purchaseMode&&selected&&options.length>1&&<label className="v52-inline-size"><span>Размер</span><select value={sizes[item.id]??""} onChange={event=>setSizes(state=>({...state,[item.id]:event.target.value}))}><option value="">Выбрать</option>{options.map(([name])=><option key={name} value={name}>{name}</option>)}</select></label>}</div>})}</div>
+            {purchaseMode&&<footer className="v52-purchase-bar"><div><span>{pending.length?`Выберите размер · ${pending.length}`:selectedProducts.length?`Выбрано ${selectedProducts.length} из ${items.length}`:"Выберите товары"}</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selectedProducts.length||pending.length>0} onClick={addSelected}>ДОБАВИТЬ В КОРЗИНУ</button></footer>}
+          </section>
+        </div>
       </section>
-      <footer className="collection-v50-summary"><div className="collection-v50-summary-copy"><span>{pending.length?`Выберите размер · ${pending.length}`:selectedProducts.length?`Выбрано ${selectedProducts.length} из ${items.length}`:"Выберите товары"}</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selectedProducts.length||pending.length>0} onClick={addSelected}>ДОБАВИТЬ В КОРЗИНУ</button></footer>
-    </section>}
+    </div>}
   </main>;
 }
 
-function EditorialView({ editorial, selectProduct, favorite, favorites, buyBundle }: { editorial:Editorial; selectProduct:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
-  // COLLECTION_DETAIL_EDITORIAL_V50
-  const items=editorial.productIds.map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
-  const [selectedIds,setSelectedIds]=useState<number[]>([]);
-  const [sizes,setSizes]=useState<Record<number,string>>({});
-  const [variants,setVariants]=useState<Record<number,Product>>({});
-  useEffect(()=>{setSelectedIds([]);setSizes({});setVariants({})},[editorial.id]);
-  const baseProduct=(product:Product)=>variants[product.id]??product;
-  const sizeOptions=(product:Product)=>{const base=baseProduct(product);const color=base.selectedColor??base.skus?.[0]?.color??base.colorVariants?.[0]?.name;return getProductSizeOptions(base,color).map(([name])=>name)};
-  const prepare=(product:Product)=>{const base=baseProduct(product);const color=base.selectedColor??base.skus?.[0]?.color??base.colorVariants?.[0]?.name??"";const options=sizeOptions(product);const chosenSize=options.length===1?options[0]:options.length>1?(sizes[product.id]??""):(base.selectedSize??base.skus?.[0]?.size??"Единый размер");const sku=findProductSku(base,color,chosenSize||undefined);return {...base,price:sku?.price??base.price,image:sku?.image??base.image,gallery:sku?.gallery??base.gallery,selectedColor:color,selectedSize:chosenSize||sku?.size||"Единый размер",selectedSkuId:sku?.id,quantity:1}};
-  const selected=items.filter(item=>selectedIds.includes(item.id)).map(prepare);
-  const pending=items.filter(item=>selectedIds.includes(item.id)&&sizeOptions(item).length>1&&!sizes[item.id]);
-  const total=selected.reduce((sum,item)=>sum+item.price,0);
-  const allSelected=items.length>0&&selectedIds.length===items.length;
-  const toggle=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(item=>item!==id):[...current,id]);
-  const add=()=>{if(selected.length&&pending.length===0)buyBundle(selected)};
-  const scrollToProducts=()=>document.getElementById("editorial-v50-products")?.scrollIntoView({behavior:"smooth",block:"start"});
-
-  return <main className="editorial-v50">
-    <section className="editorial-v50-hero"><img src={assetUrl(editorial.images[0])} alt={editorial.name}/><div className="editorial-v50-hero-copy"><small className="collection-v50-kicker">КОЛЛЕКЦИЯ</small><h1>{editorial.name}</h1><p>{editorial.lead}</p><div className="collection-v50-hero-actions"><button type="button" onClick={scrollToProducts}>Смотреть товары ↓</button><span>{productCountLabel(editorial.productIds.length)}</span></div></div></section>
-    <section className="collection-v50-story"><div className="collection-v50-story-copy"><small>О КОЛЛЕКЦИИ</small><h2>История пространства</h2><p>{editorial.detail}</p></div>{editorial.images.slice(1,3).map((image,index)=><img src={assetUrl(image)} alt={`${editorial.name}, ${index+1}`} key={`${editorial.id}-${image}`}/>)}</section>
-    <section className="collection-v50-products" id="editorial-v50-products"><header className="collection-v50-products-head"><div><small className="collection-v50-kicker">КУПИТЬ ИСТОРИЮ</small><h2>Товары коллекции</h2><p>Можно выбрать отдельные предметы или собрать всю коллекцию.</p></div><button type="button" onClick={()=>setSelectedIds(allSelected?[]:items.map(item=>item.id))}>{allSelected?"Снять выбор":"Выбрать всю коллекцию"}</button></header>
-      <div className="product-grid collection-v50-grid-products">{items.map(item=>{const isSelected=selectedIds.includes(item.id);const options=sizeOptions(item);return <div className={`collection-v50-item ${isSelected?"selected":""}`} key={item.id}><ProductCard product={baseProduct(item)} onClick={selectProduct} onQuick={selectProduct} favorite={favorite} liked={favorites.includes(item.id)} onVariantChange={product=>{setVariants(current=>({...current,[item.id]:product}));setSizes(current=>{const next={...current};delete next[item.id];return next})}}/><label className="collection-v50-select"><input type="checkbox" checked={isSelected} onChange={()=>toggle(item.id)}/><span>{isSelected?"✓":""}</span></label>{isSelected&&options.length>1&&<label className="collection-v50-size"><span>Размер</span><select value={sizes[item.id]??""} onChange={event=>setSizes(current=>({...current,[item.id]:event.target.value}))}><option value="">Выбрать размер</option>{options.map(option=><option value={option} key={option}>{option}</option>)}</select></label>}</div>})}</div>
-    </section>
-    <aside className="collection-v50-summary"><div className="collection-v50-summary-copy"><span>{pending.length?`Выберите размер · ${pending.length}`:selected.length?`Выбрано ${selected.length} из ${items.length}`:"Выберите товары"}</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selected.length||pending.length>0} onClick={add}>ДОБАВИТЬ В КОРЗИНУ</button></aside>
-  </main>;
+function EditorialView({ editorial, selectProduct, onQuick, favorite, favorites, buyBundle }: { editorial:Editorial; selectProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
+  // Direct/legacy editorial entry uses the same V52 collection experience.
+  return <CollectionsView onProduct={selectProduct} onQuick={onQuick} favorite={favorite} favorites={favorites} buyBundle={buyBundle} initialEditorial={editorial}/>;
 }
 
 function LookbookViewer({editorial,items,close,selectProduct}:{editorial:Editorial;items:Product[];close:()=>void;selectProduct?:(product:Product)=>void}){
