@@ -41,10 +41,10 @@ export const constructorDataUrl = (fileName: string) => `${BASE_PATH}/data/${fil
 // unrelated products assigned to the same merchandising collection stay intact.
 const REMOVED_CATALOG_NAME_TOKENS = [
   "мокоши",
-  "камея",
   "жар-птица",
   "жар птица",
   "жарптица",
+  "овация",
 ] as const;
 
 const normalizeCatalogProductName = (value: string) =>
