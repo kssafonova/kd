@@ -7,6 +7,7 @@ import "./ready-solutions-v63.css";
 import "./ready-solutions-v64.css";
 import "./ready-solutions-zara-kultura-v66.css";
 import "./ready-solutions-v68.css";
+import "./ready-solutions-v69.css";
 
 export default function ReadySolutionsLayout({ children }: { children: React.ReactNode }) {
   return children;
