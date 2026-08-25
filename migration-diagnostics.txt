@@ -340,19 +340,19 @@ added 513 packages in 15s
 ▲ Next.js 16.2.6 (Turbopack)
 
   Creating an optimized production build ...
-✓ Compiled successfully in 3.4s
+✓ Compiled successfully in 2.8s
   Running TypeScript ...
 Failed to type check.
 
-./app/constructor/ready-solution-mockup-v70.tsx:171:7
-Type error: 'page' is possibly 'null'.
+./app/constructor/ready-solution-mockup-v70.tsx:177:7
+Type error: 'person' is possibly 'null' or 'undefined'.
 
-  [90m169 |[0m       [36mif[0m (next === [35m3[0m && selectedCards().length === [35m0[0m) [36mreturn[0m;
-  [90m170 |[0m       step = next;
-[31m[1m>[0m [90m171 |[0m       page.dataset.v70Step = [33mString[0m(step);
+  [90m175 |[0m       });
+  [90m176 |[0m
+[31m[1m>[0m [90m177 |[0m       person.hidden = step !== [35m1[0m;
   [90m    |[0m       [31m[1m^[0m
-  [90m172 |[0m       nav.querySelectorAll<[33mHTMLButtonElement[0m>([32m"button"[0m).forEach((button) => {
-  [90m173 |[0m         button.classList.toggle([32m"is-active"[0m, [33mNumber[0m(button.dataset.step) === step);
-  [90m174 |[0m       });
+  [90m178 |[0m       readyGroups.hidden = step !== [35m2[0m;
+  [90m179 |[0m       [36mif[0m (categoryNav) categoryNav.hidden = [36mtrue[0m;
+  [90m180 |[0m       result.hidden = step !== [35m3[0m;
 Next.js build worker exited with code: 1 and signal: null
 
