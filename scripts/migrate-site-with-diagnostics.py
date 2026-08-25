@@ -55,6 +55,7 @@ scripts = [
     "redesign-home-zara-kultura-v44.py",
     "redesign-home-sketch-v45.py",
     "redesign-ready-solutions-constructor-v46.py",
+    "redesign-collections-v49.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
