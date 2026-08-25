@@ -7,10 +7,21 @@ landing = landing_path.read_text(encoding="utf-8")
 detail = detail_path.read_text(encoding="utf-8")
 
 # Landing refinements run after V38/V39, keeping their integrated hero/steps structure.
+landing = landing.replace('function SolutionsHeader()', 'export function SolutionsHeader()', 1)
+landing = landing.replace('function SolutionsFooter()', 'export function SolutionsFooter()', 1)
 landing = landing.replace('className="kd-solutions-page-v33"', 'className="kd-solutions-page-v33 kd-solutions-v46"', 1)
 landing = landing.replace('<span>Количество персон</span>', '<span>Количество человек</span>', 1)
 landing = landing.replace('<h2>Выберите свою историю</h2>', '<h2>Готовые пространства</h2>', 1)
 landing = landing.replace('Каждое решение можно изменить: убрать ненужное, выбрать другую коллекцию, цвет, размер и количество.', 'Выберите готовую основу и настройте только то, что важно: состав, оттенок, размер и количество.', 1)
+
+# Reuse the same site chrome on the constructor detail page so the transition from
+# storefront -> ready solutions -> constructor stays visually continuous.
+chrome_import = 'import { SolutionsHeader, SolutionsFooter } from "./constructor-client";\n'
+if chrome_import not in detail:
+    remote_import = 'import { RemoteImage } from "../remote-image";\n'
+    if remote_import not in detail:
+        raise SystemExit('V46 constructor chrome import anchor not found')
+    detail = detail.replace(remote_import, remote_import + chrome_import, 1)
 
 # Detail: give the scenario its own identity rather than repeating the landing title.
 detail = detail.replace('className="solution-simple-shell kd-ready-v29"', 'className="solution-simple-shell kd-ready-v29 kd-ready-v46"', 1)
@@ -54,6 +65,16 @@ elif '</div></>}' not in detail:
 detail = detail.replace('<dt>Персон</dt><dd>{guests}</dd>', '<dt>Человек</dt><dd>{guests}</dd>', 1)
 detail = detail.replace('"ДОБАВИТЬ В КОРЗИНУ"', '"ДОБАВИТЬ ВЕСЬ СОСТАВ"', 1)
 detail = detail.replace('"♡ СОХРАНИТЬ РЕШЕНИЕ"', '"♡ СОХРАНИТЬ"', 1)
+
+# Wrap only the successful detail render in the same header/footer as the landing.
+main_start = '  return <main className="solution-simple-shell kd-ready-v29 kd-ready-v46">'
+if main_start in detail:
+    detail = detail.replace(main_start, '  return <><SolutionsHeader/><main className="solution-simple-shell kd-ready-v29 kd-ready-v46">', 1)
+main_end = '  </main>;\n}'
+if main_end in detail:
+    detail = detail.replace(main_end, '  </main><SolutionsFooter/></>;\n}', 1)
+elif '<SolutionsFooter/>' not in detail:
+    raise SystemExit('V46 constructor chrome close anchor not found')
 
 landing_path.write_text(landing, encoding="utf-8")
 detail_path.write_text(detail, encoding="utf-8")
