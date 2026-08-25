@@ -404,136 +404,145 @@ function HomeBoutiques(){
 }
 
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
+  // HOME_ZARA_KULTURA_V44
   const heroSlides=[
-    {label:"НОВИНКИ",title:"Новинки",cta:"Смотреть",desktopImage:"/images/time-hero.png",mobileImage:"/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
-    {label:"СПАЛЬНЯ",title:"Спальня",cta:"Смотреть",desktopImage:"/images/blue-bedroom.png",mobileImage:"/images/editorial/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
-    {label:"ДЕКОР ДЛЯ ДОМА",title:"Декор для дома",cta:"Смотреть",desktopImage:"/images/beige-bedroom.png",mobileImage:"/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
+    {
+      label:"КАПСУЛА",
+      title:"Лунная сказка",
+      text:"Ночная палитра, сатин и глубокий синий — спокойная история для спальни и позднего чаепития.",
+      desktopImage:"/images/editorial/caps_luna_postel2.png",
+      mobileImage:"/images/editorial/caps_luna_postel.png",
+      cta:"Смотреть историю",
+      action:()=>openEditorial(editorials[1]),
+    },
+    {
+      label:"КОЛЛЕКЦИЯ",
+      title:"Ледяные узоры",
+      text:"Морозный свет, белый и ледяной голубой. Текстиль и предметы, собранные в одну тихую зимнюю композицию.",
+      desktopImage:"/images/editorial/caps_led.png",
+      mobileImage:"/images/editorial/caps_led_podyshka.png",
+      cta:"Открыть коллекцию",
+      action:()=>openEditorial(editorials[0]),
+    },
+    {
+      label:"КУХНЯ И СТОЛОВАЯ",
+      title:"Сервировка как часть интерьера",
+      text:"Фарфор, текстиль и детали для стола — не отдельные предметы, а единая домашняя сцена.",
+      desktopImage:"/images/time-table.png",
+      mobileImage:"/images/russian-service-blue.png",
+      cta:"Смотреть посуду",
+      action:()=>openCatalog("Посуда и сервировка"),
+    },
   ];
   const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[activeIndex];
-  const [traditionsPlaying,setTraditionsPlaying]=useState(true);
-  const traditionsVideoRef=useRef<HTMLVideoElement>(null);
-  const [traditionsProgress,setTraditionsProgress]=useState(0);
-  const [traditionsDuration,setTraditionsDuration]=useState(12.7);
   const [heroPaused,setHeroPaused]=useState(false);
+  const [brandPlaying,setBrandPlaying]=useState(true);
   const heroTouchStart=useRef<number|null>(null);
+  const brandVideoRef=useRef<HTMLVideoElement>(null);
 
   useEffect(()=>{
-    if(heroPaused||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    const timer=window.setInterval(()=>setSlide((activeIndex+1)%heroSlides.length),6500);
+    if(heroPaused||typeof window==="undefined"||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    const timer=window.setInterval(()=>setSlide((activeIndex+1)%heroSlides.length),7600);
     return()=>window.clearInterval(timer);
-  },[activeIndex,setSlide,heroSlides.length,heroPaused]);
+  },[activeIndex,heroPaused,setSlide,heroSlides.length]);
 
   const shiftHero=(direction:-1|1)=>setSlide((activeIndex+direction+heroSlides.length)%heroSlides.length);
-
-  const toggleTraditionsVideo=()=>{
-    const video=traditionsVideoRef.current;
+  const toggleBrandVideo=()=>{
+    const video=brandVideoRef.current;
     if(!video)return;
-    if(video.paused){void video.play();setTraditionsPlaying(true)}
-    else{video.pause();setTraditionsPlaying(false)}
+    if(video.paused){void video.play();setBrandPlaying(true)}
+    else{video.pause();setBrandPlaying(false)}
   };
-
-  const scrollHomeRail=(id:string,direction:-1|1)=>{
-    const host=document.getElementById(id);
-    if(!host)return;
-    const rail=(host.matches(".hv4-category-rail,.hv4-solution-rail")?host:host.querySelector(".product-rail")) as HTMLElement|null;
-    if(!rail)return;
-    rail.scrollBy({left:direction*Math.max(280,rail.clientWidth*.72),behavior:"smooth"});
-  };
-
-  const categories=[
-    {title:"Постельное бельё",meta:"СПАЛЬНЯ",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {title:"Пледы и подушки",meta:"ТЕКСТИЛЬ",image:"/images/sky-bolster.png",category:"Пледы и подушки"},
-    {title:"Посуда и сервировка",meta:"СТОЛОВАЯ",image:"/images/moon-plate.png",category:"Посуда и сервировка"},
-    {title:"Столовый текстиль",meta:"СЕРВИРОВКА",image:"/images/editorial-table.webp",category:"Столовый текстиль"},
-    {title:"Домашняя одежда",meta:"ДЛЯ ДОМА",image:"/images/classic-bedroom.png",category:"Домашняя одежда"},
-    {title:"Декор для дома",meta:"ИНТЕРЬЕР",image:"/images/beige-bedroom.png",category:"Все товары"},
-    {title:"Ванная",meta:"ТЕКСТИЛЬ",image:"/images/russian-bedroom.png",category:"Все товары"},
-    {title:"Подарки",meta:"ИДЕИ",image:"/images/time-collection.png",category:"Все товары"},
-  ];
 
   const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
-  const collectionProductIds=Array.from(new Set(editorials.flatMap(item=>item.productIds)));
-  const collectionProducts=collectionProductIds.map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
+  const stories:Editorial[]=[editorials[1],editorials[0]].filter((item):item is Editorial=>Boolean(item));
+  const categories=[
+    {eyebrow:"СПАЛЬНЯ",title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
+    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Посуда и сервировка",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {eyebrow:"ТЕКСТИЛЬ И ДЕКОР",title:"Пледы и подушки",image:"/images/beige-bedroom.png",category:"Пледы и подушки"},
+  ];
   const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
   const solutions=[
-    {room:"ГОСТИНАЯ",title:"Тихая гостиная",image:"/images/beige-bedroom.png"},
-    {room:"СПАЛЬНЯ",title:"Синий бархат ночи",image:"/images/blue-bedroom.png"},
-    {room:"КАБИНЕТ",title:"Кабинетное ретро",image:"/images/time-collection.png"},
-    {room:"КУХНЯ",title:"Утро в зимнем саду",image:"/images/buyan-editorial.png"},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
+    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/editorial/caps_led.png",href:`${constructorHref}table-7/`},
   ];
 
-  return <main className="home-v4 home-reference-v5 home-togas-v10 home-ux-v11">
-    <section className="hv4-hero" aria-label="Главные разделы"
+  return <main className="home-zara-v44">
+    <nav className="zh44-topnav" aria-label="Разделы главной">
+      <button type="button" onClick={()=>openCatalog("Все товары")}>Новинки</button>
+      <button type="button" onClick={()=>openCatalog("Постельное бельё")}>Спальня</button>
+      <button type="button" onClick={()=>openCatalog("Посуда и сервировка")}>Кухня и столовая</button>
+      <button type="button" onClick={()=>openCatalog("Пледы и подушки")}>Декор</button>
+      <button type="button" onClick={()=>go("collections")}>Капсулы и коллекции</button>
+      <a href={constructorHref}>Готовые решения</a>
+    </nav>
+
+    <section className="zh44-hero" aria-label="Главная история"
       onPointerEnter={()=>setHeroPaused(true)} onPointerLeave={()=>setHeroPaused(false)}
       onFocusCapture={()=>setHeroPaused(true)} onBlurCapture={()=>setHeroPaused(false)}
       onTouchStart={event=>{heroTouchStart.current=event.touches[0]?.clientX??null;setHeroPaused(true)}}
       onTouchEnd={event=>{const start=heroTouchStart.current;const end=event.changedTouches[0]?.clientX;if(start!==null&&end!==undefined&&Math.abs(end-start)>44)shiftHero(end<start?1:-1);heroTouchStart.current=null;setHeroPaused(false)}}>
-      <picture className="hv4-hero-media">
+      <picture className="zh44-hero-media">
         <source media="(max-width: 700px)" srcSet={assetUrl(hero.mobileImage)}/>
         <img src={assetUrl(hero.desktopImage)} alt={hero.title}/>
       </picture>
-      <div className="hv4-hero-copy" aria-live="polite"><h1>{hero.title}</h1><button type="button" onClick={hero.action}><span>{hero.cta}</span><Icon name="arrow"/></button></div>
-      <div className="hv4-hero-controls">
-        <nav className="hv4-hero-tabs" aria-label="Слайды главной">{heroSlides.map((item,index)=><button type="button" key={item.label} className={index===activeIndex?"active":""} aria-current={index===activeIndex?"true":undefined} onClick={()=>setSlide(index)}>{item.label}</button>)}</nav>
-        <div className="hv4-hero-arrows" aria-label="Переключить баннер"><button type="button" aria-label="Предыдущий баннер" onClick={()=>shiftHero(-1)}><Icon name="arrow"/></button><button type="button" aria-label="Следующий баннер" onClick={()=>shiftHero(1)}><Icon name="arrow"/></button></div>
+      <div className="zh44-hero-copy" aria-live="polite">
+        <small className="zh44-kicker">{hero.label}</small>
+        <h1>{hero.title}</h1>
+        <p>{hero.text}</p>
+        <div className="zh44-hero-actions">
+          <button type="button" onClick={hero.action}>{hero.cta}<Icon name="arrow"/></button>
+          <button type="button" onClick={()=>openCatalog("Все товары")}>Новинки</button>
+        </div>
+      </div>
+      <div className="zh44-hero-controls">
+        <div className="zh44-hero-dots" aria-label="Истории на главной">{heroSlides.map((item,index)=><button type="button" key={item.title} className={index===activeIndex?"active":""} aria-label={item.title} aria-current={index===activeIndex?"true":undefined} onClick={()=>setSlide(index)}/>)}</div>
+        <div className="zh44-hero-arrows"><button type="button" aria-label="Предыдущая история" onClick={()=>shiftHero(-1)}><Icon name="arrow"/></button><button type="button" aria-label="Следующая история" onClick={()=>shiftHero(1)}><Icon name="arrow"/></button></div>
       </div>
     </section>
 
-    <section className="hv4-categories hv4-shell">
-      <header className="hv4-head"><div><small>КАТАЛОГ</small><h2>Категории</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Категории назад" onClick={()=>scrollHomeRail("home-category-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Категории вперёд" onClick={()=>scrollHomeRail("home-category-rail",1)}><Icon name="arrow"/></button><button className="hv4-text-cta" type="button" onClick={()=>openCatalog("Все товары")}>ВЕСЬ КАТАЛОГ</button></div></header>
-      <div id="home-category-rail" className="hv4-category-rail" aria-label="Категории товаров">{categories.map(item=><button className="hv4-category-card" type="button" key={item.title} onClick={()=>openCatalog(item.category)}><img src={assetUrl(item.image)} alt={item.title}/><span><strong>{item.title}</strong><small>{item.meta}</small></span></button>)}</div>
-    </section>
-
-    <section className="hv4-new hv4-section hv4-shell">
-      <header className="hv4-head"><div><small>НОВИНКИ</small><h2>Новое поступление</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Новинки назад" onClick={()=>scrollHomeRail("home-new-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Новинки вперёд" onClick={()=>scrollHomeRail("home-new-rail",1)}><Icon name="arrow"/></button><button className="hv4-text-cta" type="button" onClick={()=>openCatalog("Все товары")}>СМОТРЕТЬ ВСЕ</button></div></header>
-      <div id="home-new-rail"><ProductRail className="hv4-new-rail" items={newProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></div>
-    </section>
-
-    <section className="hv4-traditions-collections" aria-label="Традиции, капсулы и коллекции">
-      <div className="hv4-traditions-collections-shell">
-        <div className={`hv4-traditions-media ${traditionsPlaying?"is-playing":"is-paused"}`}> 
-          <video ref={traditionsVideoRef} className="hv4-traditions-video" autoPlay loop muted playsInline preload="metadata" poster={assetUrl("/images/russian-bedroom.png")}
-            onPlay={()=>setTraditionsPlaying(true)} onPause={()=>setTraditionsPlaying(false)}
-            onLoadedMetadata={event=>setTraditionsDuration(event.currentTarget.duration||12.7)}
-            onTimeUpdate={event=>{const video=event.currentTarget;setTraditionsProgress(video.duration?video.currentTime/video.duration:0)}}>
-            <source media="(max-width: 700px)" src={assetUrl("/videos/home-mobile.mp4")} type="video/mp4"/>
-            <source src={assetUrl("/videos/home-desktop.mp4")} type="video/mp4"/>
-          </video>
-          <div className="hv4-traditions-copy"><div><small>BRAND STORY</small><h2>Традиции в каждом доме</h2></div><span>КУЛЬТУРА ДОМА</span></div>
-          <div className="hv4-video-controls" aria-label="Управление историей">
-            <button type="button" className="hv4-video-toggle" onClick={toggleTraditionsVideo} aria-label={traditionsPlaying?"Поставить видео на паузу":"Продолжить видео"}>
-              {traditionsPlaying?<span className="hv4-pause-icon" aria-hidden="true"><i/><i/></span>:<span className="hv4-play-icon" aria-hidden="true"/>}
-            </button>
-            <span className="hv4-video-track" aria-hidden="true"><i style={{transform:`scaleX(${traditionsProgress})`}}/></span>
-            <small>{`0:${String(Math.round(traditionsDuration)).padStart(2,"0")}`}</small>
-          </div>
-        </div>
-
-        <div className="hv4-traditions-collections-content">
-          <header className="hv4-traditions-collections-head">
-            <div><small>КОЛЛЕКЦИИ</small><h2>Капсулы и коллекции</h2></div>
-            <div className="hv4-head-actions">
-              <button className="hv4-rail-arrow prev" type="button" aria-label="Товары коллекций назад" onClick={()=>scrollHomeRail("home-collection-rail",-1)}><Icon name="arrow"/></button>
-              <button className="hv4-rail-arrow" type="button" aria-label="Товары коллекций вперёд" onClick={()=>scrollHomeRail("home-collection-rail",1)}><Icon name="arrow"/></button>
-              <button className="hv4-text-cta" type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ</button>
-            </div>
-          </header>
-          <div id="home-collection-rail"><ProductRail className="hv4-collection-product-rail" items={collectionProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/></div>
-        </div>
+    <section className="zh44-new zh44-section">
+      <div className="zh44-shell">
+        <header className="zh44-section-head"><div><small className="zh44-kicker">НОВОЕ ПОСТУПЛЕНИЕ</small><h2 className="zh44-title">Новые предметы</h2><p>Текстиль, фарфор и детали для дома — единая спокойная подборка без лишней витринной перегрузки.</p></div><button className="zh44-link" type="button" onClick={()=>openCatalog("Все товары")}>Смотреть всё <Icon name="arrow"/></button></header>
+        <ProductRail className="zh44-product-grid" items={newProducts} onProduct={onProduct} onQuick={onAdd} favorite={favorite} favorites={favorites}/>
       </div>
     </section>
 
-    <section className="hv4-solutions">
-      <div className="hv4-shell">
-        <header className="hv4-head"><div><small>ВДОХНОВЕНИЕ</small><h2>Готовые решения для дома</h2></div><div className="hv4-head-actions"><button className="hv4-rail-arrow prev" type="button" aria-label="Решения назад" onClick={()=>scrollHomeRail("home-solution-rail",-1)}><Icon name="arrow"/></button><button className="hv4-rail-arrow" type="button" aria-label="Решения вперёд" onClick={()=>scrollHomeRail("home-solution-rail",1)}><Icon name="arrow"/></button><a className="hv4-text-cta" href={constructorHref}>СМОТРЕТЬ ВСЕ</a></div></header>
-        <div id="home-solution-rail" className="hv4-solution-rail">{solutions.map(item=><a className="hv4-solution-card" href={constructorHref} key={item.room}><img src={assetUrl(item.image)} alt={`${item.room}: ${item.title}`}/><span><small>{item.room}</small><strong>{item.title}</strong><em>СМОТРЕТЬ</em></span></a>)}</div>
+    <section className="zh44-editorials" aria-label="Капсулы и коллекции">
+      <div className="zh44-editorial-grid">{stories.map(item=><button className="zh44-editorial-card" type="button" key={item.id} onClick={()=>openEditorial(item)}>
+        <img src={assetUrl(item.images[0])} alt={item.name}/>
+        <span className="zh44-editorial-copy"><small>{item.kind}</small><h2>{item.name}</h2><p>{item.lead}</p><span>Смотреть историю</span></span>
+      </button>)}</div>
+    </section>
+
+    <section className="zh44-categories zh44-section">
+      <div className="zh44-shell">
+        <header className="zh44-section-head"><div><small className="zh44-kicker">ДОМ ПО ПРОСТРАНСТВАМ</small><h2 className="zh44-title">Выберите комнату</h2><p>Три ключевых раздела прототипа — только те категории, в которых уже есть полноценный ассортимент и работающий товарный сценарий.</p></div></header>
+        <div className="zh44-category-grid">{categories.map(item=><button className="zh44-category-card" type="button" key={item.title} onClick={()=>openCatalog(item.category)}><span className="zh44-category-media"><img src={assetUrl(item.image)} alt={item.title}/></span><span className="zh44-category-copy"><span><small>{item.eyebrow}</small><strong>{item.title}</strong></span><span>Смотреть</span></span></button>)}</div>
+      </div>
+    </section>
+
+    <section className="zh44-film" aria-label="История бренда">
+      <video ref={brandVideoRef} autoPlay loop muted playsInline preload="metadata" poster={assetUrl("/images/russian-bedroom.png")} onPlay={()=>setBrandPlaying(true)} onPause={()=>setBrandPlaying(false)}>
+        <source media="(max-width: 700px)" src={assetUrl("/videos/home-mobile.mp4")} type="video/mp4"/>
+        <source src={assetUrl("/videos/home-desktop.mp4")} type="video/mp4"/>
+      </video>
+      <div className="zh44-film-copy"><small>КУЛЬТУРА ДОМА</small><h2>Традиции в каждом доме</h2><p>Современный взгляд на русскую культуру дома: тишина материалов, ритуалы сервировки и вещи, которые живут рядом годами.</p><button className="zh44-film-toggle" type="button" onClick={toggleBrandVideo}>{brandPlaying?"Пауза":"Смотреть"}</button></div>
+    </section>
+
+    <section className="zh44-solutions zh44-section">
+      <div className="zh44-shell">
+        <header className="zh44-section-head"><div><small className="zh44-kicker">ГОТОВЫЕ РЕШЕНИЯ</small><h2 className="zh44-title">Дом, собранный в единую историю</h2><p>Готовые сочетания предметов из нескольких коллекций. Внутри можно изменить состав, цвет, размер и количество.</p></div><a className="zh44-link" href={constructorHref}>Все решения <Icon name="arrow"/></a></header>
+        <div className="zh44-solution-grid">{solutions.map(item=><a className="zh44-solution-card" href={item.href} key={item.title}><span className="zh44-solution-media"><img src={assetUrl(item.image)} alt={item.title}/></span><span className="zh44-solution-copy"><span><small>{item.room}</small><strong>{item.title}</strong></span><span>Настроить</span></span></a>)}</div>
       </div>
     </section>
 
     <HomeBoutiques/>
   </main>;
 }
+
 
 function CatalogView({ initialCategory, onFilter, onAdd, onProduct, favorite, favorites }: { initialCategory:string; onFilter:()=>void; onAdd:(p:Product)=>void; onProduct:(p:Product)=>void; favorite:(n:number)=>void; favorites:number[] }) {
   const [sort, setSort] = useState("По умолчанию");
