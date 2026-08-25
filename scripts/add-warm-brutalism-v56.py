@@ -54,9 +54,9 @@ if 'name: "Тёплый брутализм"' not in table:
       "Салфетница Текстура": "коричневый",
       "Хлебница Текстура": "коричневый",
       "Корзина Текстура": "коричневый",
-      "Крестики-нолики Текстура": "бежевый",
-      "Шашки Текстура": "бежевый",
-      "Домино Текстура": "бежевый",
+      "Игра крестики - нолики Текстура": "бежевый",
+      "Игра шашки Текстура": "бежевый",
+      "Игра домино Текстура": "бежевый",
     },
 
     // A compact curated starting composition; every supplied SKU remains available
@@ -74,7 +74,7 @@ if 'name: "Тёплый брутализм"' not in table:
       "Менажница Дрёмица",
       "Корзина Текстура",
       "Обложка для ежедневника Текстура",
-      "Крестики-нолики Текстура",
+      "Игра крестики - нолики Текстура",
     ],
   },
 '''
@@ -93,6 +93,26 @@ if "const offerTargets" not in resolver:
     resolver = resolver.replace(
         "  const explicitProductMatch = productTargets.some((target) => matchesLoose(productName, target));\n\n  return collectionMatch || explicitProductMatch;",
         "  const explicitProductMatch = productTargets.some((target) => matchesLoose(productName, target));\n  const explicitOfferMatch = offerTargets.has(offerId);\n\n  return collectionMatch || explicitProductMatch || explicitOfferMatch;",
+    )
+
+# Some rows in the constructor feed have no collection value although the source
+# product name contains the collection. Infer it only for this exact cabinet solution,
+# so UI labels and product-variant grouping remain faithful to the supplied mapping.
+if "WARM_BRUTALISM_COLLECTION_INFERENCE_V56" not in resolver:
+    resolver = resolver.replace(
+        "  return sourceRows.sort((a, b) => {",
+        '''  // WARM_BRUTALISM_COLLECTION_INFERENCE_V56
+  const normalizedRows = solution.id === "table-8" ? sourceRows.map((row) => {
+    if (row.collection) return row;
+    const name = normalizeSolutionValue(row.product_name || "");
+    const collection = name.includes("юрма") ? "Юрма"
+      : name.includes("текстура") ? "Текстура"
+      : name.includes("дремица") ? "Дрёмица"
+      : "";
+    return collection ? { ...row, collection } : row;
+  }) : sourceRows;
+
+  return normalizedRows.sort((a, b) => {''',
     )
 
 # The cabinet scenario uses some leather desk/table accessories whose source
