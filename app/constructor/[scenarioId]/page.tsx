@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ScenarioConstructor } from "../scenario-client";
-import { ReadySolutionDetailV52 } from "../ready-solutions-v52";
+import { ReadySolutionDetailV54 } from "../ready-solutions-v54";
 import { CONSTRUCTOR_SCENARIO_IDS, isRoutableConstructorScenarioId } from "../scenarios";
 import { findTableSolution } from "../table-solutions";
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ scenarioI
   return {
     title: `${solution?.name ?? scenarioId} — Готовые решения Культура Дома`,
     description: solution
-      ? `${solution.space}. Готовое решение из коллекций ${solution.collections.join(", ")}.`
+      ? `${solution.space}. Выберите количество персон и настройте готовое решение из коллекций ${solution.collections.join(", ")}.`
       : "Соберите готовый сценарий из совместимых товаров Культуры Дома.",
   };
 }
@@ -25,6 +25,6 @@ export async function generateMetadata({ params }: { params: Promise<{ scenarioI
 export default async function ScenarioPage({ params }: { params: Promise<{ scenarioId: string }> }) {
   const { scenarioId } = await params;
   if (!isRoutableConstructorScenarioId(scenarioId)) notFound();
-  if (findTableSolution(scenarioId)) return <ReadySolutionDetailV52 scenarioId={scenarioId} />;
+  if (findTableSolution(scenarioId)) return <ReadySolutionDetailV54 scenarioId={scenarioId} />;
   return <ScenarioConstructor scenarioId={scenarioId} />;
 }
