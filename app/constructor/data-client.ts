@@ -35,6 +35,34 @@ export const EDITORIAL_EXPANSION_FILES = [
 
 export const constructorDataUrl = (fileName: string) => `${BASE_PATH}/data/${fileName}`;
 
+// Products from these discontinued lines must not surface anywhere in the
+// storefront constructor, even if an old preset or scenario still references
+// their offer ids. Match the product display name rather than collection so
+// unrelated products assigned to the same merchandising collection stay intact.
+const REMOVED_CATALOG_NAME_TOKENS = [
+  "мокоши",
+  "камея",
+  "жар-птица",
+  "жар птица",
+  "жарптица",
+] as const;
+
+const normalizeCatalogProductName = (value: string) =>
+  String(value || "")
+    .trim()
+    .toLocaleLowerCase("ru-RU")
+    .replace(/ё/g, "е")
+    .replace(/[‐‑‒–—]/g, "-")
+    .replace(/\s+/g, " ");
+
+export const isConstructorCatalogProductVisible = (productName: string) => {
+  const name = normalizeCatalogProductName(productName);
+  return !REMOVED_CATALOG_NAME_TOKENS.some((token) => name.includes(token));
+};
+
+const filterCatalogRows = (rows: CatalogRow[]) =>
+  rows.filter((row) => isConstructorCatalogProductVisible(row.product_name));
+
 const parseCsv = <T extends Record<string, string>>(source: string): T[] => {
   const text = source.replace(/^\uFEFF/, "");
   const rows: string[][] = [];
@@ -97,7 +125,14 @@ export const loadConstructorData = () => {
       loadOptionalCsv<ExpansionRuleRow>(EDITORIAL_EXPANSION_FILES[0]),
       loadOptionalCsv<ExpansionPatchRow>(EDITORIAL_EXPANSION_FILES[1]),
     ])
-      .then(([presets, candidates, scenarios, catalog, expansionRules, expansionPatches]) => ({ presets, candidates, scenarios, catalog, expansionRules, expansionPatches }))
+      .then(([presets, candidates, scenarios, catalog, expansionRules, expansionPatches]) => ({
+        presets,
+        candidates,
+        scenarios,
+        catalog: filterCatalogRows(catalog),
+        expansionRules,
+        expansionPatches,
+      }))
       .catch((error) => { constructorDataPromise = null; throw error; });
   }
   return constructorDataPromise;
@@ -122,21 +157,23 @@ export const loadFinalConstructorData = () => {
           required_items: row.required_items ?? "",
           status: row.status ?? "",
         }));
-        const variants: FinalScenarioVariantRow[] = variantRaw.map((row) => ({
-          scenario_name: row["Сценарий"] ?? "",
-          space: row["Пространство"] ?? "",
-          occasion: row["Повод"] ?? "",
-          role: row["Роль"] ?? "",
-          type: row["Тип"] ?? "",
-          offer_id: row.offer_id ?? "",
-          product_name: row["Название товара"] ?? "",
-          price_rub: row["Цена"] ?? "",
-          material: row["Материал"] ?? "",
-          color: row["Цвет"] ?? "",
-          product_url: row.URL ?? "",
-          note: row["Примечание"] ?? "",
-        }));
-        return { summaries, variants, catalog };
+        const variants: FinalScenarioVariantRow[] = variantRaw
+          .map((row) => ({
+            scenario_name: row["Сценарий"] ?? "",
+            space: row["Пространство"] ?? "",
+            occasion: row["Повод"] ?? "",
+            role: row["Роль"] ?? "",
+            type: row["Тип"] ?? "",
+            offer_id: row.offer_id ?? "",
+            product_name: row["Название товара"] ?? "",
+            price_rub: row["Цена"] ?? "",
+            material: row["Материал"] ?? "",
+            color: row["Цвет"] ?? "",
+            product_url: row.URL ?? "",
+            note: row["Примечание"] ?? "",
+          }))
+          .filter((row) => isConstructorCatalogProductVisible(row.product_name));
+        return { summaries, variants, catalog: filterCatalogRows(catalog) };
       })
       .catch((error) => { finalConstructorDataPromise = null; throw error; });
   }
