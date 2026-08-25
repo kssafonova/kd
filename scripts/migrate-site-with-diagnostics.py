@@ -62,6 +62,7 @@ scripts = [
     "polish-ready-solutions-collection-labels-v61.py",
     "refine-ready-solutions-premium-v62.py",
     "refine-ready-solutions-large-steps-v63.py",
+    "refine-ready-solutions-cohesive-v64.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
