@@ -61,6 +61,7 @@ scripts = [
     "refine-ready-solutions-catalog-moodboard-v61.py",
     "polish-ready-solutions-collection-labels-v61.py",
     "refine-ready-solutions-premium-v62.py",
+    "refine-ready-solutions-large-steps-v63.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
