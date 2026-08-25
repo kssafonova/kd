@@ -58,6 +58,7 @@ scripts = [
     "connect-collections-ready-solutions-v58.py",
     "enhance-ready-solutions-result-v59.py",
     "simplify-ready-solutions-v60.py",
+    "refine-ready-solutions-catalog-moodboard-v61.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
