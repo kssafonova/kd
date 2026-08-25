@@ -88,9 +88,6 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
       "Свеча Многоцветы",
     ],
     includeCollectionProducts: false,
-
-    // Keep the initial state light: the constructor recommends one item from
-    // each practical group instead of selecting the entire assortment at once.
     defaultProductNames: [],
   },
   {
@@ -102,17 +99,56 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     previewFile: "redline1.jpeg",
     scrollFile: "redline2.jpeg",
     collections: ["Мокоши", "Камея"],
+
+    // Final curated assortment from the approved Red Lines screenshot.
     productNames: [
+      // Тарелки
+      "Тарелка десертная Камея",
+      "Тарелка для супа Камея",
+      "Тарелка закусочная Камея",
+      "Тарелка обеденная Камея",
+      "Тарелка десертная Мокоши",
+
+      // Блюда, салатники и подача
+      "Салатник Камея",
+      "Тарелка глубокая Камея",
+      "Блюдо овальное Камея",
+      "Супница Камея",
+
+      // Кружки, чайные и кофейные пары
+      "Кофейная пара Камея",
+      "Кружка Камея",
+      "Чайная пара Камея",
       "Кофейная пара Мокоши",
       "Чайная пара Мокоши",
-      "Тарелка десертная Мокоши",
-      "Чайная пара Камея",
-      "Тарелка десертная Камея",
+
+      // Чайники, сахарницы и молочники
+      "Сахарница Камея",
+      "Молочник Камея",
       "Чайник заварочный Камея",
-      "Салатник Камея",
-      "Скатерть Мокоши",
-      "Плейсмат Мокоши",
+
+      // Скатерти, плейсматы и тканевые салфетки
       "Дорожка с кисточками Мокоши",
+      "Плейсмат Мокоши",
+      "Салфетка Мокоши",
+      "Скатерть Мокоши",
+    ],
+    includeCollectionProducts: false,
+
+    // Match the checked cards in the approved screenshot at 2 persons.
+    defaultProductNames: [
+      "Тарелка десертная Камея",
+      "Тарелка десертная Мокоши",
+      "Салатник Камея",
+      "Чайная пара Камея",
+      "Кофейная пара Мокоши",
+      "Чайная пара Мокоши",
+      "Сахарница Камея",
+      "Молочник Камея",
+      "Чайник заварочный Камея",
+      "Дорожка с кисточками Мокоши",
+      "Плейсмат Мокоши",
+      "Скатерть Мокоши",
     ],
   },
   {
@@ -126,8 +162,6 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     collections: ["Ледяные узоры", "Лунная сказка", "Нити Времени"],
 
     // Final approved CSV additions for the Winter Fairy Tale scenario.
-    // Broad collection matching remains disabled so only these exact catalog
-    // items are mixed with the GitHub storefront products below.
     productNames: [
       "Комплект постельного белья Нити времени",
       "Подушка декоративная Бархат",
@@ -144,9 +178,6 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
       "Свеча Корона малая, без аромата",
     ],
     includeCollectionProducts: false,
-
-    // Exact products previously added to app/catalog-data.ts and GitHub media:
-    // Лунная сказка, Ледяные узоры, кружево and Бархатный ритм.
     githubProductIds: [4, 2003, 6, 7, 2000, 3],
   },
 ] as const;
