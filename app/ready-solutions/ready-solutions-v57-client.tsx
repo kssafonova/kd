@@ -141,6 +141,21 @@ function buildGroups(categories: SolutionCategory[]): FormGroup[] {
 
 const collectionHref = (collection: string) => `/?section=collections&collection=${encodeURIComponent(collection)}`;
 
+// READY_SOLUTIONS_CATALOG_MOODBOARD_V61
+const COLLECTION_LABELS: Record<string, string> = {
+  "Мокоши": "Символы",
+  "Камея": "Эхо",
+  "Жар-птица": "Феникс",
+};
+const COLLECTION_SOURCES: Record<string, string> = Object.fromEntries(Object.entries(COLLECTION_LABELS).map(([source, label]) => [label, source]));
+const displayCollectionName = (value: string) => COLLECTION_LABELS[value] || value;
+const sourceCollectionName = (value: string) => COLLECTION_SOURCES[value] || value;
+const belongsToCollection = (row: CatalogRow, collection: string) => {
+  const target = norm(sourceCollectionName(collection));
+  if (!target) return false;
+  return norm(row.collection || "") === target || norm(row.product_name || "").includes(target);
+};
+
 export function ReadySolutionsLanding() {
   const { catalog, rules, error } = useData();
   // READY_SOLUTIONS_SIMPLIFIED_V60
@@ -206,11 +221,44 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
   const [qty, setQty] = useState<Record<string, number>>({});
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [collectionFilters, setCollectionFilters] = useState<Record<string, string>>({});
+  const [activeCollections, setActiveCollections] = useState<string[]>(() => solution ? [...solution.collections] : []);
   const [saved, setSaved] = useState(false);
   const [replaceOptionId, setReplaceOptionId] = useState<string | null>(null);
   const [replaceGroupId, setReplaceGroupId] = useState<string | null>(null);
 
-  const rows = useMemo(() => solution && catalog ? resolveTableSolutionCatalogRows(catalog.catalog, solution) : [], [catalog, solution]);
+  const availableCollections = useMemo(() => {
+    if (!solution || !catalog) return solution ? [...solution.collections] : [];
+    const pool = [...TABLE_SOLUTIONS.flatMap((item) => item.collections), ...catalog.catalog.map((row) => row.collection).filter(Boolean)];
+    const byLabel = new Map<string, string>();
+    pool.forEach((value) => {
+      const source = String(value || "").trim();
+      if (!source) return;
+      const label = displayCollectionName(source);
+      const key = norm(label);
+      if (!byLabel.has(key)) byLabel.set(key, source);
+    });
+    solution.collections.forEach((source) => byLabel.set(norm(displayCollectionName(source)), source));
+    return Array.from(byLabel.values()).sort((a, b) => displayCollectionName(a).localeCompare(displayCollectionName(b), "ru"));
+  }, [catalog, solution]);
+
+  const rows = useMemo(() => {
+    if (!solution || !catalog) return [];
+    const baseRows = resolveTableSolutionCatalogRows(catalog.catalog, solution);
+    const baseCollections = solution.collections;
+    const isEnabled = (value: string) => activeCollections.some((activeCollection) => norm(sourceCollectionName(activeCollection)) === norm(sourceCollectionName(value)));
+    const keptBase = baseRows.filter((row) => {
+      const matched = baseCollections.filter((collection) => belongsToCollection(row, collection));
+      return matched.length === 0 || matched.some(isEnabled);
+    });
+    const extras = activeCollections.filter((collection) => !baseCollections.some((baseCollection) => norm(sourceCollectionName(baseCollection)) === norm(sourceCollectionName(collection))));
+    const extraRows = catalog.catalog.filter((row) => extras.some((collection) => belongsToCollection(row, collection)));
+    const merged = new Map<string, CatalogRow>();
+    [...keptBase, ...extraRows].forEach((row) => {
+      const key = String(row.offer_id || row.vendor_code || `${norm(row.product_name)}|${norm(row.color)}|${norm(row.size || row.volume)}`);
+      if (!merged.has(key)) merged.set(key, row);
+    });
+    return Array.from(merged.values());
+  }, [catalog, solution, activeCollections]);
   const legacyCategories = useMemo(() => solution ? buildSolutionCategories(rows, solution.space) : [], [rows, solution]);
   const groups = useMemo(() => buildGroups(legacyCategories), [legacyCategories]);
   const options = useMemo(() => groups.flatMap((group) => group.items.map((item) => item.option)), [groups]);
@@ -235,6 +283,14 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
       return next;
     });
   }, [guests, options]);
+
+  useEffect(() => {
+    if (!options.length) return;
+    setSelected((current) => { const next = { ...current }; options.forEach((option) => { if (!(option.id in next)) next[option.id] = false; }); return next; });
+    setColors((current) => { const next = { ...current }; options.forEach((option) => { if (!(option.id in next)) next[option.id] = optionColors(option)[0] || ""; }); return next; });
+    setSizes((current) => { const next = { ...current }; options.forEach((option) => { if (!(option.id in next)) { const color = optionColors(option)[0] || ""; next[option.id] = optionSizes(option, color)[0] || ""; } }); return next; });
+    setQty((current) => { const next = { ...current }; options.forEach((option) => { if (!(option.id in next)) next[option.id] = recommendedOptionQuantity(option, guests); }); return next; });
+  }, [options, guests]);
 
   const selectedRows = useMemo<SelectedRow[]>(() => groups.flatMap((group) => group.items.flatMap(({ option }) => {
     if (!selected[option.id]) return [];
@@ -278,14 +334,18 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
       <nav className="rs57-crumbs"><Link href="/">Главная</Link><span>/</span><Link href="/ready-solutions/">Готовые решения</Link><span>/</span><b>{solution.name}</b></nav>
       <section className="rs57-wizard-hero">
         <div className="rs57-wizard-hero-media"><RemoteImage src={solutionImage(solution, rows)} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></div>
-        <div className="rs57-wizard-hero-copy"><small>{solution.space}</small><h1>{solution.name}</h1><p>Готовая композиция, которую можно адаптировать под своё пространство. Меняйте количество персон, цвета и отдельные предметы — остальная логика решения сохранится.</p><div className="rs57-collection-links"><span>Коллекции:</span>{solution.collections.map((collection) => <Link key={collection} href={collectionHref(collection)}>{collection}</Link>)}</div></div>
+        <div className="rs57-wizard-hero-copy"><small>{solution.space}</small><h1>{solution.name}</h1><p>Готовая композиция, которую можно адаптировать под своё пространство. Меняйте количество, коллекции и отдельные предметы.</p><div className="rs57-collection-links"><span>Коллекции:</span>{activeCollections.map((collection) => <Link key={collection} href={collectionHref(collection)}>{displayCollectionName(collection)}</Link>)}</div></div>
       </section>
 
       <nav className="rs57-stepper" aria-label="Этапы готового решения">{([1, 2, 3] as WizardStep[]).map((value) => <button key={value} type="button" className={step === value ? "is-active" : step > value ? "is-complete" : ""} onClick={() => { if (value !== 2 || !replaceOptionId) setStep(value); }}><span>{step > value ? <Icon name="check"/> : value}</span><em>{value === 1 ? "Параметры" : value === 2 ? "Состав" : "Результат"}</em></button>)}</nav>
 
-      {step === 1 && <div className="rs57-stage rs57-parameters">
-        <section><header className="rs57-stage-head"><small>ШАГ 1 ИЗ 3</small><h2>Настройте под себя</h2><p>Количество персон меняет только персональные предметы — тарелки, пары, плейсматы и салфеточные аксессуары. Декор, игры и крупные предметы остаются по одному.</p></header><div className="rs57-person-form">{guestOptions.map((value) => <button key={value} type="button" className={guests === value ? "is-active" : ""} onClick={() => setGuests(value)}><strong>{value}</strong><span>{value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span></button>)}</div><div className="rs57-parameter-note"><span>Пространство</span><b>{solution.space}</b><span>Коллекции</span><p>{solution.collections.join(" · ")}</p></div></section>
-        <aside className="rs57-summary-card"><small>ВАШЕ РЕШЕНИЕ</small><h3>{solution.name}</h3><dl><div><dt>Персон</dt><dd>{guests}</dd></div><div><dt>Категорий</dt><dd>{groups.length}</dd></div><div><dt>Выбрано</dt><dd>{selectedRows.length}</dd></div></dl><footer><span>Текущий итог</span><strong>{money(total)}</strong></footer><button type="button" className="rs57-primary" onClick={() => setStep(2)}>ПЕРЕЙТИ К СОСТАВУ</button></aside>
+      {step === 1 && <div className="rs57-stage rs57-parameters rs61-parameters">
+        <section className="rs61-parameters-main">
+          <header className="rs57-stage-head"><small>ШАГ 1 ИЗ 3</small><h2>Параметры</h2><p>Настройте количество персон и коллекции. В решении должна остаться хотя бы одна коллекция.</p></header>
+          <div className="rs61-parameter-section"><div className="rs61-parameter-label"><strong>Количество персон</strong><small>Персональные предметы пересчитаются автоматически</small></div><div className="rs57-person-form">{guestOptions.map((value) => <button key={value} type="button" className={guests === value ? "is-active" : ""} onClick={() => setGuests(value)}><strong>{value}</strong><span>{value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span></button>)}</div></div>
+          <div className="rs61-parameter-section rs61-collection-editor"><div className="rs61-parameter-label"><strong>Коллекции в решении</strong><small>Добавляйте новые или убирайте те, которые не подходят</small></div><div className="rs61-collection-chips">{activeCollections.map((collection) => <button type="button" key={collection} className="rs61-collection-chip" disabled={activeCollections.length === 1} onClick={() => setActiveCollections((current) => current.filter((value) => norm(sourceCollectionName(value)) !== norm(sourceCollectionName(collection))))}><span>{displayCollectionName(collection)}</span><b aria-hidden="true">×</b></button>)}</div>{availableCollections.some((collection) => !activeCollections.some((activeCollection) => norm(sourceCollectionName(activeCollection)) === norm(sourceCollectionName(collection)))) && <label className="rs61-add-collection"><span>Добавить коллекцию</span><select value="" onChange={(event) => { const value = event.target.value; if (value) setActiveCollections((current) => [...current, value]); }}><option value="">Выберите коллекцию</option>{availableCollections.filter((collection) => !activeCollections.some((activeCollection) => norm(sourceCollectionName(activeCollection)) === norm(sourceCollectionName(collection)))).map((collection) => <option key={collection} value={collection}>{displayCollectionName(collection)}</option>)}</select></label>}</div>
+        </section>
+        <aside className="rs57-summary-card rs61-parameter-summary"><small>ВАШЕ РЕШЕНИЕ</small><h3>{solution.name}</h3><dl><div><dt>Персон</dt><dd>{guests}</dd></div><div><dt>Коллекций</dt><dd>{activeCollections.length}</dd></div><div><dt>Выбрано</dt><dd>{selectedRows.length}</dd></div></dl><footer><span>Текущий итог</span><strong>{money(total)}</strong></footer><button type="button" className="rs57-primary" onClick={() => setStep(2)}>ПЕРЕЙТИ К СОСТАВУ</button></aside>
       </div>}
 
       {step === 2 && active && <div className="rs57-stage rs57-composition">
@@ -298,18 +358,18 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
         <aside className="rs57-summary-card rs57-sticky-summary"><small>ВАШ ВЫБОР</small><h3>{selectedRows.length ? `${selectedRows.length} позиций` : "Начните с товаров"}</h3><div className="rs57-summary-lines">{selectedRows.slice(0, 5).map(({ option, quantity }) => <p key={option.id}><span>{option.title}</span><em>× {quantity}</em></p>)}{selectedRows.length > 5 && <p><span>И ещё</span><em>+{selectedRows.length - 5}</em></p>}</div><footer><span>Итого</span><strong>{money(total)}</strong></footer><button type="button" className="rs57-primary" onClick={() => setStep(3)} disabled={!selectedRows.length}>ПЕРЕЙТИ К РЕЗУЛЬТАТУ</button></aside>
       </div>}
 
-      {step === 3 && <div className="rs57-stage rs57-result-stage rs60-result-stage">
-        <section className="rs60-result-main"><header className="rs57-stage-head rs60-result-head"><small>ШАГ 3 ИЗ 3</small><h2>Результат</h2><p>Ваше решение собрано в одном визуальном поле. Меняйте количество, заменяйте, удаляйте или добавляйте предметы прямо здесь.</p></header>
-          {selectedRows.length ? <section className="rs60-moodboard" aria-label="Выбранные товары">
-            <div className="rs60-moodboard-grid">
-              {selectedRows.map(({ row, quantity, option, group }, index) => <article className={`rs60-moodboard-card rs60-mood-${index % 7}`} key={`mood-${option.id}-${row.offer_id}`}>
-                <div className="rs60-moodboard-media"><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/></div>
-                <div className="rs60-moodboard-copy"><small>{group.title}</small><strong>{option.title}</strong><span>{money(priceOf(row))}</span></div>
-                <div className="rs60-moodboard-controls"><div className="rs60-qty"><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: Math.max(1, quantity - 1) }))} aria-label="Уменьшить количество">−</button><b>{quantity}</b><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: quantity + 1 }))} aria-label="Увеличить количество">+</button></div><div className="rs60-card-actions"><button type="button" onClick={() => startReplace(option, group)}>Заменить</button><button type="button" onClick={() => removeItem(option.id)}>Удалить</button></div></div>
+      {step === 3 && <div className="rs57-stage rs57-result-stage rs60-result-stage rs61-result-stage">
+        <section className="rs60-result-main rs61-result-main"><header className="rs57-stage-head rs60-result-head"><small>ШАГ 3 ИЗ 3</small><h2>Результат</h2><p>Собранный образ из тех же товарных карточек, что в каталоге. Количество, цвет, замену и удаление можно менять прямо здесь.</p></header>
+          {selectedRows.length ? <section className="rs61-moodboard" aria-label="Выбранные товары">
+            <div className="rs61-moodboard-grid">
+              {selectedRows.map(({ row, quantity, option, group }, index) => <article className={`product-card rs61-moodboard-card rs61-mood-${index % 7}`} key={`mood-${option.id}-${row.offer_id}`}>
+                <div className="product-image rs61-moodboard-media"><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/></div>
+                <div className="product-copy rs61-moodboard-copy"><div className="product-link"><strong>{option.title}</strong><small>{[displayCollectionName(option.collection || row.collection || ""), row.color, row.size || row.volume].filter(Boolean).join(" · ")}</small></div>{optionColors(option).length > 1 && <div className="plp-swatches" role="group" aria-label={`Цвет товара ${option.title}`}>{optionColors(option).map((value) => <button type="button" key={value} className={(colors[option.id] || row.color) === value ? "active" : ""} style={{ background: swatchColor(value) }} onClick={() => { setColors((current) => ({ ...current, [option.id]: value })); setSizes((current) => ({ ...current, [option.id]: optionSizes(option, value)[0] || "" })); }} aria-label={`Выбрать цвет ${value}`} title={value}/>)}</div>}<span className="price">{money(priceOf(row))}</span></div>
+                <div className="rs61-moodboard-controls"><div className="rs61-qty"><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: Math.max(1, quantity - 1) }))} aria-label="Уменьшить количество">−</button><b>{quantity}</b><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: quantity + 1 }))} aria-label="Увеличить количество">+</button></div><div className="rs61-card-actions"><button type="button" onClick={() => startReplace(option, group)}>Заменить</button><button type="button" onClick={() => removeItem(option.id)}>Удалить</button></div></div>
               </article>)}
-              <button type="button" className="rs60-add-card" onClick={goComposition}><span>+</span><strong>Добавить предмет</strong><small>из доступных категорий и коллекций</small></button>
+              <button type="button" className="product-card rs61-add-card" onClick={goComposition}><span>+</span><strong>Добавить предмет</strong><small>Выбрать категорию или коллекцию</small></button>
             </div>
-            <footer className="rs60-result-total"><div><span>{selectedRows.length} позиций</span><strong>{money(total)}</strong></div><button type="button" className="rs57-primary" onClick={addToCart}>ДОБАВИТЬ ВСЁ В КОРЗИНУ</button></footer>
+            <footer className="rs60-result-total rs61-result-total"><div><span>{selectedRows.length} позиций · {activeCollections.length} коллекций</span><strong>{money(total)}</strong></div><button type="button" className="rs57-primary" onClick={addToCart}>ДОБАВИТЬ ВСЁ В КОРЗИНУ</button></footer>
           </section> : <div className="rs57-empty-result"><h3>В решении пока нет товаров</h3><button type="button" onClick={goComposition}>Добавить предмет</button></div>}
         </section>
       </div>}
