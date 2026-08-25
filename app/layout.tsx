@@ -44,6 +44,7 @@ import "./collections-zara-kultura-v31.css";
 import "./collections-zara-kultura-v32.css";
 import "./collections-catalog-parity-v34.css";
 import "./commerce-zara-kultura-v41.css";
+import "./commerce-hypotheses-v42.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
