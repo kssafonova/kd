@@ -365,12 +365,22 @@ export default function Home() {
     const params=new URLSearchParams(window.location.search);
     const section=params.get("section");
     const open=params.get("open");
+    const requestedCollection=params.get("collection");
     if(section==="collections")setView("collections");
+    if(requestedCollection){
+      const key=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
+      const aliases:Record<string,string>={"мокоши":"Символы","камея":"Эхо","жар-птица":"Феникс","жар птица":"Феникс"};
+      const requested=aliases[key(requestedCollection)]||requestedCollection;
+      const matched=editorials.find(item=>key(item.name)===key(requested));
+      if(matched){setEditorial(matched);setView("editorial")}
+    }
     if(open==="cart")setCartOpen(true);
     if(open==="search")setSearch(true);
     if(open==="account")setAccount(true);
     if(open==="favorites")setFavoritesOpen(true);
-    if(section||open)window.history.replaceState({},"",window.location.pathname);
+    if(open==="menu"){setMenuSection("");setMenu(true)}
+    if(open==="boutiques")setBoutiquesOpen(true);
+    if(section||open||requestedCollection)window.history.replaceState({},"",window.location.pathname);
   },[]);
   const [toast, setToast] = useState("");
 
@@ -525,6 +535,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
     {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
     {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/products/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},
+    {room:"КАБИНЕТ",title:"Тёплый брутализм",image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a4375b9224e0_big.jpg",href:`${constructorHref}table-8/`},
   ];
 
   return <main className="home-sketch-v45">
