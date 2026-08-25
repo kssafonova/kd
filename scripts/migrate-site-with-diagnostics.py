@@ -68,6 +68,7 @@ scripts = [
     "redesign-mobile-cart-checkout-v67.py",
     "redesign-one-screen-checkout-v68.py",
     "redesign-cart-checkout-mockup-v69.py",
+    "refine-ready-solutions-mockup-v68.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
