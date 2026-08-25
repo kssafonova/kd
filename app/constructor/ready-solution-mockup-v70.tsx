@@ -15,7 +15,10 @@ export function ReadySolutionMockupV70() {
     if (!page || !hero || !person || !groups || !summary || page.classList.contains("v70-ready")) return;
 
     const readyPage = page;
+    const readyHero = hero;
+    const readyPerson = person;
     const readyGroups = groups;
+    const readySummary = summary;
     readyPage.classList.add("v70-ready");
     let step = 1;
 
@@ -30,7 +33,7 @@ export function ReadySolutionMockupV70() {
       button.addEventListener("click", () => setStep(index + 1));
       nav.appendChild(button);
     });
-    hero.insertAdjacentElement("afterend", nav);
+    readyHero.insertAdjacentElement("afterend", nav);
 
     const result = document.createElement("section");
     result.className = "v70-result";
@@ -46,7 +49,7 @@ export function ReadySolutionMockupV70() {
     `;
     readyGroups.insertAdjacentElement("afterend", result);
     const resultTitle = result.querySelector("h1")!;
-    resultTitle.textContent = hero.querySelector("h1")?.textContent || "Готовое решение";
+    resultTitle.textContent = readyHero.querySelector("h1")?.textContent || "Готовое решение";
     result.querySelector<HTMLButtonElement>(".v70-edit")?.addEventListener("click", () => setStep(2));
 
     const flowbar = document.createElement("div");
@@ -61,7 +64,7 @@ export function ReadySolutionMockupV70() {
     const flowbarButton = flowbar.querySelector<HTMLButtonElement>("button")!;
     flowbarButton.addEventListener("click", () => setStep(step === 1 ? 2 : 3));
 
-    const nativeSummaryButton = summary.querySelector<HTMLButtonElement>("button");
+    const nativeSummaryButton = readySummary.querySelector<HTMLButtonElement>("button");
     if (nativeSummaryButton) nativeSummaryButton.textContent = "ДОБАВИТЬ В КОРЗИНУ";
 
     function selectedCards() {
@@ -174,15 +177,15 @@ export function ReadySolutionMockupV70() {
         button.classList.toggle("is-active", Number(button.dataset.step) === step);
       });
 
-      person.hidden = step !== 1;
+      readyPerson.hidden = step !== 1;
       readyGroups.hidden = step !== 2;
       if (categoryNav) categoryNav.hidden = true;
       result.hidden = step !== 3;
-      hero.hidden = step === 3;
-      hero.classList.toggle("is-compact", step === 2);
+      readyHero.hidden = step === 3;
+      readyHero.classList.toggle("is-compact", step === 2);
 
       flowbar.hidden = step === 3;
-      summary.hidden = step !== 3;
+      readySummary.hidden = step !== 3;
       if (nativeSummaryButton) nativeSummaryButton.textContent = "ДОБАВИТЬ В КОРЗИНУ";
 
       syncResult();
