@@ -12,6 +12,7 @@ import "./ready-solutions-site-v33.css";
 import "./ready-solutions-zara-kultura-v38.css";
 import "./ready-solutions-hero-v39.css";
 import "./ready-solutions-constructor-v46.css";
+import "./ready-solutions-v47.css";
 
 export default function ConstructorLayout({ children }: { children: ReactNode }) {
   return children;
