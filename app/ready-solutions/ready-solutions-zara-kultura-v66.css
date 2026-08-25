@@ -1,0 +1,604 @@
+/* V66 — Ready Solutions: editorial commerce in the visual language of Kultura Doma. */
+.rs66-zara{
+  --rs66-ink:#171714;
+  --rs66-muted:#77756f;
+  --rs66-line:#e5e2dc;
+  --rs66-soft:#f1efe9;
+  --rs66-warm:#e9e4db;
+  --rs66-paper:#fff;
+  background:#fff!important;
+  color:var(--rs66-ink)!important;
+}
+
+/* Landing — one lead story, then quieter editorial cards. */
+.rs66-zara .rs57-landing{
+  width:100%!important;
+  max-width:1548px!important;
+  margin:0 auto!important;
+  padding:0 24px 120px!important;
+}
+.rs66-zara .rs57-intro.rs60-intro{
+  max-width:none!important;
+  min-height:300px!important;
+  padding:84px 0 34px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1.15fr) minmax(320px,.55fr)!important;
+  gap:8vw!important;
+  align-items:end!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+}
+.rs66-zara .rs57-intro.rs60-intro>div{display:contents!important}
+.rs66-zara .rs57-intro.rs60-intro small,
+.rs66-zara .rs57-intro.rs60-intro h1{grid-column:1!important}
+.rs66-zara .rs57-intro.rs60-intro small{font-size:8px!important;letter-spacing:.18em!important;color:#7b7973!important}
+.rs66-zara .rs57-intro.rs60-intro h1{
+  margin:12px 0 0!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(52px,5vw,78px)!important;
+  line-height:.94!important;
+  font-weight:400!important;
+  letter-spacing:-.035em!important;
+}
+.rs66-zara .rs57-intro.rs60-intro p{
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  align-self:end!important;
+  max-width:520px!important;
+  margin:0!important;
+  color:#66645f!important;
+  font-size:11px!important;
+  line-height:1.75!important;
+}
+.rs66-zara .rs57-index{padding-top:28px!important}
+.rs66-zara .rs57-index-head{
+  display:flex!important;
+  align-items:end!important;
+  justify-content:space-between!important;
+  margin:0!important;
+  padding:0 0 18px!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+}
+.rs66-zara .rs57-index-head small{font-size:8px!important;letter-spacing:.16em!important;color:#85837d!important}
+.rs66-zara .rs57-index-head h2{
+  margin:6px 0 0!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:26px!important;
+  line-height:1!important;
+  font-weight:400!important;
+}
+.rs66-zara .rs62-space-filter{
+  position:relative!important;
+  top:auto!important;
+  margin:0 0 34px!important;
+  padding:16px 0 0!important;
+  display:grid!important;
+  grid-template-columns:130px minmax(0,1fr)!important;
+  align-items:end!important;
+  gap:20px!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+  background:#fff!important;
+  backdrop-filter:none!important;
+}
+.rs66-zara .rs62-space-filter>span{padding-bottom:12px!important;font-size:9px!important;color:#77756f!important}
+.rs66-zara .rs62-space-filter .rs62-filter-rail{gap:28px!important;border:0!important;overflow-x:auto!important;scrollbar-width:none!important}
+.rs66-zara .rs62-space-filter .rs62-filter-rail::-webkit-scrollbar{display:none!important}
+.rs66-zara .rs62-space-filter .rs62-filter-rail button{
+  min-height:42px!important;
+  padding:0 0 11px!important;
+  border:0!important;
+  border-bottom:1px solid transparent!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#7b7973!important;
+  font-size:10px!important;
+  white-space:nowrap!important;
+}
+.rs66-zara .rs62-space-filter .rs62-filter-rail button.is-active{border-bottom-color:#171714!important;color:#171714!important}
+.rs66-zara .rs57-context-filter{
+  margin:0 0 28px!important;
+  padding:10px 0!important;
+  border:0!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+  background:#fff!important;
+}
+
+.rs66-zara .rs57-solution-grid{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:72px 18px!important;
+  align-items:start!important;
+}
+.rs66-zara .rs57-solution-card{
+  min-width:0!important;
+  border:0!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.rs66-zara .rs57-solution-card:nth-child(1){grid-column:1/-1!important;position:relative!important}
+.rs66-zara .rs57-solution-card:nth-child(2){grid-column:1/span 6!important}
+.rs66-zara .rs57-solution-card:nth-child(3){grid-column:7/-1!important;margin-top:10vw!important}
+.rs66-zara .rs57-solution-media{
+  display:block!important;
+  width:100%!important;
+  background:var(--rs66-soft)!important;
+  overflow:hidden!important;
+}
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-media{height:min(76vh,920px)!important}
+.rs66-zara .rs57-solution-card:nth-child(n+2) .rs57-solution-media{aspect-ratio:4/5!important}
+.rs66-zara .rs57-solution-media img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  transition:transform .9s cubic-bezier(.22,.61,.36,1)!important;
+}
+.rs66-zara .rs57-solution-card:hover .rs57-solution-media img{transform:scale(1.015)!important}
+.rs66-zara .rs57-solution-copy{
+  padding:14px 0 0!important;
+  border:0!important;
+  background:transparent!important;
+}
+.rs66-zara .rs57-solution-copy>small{font-size:8px!important;letter-spacing:.14em!important;color:#85837d!important}
+.rs66-zara .rs57-solution-copy h3{
+  margin:6px 0 7px!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(24px,2.4vw,36px)!important;
+  line-height:1!important;
+  font-weight:400!important;
+  letter-spacing:-.015em!important;
+}
+.rs66-zara .rs57-solution-copy>p{font-size:10px!important;color:#77756f!important}
+.rs66-zara .rs57-solution-copy>div:not(.rs57-person-badges){
+  display:flex!important;
+  justify-content:flex-start!important;
+  gap:20px!important;
+  border:0!important;
+  padding-top:9px!important;
+  font-size:9px!important;
+}
+.rs66-zara .rs57-person-badges{display:none!important}
+.rs66-zara .rs57-card-cta{
+  width:max-content!important;
+  margin-top:14px!important;
+  padding:0 0 4px!important;
+  border:0!important;
+  border-bottom:1px solid #171714!important;
+  background:transparent!important;
+  color:#171714!important;
+  font-size:9px!important;
+  letter-spacing:.08em!important;
+}
+.rs66-zara .rs57-card-cta svg{width:13px!important;height:13px!important}
+
+/* Featured solution behaves like an editorial cover. */
+.rs66-zara .rs57-solution-card:nth-child(1):after{
+  content:"";
+  position:absolute!important;
+  inset:0 0 auto 0!important;
+  height:min(76vh,920px)!important;
+  pointer-events:none!important;
+  background:linear-gradient(180deg,transparent 48%,rgba(0,0,0,.52) 100%)!important;
+}
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy{
+  position:absolute!important;
+  z-index:2!important;
+  left:clamp(26px,5vw,74px)!important;
+  right:clamp(26px,5vw,74px)!important;
+  bottom:clamp(28px,5vw,70px)!important;
+  max-width:640px!important;
+  padding:0!important;
+  color:#fff!important;
+}
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy>small,
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy>p,
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy span,
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy strong{color:rgba(255,255,255,.86)!important}
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy h3{font-size:clamp(40px,5vw,72px)!important;color:#fff!important}
+.rs66-zara .rs57-solution-card:nth-child(1) .rs57-card-cta{border-bottom-color:#fff!important;color:#fff!important}
+
+/* Detail hero — full editorial image, commerce below. */
+.rs66-zara .rs57-wizard-shell{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0 24px 130px!important;
+}
+.rs66-zara .rs57-crumbs{
+  max-width:1500px!important;
+  margin:0 auto!important;
+  padding:15px 0 13px!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+  color:#8a8882!important;
+  font-size:8px!important;
+}
+.rs66-zara .rs57-wizard-hero{
+  position:relative!important;
+  display:block!important;
+  width:calc(100% + 48px)!important;
+  min-height:0!important;
+  margin:0 -24px!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.rs66-zara .rs57-wizard-hero-media{
+  width:100%!important;
+  max-width:none!important;
+  height:min(78vh,920px)!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  background:var(--rs66-soft)!important;
+}
+.rs66-zara .rs57-wizard-hero-media img{width:100%!important;height:100%!important;object-fit:cover!important}
+.rs66-zara .rs57-wizard-hero:after{
+  content:"";
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none!important;
+  background:linear-gradient(180deg,rgba(0,0,0,.02) 35%,rgba(0,0,0,.56) 100%)!important;
+}
+.rs66-zara .rs57-wizard-hero-copy{
+  position:absolute!important;
+  z-index:2!important;
+  left:clamp(26px,7vw,110px)!important;
+  right:clamp(26px,7vw,110px)!important;
+  bottom:clamp(30px,6vw,86px)!important;
+  max-width:760px!important;
+  padding:0!important;
+  color:#fff!important;
+}
+.rs66-zara .rs57-wizard-hero-copy>small{font-size:8px!important;letter-spacing:.18em!important;color:rgba(255,255,255,.82)!important}
+.rs66-zara .rs57-wizard-hero-copy h1{
+  max-width:760px!important;
+  margin:10px 0 14px!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(54px,6vw,92px)!important;
+  line-height:.9!important;
+  font-weight:400!important;
+  letter-spacing:-.04em!important;
+  color:#fff!important;
+}
+.rs66-zara .rs57-wizard-hero-copy>p{max-width:560px!important;color:rgba(255,255,255,.88)!important;font-size:11px!important;line-height:1.7!important}
+.rs66-zara .rs57-collection-links{margin-top:20px!important;gap:12px!important;color:#fff!important}
+.rs66-zara .rs57-collection-links>span{font-size:8px!important;color:rgba(255,255,255,.72)!important}
+.rs66-zara .rs57-collection-links a{
+  padding:0 0 3px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.68)!important;
+  color:#fff!important;
+  font-size:9px!important;
+}
+
+/* Three navigation stages are typography, not boxes. */
+.rs66-zara .rs57-stepper.rs63-stepper{
+  position:sticky!important;
+  top:78px!important;
+  z-index:35!important;
+  max-width:1500px!important;
+  margin:0 auto!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:0!important;
+  border-top:0!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+  background:rgba(255,255,255,.975)!important;
+  backdrop-filter:blur(14px)!important;
+}
+.rs66-zara .rs57-stepper.rs63-stepper button{
+  min-height:62px!important;
+  padding:20px 0 13px!important;
+  border:0!important;
+  background:transparent!important;
+  color:#9a9790!important;
+  box-shadow:none!important;
+}
+.rs66-zara .rs57-stepper.rs63-stepper button>span{display:none!important}
+.rs66-zara .rs57-stepper.rs63-stepper button>em{font-family:"Tenor Sans",serif!important;font-size:16px!important;font-style:normal!important;font-weight:400!important}
+.rs66-zara .rs57-stepper.rs63-stepper button:after{height:1px!important;background:transparent!important}
+.rs66-zara .rs57-stepper.rs63-stepper button.is-active,
+.rs66-zara .rs57-stepper.rs63-stepper button.is-complete{color:#171714!important}
+.rs66-zara .rs57-stepper.rs63-stepper button.is-active:after{background:#171714!important}
+
+.rs66-zara .rs57-stage{
+  width:100%!important;
+  max-width:1500px!important;
+  margin:0 auto!important;
+  padding-top:60px!important;
+}
+.rs66-zara .rs57-stage-head{max-width:820px!important;margin-bottom:38px!important}
+.rs66-zara .rs57-stage-head>small{font-size:8px!important;letter-spacing:.16em!important;color:#85837d!important}
+.rs66-zara .rs57-stage-head h2{
+  margin:8px 0 10px!important;
+  font-family:"Tenor Sans",serif!important;
+  font-size:clamp(34px,3.4vw,50px)!important;
+  line-height:.98!important;
+  font-weight:400!important;
+  letter-spacing:-.02em!important;
+}
+.rs66-zara .rs57-stage-head>p{max-width:650px!important;color:#73716b!important;font-size:10px!important;line-height:1.7!important}
+
+/* Parameters become two editorial horizontal rows. */
+.rs66-zara .rs62-parameters.rs63-parameters{max-width:1180px!important;margin:0 auto!important;padding-top:60px!important}
+.rs66-zara .rs63-parameters .rs62-parameter-block{
+  margin:0!important;
+  padding:30px 0 36px!important;
+  border:0!important;
+  border-top:1px solid var(--rs66-line)!important;
+  background:#fff!important;
+}
+.rs66-zara .rs63-parameters .rs62-parameter-block:last-of-type{border-bottom:1px solid var(--rs66-line)!important}
+.rs66-zara .rs63-parameters .rs62-parameter-block>header{display:grid!important;grid-template-columns:230px 1fr!important;gap:24px!important;margin-bottom:18px!important}
+.rs66-zara .rs63-parameters .rs62-parameter-block>header strong{font-family:"Tenor Sans",serif!important;font-size:22px!important;font-weight:400!important}
+.rs66-zara .rs63-parameters .rs62-parameter-block>header small{font-size:9px!important;color:#85837d!important;align-self:center!important}
+.rs66-zara .rs63-parameters .rs62-filter-rail{gap:30px!important;border:0!important;border-bottom:1px solid #d7d4ce!important}
+.rs66-zara .rs63-parameters .rs62-filter-rail>button{
+  min-height:48px!important;
+  padding:0 0 12px!important;
+  border:0!important;
+  border-bottom:1px solid transparent!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+.rs66-zara .rs63-parameters .rs62-filter-rail>button.is-active{border-bottom-color:#171714!important}
+.rs66-zara .rs63-parameters .rs62-person-rail>button strong{font-family:"Tenor Sans",serif!important;font-size:27px!important;font-weight:400!important}
+.rs66-zara .rs63-parameters .rs62-parameter-action{
+  margin-top:26px!important;
+  padding:0!important;
+  border:0!important;
+  background:#fff!important;
+}
+.rs66-zara .rs63-parameters .rs62-parameter-action .rs57-primary{
+  min-width:230px!important;
+  min-height:48px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#171714!important;
+  color:#fff!important;
+}
+
+/* Composition — PLP first, configuration second. */
+.rs66-zara .rs57-stage.rs57-composition{display:block!important;max-width:1500px!important}
+.rs66-zara .rs57-composition-main{width:100%!important}
+.rs66-zara .rs57-composition .rs62-category-rail{
+  margin:0 0 34px!important;
+  padding:0!important;
+  gap:30px!important;
+  border:0!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+  background:#fff!important;
+  overflow-x:auto!important;
+  scrollbar-width:none!important;
+}
+.rs66-zara .rs57-composition .rs62-category-rail::-webkit-scrollbar{display:none!important}
+.rs66-zara .rs57-composition .rs62-category-rail button{
+  min-height:48px!important;
+  padding:0 0 12px!important;
+  border:0!important;
+  border-bottom:1px solid transparent!important;
+  background:transparent!important;
+  color:#77756f!important;
+  font-size:10px!important;
+  white-space:nowrap!important;
+}
+.rs66-zara .rs57-composition .rs62-category-rail button.is-active{border-bottom-color:#171714!important;color:#171714!important}
+.rs66-zara .rs57-product-group>header{
+  padding:0 0 20px!important;
+  display:flex!important;
+  align-items:end!important;
+  justify-content:space-between!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+}
+.rs66-zara .rs57-product-group>header h3{font-family:"Tenor Sans",serif!important;font-size:30px!important;font-weight:400!important}
+.rs66-zara .rs57-product-group>header button{
+  padding:0 0 4px!important;
+  border:0!important;
+  border-bottom:1px solid #171714!important;
+  background:transparent!important;
+  color:#171714!important;
+  font-size:9px!important;
+}
+.rs66-zara .rs57-composition .rs62-product-filters{
+  display:block!important;
+  margin:0 0 32px!important;
+  border:0!important;
+  background:#fff!important;
+}
+.rs66-zara .rs57-composition .rs62-product-filters>section{
+  display:grid!important;
+  grid-template-columns:120px minmax(0,1fr)!important;
+  gap:22px!important;
+  align-items:end!important;
+  padding:14px 0 0!important;
+  border:0!important;
+  border-bottom:1px solid var(--rs66-line)!important;
+}
+.rs66-zara .rs57-composition .rs62-product-filters>section>span{padding-bottom:11px!important;font-size:9px!important;color:#77756f!important;text-transform:none!important}
+.rs66-zara .rs57-composition .rs62-product-filters .rs62-filter-rail{gap:24px!important;border:0!important;overflow-x:auto!important;scrollbar-width:none!important}
+.rs66-zara .rs57-composition .rs62-product-filters .rs62-filter-rail button{
+  min-height:42px!important;
+  padding:0 0 11px!important;
+  border-bottom:1px solid transparent!important;
+  font-size:9px!important;
+  white-space:nowrap!important;
+}
+.rs66-zara .rs57-composition .rs62-product-filters .rs62-filter-rail button.is-active{border-bottom-color:#171714!important}
+.rs66-zara .rs62-product-grid.product-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:58px 18px!important;
+}
+.rs66-zara .rs57-product-wrap,
+.rs66-zara .rs57-product-card{
+  border:0!important;
+  outline:0!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.rs66-zara .rs57-product-card .product-image{aspect-ratio:1/1!important;background:var(--rs66-soft)!important}
+.rs66-zara .rs57-product-card .product-copy{padding:11px 0!important}
+.rs66-zara .rs57-product-card .product-copy strong{font-size:16px!important;font-weight:400!important}
+.rs66-zara .rs57-product-card .product-copy small{font-size:12px!important;color:#85837d!important}
+.rs66-zara .rs57-product-card .price{font-size:14px!important}
+.rs66-zara .plp-swatches{gap:7px!important;margin:8px 0 7px!important}
+.rs66-zara .plp-swatches button{width:16px!important;height:16px!important;border:1px solid #d1cec8!important;border-radius:0!important}
+.rs66-zara .plp-swatches button.active{outline:1px solid #171714!important;outline-offset:2px!important}
+.rs66-zara .rs62-selection-check.quick{
+  right:3px!important;
+  bottom:8px!important;
+  width:32px!important;
+  height:32px!important;
+  border:1px solid #171714!important;
+  border-radius:0!important;
+  background:#fff!important;
+  color:transparent!important;
+  box-shadow:none!important;
+}
+.rs66-zara .rs62-selection-check.quick.selected{border-color:#171714!important;background:#171714!important;color:#fff!important}
+.rs66-zara .rs57-card-controls{margin-top:8px!important;padding-top:10px!important;border-top:1px solid #ece9e3!important}
+
+/* Bottom commerce bar replaces the side-card feeling. */
+.rs66-zara .rs57-composition>.rs57-sticky-summary{
+  position:sticky!important;
+  bottom:0!important;
+  top:auto!important;
+  z-index:45!important;
+  width:100%!important;
+  margin:52px 0 0!important;
+  padding:13px 0 17px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:24px!important;
+  border:0!important;
+  border-top:1px solid #d7d4ce!important;
+  background:rgba(255,255,255,.985)!important;
+  backdrop-filter:blur(16px)!important;
+  box-shadow:none!important;
+}
+.rs66-zara .rs57-composition>.rs57-sticky-summary>small,
+.rs66-zara .rs57-composition>.rs57-sticky-summary>h3,
+.rs66-zara .rs57-composition>.rs57-sticky-summary>.rs57-summary-lines{display:none!important}
+.rs66-zara .rs57-composition>.rs57-sticky-summary footer{display:flex!important;gap:15px!important;align-items:baseline!important;padding:0!important}
+.rs66-zara .rs57-composition>.rs57-sticky-summary footer span{font-size:9px!important;color:#77756f!important}
+.rs66-zara .rs57-composition>.rs57-sticky-summary footer strong{font-family:"Tenor Sans",serif!important;font-size:22px!important;font-weight:400!important}
+.rs66-zara .rs57-composition>.rs57-sticky-summary .rs57-primary{
+  min-width:250px!important;
+  min-height:48px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#171714!important;
+  color:#fff!important;
+}
+
+/* Final result becomes a restrained editorial moodboard. */
+.rs66-zara .rs63-result-stage{padding-top:60px!important}
+.rs66-zara .rs63-result-head{padding-bottom:22px!important;margin-bottom:42px!important;border-bottom:1px solid var(--rs66-line)!important}
+.rs66-zara .rs61-moodboard-grid{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:66px 18px!important;
+}
+.rs66-zara .rs61-moodboard-card{grid-column:span 4!important;border:0!important;background:#fff!important;box-shadow:none!important}
+.rs66-zara .rs61-moodboard-card:nth-child(5n+1){grid-column:span 5!important}
+.rs66-zara .rs61-moodboard-card:nth-child(5n+2){grid-column:span 3!important;margin-top:8vw!important}
+.rs66-zara .rs61-moodboard-card:nth-child(5n+3){grid-column:span 4!important}
+.rs66-zara .rs61-moodboard-media{background:var(--rs66-soft)!important}
+.rs66-zara .rs61-moodboard-copy{padding-top:10px!important}
+.rs66-zara .rs61-moodboard-copy strong{font-size:15px!important;font-weight:400!important}
+.rs66-zara .rs61-moodboard-copy small{font-size:11px!important;color:#85837d!important}
+.rs66-zara .rs61-add-card{
+  grid-column:span 4!important;
+  min-height:320px!important;
+  border:0!important;
+  background:var(--rs66-soft)!important;
+}
+.rs66-zara .rs61-card-actions button{border:0!important;border-bottom:1px solid #77756f!important;background:transparent!important;font-size:9px!important}
+.rs66-zara .rs61-result-total{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:45!important;
+  margin-top:56px!important;
+  padding:13px 0 17px!important;
+  border-top:1px solid #d7d4ce!important;
+  background:rgba(255,255,255,.985)!important;
+  backdrop-filter:blur(16px)!important;
+}
+.rs66-zara .rs61-result-total .rs57-primary{
+  min-height:48px!important;
+  min-width:240px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#171714!important;
+  color:#fff!important;
+}
+.rs66-zara .rs57-mobile-dock{display:none!important}
+
+@media(max-width:980px){
+  .rs66-zara .rs57-solution-card:nth-child(1){grid-column:1/-1!important}
+  .rs66-zara .rs57-solution-card:nth-child(2),
+  .rs66-zara .rs57-solution-card:nth-child(3){grid-column:span 6!important;margin-top:0!important}
+  .rs66-zara .rs62-product-grid.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .rs66-zara .rs61-moodboard-card,
+  .rs66-zara .rs61-moodboard-card:nth-child(n){grid-column:span 6!important;margin-top:0!important}
+}
+
+@media(max-width:820px){
+  .rs66-zara .rs57-landing{padding:0 14px 86px!important}
+  .rs66-zara .rs57-intro.rs60-intro{
+    min-height:0!important;
+    display:block!important;
+    padding:50px 0 27px!important;
+  }
+  .rs66-zara .rs57-intro.rs60-intro>div{display:block!important}
+  .rs66-zara .rs57-intro.rs60-intro h1{font-size:44px!important}
+  .rs66-zara .rs57-intro.rs60-intro p{margin-top:18px!important;max-width:430px!important;font-size:10px!important}
+  .rs66-zara .rs57-index-head h2{font-size:23px!important}
+  .rs66-zara .rs62-space-filter{grid-template-columns:1fr!important;gap:0!important;padding-top:12px!important}
+  .rs66-zara .rs62-space-filter>span{padding-bottom:4px!important}
+  .rs66-zara .rs57-solution-grid{display:block!important}
+  .rs66-zara .rs57-solution-card:nth-child(n){margin:0 0 50px!important}
+  .rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-media{height:68svh!important}
+  .rs66-zara .rs57-solution-card:nth-child(1):after{height:68svh!important}
+  .rs66-zara .rs57-solution-card:nth-child(n+2) .rs57-solution-media{aspect-ratio:4/5!important}
+  .rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy{left:22px!important;right:22px!important;bottom:28px!important}
+  .rs66-zara .rs57-solution-card:nth-child(1) .rs57-solution-copy h3{font-size:42px!important}
+  .rs66-zara .rs57-solution-copy h3{font-size:25px!important}
+
+  .rs66-zara .rs57-wizard-shell{padding:0 14px 105px!important}
+  .rs66-zara .rs57-crumbs{padding:12px 0!important}
+  .rs66-zara .rs57-wizard-hero{width:calc(100% + 28px)!important;margin:0 -14px!important}
+  .rs66-zara .rs57-wizard-hero-media{height:72svh!important}
+  .rs66-zara .rs57-wizard-hero-copy{left:22px!important;right:22px!important;bottom:30px!important}
+  .rs66-zara .rs57-wizard-hero-copy h1{font-size:48px!important}
+  .rs66-zara .rs57-wizard-hero-copy>p{font-size:10px!important}
+  .rs66-zara .rs57-stepper.rs63-stepper{top:62px!important;margin:0!important}
+  .rs66-zara .rs57-stepper.rs63-stepper button{min-height:52px!important;padding:16px 0 11px!important}
+  .rs66-zara .rs57-stepper.rs63-stepper button>em{font-size:13px!important}
+  .rs66-zara .rs57-stage{padding-top:42px!important}
+  .rs66-zara .rs57-stage-head h2{font-size:34px!important}
+  .rs66-zara .rs63-parameters .rs62-parameter-block>header{grid-template-columns:1fr!important;gap:5px!important}
+  .rs66-zara .rs63-parameters .rs62-filter-rail{gap:22px!important;overflow-x:auto!important;scrollbar-width:none!important}
+  .rs66-zara .rs57-composition .rs62-product-filters>section{grid-template-columns:1fr!important;gap:0!important}
+  .rs66-zara .rs57-composition .rs62-product-filters>section>span{padding:11px 0 0!important}
+  .rs66-zara .rs62-product-grid.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:34px 8px!important}
+  .rs66-zara .rs57-product-card .product-copy strong{font-size:13px!important}
+  .rs66-zara .rs57-product-card .product-copy small{font-size:10px!important}
+  .rs66-zara .rs57-product-card .price{font-size:12px!important}
+  .rs66-zara .rs62-selection-check.quick{width:28px!important;height:28px!important;right:2px!important;bottom:4px!important}
+  .rs66-zara .rs57-composition>.rs57-sticky-summary{
+    margin-left:-14px!important;
+    margin-right:-14px!important;
+    width:calc(100% + 28px)!important;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom))!important;
+    grid-template-columns:minmax(0,.85fr) minmax(146px,1.15fr)!important;
+  }
+  .rs66-zara .rs57-composition>.rs57-sticky-summary .rs57-primary{min-width:0!important;width:100%!important;min-height:46px!important}
+  .rs66-zara .rs61-moodboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:36px 8px!important}
+  .rs66-zara .rs61-moodboard-card,
+  .rs66-zara .rs61-moodboard-card:nth-child(n),
+  .rs66-zara .rs61-add-card{grid-column:span 1!important;margin-top:0!important}
+  .rs66-zara .rs61-add-card{min-height:220px!important}
+  .rs66-zara .rs61-result-total{
+    margin-left:-14px!important;
+    margin-right:-14px!important;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom))!important;
+  }
+  .rs66-zara .rs57-mobile-dock{display:none!important}
+}
