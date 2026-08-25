@@ -4,4 +4,5 @@
 :HL["/kd/_next/static/chunks/14ws-.vyru.4k.css","style"]
 :HL["/kd/_next/static/chunks/0fw7_87r0~wlf.css","style"]
 :HL["/kd/_next/static/chunks/0v4pj-8_60cdt.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"winter-garden-breakfast","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"ptVJ3sGwPRyQFL6pPMPyS"}
+:HL["/kd/_next/static/chunks/0_-5phxhekt4y.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"winter-garden-breakfast","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"v10rGE8o7etwiSCoWszI7"}
