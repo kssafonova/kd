@@ -167,3 +167,11 @@
 @media(max-width:390px){
   .rs57-page .header .logo{font-size:15px}.rs57-page .header-actions{gap:4px}.rs57-person-form{grid-template-columns:repeat(2,minmax(0,1fr))}.rs57-product-grid.product-grid{gap:26px 8px!important}.rs57-page .rs57-product-card .product-copy .product-link>strong{font-size:14px!important}.rs57-page .rs57-product-card .product-copy .product-link>small{font-size:10px!important}.rs57-mobile-dock{grid-template-columns:minmax(0,.75fr) minmax(155px,1.25fr)}
 }
+
+
+/* COLLECTION_CONTEXT_STYLE_V58 — contextual bridge from collection stories. */
+.rs57-context-filter{display:flex;align-items:center;gap:10px;margin:-12px 0 26px;padding:11px 0;border-bottom:1px solid var(--rs-line);font-size:9px}
+.rs57-context-filter>span{color:#858680;text-transform:uppercase;letter-spacing:.1em}
+.rs57-context-filter>b{font-weight:400;font-size:11px}
+.rs57-context-filter>button{margin-left:auto;padding-bottom:3px;border-bottom:1px solid #777873;color:#666761;font-size:9px}
+@media(max-width:760px){.rs57-context-filter{margin:-8px 0 22px}.rs57-context-filter>b{font-size:10px}}

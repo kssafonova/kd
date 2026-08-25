@@ -146,6 +146,12 @@ export function ReadySolutionsLanding() {
   const [space, setSpace] = useState("all");
   const [guests, setGuests] = useState("all");
   const [category, setCategory] = useState("all");
+  // COLLECTION_CONTEXT_V58
+  const [collectionContext, setCollectionContext] = useState("");
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("collection") || "";
+    setCollectionContext(requested);
+  }, []);
   if (error) return <div className="rs57-page"><StoreHeader/><main className="rs57-state">{error}</main></div>;
   if (!catalog) return <div className="rs57-page"><StoreHeader/><main className="rs57-state">Загружаем готовые решения…</main></div>;
 
@@ -159,7 +165,7 @@ export function ReadySolutionsLanding() {
   const spaces = Array.from(new Set(cards.map((card) => card.solution.space)));
   const guestValues = Array.from(new Set(cards.flatMap((card) => card.guestOptions))).sort((a, b) => a - b);
   const categories = Array.from(new Set(cards.flatMap((card) => card.groups.map((group) => group.title))));
-  const visible = cards.filter((card) => (space === "all" || card.solution.space === space) && (guests === "all" || card.guestOptions.includes(Number(guests))) && (category === "all" || card.groups.some((group) => group.title === category)));
+  const visible = cards.filter((card) => (!collectionContext || card.solution.collections.some((value) => norm(value) === norm(collectionContext))) && (space === "all" || card.solution.space === space) && (guests === "all" || card.guestOptions.includes(Number(guests))) && (category === "all" || card.groups.some((group) => group.title === category)));
   const reset = () => { setSpace("all"); setGuests("all"); setCategory("all"); };
 
   return <div className="rs57-page">
@@ -179,6 +185,7 @@ export function ReadySolutionsLanding() {
           {(space !== "all" || guests !== "all" || category !== "all") && <button type="button" onClick={reset}>Сбросить</button>}
         </div>
 
+        {collectionContext && <div className="rs57-context-filter"><span>Коллекция</span><b>{collectionContext}</b><button type="button" onClick={() => setCollectionContext("")}>Снять фильтр</button></div>}
         {visible.length ? <div className="rs57-solution-grid">{visible.map(({ solution, rows, groups, guestOptions, image, from }) => <article className="rs57-solution-card" key={solution.id}>
           <Link className="rs57-solution-media" href={`/ready-solutions/${solution.id}/`}><RemoteImage src={image} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></Link>
           <div className="rs57-solution-copy"><small>{solution.space}</small><Link href={`/ready-solutions/${solution.id}/`}><h3>{solution.name}</h3></Link><p>{solution.collections.join(" · ")}</p><div><span>{groups.length} категорий · {rows.length} вариантов</span><strong>{from ? `от ${money(from)}` : "Настроить состав"}</strong></div><div className="rs57-person-badges">{guestOptions.map((value) => <span key={value}>{value} {value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span>)}</div><Link className="rs57-card-cta" href={`/ready-solutions/${solution.id}/`}>НАСТРОИТЬ РЕШЕНИЕ <Icon name="arrow"/></Link></div>

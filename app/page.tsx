@@ -729,6 +729,9 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
   const startPurchase=()=>{setPurchaseMode(true);setSelectedIds([]);setSizes({})};
   const finishPurchase=()=>{setPurchaseMode(false);setSelectedIds([]);setSizes({})};
   const addSelected=()=>{if(selectedProducts.length&&pending.length===0){buyBundle(selectedProducts);close()}};
+  // READY_SOLUTION_COLLECTION_BRIDGE_V58
+  const readySolutionCollection=active?({"Символы":"Мокоши","Эхо":"Камея","Феникс":"Жар-птица"} as Record<string,string>)[active.name]||active.name:"";
+  const readySolutionHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/ready-solutions/?collection=${encodeURIComponent(readySolutionCollection)}`;
 
   return <main className="collections-v52">
     <header className="collections-v52-intro">
@@ -749,7 +752,7 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
           <aside className="v52-story-editorial" aria-label="История коллекции">
             <div className="v52-story-title"><small>КОЛЛЕКЦИЯ</small><h1>{active.name}</h1><p>{active.lead}</p><span>{productCountLabel(items.length)}</span></div>
             {active.images.map((image,index)=><figure key={`${active.id}-${image}`}><img src={assetUrl(image)} alt={`${active.name}, кадр ${index+1}`}/>{index===0&&<figcaption>{active.detail}</figcaption>}</figure>)}
-            <div className="v52-story-note"><small>О КОЛЛЕКЦИИ</small><p>{active.description}</p></div>
+            <div className="v52-story-note"><small>О КОЛЛЕКЦИИ</small><p>{active.description}</p><a className="v52-buy-story v58-ready-solution-link" href={readySolutionHref}>СОБРАТЬ ГОТОВОЕ РЕШЕНИЕ →</a></div>
           </aside>
           <section className="v52-story-commerce" aria-label="Товары коллекции">
             <header className="v52-commerce-head"><div><small>{purchaseMode?"СОБЕРИТЕ СВОЮ ИСТОРИЮ":"ТОВАРЫ КОЛЛЕКЦИИ"}</small><h2>{purchaseMode?"Выберите предметы":"Предметы истории"}</h2><p>{purchaseMode?"Отметьте нужные позиции. Для товаров с несколькими размерами размер можно выбрать после отметки.":"Каждый предмет можно добавить отдельно — привычной кнопкой корзины, как в каталоге."}</p></div>{purchaseMode?<div className="v52-commerce-actions"><button type="button" className="v52-secondary-action" onClick={()=>setSelectedIds(allSelected?[]:items.map(item=>item.id))}>{allSelected?"Снять выбор":"Выбрать всё"}</button><button type="button" className="v52-text-action" onClick={finishPurchase}>Отменить</button></div>:<button type="button" className="v52-buy-story" onClick={startPurchase}>КУПИТЬ КОЛЛЕКЦИЮ</button>}</header>
