@@ -241,7 +241,7 @@ const discountOf = (product: Product) => product.oldPrice ? Math.round((1-produc
 const categories = [
   ["Спальня", "/images/classic-bedroom.png"],
   ["Кухня и столовая", "/images/moon-plate.png"],
-  ["Капсулы и коллекции", "/images/time-collection.png"],
+  ["Коллекции", "/images/time-collection.png"],
   ["Домашний текстиль", "/images/russian-bedroom.png"],
   ["Ванная", "/images/zip-product-bed.png"],
 ];
@@ -255,9 +255,13 @@ const slideProductIds = [
 ];
 
 type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦИЯ"; lead:string; detail:string; description:string; images:string[]; productIds:number[] };
+// COLLECTIONS_ONLY_V49
 const editorials:Editorial[] = [
   { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле. Белый, ледяной голубой и деликатный орнамент создают ощущение тихого зимнего утра.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/images/editorial/caps_led.png","/images/editorial/caps_led_podyshka.png","/images/editorial/caps_led_podyshka2.png","/images/editorial/caps_led_serviz.png"], productIds:[2000,2001,2003,2004,2010] },
-  { id:"luna", name:"Лунная сказка", kind:"КАПСУЛА", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю: вышитый текстиль, кружево, кобальтовый фарфор и свет, который делает дом почти театральным.", description:"Интерактивный editorial о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_postel3.png","/images/editorial/caps_luna_serviz.png","/images/editorial/caps_luna_serviz2.png","/images/editorial/caps_luna_serviz3.png"], productIds:[4,10,5,6,3] },
+  { id:"luna", name:"Лунная сказка", kind:"КОЛЛЕКЦИЯ", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю: вышитый текстиль, кружево, кобальтовый фарфор и свет, который делает дом почти театральным.", description:"Коллекция о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_postel3.png","/images/editorial/caps_luna_serviz.png","/images/editorial/caps_luna_serviz2.png","/images/editorial/caps_luna_serviz3.png"], productIds:[4,10,5,6,3] },
+  { id:"white-chapter", name:"Белая глава", kind:"КОЛЛЕКЦИЯ", lead:"Белый сатин, спокойный свет и мягкие фактуры для спальни, в которой ничего не отвлекает.", detail:"Белая глава строится на чистой палитре и тактильности. Постельный текстиль, подушки и мягкие предметы объединены так, чтобы интерьер оставался светлым, спокойным и цельным.", description:"Светлая коллекция текстиля для тихой современной спальни.", images:["/images/russian-bedroom.png","/images/classic-bedroom.png","/images/zip-product-bed.png","/images/beige-bedroom.png"], productIds:[2,8,11,12,3] },
+  { id:"home-in-bloom", name:"Дом в цвету", kind:"КОЛЛЕКЦИЯ", lead:"Фарфор, вазы и сервировка для стола, который выглядит празднично даже в обычный день.", detail:"Коллекция соединяет посуду, вазы и предметы сервировки в лёгкую композицию. Цвет и прозрачные фактуры добавляют дому выразительности, но не превращают стол в парадную декорацию.", description:"Коллекция для сервировки и домашних встреч — выразительная, но повседневная.", images:["/images/editorial-vases.webp","/images/editorial-table.webp","/images/russian-service-blue.png","/images/time-table.png"], productIds:[5,10,2001,2004,2010] },
+  { id:"velvet-rhythm", name:"Бархатный ритм", kind:"КОЛЛЕКЦИЯ", lead:"Молочные и холодные синие оттенки, стёганые поверхности и мягкий текстиль для многослойной спальни.", detail:"Бархатный ритм собран вокруг покрывал, пледов и декоративных подушек. Разные фактуры остаются в одной спокойной гамме и позволяют менять настроение спальни без полного обновления интерьера.", description:"Тактильная коллекция пледов, покрывал и декоративных подушек.", images:["/images/beige-bedroom.png","/images/classic-bedroom.png","/images/blue-bedroom.png","/images/products/KD-PD-1027-MOL01.png"], productIds:[7,6,3,2000,2003] },
 ];
 
 export default function Home() {
@@ -406,7 +410,7 @@ function HomeBoutiques(){
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   // HOME_SKETCH_ZARA_KULTURA_V45
   const heroSlides=[
-    {label:"КАПСУЛА",title:"Лунная сказка",subtitle:"Тихая история для спальни и позднего чаепития",desktopImage:"/images/editorial/caps_luna_postel2.png",mobileImage:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[1])},
+    {label:"КОЛЛЕКЦИЯ",title:"Лунная сказка",subtitle:"Тихая история для спальни и позднего чаепития",desktopImage:"/images/editorial/caps_luna_postel2.png",mobileImage:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[1])},
     {label:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",subtitle:"Светлая зимняя палитра, вышивка и мягкие фактуры",desktopImage:"/images/editorial/caps_led.png",mobileImage:"/images/editorial/caps_led_podyshka.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[0])},
     {label:"ПОСУДА И СЕРВИРОВКА",title:"Дом начинается с ритуалов",subtitle:"Фарфор, текстиль и предметы для красивой повседневности",desktopImage:"/images/time-table.png",mobileImage:"/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
   ];
@@ -577,13 +581,12 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V3
 function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void }) {
   // COLLECTIONS_CATALOG_PARITY_V34
-  const [filter,setFilter]=useState<"all"|"capsule"|"collection">("all");
   const [active,setActive]=useState<Editorial|null>(null);
   const [selectedIds,setSelectedIds]=useState<number[]>([]);
   const [sizes,setSizes]=useState<Record<number,string>>({});
   const [variants,setVariants]=useState<Record<number,Product>>({});
 
-  const visible=editorials.filter(item=>filter==="all"||(filter==="capsule"?item.kind==="КАПСУЛА":item.kind==="КОЛЛЕКЦИЯ"));
+  const visible=editorials;
   const items=(active?.productIds??[]).map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
   const baseProduct=(product:Product)=>variants[product.id]??product;
   const sizeOptions=(product:Product)=>{
@@ -611,17 +614,11 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle }: { o
 
   return <main className="collections-v34">
     <header className="collections-v34-head">
-      <h1>Капсулы и коллекции</h1>
-      <p>Истории для дома, собранные из предметов Культура Дома.</p>
+      <h1>Коллекции</h1>
+      <p>Коллекции для разных пространств и домашних ритуалов — от спальни до сервировки.</p>
     </header>
 
-    <nav className="collections-v34-tabs" aria-label="Капсулы и коллекции">
-      <button type="button" className={filter==="all"?"active":""} onClick={()=>setFilter("all")}>Все</button>
-      <button type="button" className={filter==="capsule"?"active":""} onClick={()=>setFilter("capsule")}>Капсулы</button>
-      <button type="button" className={filter==="collection"?"active":""} onClick={()=>setFilter("collection")}>Коллекции</button>
-    </nav>
-
-    <section className="collections-v34-grid" aria-label="Список капсул и коллекций">
+    <section className="collections-v34-grid" aria-label="Список коллекций">
       {visible.map(editorial=><article className="collections-v34-card" key={editorial.id}>
         <button className="collections-v34-image" type="button" onClick={()=>open(editorial)}><img src={assetUrl(editorial.images[0])} alt={editorial.name}/></button>
         <div className="collections-v34-copy"><small>{editorial.kind}</small><button type="button" onClick={()=>open(editorial)}><h2>{editorial.name}</h2></button><p>{editorial.lead}</p><div><span>{productCountLabel(editorial.productIds.length)}</span><strong>от {fmt(collectionPrice(editorial))}</strong></div></div>
@@ -891,7 +888,7 @@ function Menu({ current, setCurrent, close, go, openCatalog }: { current:string;
 
     <section className="premium-menu-editorial" aria-label="Editorial и готовые решения">
       <small>EDITORIAL</small>
-      <button type="button" onClick={()=>go("collections")}><span>КАПСУЛЫ И КОЛЛЕКЦИИ</span><Icon name="arrow"/></button>
+      <button type="button" onClick={()=>go("collections")}><span>КОЛЛЕКЦИИ</span><Icon name="arrow"/></button>
       <a href={constructorHref} onClick={close}><span>ГОТОВЫЕ РЕШЕНИЯ</span><Icon name="arrow"/></a>
     </section>
 
