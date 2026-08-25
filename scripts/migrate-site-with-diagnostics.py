@@ -51,6 +51,7 @@ scripts = [
     "redesign-commerce-zara-kultura-v41.py",
     "redesign-commerce-hypotheses-v42.py",
     "fix-commerce-v42-crosssell.py",
+    "redesign-commerce-clarity-v43.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
