@@ -56,6 +56,7 @@ scripts = [
     "redesign-home-sketch-v45.py",
     "redesign-ready-solutions-constructor-v46.py",
     "redesign-collections-v49.py",
+    "redesign-collections-v50.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
