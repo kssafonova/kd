@@ -177,7 +177,7 @@ export function ReadySolutionsLanding() {
     return { solution, rows, groups, guestOptions, image: solutionImage(solution, rows), from: prices.length ? Math.min(...prices) : 0 };
   });
   const spaces = Array.from(new Set(cards.map((card) => card.solution.space)));
-  const visible = cards.filter((card) => (!collectionContext || card.solution.collections.some((value) => norm(value) === norm(collectionContext))) && (space === "all" || card.solution.space === space));
+  const visible = cards.filter((card) => (!collectionContext || card.solution.collections.some((value) => norm(displayCollectionName(value)) === norm(collectionContext) || norm(sourceCollectionName(value)) === norm(sourceCollectionName(collectionContext)))) && (space === "all" || card.solution.space === space)); // READY_SOLUTIONS_COLLECTION_LABELS_V61
   const reset = () => { setSpace("all"); };
 
   return <div className="rs57-page">
@@ -194,10 +194,10 @@ export function ReadySolutionsLanding() {
           {space !== "all" && <button type="button" onClick={reset}>Сбросить</button>}
         </div>
 
-        {collectionContext && <div className="rs57-context-filter"><span>Коллекция</span><b>{collectionContext}</b><button type="button" onClick={() => setCollectionContext("")}>Снять фильтр</button></div>}
+        {collectionContext && <div className="rs57-context-filter"><span>Коллекция</span><b>{displayCollectionName(collectionContext)}</b><button type="button" onClick={() => setCollectionContext("")}>Снять фильтр</button></div>}
         {visible.length ? <div className="rs57-solution-grid">{visible.map(({ solution, rows, groups, guestOptions, image, from }) => <article className="rs57-solution-card" key={solution.id}>
           <Link className="rs57-solution-media" href={`/ready-solutions/${solution.id}/`}><RemoteImage src={image} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></Link>
-          <div className="rs57-solution-copy"><small>{solution.space}</small><Link href={`/ready-solutions/${solution.id}/`}><h3>{solution.name}</h3></Link><p>{solution.collections.join(" · ")}</p><div><span>{groups.length} категорий · {rows.length} вариантов</span><strong>{from ? `от ${money(from)}` : "Настроить состав"}</strong></div><div className="rs57-person-badges">{guestOptions.map((value) => <span key={value}>{value} {value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span>)}</div><Link className="rs57-card-cta" href={`/ready-solutions/${solution.id}/`}>НАСТРОИТЬ РЕШЕНИЕ <Icon name="arrow"/></Link></div>
+          <div className="rs57-solution-copy"><small>{solution.space}</small><Link href={`/ready-solutions/${solution.id}/`}><h3>{solution.name}</h3></Link><p>{solution.collections.map(displayCollectionName).join(" · ")}</p><div><span>{groups.length} категорий · {rows.length} вариантов</span><strong>{from ? `от ${money(from)}` : "Настроить состав"}</strong></div><div className="rs57-person-badges">{guestOptions.map((value) => <span key={value}>{value} {value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span>)}</div><Link className="rs57-card-cta" href={`/ready-solutions/${solution.id}/`}>НАСТРОИТЬ РЕШЕНИЕ <Icon name="arrow"/></Link></div>
         </article>)}</div> : <div className="rs57-empty-filter"><h3>Нет решений с такими параметрами</h3><p>Сбросьте один из фильтров — остальные параметры сохранятся.</p><button type="button" onClick={reset}>Показать все решения</button></div>}
       </section>
     </main>
@@ -389,7 +389,7 @@ function ProductGroup({ group, filter, onFilter, collectionFilter, onCollectionF
     <header><div><small>КАТЕГОРИЯ</small><h3>{group.title}</h3></div>{!replacingId && <button type="button" onClick={() => visible.forEach(({ option }) => onSelected(option.id, !allVisibleSelected))}>{allVisibleSelected ? "Снять всё" : "Выбрать всё"}</button>}</header>
     <div className="rs60-product-filters">
       <label><span>Тип товара</span><select value={filter} onChange={(event) => onFilter(event.target.value)}><option value="all">Все</option>{subcategories.map(([id, title]) => <option key={id} value={id}>{title}</option>)}</select></label>
-      <label><span>Коллекция</span><select value={collectionFilter} onChange={(event) => onCollectionFilter(event.target.value)}><option value="all">Все коллекции</option>{collections.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
+      <label><span>Коллекция</span><select value={collectionFilter} onChange={(event) => onCollectionFilter(event.target.value)}><option value="all">Все коллекции</option>{collections.map((value) => <option key={value} value={value}>{displayCollectionName(value)}</option>)}</select></label>
     </div>
     <div className="product-grid rs57-product-grid">{visible.map((item) => <ReadyCatalogCard key={item.option.id} option={item.option} selected={Boolean(selected[item.option.id])} color={colors[item.option.id] || ""} size={sizes[item.option.id] || ""} quantity={qty[item.option.id] || recommendedOptionQuantity(item.option, guests)} guests={guests} replacing={Boolean(replacingId)} replacingSelf={replacingId === item.option.id} onToggle={() => onSelected(item.option.id, !selected[item.option.id])} onColor={(value) => onColor(item.option.id, value)} onSize={(value) => onSize(item.option.id, value)} onQty={(value) => onQty(item.option.id, value)}/>)}</div>
   </section>;
