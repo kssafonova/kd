@@ -2,6 +2,6 @@
 :HL["/kd/_next/static/chunks/0tmnyyiibjdut.css","style"]
 :HL["/kd/_next/static/chunks/01lmfg~ex2zuo.css","style"]
 :HL["/kd/_next/static/chunks/12eu6_et16otq.css","style"]
-:HL["/kd/_next/static/chunks/0j-6y~cy1p0qi.css","style"]
+:HL["/kd/_next/static/chunks/0hajm~wpabkgg.css","style"]
 :HL["/kd/_next/static/chunks/0j~y728hwkfxw.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"winter-garden-breakfast","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"iHRHxhcKzQLh5sNgIv39U"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"winter-garden-breakfast","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"uqj48xSp4K7ECw4ouAyq0"}
