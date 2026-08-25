@@ -158,6 +158,7 @@ const belongsToCollection = (row: CatalogRow, collection: string) => {
 
 // READY_SOLUTIONS_PREMIUM_FILTERS_V62
 // READY_SOLUTIONS_LARGE_STEPS_V63
+// EDITORIAL_COMMERCE_V66
 export function ReadySolutionsLanding() {
   const { catalog, rules, error } = useData();
   // READY_SOLUTIONS_SIMPLIFIED_V60
@@ -182,21 +183,21 @@ export function ReadySolutionsLanding() {
   const visible = cards.filter((card) => (!collectionContext || card.solution.collections.some((value) => norm(displayCollectionName(value)) === norm(collectionContext) || norm(sourceCollectionName(value)) === norm(sourceCollectionName(collectionContext)))) && (space === "all" || card.solution.space === space)); // READY_SOLUTIONS_COLLECTION_LABELS_V61
   const reset = () => { setSpace("all"); };
 
-  return <div className="rs57-page">
+  return <div className="rs57-page rs66-zara">
     <StoreHeader/>
     <main className="rs57-landing">
       <section className="rs57-intro rs60-intro">
-        <div><small>ГОТОВЫЕ РЕШЕНИЯ</small><h1>Готовые решения для дома</h1><p>Выберите пространство и адаптируйте готовую композицию под себя.</p></div>
+        <div><small>КУЛЬТУРА ДОМА · ГОТОВЫЕ РЕШЕНИЯ</small><h1>Готовые решения</h1><p>Цельные композиции для спальни, стола и дома. Выберите близкий образ, затем измените только те предметы, которые нужны именно вам.</p></div>
       </section>
 
       <section className="rs57-index" aria-labelledby="rs57-index-title">
-        <header className="rs57-index-head"><div><small>ПОДБОР</small><h2 id="rs57-index-title">Найдите своё решение</h2></div><span>{visible.length} из {cards.length}</span></header>
+        <header className="rs57-index-head"><div><small>ПРОСТРАНСТВА</small><h2 id="rs57-index-title">Композиции для дома</h2></div><span>{visible.length} из {cards.length}</span></header>
         <div className="rs62-space-filter" aria-label="Фильтр по пространству"><span>Пространство</span><nav className="rs62-filter-rail"><button type="button" className={space === "all" ? "is-active" : ""} onClick={() => setSpace("all")}>Все</button>{spaces.map((value) => <button type="button" key={value} className={space === value ? "is-active" : ""} onClick={() => setSpace(value)}>{value}</button>)}</nav></div>
 
         {collectionContext && <div className="rs57-context-filter"><span>Коллекция</span><b>{displayCollectionName(collectionContext)}</b><button type="button" onClick={() => setCollectionContext("")}>Снять фильтр</button></div>}
         {visible.length ? <div className="rs57-solution-grid">{visible.map(({ solution, rows, groups, guestOptions, image, from }) => <article className="rs57-solution-card" key={solution.id}>
           <Link className="rs57-solution-media" href={`/ready-solutions/${solution.id}/`}><RemoteImage src={image} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></Link>
-          <div className="rs57-solution-copy"><small>{solution.space}</small><Link href={`/ready-solutions/${solution.id}/`}><h3>{solution.name}</h3></Link><p>{solution.collections.map(displayCollectionName).join(" · ")}</p><div><span>{groups.length} категорий · {rows.length} вариантов</span><strong>{from ? `от ${money(from)}` : "Настроить состав"}</strong></div><div className="rs57-person-badges">{guestOptions.map((value) => <span key={value}>{value} {value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span>)}</div><Link className="rs57-card-cta" href={`/ready-solutions/${solution.id}/`}>НАСТРОИТЬ РЕШЕНИЕ <Icon name="arrow"/></Link></div>
+          <div className="rs57-solution-copy"><small>{solution.space}</small><Link href={`/ready-solutions/${solution.id}/`}><h3>{solution.name}</h3></Link><p>{solution.collections.map(displayCollectionName).join(" · ")}</p><div><span>{groups.length} категорий · {rows.length} вариантов</span><strong>{from ? `от ${money(from)}` : "Настроить состав"}</strong></div><div className="rs57-person-badges">{guestOptions.map((value) => <span key={value}>{value} {value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span>)}</div><Link className="rs57-card-cta" href={`/ready-solutions/${solution.id}/`}>СМОТРЕТЬ РЕШЕНИЕ <Icon name="arrow"/></Link></div>
         </article>)}</div> : <div className="rs57-empty-filter"><h3>Нет решений с такими параметрами</h3><p>Сбросьте один из фильтров — остальные параметры сохранятся.</p><button type="button" onClick={reset}>Показать все решения</button></div>}
       </section>
     </main>
@@ -328,22 +329,22 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
   const goComposition = () => { setReplaceOptionId(null); setReplaceGroupId(null); setStep(2); };
   const currentReplacing = replaceOptionId ? options.find((option) => option.id === replaceOptionId) : null;
 
-  return <div className="rs57-page rs57-wizard-page">
+  return <div className="rs57-page rs57-wizard-page rs66-zara">
     <StoreHeader/>
     <main className="rs57-wizard-shell">
       <nav className="rs57-crumbs"><Link href="/">Главная</Link><span>/</span><Link href="/ready-solutions/">Готовые решения</Link><span>/</span><b>{solution.name}</b></nav>
       <section className="rs57-wizard-hero">
         <div className="rs57-wizard-hero-media"><RemoteImage src={solutionImage(solution, rows)} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></div>
-        <div className="rs57-wizard-hero-copy"><small>{solution.space}</small><h1>{solution.name}</h1><p>Выберите основу и настройте её под своё пространство.</p><div className="rs57-collection-links"><span>Коллекции:</span>{activeCollections.map((collection) => <Link key={collection} href={collectionHref(collection)}>{displayCollectionName(collection)}</Link>)}</div></div>
+        <div className="rs57-wizard-hero-copy"><small>ГОТОВОЕ РЕШЕНИЕ · {solution.space}</small><h1>{solution.name}</h1><p>Готовая композиция Культура Дома. Сохраните её целиком или измените состав, цвет и количество под своё пространство.</p><div className="rs57-collection-links"><span>Коллекции:</span>{activeCollections.map((collection) => <Link key={collection} href={collectionHref(collection)}>{displayCollectionName(collection)}</Link>)}</div></div>
       </section>
 
-      <nav className="rs57-stepper rs63-stepper" aria-label="Этапы готового решения">{([1, 2, 3] as WizardStep[]).map((value) => <button key={value} type="button" className={step === value ? "is-active" : step > value ? "is-complete" : ""} onClick={() => { if (value !== 2 || !replaceOptionId) setStep(value); }}><span>{step > value ? <Icon name="check"/> : value}</span><em>{value === 1 ? "Параметры" : value === 2 ? "Состав" : "Результат"}</em></button>)}</nav>
+      <nav className="rs57-stepper rs63-stepper" aria-label="Этапы готового решения">{([1, 2, 3] as WizardStep[]).map((value) => <button key={value} type="button" className={step === value ? "is-active" : step > value ? "is-complete" : ""} onClick={() => { if (value !== 2 || !replaceOptionId) setStep(value); }}><span>{step > value ? <Icon name="check"/> : value}</span><em>{value === 1 ? "Параметры" : value === 2 ? "Состав" : "Образ"}</em></button>)}</nav>
 
-      {step === 1 && <div className="rs57-stage rs57-parameters rs61-parameters rs62-parameters rs63-parameters"><section className="rs62-parameters-main"><header className="rs57-stage-head"><small>ШАГ 1 ИЗ 3</small><h2>Параметры</h2><p>Количество персон и коллекции определяют основу будущего состава.</p></header><section className="rs62-parameter-block"><header><strong>Количество персон</strong><small>Персональные предметы пересчитаются автоматически</small></header><nav className="rs62-filter-rail rs62-person-rail">{guestOptions.map((value) => <button key={value} type="button" className={guests === value ? "is-active" : ""} onClick={() => setGuests(value)}><strong>{value}</strong><span>{value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span></button>)}</nav></section><section className="rs62-parameter-block"><header><strong>Коллекции</strong><small>Нажмите, чтобы добавить или убрать коллекцию</small></header><nav className="rs62-filter-rail rs62-collection-rail">{availableCollections.map((collection) => { const active=activeCollections.some((value)=>norm(sourceCollectionName(value))===norm(sourceCollectionName(collection))); return <button type="button" key={collection} className={active?"is-active":""} disabled={active&&activeCollections.length===1} onClick={()=>setActiveCollections((current)=>active?current.filter((value)=>norm(sourceCollectionName(value))!==norm(sourceCollectionName(collection))):[...current,collection])}><span>{displayCollectionName(collection)}</span>{active&&<em>✓</em>}</button>; })}</nav></section><footer className="rs62-parameter-action"><div><span>{activeCollections.length} коллекций · {selectedRows.length} позиций</span><strong>{money(total)}</strong></div><button type="button" className="rs57-primary" onClick={() => setStep(2)}>К СОСТАВУ</button></footer></section></div>}
+      {step === 1 && <div className="rs57-stage rs57-parameters rs61-parameters rs62-parameters rs63-parameters"><section className="rs62-parameters-main"><header className="rs57-stage-head"><small>НАСТРОЙКА РЕШЕНИЯ</small><h2>Параметры</h2><p>Количество персон и коллекции определяют основу будущего состава.</p></header><section className="rs62-parameter-block"><header><strong>Количество персон</strong><small>Персональные предметы пересчитаются автоматически</small></header><nav className="rs62-filter-rail rs62-person-rail">{guestOptions.map((value) => <button key={value} type="button" className={guests === value ? "is-active" : ""} onClick={() => setGuests(value)}><strong>{value}</strong><span>{value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span></button>)}</nav></section><section className="rs62-parameter-block"><header><strong>Коллекции</strong><small>Нажмите, чтобы добавить или убрать коллекцию</small></header><nav className="rs62-filter-rail rs62-collection-rail">{availableCollections.map((collection) => { const active=activeCollections.some((value)=>norm(sourceCollectionName(value))===norm(sourceCollectionName(collection))); return <button type="button" key={collection} className={active?"is-active":""} disabled={active&&activeCollections.length===1} onClick={()=>setActiveCollections((current)=>active?current.filter((value)=>norm(sourceCollectionName(value))!==norm(sourceCollectionName(collection))):[...current,collection])}><span>{displayCollectionName(collection)}</span>{active&&<em>✓</em>}</button>; })}</nav></section><footer className="rs62-parameter-action"><div><span>{activeCollections.length} коллекций · {selectedRows.length} позиций</span><strong>{money(total)}</strong></div><button type="button" className="rs57-primary" onClick={() => setStep(2)}>К СОСТАВУ</button></footer></section></div>}
 
       {step === 2 && active && <div className="rs57-stage rs57-composition">
         <section className="rs57-composition-main">
-          <header className="rs57-stage-head"><small>ШАГ 2 ИЗ 3</small><h2>{replaceOptionId ? "Выберите замену" : "Состав решения"}</h2><p>{replaceOptionId && currentReplacing ? `Заменяем «${currentReplacing.title}». Выберите другой предмет в этой категории — после выбора вернём вас к результату.` : "Выберите товары и настройте цвет, размер и количество."}</p></header>
+          <header className="rs57-stage-head"><small>СОСТАВ РЕШЕНИЯ</small><h2>{replaceOptionId ? "Выберите замену" : "Предметы решения"}</h2><p>{replaceOptionId && currentReplacing ? `Заменяем «${currentReplacing.title}». Выберите другой предмет в этой категории — после выбора вернём вас к результату.` : "Выберите товары и настройте цвет, размер и количество."}</p></header>
           {replaceOptionId && <div className="rs57-replace-banner"><span><b>Режим замены</b><small>{currentReplacing?.title}</small></span><button type="button" onClick={cancelReplace}>Отменить</button></div>}
           <nav className="rs57-group-tabs rs62-category-rail" aria-label="Категории решения">{groups.filter((group) => !replaceGroupId || group.id === replaceGroupId).map((group) => <button type="button" key={group.id} className={active.id === group.id ? "is-active" : ""} onClick={() => setActiveGroup(group.id)}><span>{group.title}</span><em>{group.items.filter(({ option }) => selected[option.id]).length}/{group.items.length}</em></button>)}</nav>
           <ProductGroup group={active} filter={filters[active.id] || "all"} onFilter={(value) => setFilters((current) => ({ ...current, [active.id]: value }))} collectionFilter={collectionFilters[active.id] || "all"} onCollectionFilter={(value) => setCollectionFilters((current) => ({ ...current, [active.id]: value }))} selected={selected} colors={colors} sizes={sizes} qty={qty} guests={guests} replacingId={replaceOptionId} onSelected={handleSelect} onColor={(id, value) => { setColors((current) => ({ ...current, [id]: value })); const option = active.items.find((item) => item.option.id === id)?.option; if (option) setSizes((current) => ({ ...current, [id]: optionSizes(option, value)[0] || "" })); }} onSize={(id, value) => setSizes((current) => ({ ...current, [id]: value }))} onQty={(id, value) => setQty((current) => ({ ...current, [id]: Math.max(1, value) }))}/>
@@ -354,7 +355,7 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
       {step === 3 && <div className="rs57-stage rs57-result-stage rs60-result-stage rs61-result-stage rs63-result-stage">
         <section className="rs60-result-main rs61-result-main">
           <header className="rs57-stage-head rs60-result-head rs63-result-head">
-            <div><small>ШАГ 3 ИЗ 3</small><h2>Результат</h2><p>Готовый образ. Цвета уже выбраны; при необходимости замените или удалите предмет.</p></div>
+            <div><small>ГОТОВЫЙ ОБРАЗ</small><h2>Ваше решение</h2><p>Готовый образ. Цвета уже выбраны; при необходимости замените или удалите предмет.</p></div>
             <div className="rs63-result-head-summary"><span>{selectedRows.length} позиций · {activeCollections.length} коллекций</span><strong>{money(total)}</strong></div>
           </header>
           {selectedRows.length ? <section className="rs61-moodboard" aria-label="Финальный moodboard выбранных товаров">
@@ -366,13 +367,13 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
               </article>})}
               <button type="button" className="product-card rs61-add-card" onClick={goComposition}><span>+</span><strong>Добавить предмет</strong><small>Вернуться к составу решения</small></button>
             </div>
-            <footer className="rs60-result-total rs61-result-total"><div><span>{selectedRows.length} позиций · выбранные цвета сохранены</span><strong>{money(total)}</strong></div><button type="button" className="rs57-primary" onClick={addToCart}>ДОБАВИТЬ ВСЁ В КОРЗИНУ</button></footer>
+            <footer className="rs60-result-total rs61-result-total"><div><span>{selectedRows.length} позиций · выбранные цвета сохранены</span><strong>{money(total)}</strong></div><button type="button" className="rs57-primary" onClick={addToCart}>КУПИТЬ РЕШЕНИЕ</button></footer>
           </section> : <div className="rs57-empty-result"><h3>В решении пока нет товаров</h3><button type="button" onClick={goComposition}>Добавить предмет</button></div>}
         </section>
       </div>}
     </main>
 
-    <div className="rs57-mobile-dock"><span><small>{selectedRows.length} позиций</small><strong>{money(total)}</strong></span>{step === 1 ? <button type="button" onClick={() => setStep(2)}>К СОСТАВУ</button> : step === 2 ? <button type="button" onClick={() => setStep(3)} disabled={!selectedRows.length}>РЕЗУЛЬТАТ</button> : <button type="button" onClick={addToCart} disabled={!selectedRows.length}>В КОРЗИНУ</button>}</div>
+    <div className="rs57-mobile-dock"><span><small>{selectedRows.length} позиций</small><strong>{money(total)}</strong></span>{step === 1 ? <button type="button" onClick={() => setStep(2)}>К СОСТАВУ</button> : step === 2 ? <button type="button" onClick={() => setStep(3)} disabled={!selectedRows.length}>РЕЗУЛЬТАТ</button> : <button type="button" onClick={addToCart} disabled={!selectedRows.length}>КУПИТЬ</button>}</div>
     <StoreFooter/>
   </div>;
 }

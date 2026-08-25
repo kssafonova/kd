@@ -676,10 +676,9 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
 // EDITORIAL_STORY_OVERLAY_V3
+// COLLECTIONS_ZARA_KULTURA_V66
 function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initialEditorial }: { onProduct:(product:Product)=>void; onQuick:(product:Product)=>void; favorite:(id:number)=>void; favorites:number[]; buyBundle:(items:Product[])=>void; initialEditorial?:Editorial }) {
-  // COLLECTIONS_UNIFIED_V52
   const [active,setActive]=useState<Editorial|null>(initialEditorial??null);
-  const [purchaseMode,setPurchaseMode]=useState(false);
   const [selectedIds,setSelectedIds]=useState<number[]>([]);
   const [sizes,setSizes]=useState<Record<number,string>>({});
   const [variants,setVariants]=useState<Record<number,Product>>({});
@@ -687,7 +686,6 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
   useEffect(()=>{
     if(initialEditorial){
       setActive(initialEditorial);
-      setPurchaseMode(false);
       setSelectedIds([]);
       setSizes({});
       setVariants({});
@@ -706,8 +704,8 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
     return values.length?Math.min(...values):0;
   };
   const items=useMemo(()=>active?active.productIds.map(id=>products.find(item=>item.id===id)).filter((item):item is Product=>Boolean(item)):[],[active]);
-  const open=(editorial:Editorial)=>{setActive(editorial);setPurchaseMode(false);setSelectedIds([]);setSizes({});setVariants({})};
-  const close=()=>{setActive(null);setPurchaseMode(false);setSelectedIds([]);setSizes({});setVariants({})};
+  const open=(editorial:Editorial)=>{setActive(editorial);setSelectedIds([]);setSizes({});setVariants({})};
+  const close=()=>{setActive(null);setSelectedIds([]);setSizes({});setVariants({})};
   const toggle=(id:number)=>setSelectedIds(current=>current.includes(id)?current.filter(item=>item!==id):[...current,id]);
   const currentProduct=(item:Product)=>variants[item.id]??item;
   const colorOf=(item:Product)=>{const current=currentProduct(item);return current.selectedColor??current.colorVariants?.[0]?.name??current.skus?.[0]?.color??""};
@@ -727,17 +725,14 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
   });
   const total=selectedProducts.reduce((sum,item)=>sum+item.price,0);
   const allSelected=items.length>0&&selectedIds.length===items.length;
-  const startPurchase=()=>{setPurchaseMode(true);setSelectedIds([]);setSizes({})};
-  const finishPurchase=()=>{setPurchaseMode(false);setSelectedIds([]);setSizes({})};
   const addSelected=()=>{if(selectedProducts.length&&pending.length===0){buyBundle(selectedProducts);close()}};
-  // READY_SOLUTION_COLLECTION_BRIDGE_V58
-  const readySolutionCollection=active?({"Символы":"Мокоши","Эхо":"Камея","Феникс":"Жар-птица"} as Record<string,string>)[active.name]||active.name:"";
+  const readySolutionCollection=active?({"Эхо":"Камея","Нити":"Нити времени","Феникс":"Жар-птица"} as Record<string,string>)[active.name]||active.name:"";
   const readySolutionHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/ready-solutions/?collection=${encodeURIComponent(readySolutionCollection)}`;
 
-  return <main className="collections-v52">
+  return <main className="collections-v52 collections-v66-zara">
     <header className="collections-v52-intro">
-      <div><small>КУЛЬТУРА ДОМА · EDITORIAL</small><h1>Коллекции</h1></div>
-      <p>Истории для дома, собранные вокруг цвета, орнамента и ритуала. Откройте коллекцию как журнал — и выбирайте предметы только тогда, когда они действительно нужны.</p>
+      <div><small>КУЛЬТУРА ДОМА · КОЛЛЕКЦИИ</small><h1>Коллекции</h1></div>
+      <p>Дом складывается из историй. Каждая коллекция объединяет цвет, орнамент и предметы так, чтобы их можно было прожить вместе — или выбрать только один акцент.</p>
     </header>
     <section className="collections-v52-index" aria-label="Коллекции Культура Дома">
       {editorials.map(editorial=><article className="collections-v52-card" key={editorial.id}>
@@ -753,12 +748,12 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
           <aside className="v52-story-editorial" aria-label="История коллекции">
             <div className="v52-story-title"><small>КОЛЛЕКЦИЯ</small><h1>{active.name}</h1><p>{active.lead}</p><span>{productCountLabel(items.length)}</span></div>
             {active.images.map((image,index)=><figure key={`${active.id}-${image}`}><img src={assetUrl(image)} alt={`${active.name}, кадр ${index+1}`}/>{index===0&&<figcaption>{active.detail}</figcaption>}</figure>)}
-            <div className="v52-story-note"><small>О КОЛЛЕКЦИИ</small><p>{active.description}</p><a className="v52-buy-story v58-ready-solution-link" href={readySolutionHref}>СОБРАТЬ ГОТОВОЕ РЕШЕНИЕ →</a></div>
+            <div className="v52-story-note"><small>ИСТОРИЯ КОЛЛЕКЦИИ</small><p>{active.description}</p><a className="v52-buy-story v58-ready-solution-link" href={readySolutionHref}>СОБРАТЬ ГОТОВОЕ РЕШЕНИЕ →</a></div>
           </aside>
           <section className="v52-story-commerce" aria-label="Товары коллекции">
-            <header className="v52-commerce-head"><div><small>{purchaseMode?"СОБЕРИТЕ СВОЮ ИСТОРИЮ":"ТОВАРЫ КОЛЛЕКЦИИ"}</small><h2>{purchaseMode?"Выберите предметы":"Предметы истории"}</h2><p>{purchaseMode?"Отметьте нужные позиции. Для товаров с несколькими размерами размер можно выбрать после отметки.":"Каждый предмет можно добавить отдельно — привычной кнопкой корзины, как в каталоге."}</p></div>{purchaseMode?<div className="v52-commerce-actions"><button type="button" className="v52-secondary-action" onClick={()=>setSelectedIds(allSelected?[]:items.map(item=>item.id))}>{allSelected?"Снять выбор":"Выбрать всё"}</button><button type="button" className="v52-text-action" onClick={finishPurchase}>Отменить</button></div>:<button type="button" className="v52-buy-story" onClick={startPurchase}>КУПИТЬ КОЛЛЕКЦИЮ</button>}</header>
-            <div className={`product-grid v52-story-products ${purchaseMode?"is-selection-mode":""}`}>{items.map(item=>{const current=currentProduct(item);const selected=selectedIds.includes(item.id);const options=sizeOptions(item);const needsSize=selected&&options.length>1&&!sizes[item.id];return <div className={`v52-story-product ${selected?"selected":""}`} key={item.id}><ProductCard product={current} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)} selectionMode={purchaseMode} selected={selected} pending={needsSize} onSelect={()=>toggle(item.id)} onVariantChange={product=>{setVariants(state=>({...state,[item.id]:product}));setSizes(state=>{const next={...state};delete next[item.id];return next})}}/>{purchaseMode&&selected&&options.length>1&&<label className="v52-inline-size"><span>Размер</span><select value={sizes[item.id]??""} onChange={event=>setSizes(state=>({...state,[item.id]:event.target.value}))}><option value="">Выбрать</option>{options.map(([name])=><option key={name} value={name}>{name}</option>)}</select></label>}</div>})}</div>
-            {purchaseMode&&<footer className="v52-purchase-bar"><div><span>{pending.length?`Выберите размер · ${pending.length}`:selectedProducts.length?`Выбрано ${selectedProducts.length} из ${items.length}`:"Выберите товары"}</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selectedProducts.length||pending.length>0} onClick={addSelected}>ДОБАВИТЬ В КОРЗИНУ</button></footer>}
+            <header className="v52-commerce-head"><div><small>ТОВАРЫ КОЛЛЕКЦИИ</small><h2>Предметы коллекции</h2><p>Выберите нужные позиции. Если у предмета несколько размеров, размер появится после выбора.</p></div><div className="v65-commerce-actions"><button type="button" onClick={()=>setSelectedIds(allSelected?[]:items.map(item=>item.id))}>{allSelected?"Снять выбор":"Выбрать всё"}</button></div></header>
+            <div className="product-grid v52-story-products is-selection-mode">{items.map(item=>{const current=currentProduct(item);const selected=selectedIds.includes(item.id);const options=sizeOptions(item);const needsSize=selected&&options.length>1&&!sizes[item.id];return <div className={`v52-story-product ${selected?"selected":""}`} key={item.id}><ProductCard product={current} onClick={onProduct} onQuick={onQuick} favorite={favorite} liked={favorites.includes(item.id)} selectionMode={true} selected={selected} pending={needsSize} onSelect={()=>toggle(item.id)} onVariantChange={product=>{setVariants(state=>({...state,[item.id]:product}));setSizes(state=>{const next={...state};delete next[item.id];return next})}}/>{selected&&options.length>1&&<label className="v52-inline-size"><span>Размер</span><select value={sizes[item.id]??""} onChange={event=>setSizes(state=>({...state,[item.id]:event.target.value}))}><option value="">Выбрать</option>{options.map(([name])=><option key={name} value={name}>{name}</option>)}</select></label>}</div>})}</div>
+            <footer className="v52-purchase-bar"><div><span>{pending.length?`Выберите размер · ${pending.length}`:selectedProducts.length?`Выбрано ${selectedProducts.length} из ${items.length}`:"Выберите товары"}</span><strong>{fmt(total)}</strong></div><button type="button" disabled={!selectedProducts.length||pending.length>0} onClick={addSelected}>КУПИТЬ</button></footer>
           </section>
         </div>
       </section>
