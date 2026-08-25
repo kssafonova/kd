@@ -14,7 +14,14 @@ export function ReadySolutionMockupV70() {
     const summary = page?.querySelector<HTMLElement>(".v54-summary");
     if (!page || !hero || !person || !groups || !summary || page.classList.contains("v70-ready")) return;
 
-    page.classList.add("v70-ready");
+    // Preserve the successful null guard for nested callbacks/functions.
+    const pageRoot = page;
+    const heroRoot = hero;
+    const personRoot = person;
+    const groupsRoot = groups;
+    const summaryRoot = summary;
+
+    pageRoot.classList.add("v70-ready");
     let step = 1;
 
     const nav = document.createElement("nav");
@@ -28,7 +35,7 @@ export function ReadySolutionMockupV70() {
       button.addEventListener("click", () => setStep(index + 1));
       nav.appendChild(button);
     });
-    hero.insertAdjacentElement("afterend", nav);
+    heroRoot.insertAdjacentElement("afterend", nav);
 
     const result = document.createElement("section");
     result.className = "v70-result";
@@ -38,9 +45,9 @@ export function ReadySolutionMockupV70() {
       <div class="v70-result-groups"></div>
       <button type="button" class="v70-edit">Изменить состав</button>
     `;
-    groups.insertAdjacentElement("afterend", result);
+    groupsRoot.insertAdjacentElement("afterend", result);
     const resultTitle = result.querySelector("h1")!;
-    resultTitle.textContent = hero.querySelector("h1")?.textContent || "Готовое решение";
+    resultTitle.textContent = heroRoot.querySelector("h1")?.textContent || "Готовое решение";
     result.querySelector<HTMLButtonElement>(".v70-edit")?.addEventListener("click", () => setStep(2));
 
     const nextFromParams = document.createElement("button");
@@ -48,17 +55,17 @@ export function ReadySolutionMockupV70() {
     nextFromParams.className = "v70-inline-next";
     nextFromParams.textContent = "К СОСТАВУ";
     nextFromParams.addEventListener("click", () => setStep(2));
-    person.appendChild(nextFromParams);
+    personRoot.appendChild(nextFromParams);
 
     const toResult = document.createElement("button");
     toResult.type = "button";
     toResult.className = "v70-inline-next v70-to-result";
     toResult.textContent = "ПЕРЕЙТИ К РЕЗУЛЬТАТУ";
     toResult.addEventListener("click", () => setStep(3));
-    groups.appendChild(toResult);
+    groupsRoot.appendChild(toResult);
 
     function selectedCards() {
-      return Array.from(groups.querySelectorAll<HTMLElement>(".v54-product-card.is-selected"));
+      return Array.from(groupsRoot.querySelectorAll<HTMLElement>(".v54-product-card.is-selected"));
     }
 
     function syncResult() {
@@ -76,7 +83,7 @@ export function ReadySolutionMockupV70() {
         if (image) tile.appendChild(image);
         mood.appendChild(tile);
       });
-      Array.from(groups.querySelectorAll<HTMLElement>(".v54-group")).forEach((group) => {
+      Array.from(groupsRoot.querySelectorAll<HTMLElement>(".v54-group")).forEach((group) => {
         const count = group.querySelectorAll(".v54-product-card.is-selected").length;
         if (!count) return;
         const row = document.createElement("button");
@@ -88,20 +95,20 @@ export function ReadySolutionMockupV70() {
     }
 
     const observer = new MutationObserver(() => syncResult());
-    observer.observe(groups, { attributes: true, subtree: true, attributeFilter: ["class"] });
+    observer.observe(groupsRoot, { attributes: true, subtree: true, attributeFilter: ["class"] });
 
     function setStep(next: number) {
       step = next;
-      page.dataset.v70Step = String(step);
+      pageRoot.dataset.v70Step = String(step);
       nav.querySelectorAll<HTMLButtonElement>("button").forEach((button) => {
         button.classList.toggle("is-active", Number(button.dataset.step) === step);
       });
-      person.hidden = step !== 1;
-      groups.hidden = step !== 2;
+      personRoot.hidden = step !== 1;
+      groupsRoot.hidden = step !== 2;
       if (categoryNav) categoryNav.hidden = true;
       result.hidden = step !== 3;
-      hero.classList.toggle("is-compact", step !== 1);
-      summary.classList.toggle("is-result", step === 3);
+      heroRoot.classList.toggle("is-compact", step !== 1);
+      summaryRoot.classList.toggle("is-result", step === 3);
       syncResult();
       if (step > 1) nav.scrollIntoView({ behavior: "smooth", block: "start" });
     }
