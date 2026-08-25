@@ -52,6 +52,7 @@ scripts = [
     "redesign-home-sketch-v45.py",
     "unify-collections-ready-solutions-v52.py",
     "link-ready-solutions-v55.py",
+    "fix-ready-solutions-basepath-v55.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
