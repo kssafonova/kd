@@ -58,6 +58,7 @@ scripts = [
     "redesign-collections-v49.py",
     "redesign-collections-v50.py",
     "add-symbols-echo-phoenix-collections-v51.py",
+    "unify-collections-ready-solutions-v52.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
