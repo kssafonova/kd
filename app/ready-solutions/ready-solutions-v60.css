@@ -1,0 +1,90 @@
+/* V60 — simplify Ready Solutions. White Kultura Doma UI, compact forms, moodboard result. */
+.rs57-page{background:#fff!important}
+.rs60-intro{display:block!important;max-width:1460px;margin:0 auto;padding:64px 28px 38px!important;border-bottom:1px solid #e8e6e1}
+.rs60-intro>div{max-width:720px}
+.rs60-intro h1{margin:10px 0 14px;font-family:"Tenor Sans",serif;font-size:clamp(38px,4vw,58px);line-height:1;font-weight:400}
+.rs60-intro p{max-width:560px;margin:0;color:#6f6d67;font-size:12px;line-height:1.7}
+.rs60-space-filter{display:flex!important;align-items:end!important;gap:18px!important;max-width:420px!important;padding:0!important;border:0!important;background:#fff!important}
+.rs60-space-filter label{flex:1;min-width:0}
+.rs60-space-filter label span,.rs60-product-filters span{display:block;margin-bottom:7px;color:#77746e;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.rs60-space-filter select,.rs60-product-filters select{width:100%;min-height:42px;padding:0 34px 0 0;border:0;border-bottom:1px solid #1d1d1b;border-radius:0;background:#fff;color:#1d1d1b;font-size:12px}
+.rs60-space-filter>button{min-height:42px;padding:0;border:0;background:none;text-decoration:underline;text-underline-offset:4px;font-size:10px}
+
+/* Keep existing form logic, remove noisy summary content. */
+.rs57-parameters>.rs57-summary-card>small,.rs57-parameters>.rs57-summary-card>h3,.rs57-parameters>.rs57-summary-card dl,
+.rs57-sticky-summary>small,.rs57-sticky-summary>h3,.rs57-sticky-summary .rs57-summary-lines{display:none!important}
+.rs57-summary-card{background:#fff!important;border:1px solid #e4e1db!important;box-shadow:none!important}
+.rs57-summary-card footer{margin-top:0!important;border-top:0!important;padding-top:0!important}
+.rs57-stage-head p{max-width:620px}
+
+/* Composition: category tabs + two compact filters only. */
+.rs60-product-group>header p{display:none}
+.rs60-product-filters{display:grid;grid-template-columns:minmax(180px,1fr) minmax(180px,1fr);gap:22px;max-width:640px;margin:18px 0 28px}
+.rs60-product-group .rs57-subfilters{display:none!important}
+.rs57-group-tabs{scrollbar-width:none}
+.rs57-group-tabs::-webkit-scrollbar{display:none}
+
+/* Result is the moodboard. No duplicate product list/sidebar. */
+.rs60-result-stage{display:block!important;max-width:1460px;margin:0 auto;padding-bottom:120px}
+.rs60-result-main{width:100%;min-width:0}
+.rs60-result-head{max-width:680px;margin-bottom:28px}
+.rs60-moodboard{width:100%}
+.rs60-moodboard-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-flow:dense;gap:12px;align-items:start}
+.rs60-moodboard-card{grid-column:span 3;min-width:0;background:#fff}
+.rs60-moodboard-card.rs60-mood-1,.rs60-moodboard-card.rs60-mood-5{grid-column:span 4}
+.rs60-moodboard-card.rs60-mood-2{grid-column:span 5}
+.rs60-moodboard-media{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#f5f4f1}
+.rs60-moodboard-media img{display:block;width:100%;height:100%;object-fit:cover}
+.rs60-moodboard-copy{display:grid;grid-template-columns:1fr auto;gap:3px 12px;padding:10px 0 7px}
+.rs60-moodboard-copy small{grid-column:1/-1;color:#88857f;font-size:9px}
+.rs60-moodboard-copy strong{min-width:0;font-size:12px;font-weight:400;line-height:1.35}
+.rs60-moodboard-copy span{font-size:11px;white-space:nowrap}
+.rs60-moodboard-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:8px;border-top:1px solid #ece9e4}
+.rs60-qty{display:grid;grid-template-columns:28px 28px 28px;align-items:center;text-align:center}
+.rs60-qty button{width:28px;height:28px;border:0;background:#fff;font-size:16px}
+.rs60-qty b{font-size:11px;font-weight:400}
+.rs60-card-actions{display:flex;gap:12px}
+.rs60-card-actions button{padding:0;border:0;background:none;color:#56534e;font-size:9px;text-decoration:underline;text-underline-offset:3px}
+.rs60-add-card{grid-column:span 3;min-height:250px;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;border:1px solid #d9d6d0;background:#fff;text-align:center}
+.rs60-add-card>span{font-family:"Tenor Sans",serif;font-size:42px;font-weight:300;line-height:1}
+.rs60-add-card strong{margin-top:12px;font-size:12px;font-weight:400}
+.rs60-add-card small{max-width:150px;margin-top:6px;color:#85827c;font-size:9px;line-height:1.45}
+.rs60-result-total{position:sticky;bottom:0;z-index:8;display:flex;align-items:center;justify-content:flex-end;gap:30px;margin-top:34px;padding:14px 0 calc(14px + env(safe-area-inset-bottom));border-top:1px solid #dcd9d3;background:rgba(255,255,255,.97);backdrop-filter:blur(12px)}
+.rs60-result-total>div{text-align:right}
+.rs60-result-total span{display:block;color:#7d7a74;font-size:9px}
+.rs60-result-total strong{display:block;margin-top:2px;font-family:"Tenor Sans",serif;font-size:22px;font-weight:400}
+.rs60-result-total .rs57-primary{min-width:250px;margin:0!important}
+.rs60-result-stage+.rs57-result-summary,.rs59-result-products,.rs57-result-list{display:none!important}
+
+@media(max-width:900px){
+  .rs60-intro{padding:42px 14px 24px!important}
+  .rs60-intro h1{font-size:38px}
+  .rs60-space-filter{max-width:none!important;width:100%}
+  .rs57-parameters,.rs57-composition{grid-template-columns:1fr!important}
+  .rs57-parameters>.rs57-summary-card,.rs57-sticky-summary{display:none!important}
+  .rs60-product-filters{grid-template-columns:1fr 1fr;gap:10px;max-width:none;margin:14px 0 20px}
+  .rs60-product-filters select{font-size:11px}
+  .rs60-result-stage{padding:0 12px 92px!important}
+  .rs60-result-head{margin-bottom:20px}
+  .rs60-moodboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 8px}
+  .rs60-moodboard-card,.rs60-moodboard-card.rs60-mood-1,.rs60-moodboard-card.rs60-mood-2,.rs60-moodboard-card.rs60-mood-5,.rs60-add-card{grid-column:span 1}
+  .rs60-moodboard-copy{display:block;padding-top:8px}
+  .rs60-moodboard-copy small{display:block;font-size:8px}
+  .rs60-moodboard-copy strong{display:block;margin-top:3px;font-size:11px}
+  .rs60-moodboard-copy span{display:block;margin-top:3px;font-size:10px}
+  .rs60-moodboard-controls{display:block}
+  .rs60-card-actions{margin-top:7px;justify-content:space-between}
+  .rs60-add-card{min-height:0;padding:16px}
+  .rs60-result-total{position:fixed;left:0;right:0;bottom:0;margin:0;padding:9px 12px calc(9px + env(safe-area-inset-bottom));gap:12px;box-shadow:0 -8px 24px rgba(0,0,0,.05)}
+  .rs60-result-total>div{margin-right:auto;text-align:left}
+  .rs60-result-total strong{font-size:17px}
+  .rs60-result-total .rs57-primary{min-width:0;min-height:44px;padding:0 14px;font-size:8px}
+  .rs57-mobile-dock{display:none!important}
+}
+
+@media(max-width:520px){
+  .rs60-product-filters{grid-template-columns:1fr}
+  .rs60-moodboard-controls{padding-top:6px}
+  .rs60-qty{grid-template-columns:26px 26px 26px}
+  .rs60-qty button{width:26px;height:26px}
+}
