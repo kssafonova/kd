@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ScenarioConstructor } from "../scenario-client";
-import { TableSolutionDetail } from "../table-solution-client";
+import { ReadySolutionDetailV47 } from "../ready-solutions-v47";
 import { CONSTRUCTOR_SCENARIO_IDS, isRoutableConstructorScenarioId } from "../scenarios";
 import { findTableSolution } from "../table-solutions";
 
@@ -25,6 +25,6 @@ export async function generateMetadata({ params }: { params: Promise<{ scenarioI
 export default async function ScenarioPage({ params }: { params: Promise<{ scenarioId: string }> }) {
   const { scenarioId } = await params;
   if (!isRoutableConstructorScenarioId(scenarioId)) notFound();
-  if (findTableSolution(scenarioId)) return <TableSolutionDetail scenarioId={scenarioId} />;
+  if (findTableSolution(scenarioId)) return <ReadySolutionDetailV47 scenarioId={scenarioId} />;
   return <ScenarioConstructor scenarioId={scenarioId} />;
 }
