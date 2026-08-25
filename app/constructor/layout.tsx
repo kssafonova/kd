@@ -10,7 +10,9 @@ import "./table-solution-kultura-editorial-v29.css";
 import "./ready-solutions-v52.css";
 import "./ready-solutions-v54.css";
 import "./ready-solutions-v54-grid-fix.css";
+import "./ready-solution-mockup-v70.css";
+import { ReadySolutionMockupV70 } from "./ready-solution-mockup-v70";
 
 export default function ConstructorLayout({ children }: { children: ReactNode }) {
-  return children;
+  return <><ReadySolutionMockupV70 />{children}</>;
 }
