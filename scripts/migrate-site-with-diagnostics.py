@@ -53,6 +53,7 @@ scripts = [
     "unify-collections-ready-solutions-v52.py",
     "link-ready-solutions-v55.py",
     "fix-ready-solutions-basepath-v55.py",
+    "add-warm-brutalism-v56.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
