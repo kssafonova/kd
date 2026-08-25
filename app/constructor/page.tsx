@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { ConstructorLanding } from "./constructor-client";
+import { ReadySolutionsLandingV47 } from "./ready-solutions-v47";
 
 export const metadata: Metadata = {
-  title: "Конструктор сценариев — Культура Дома",
-  description: "Готовые сервировки и интерьерные сценарии из реальных товаров Культуры Дома.",
+  title: "Готовые решения — Культура Дома",
+  description: "Готовые сервировки и интерьерные решения, которые можно настроить по составу, цвету, размеру и количеству.",
 };
 
 export default function ConstructorPage() {
-  return <ConstructorLanding />;
+  return <ReadySolutionsLandingV47 />;
 }
