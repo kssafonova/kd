@@ -45,6 +45,7 @@ import "./collections-zara-kultura-v32.css";
 import "./collections-catalog-parity-v34.css";
 import "./collections-editorial-v48.css";
 import "./collections-landing-v49.css";
+import "./collections-zara-kultura-v50.css";
 import "./commerce-zara-kultura-v41.css";
 import "./commerce-hypotheses-v42.css";
 import "./commerce-clarity-v43.css";
