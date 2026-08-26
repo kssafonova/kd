@@ -54,6 +54,7 @@ import "./cart-checkout-kultura-v78.css";
 import "./editorial-commerce-v81.css";
 import "./checkout-kultura-v82.css";
 import "./checkout-v83.css";
+import "./checkout-bonus-v84.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
