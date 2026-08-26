@@ -175,10 +175,12 @@ type SelectedRow = { row:CatalogRow; quantity:number; option:SolutionProductOpti
 
 function ProductCard({option,selected,color,size,quantity,guests,onToggle,onColor,onSize,onQty}:{option:SolutionProductOption;selected:boolean;color:string;size:string;quantity:number;guests:number;onToggle:()=>void;onColor:(v:string)=>void;onSize:(v:string)=>void;onQty:(v:number)=>void}) {
   const colors=optionColors(option), sizes=optionSizes(option,color), row=pickOptionVariant(option,color,size), image=rowImages(row)[0]||"/images/image-placeholder.svg";
+  // READY_AROMA_VARIANT_V74
+  const aromaVariant=norm(displayProductName(option.title))===norm("Свеча Феникс");
   return <article className={`rs71-product ${selected?"is-selected":""}`}>
     <div className="rs71-product-media"><RemoteImage src={image} fallbackSrc="/images/image-placeholder.svg" alt={displayProductName(option.title)}/><label className="rs71-check"><input type="checkbox" checked={selected} onChange={onToggle}/><i>✓</i></label></div>
     <div className="rs71-product-copy"><h3>{displayProductName(option.title)}</h3><p>{[displayCollectionName(option.collection||row?.collection||""),row?.material].filter(Boolean).join(" · ")}</p><strong>{money(priceOf(row))}</strong></div>
-    {colors.length>1&&<div className="rs71-swatches">{colors.map((value)=><button type="button" key={value} title={value} className={(color||row?.color)===value?"is-active":""} style={{background:swatchColor(value)}} onClick={()=>onColor(value)}/>)}</div>}
+    {colors.length>1&&(aromaVariant?<div className="rs71-aroma-options"><small>Аромат</small>{colors.map((value)=><button type="button" key={value} className={(color||row?.color)===value?"is-active":""} onClick={()=>onColor(value)}>{value}</button>)}</div>:<div className="rs71-swatches">{colors.map((value)=><button type="button" key={value} title={value} className={(color||row?.color)===value?"is-active":""} style={{background:swatchColor(value)}} onClick={()=>onColor(value)}/>)}</div>)}
     {selected&&<div className="rs71-product-controls">{sizes.length>1&&<div className="rs71-sizes">{sizes.map((value)=><button type="button" key={value} className={size===value?"is-active":""} onClick={()=>onSize(value)}>{value}</button>)}</div>}<div className="rs71-qty"><button type="button" onClick={()=>onQty(Math.max(1,quantity-1))}>−</button><b>{quantity}</b><button type="button" onClick={()=>onQty(quantity+1)}>+</button><span>{option.perPerson?`для ${guests} персон`:"на решение"}</span></div></div>}
   </article>;
 }
