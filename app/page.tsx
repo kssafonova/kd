@@ -309,6 +309,9 @@ const collectionEditorialProducts:Product[] = [
 const normalizeRetiredCatalogName=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/[‐‑‒–—]/g,"-").replace(/\s+/g," ");
 const isRetiredCatalogProduct=(name:string)=>{const value=normalizeRetiredCatalogName(name);return value.includes("мокоши")||value.includes("овация")||/жар(?:-| )?птица/.test(value)};
 for(let index=products.length-1;index>=0;index-=1){if(isRetiredCatalogProduct(products[index].name))products.splice(index,1)}
+// ECHO_CSV_MEDIA_V81
+const echoCsvMediaByArticle:Record<string,{image:string;gallery:string[]}>={"УТ-00011436":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a9a9ef4_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a9a9ef4_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a575b5c5163_big.jpg"]},"УТ-00011437":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a832033_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a832033_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a575cbeca53_big.jpg"]},"УТ-00011441":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aeea5edf_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aeea5edf_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a15ad53ba204_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a5765de48a1_big.jpg"]},"УТ-00011442":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aefe9f00_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aefe9f00_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a5787c5c475_big.jpg"]},"УТ-00011517":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af134502_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af134502_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a5760b0ab4b_big.jpg"]},"УТ-00011518":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af3ed506_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af3ed506_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a15ad989a8a5_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af3a736d_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af4453b5_big.jpg"]},"УТ-00011448":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/69f06b7fd6aff_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/69f06b7fd6aff_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a15b01297ff6_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69f06b801a49b_big.jpg"]},"УТ-00011449":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a85f308820_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a85f308820_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a5751851cd4_big.jpg"]},"УТ-00011450":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a861165ce4_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a861165ce4_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a15afd9285dd_big.jpg"]},"УТ-00011440":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af59a5dc_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af59a5dc_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a15aede2722f_big.jpg"]},"УТ-00011432":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a73285a37b_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a73285a37b_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a5772a9dbd2_big.jpg"]},"УТ-00011433":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a739923911_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a739923911_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a576f26a902_big.jpg"]},"УТ-00011434":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a06d76222d16_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a06d76222d16_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a576c56bb35_big.jpg"]},"УТ-00011438":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a50b12627f2e_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a50b12627f2e_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/699f11c473620_big.jpg"]},"УТ-00011439":{"image":"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af835e91_big.jpg","gallery":["https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af835e91_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/699d71e583d98_big.jpg"]}};
+collectionEditorialProducts.forEach(item=>{if(!item.name.includes("Эхо"))return;const article=item.skus?.[0]?.article||item.article||"";const media=echoCsvMediaByArticle[article];if(!media)return;item.image=media.image;item.gallery=media.gallery;item.skus=item.skus?.map(sku=>{const next=echoCsvMediaByArticle[sku.article]||media;return {...sku,image:next.image,gallery:next.gallery};});});
 products.push(...collectionEditorialProducts.filter(item=>!REMOVED_PRODUCT_IDS.has(item.id)&&!isRetiredCatalogProduct(item.name)&&!products.some(existing=>existing.id===item.id)));
 
 // READY_SOLUTIONS_MERCH_V75
@@ -487,73 +490,36 @@ function HomeBoutiques(){
 }
 
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
-  // HOME_SKETCH_ZARA_KULTURA_V45
+  // HOME_STOREFRONT_V81
   const heroSlides=[
-    {label:"КАПСУЛА",title:"Лунная сказка",subtitle:"Тихая история для спальни и позднего чаепития",desktopImage:"/images/editorial/caps_luna_postel2.png",mobileImage:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[1])},
-    {label:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",subtitle:"Светлая зимняя палитра, вышивка и мягкие фактуры",desktopImage:"/images/editorial/caps_led.png",mobileImage:"/images/editorial/caps_led_podyshka.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[0])},
-    {label:"ПОСУДА И СЕРВИРОВКА",title:"Дом начинается с ритуалов",subtitle:"Фарфор, текстиль и предметы для красивой повседневности",desktopImage:"/images/time-table.png",mobileImage:"/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
+    {eyebrow:"НОВАЯ ИСТОРИЯ",title:"Дом как единая композиция",text:"Текстиль, сервировка и декор в современном русском прочтении.",image:"/images/editorial/caps_luna_postel2.png",mobile:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекции",action:()=>go("collections")},
+    {eyebrow:"ГОТОВЫЕ РЕШЕНИЯ",title:"Соберите пространство целиком",text:"Выберите готовую основу и измените только нужные предметы.",image:"/images/constructor/green.jpeg",mobile:"/images/constructor/green.jpeg",cta:"Выбрать решение",action:()=>{window.location.href=`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions/`}},
+    {eyebrow:"СЕРВИРОВКА",title:"Предметы для ежедневных ритуалов",text:"Фарфор, стекло и текстиль, которые работают вместе.",image:"/images/time-table.png",mobile:"/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
   ];
-  const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
-  const hero=heroSlides[activeIndex];
-  const [paused,setPaused]=useState(false);
-  const touchStart=useRef<number|null>(null);
-  useEffect(()=>{
-    if(paused||typeof window==="undefined"||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    const timer=window.setInterval(()=>setSlide((activeIndex+1)%heroSlides.length),7000);
-    return()=>window.clearInterval(timer);
-  },[activeIndex,paused,setSlide,heroSlides.length]);
-  const shift=(direction:-1|1)=>setSlide((activeIndex+direction+heroSlides.length)%heroSlides.length);
-
+  const active=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
+  const hero=heroSlides[active];
   const categories=[
     {title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {title:"Пледы",image:"/images/products/KD-PD-2003-BLUE01.png",category:"Пледы и подушки"},
-    {title:"Подушки",image:"/images/products/KD-PD-2000-WHITE01.png",category:"Пледы и подушки"},
-    {title:"Посуда",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {title:"Сервировка",image:"/images/time-table.png",category:"Посуда и сервировка"},
-    {title:"Декор",image:"/images/beige-bedroom.png",category:"Все товары"},
+    {title:"Посуда и сервировка",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {title:"Пледы и подушки",image:"/images/beige-bedroom.png",category:"Пледы и подушки"},
+    {title:"Декор для дома",image:"/images/editorial/caps_led_podyshka.png",category:"Декор для дома"},
+    {title:"Свечи и диффузоры",image:"/images/editorial/caps_luna_serviz.png",category:"Свечи и диффузоры"},
+    {title:"Для ванной",image:"/images/russian-bedroom.png",category:"Для ванной"},
   ];
-  const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
-  const collection=editorials[1]??editorials[0];
-  const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/ready-solutions/`;
+  const collectionStories=editorials.slice(0,5);
+  const readyBase=process.env.NEXT_PUBLIC_BASE_PATH??"";
   const solutions=[
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
-    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/products/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},
-    {room:"КАБИНЕТ",title:"Тёплый брутализм",image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a4375b9224e0_big.jpg",href:`${constructorHref}table-8/`},
+    {title:"Зеленый салон",space:"СТОЛОВАЯ",image:"/images/constructor/green.jpeg",href:`${readyBase}/ready-solutions/table-1/`},
+    {title:"Красные линии",space:"СТОЛОВАЯ",image:"/images/constructor/redline1.jpeg",href:`${readyBase}/ready-solutions/table-2/`},
+    {title:"Зимняя сказка",space:"СПАЛЬНЯ",image:"/images/editorial/caps_led.png",href:`${readyBase}/ready-solutions/table-7/`},
+    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/images/constructor/warm-brutalism.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
   ];
-
-  return <main className="home-sketch-v45">
-    <section className="hs45-hero" aria-label="Главный баннер"
-      onPointerEnter={()=>setPaused(true)} onPointerLeave={()=>setPaused(false)}
-      onTouchStart={event=>{touchStart.current=event.touches[0]?.clientX??null;setPaused(true)}}
-      onTouchEnd={event=>{const start=touchStart.current;const end=event.changedTouches[0]?.clientX;if(start!==null&&end!==undefined&&Math.abs(end-start)>44)shift(end<start?1:-1);touchStart.current=null;setPaused(false)}}>
-      <picture><source media="(max-width:700px)" srcSet={assetUrl(hero.mobileImage)}/><img src={assetUrl(hero.desktopImage)} alt={hero.title}/></picture>
-      <div className="hs45-hero-overlay"/>
-      <div className="hs45-hero-copy"><small>{hero.label}</small><h1>{hero.title}</h1><p>{hero.subtitle}</p><button type="button" onClick={hero.action}>{hero.cta}</button></div>
-      <div className="hs45-hero-nav"><div>{heroSlides.map((item,index)=><button type="button" key={item.title} className={index===activeIndex?"active":""} onClick={()=>setSlide(index)} aria-label={item.title}/>)}</div><span><button type="button" onClick={()=>shift(-1)} aria-label="Назад">←</button><button type="button" onClick={()=>shift(1)} aria-label="Вперёд">→</button></span></div>
-    </section>
-
-    <section className="hs45-categories hs45-shell" aria-labelledby="hs45-categories-title">
-      <header className="hs45-head"><div><small>КАТАЛОГ</small><h2 id="hs45-categories-title">Категории</h2></div><button type="button" onClick={()=>openCatalog("Все товары")}>Весь каталог →</button></header>
-      <div className="hs45-category-row">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}><span><img src={assetUrl(item.image)} alt={item.title}/></span><strong>{item.title}</strong></button>)}</div>
-    </section>
-
-    <section className="hs45-new hs45-shell" aria-labelledby="hs45-new-title">
-      <header className="hs45-head"><div><small>НОВИНКИ</small><h2 id="hs45-new-title">Новое поступление</h2></div><button type="button" onClick={()=>openCatalog("Все товары")}>Смотреть всё →</button></header>
-      <div className="hs45-product-grid">{newProducts.slice(0,4).map(product=><ProductCard key={`home-v45-${product.id}`} product={product} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(product.id)}/>)}</div>
-    </section>
-
-    {collection&&<section className="hs45-collection" aria-labelledby="hs45-collection-title">
-      <button type="button" className="hs45-collection-media" onClick={()=>openEditorial(collection)}><img src={assetUrl(collection.images[0])} alt={collection.name}/></button>
-      <div className="hs45-collection-copy"><small>{collection.kind}</small><h2 id="hs45-collection-title">{collection.name}</h2><p>{collection.lead}</p><button type="button" onClick={()=>openEditorial(collection)}>Смотреть коллекцию →</button></div>
-    </section>}
-
-    <section className="hs45-solutions hs45-shell" aria-labelledby="hs45-solutions-title">
-      <header className="hs45-head"><div><small>ГОТОВЫЕ РЕШЕНИЯ</small><h2 id="hs45-solutions-title">Пространства, собранные за вас</h2></div><a href={constructorHref}>Все решения →</a></header>
-      <div className="hs45-solution-grid">{solutions.map(item=><a href={item.href} key={item.title}><span className="hs45-solution-media"><img src={assetUrl(item.image)} alt={item.title}/></span><span className="hs45-solution-copy"><small>{item.room}</small><strong>{item.title}</strong><em>Собрать решение →</em></span></a>)}</div>
-    </section>
-
-    <section className="hs45-boutiques-intro hs45-shell"><small>БУТИКИ</small><h2>Культура Дома рядом</h2><p>Посмотрите материалы, оттенки и фактуры вживую.</p></section>
+  return <main className="home-v81">
+    <nav className="home81-nav" aria-label="Категории">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}<button type="button" onClick={()=>go("collections")}>Коллекции</button><a href={`${readyBase}/ready-solutions/`}>Готовые решения</a></nav>
+    <section className="home81-hero"><picture><source media="(max-width:700px)" srcSet={assetUrl(hero.mobile)}/><img src={assetUrl(hero.image)} alt={hero.title}/></picture><div><small>{hero.eyebrow}</small><h1>{hero.title}</h1><p>{hero.text}</p><button type="button" onClick={hero.action}>{hero.cta}</button></div><nav>{heroSlides.map((item,index)=><button type="button" aria-label={item.title} className={index===active?"is-active":""} key={item.title} onClick={()=>setSlide(index)}/>)}</nav></section>
+    <section className="home81-section home81-categories"><header><small>КАТАЛОГ</small><h2>Для каждой зоны дома</h2><p>Начните с категории или соберите пространство целиком.</p></header><div>{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}><span><img src={assetUrl(item.image)} alt={item.title}/></span><strong>{item.title}</strong><small>Смотреть</small></button>)}</div></section>
+    <section className="home81-collections"><div className="home81-collections-hero"><img src={assetUrl(collectionStories[0]?.images[0]||"/images/editorial/caps_led.png")} alt="Коллекции Культура Дома"/><div><small>КОЛЛЕКЦИИ</small><h2>Истории, которые связывают предметы</h2><p>Цвет, орнамент и материал продолжаются от сервировки до текстиля и декора.</p><button type="button" onClick={()=>go("collections")}>Все коллекции</button></div></div><div className="home81-collection-rail">{collectionStories.map(item=><button type="button" key={item.id} onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[0])} alt={item.name}/><span>{item.name}</span></button>)}</div></section>
+    <section className="home81-section home81-solutions"><header><small>ГОТОВЫЕ РЕШЕНИЯ</small><h2>Выберите настроение — состав можно изменить</h2><p>Готовая композиция становится отправной точкой: количество, коллекции и предметы настраиваются внутри.</p><a href={`${readyBase}/ready-solutions/`}>Все решения</a></header><div>{solutions.map(item=><a href={item.href} key={item.title}><span><img src={assetUrl(item.image)} alt={item.title}/></span><small>{item.space}</small><strong>{item.title}</strong><em>Настроить</em></a>)}</div></section>
     <HomeBoutiques/>
   </main>;
 }
