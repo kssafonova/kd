@@ -1,0 +1,38 @@
+/* CHECKOUT_KULTURA_V85
+   Final visual polish for the live one-screen checkout after V83/V84 migrations.
+   Keeps business logic intact; removes card-heavy UI and restores Kultura Doma language.
+*/
+.checkout-v69.checkout-v83{--ck85-ink:#151515;--ck85-muted:#77746f;--ck85-line:#dedcd6;--ck85-soft:#f6f4ef;background:#fff!important;color:var(--ck85-ink)!important}
+
+/* Verification stays visually secondary to the checkout itself. */
+.checkout-v83-verify{margin:26px 0 0!important;padding:0!important;border:0!important;background:#fff!important}
+.checkout-v83-verify header h3{margin:0!important;font-size:11px!important;font-weight:500!important}.checkout-v83-verify header p{margin:5px 0 0!important;color:var(--ck85-muted)!important;font-size:9px!important;line-height:1.5!important}
+.checkout-v83-verify-tabs{display:flex!important;gap:26px!important;margin:16px 0 20px!important;border-bottom:1px solid var(--ck85-line)!important;overflow-x:auto!important;scrollbar-width:none!important}.checkout-v83-verify-tabs::-webkit-scrollbar{display:none!important}
+.checkout-v83-verify-tabs button{position:relative!important;flex:0 0 auto!important;padding:0 0 10px!important;border:0!important;background:#fff!important;color:var(--ck85-muted)!important;font-size:9px!important;white-space:nowrap!important}.checkout-v83-verify-tabs button.active{color:#111!important}.checkout-v83-verify-tabs button.active:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:#111}
+.checkout-v83-code{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:12px!important;align-items:end!important;margin:16px 0 0!important;padding:15px 0!important;border:0!important;border-top:1px solid var(--ck85-line)!important;border-bottom:1px solid var(--ck85-line)!important;background:#fff!important}
+.checkout-v83-code label{display:grid!important;gap:6px!important}.checkout-v83-code label span{color:var(--ck85-muted)!important;font-size:9px!important}.checkout-v83-code input{height:38px!important;padding:0 0 8px!important;border:0!important;border-bottom:1px solid #111!important;border-radius:0!important;background:#fff!important;outline:0!important;font-size:18px!important;letter-spacing:.28em!important}.checkout-v83-code>button{height:40px!important;padding:0 18px!important;border:1px solid #111!important;background:#111!important;color:#fff!important;font-size:9px!important}.checkout-v83-code>small,.checkout-v83-code>em{grid-column:1/-1!important;font-size:8px!important;font-style:normal!important}.checkout-v83-code>small{color:var(--ck85-muted)!important}.checkout-v83-code>em{color:#9a4e45!important}
+.checkout-v83-verified-note{margin-top:10px!important;color:#416b54!important;font-size:9px!important}.checkout-v83-email-field{margin-top:20px!important}.checkout-v83-email-field>div{position:relative!important}.checkout-v83-email-field input{padding-right:112px!important}.checkout-v83-email-field button,.checkout-v83-email-field b{position:absolute!important;right:0!important;bottom:9px!important;padding:0 0 3px!important;border:0!important;border-bottom:1px solid #111!important;background:#fff!important;font-size:9px!important;font-weight:400!important}.checkout-v83-email-field b{display:grid!important;place-items:center!important;width:20px!important;height:20px!important;padding:0!important;border:0!important;border-radius:50%!important;background:#416b54!important;color:#fff!important}
+
+/* Payment is a clean choice list, not a stack of cards. */
+.checkout-v83-payments{display:grid!important;grid-template-columns:1fr 1fr!important;gap:0 28px!important}
+.checkout-v83-payment{position:relative!important;display:grid!important;grid-template-columns:15px minmax(0,1fr)!important;gap:10px!important;align-items:start!important;min-height:68px!important;padding:14px 0!important;border:0!important;border-bottom:1px solid var(--ck85-line)!important;border-radius:0!important;background:#fff!important;box-shadow:none!important;text-align:left!important}
+.checkout-v83-payment.active{border-bottom-color:#111!important;box-shadow:none!important}.checkout-v83-payment i{width:13px!important;height:13px!important;margin-top:1px!important;border:1px solid #aaa!important;border-radius:50%!important}.checkout-v83-payment.active i{border:4px solid #111!important}.checkout-v83-payment span{display:block!important}.checkout-v83-payment b{display:flex!important;align-items:center!important;gap:7px!important;font-size:10px!important;font-weight:500!important;line-height:1.35!important}.checkout-v83-payment small{display:block!important;margin-top:4px!important;color:var(--ck85-muted)!important;font-size:8px!important;line-height:1.45!important}.checkout-v83-payment mark{padding:1px 4px!important;background:#e9f1eb!important;color:#416b54!important;font-size:7px!important}.checkout-v83-payment-wide{grid-column:1/-1!important}
+.checkout-v83-comment{display:grid!important;gap:6px!important;margin-top:26px!important}.checkout-v83-comment>span{color:var(--ck85-muted)!important;font-size:9px!important}.checkout-v83-comment textarea{width:100%!important;min-height:66px!important;padding:8px 0!important;border:0!important;border-bottom:1px solid #9f9c95!important;border-radius:0!important;background:#fff!important;outline:0!important;resize:vertical!important;font-size:11px!important;line-height:1.5!important}.checkout-v83-comment textarea:focus{border-bottom-color:#111!important}
+
+/* Loyalty is useful but deliberately quiet. */
+.checkout-v84-loyalty{padding-top:4px!important}.checkout-v84-loyalty-head{padding-bottom:14px!important}.checkout-v84-loyalty-toggle{padding-top:14px!important}
+
+/* Desktop rhythm */
+@media(min-width:1101px){.checkout-v69-layout{grid-template-columns:minmax(0,830px) 350px!important;gap:78px!important;width:min(1320px,calc(100% - 80px))!important}.checkout-v69-section{padding-top:32px!important;padding-bottom:36px!important}.checkout-v69-summary>div{top:92px!important}}
+
+/* Tablet */
+@media(max-width:1100px) and (min-width:761px){.checkout-v69-layout{grid-template-columns:minmax(0,1fr) 300px!important;gap:38px!important;width:calc(100% - 44px)!important}.checkout-v83-payments{gap-column:20px!important}}
+
+/* Mobile: one calm vertical checkout, no duplicate summary/nav. */
+@media(max-width:760px){
+ .checkout-v83-verify{margin-top:22px!important}.checkout-v83-verify-tabs{margin-top:14px!important;gap:22px!important}.checkout-v83-code{grid-template-columns:1fr!important}.checkout-v83-code>button{width:100%!important}.checkout-v83-code>small,.checkout-v83-code>em{grid-column:1!important}
+ .checkout-v83-payments{grid-template-columns:1fr!important;gap:0!important}.checkout-v83-payment,.checkout-v83-payment-wide{grid-column:auto!important;min-height:60px!important;padding:13px 0!important}
+ .checkout-v83-comment{margin-top:22px!important}
+ .checkout-v69-section{padding-top:23px!important;padding-bottom:27px!important}
+ .checkout-v69-submit{position:sticky!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:90!important;box-shadow:0 7px 24px rgba(0,0,0,.14)!important}
+}
