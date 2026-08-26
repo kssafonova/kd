@@ -512,7 +512,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     {title:"Зеленый салон",space:"СТОЛОВАЯ",image:"/images/constructor/green.jpeg",href:`${readyBase}/ready-solutions/table-1/`},
     {title:"Красные линии",space:"СТОЛОВАЯ",image:"/images/constructor/redline1.jpeg",href:`${readyBase}/ready-solutions/table-2/`},
     {title:"Зимняя сказка",space:"СПАЛЬНЯ",image:"/images/editorial/caps_led.png",href:`${readyBase}/ready-solutions/table-7/`},
-    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/images/constructor/warm-brutalism.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
+    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/images/constructor/bluegold2.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
   ];
   return <main className="home-v81">
     <nav className="home81-nav" aria-label="Категории">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}<button type="button" onClick={()=>go("collections")}>Коллекции</button><a href={`${readyBase}/ready-solutions/`}>Готовые решения</a></nav>
@@ -534,12 +534,15 @@ function CatalogView({ initialCategory, onFilter, onAdd, onProduct, favorite, fa
     "Посуда и сервировка":[5,10,2001,2004,2010],
     "Постельное бельё":[2,4,8,11,12],
     "Пледы и подушки":[3,6,7,2000,2003],
-    "Домашняя одежда":[],
-    "Столовый текстиль":[],
+    "Декор для дома":products.filter(product=>/ваза|свеч|диффуз|декор|подуш|плед/i.test(product.name)).map(product=>product.id),
+    "Свечи и диффузоры":products.filter(product=>/свеч|диффуз/i.test(product.name)).map(product=>product.id),
+    "Для ванной":products.filter(product=>/ванн|полотен|халат/i.test(`${product.name} ${product.note}`)).map(product=>product.id),
+    "Домашняя одежда":products.filter(product=>/халат|пижам|одежд/i.test(`${product.name} ${product.note}`)).map(product=>product.id),
+    "Столовый текстиль":products.filter(product=>/скатерт|салфет|плейсмат|дорожк/i.test(product.name)).map(product=>product.id),
   };
   const list = products.filter(product=>(categoryProductIds[category]??[]).includes(product.id)).sort((a,b)=>sort === "Сначала дешевле" ? a.price-b.price : sort === "Сначала дороже" ? b.price-a.price : a.id-b.id);
   return <div className="catalog page"><div className="crumbs">Главная / Каталог / {category}</div><div className="title-line"><h1>{category}</h1><span>{list.length} {list.length===1?"товар":list.length>=2&&list.length<=4?"товара":"товаров"}</span></div>
-    <div className="tabs">{["Все товары","Посуда и сервировка","Постельное бельё","Пледы и подушки","Декор для дома","Домашняя одежда","Столовый текстиль"].map(x=><button key={x} className={category===x?"active":""} onClick={()=>setCategory(x)}>{x}</button>)}</div>
+    <div className="tabs">{["Все товары","Посуда и сервировка","Постельное бельё","Пледы и подушки","Декор для дома","Свечи и диффузоры","Для ванной","Столовый текстиль"].map(x=><button key={x} className={category===x?"active":""} onClick={()=>setCategory(x)}>{x}</button>)}</div>
     <div className="catalog-tools"><select value={sort} onChange={e=>setSort(e.target.value)}><option>По умолчанию</option><option>Сначала дешевле</option><option>Сначала дороже</option></select><button onClick={onFilter}><Icon name="filter"/> Фильтры</button></div>
     {list.length?<div className="product-grid">{list.map(p=><ProductCard key={`${category}-${p.id}`} product={p} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(p.id)}/>)}</div>:<div className="catalog-empty"><p>В этой категории пока нет товаров</p></div>}
   </div>;
