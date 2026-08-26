@@ -73,6 +73,7 @@ scripts = [
     "refine-ready-solutions-v73.py",
     "normalize-catalog-products-v74.py",
     "refine-green-salon-merch-v75.py",
+    "refine-red-lines-alaya-nit-v76.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
