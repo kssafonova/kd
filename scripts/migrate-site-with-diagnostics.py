@@ -75,6 +75,7 @@ scripts = [
     "refine-green-salon-merch-v75.py",
     "refine-red-lines-alaya-nit-v76.py",
     "remove-rosy-collection-v77.py",
+    "refine-ready-solutions-groups-v80.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
