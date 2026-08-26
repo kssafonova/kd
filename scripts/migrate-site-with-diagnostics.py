@@ -72,6 +72,7 @@ scripts = [
     "enrich-ready-solutions-collections-v72.py",
     "refine-ready-solutions-v73.py",
     "normalize-catalog-products-v74.py",
+    "refine-green-salon-merch-v75.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
