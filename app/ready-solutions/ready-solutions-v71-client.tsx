@@ -25,7 +25,7 @@ const money = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)
 const priceOf = (row?: CatalogRow) => Number(String(row?.price || "").replace(/[^\d.,-]/g, "").replace(",", ".")) || 0;
 const norm = (value: string) => String(value || "").trim().toLocaleLowerCase("ru-RU").replace(/ё/g, "е").replace(/[«»"']/g, "").replace(/\s+/g, " ");
 const rowImages = (row?: CatalogRow) => Array.from(new Set([row?.primary_image_url, ...(row?.all_image_urls || "").split("|")].filter((value): value is string => Boolean(value))));
-const COLLECTION_LABELS: Record<string, string> = { "Мокоши": "Символы", "Камея": "Эхо", "Жар-птица": "Феникс", "Дияф": "Диаф" };
+const COLLECTION_LABELS: Record<string, string> = { "Камея": "Эхо", "Жар-птица": "Феникс", "Дияф": "Диаф", "Приданное": "Приданое" };
 const displayCollectionName = (value: string) => COLLECTION_LABELS[value] || value;
 const displayProductName = (value: string) => String(value || "")
   .replace(/мокоши/gi, "Символы")
@@ -36,16 +36,17 @@ const displayProductName = (value: string) => String(value || "")
 // Merchandising matrix supplied for the four live Ready Solutions. These are
 // SOURCE collection names, because CSV matching happens before the public alias.
 const SOLUTION_BASE_COLLECTIONS: Record<string, string[]> = {
-  "Красные линии": ["Мокоши", "Овация"],
+  "Красные линии": ["Мокоши", "Камея", "Оренбургские узоры"],
+  "Зеленый салон": ["Петербург", "Многоцвет", "Овация", "Весна"],
 };
 const SOLUTION_EXTRA_COLLECTIONS: Record<string, string[]> = {
   "Зимняя сказка": ["Жар-птица", "Оренбургские узоры", "Голубые цветы", "Тайна острова Буяна", "Овация"],
-  "Красные линии": ["Камея", "Обереги", "Приданное", "Оренбургские узоры"],
+  "Красные линии": ["Овация", "Обереги", "Приданое", "Александр"],
   "Тёплый брутализм": ["Купель", "Кружево", "Тайна острова Буяна", "Орнаменты России", "Жар-птица"],
-  "Зеленый салон": ["Камея", "Фейерверк", "Обереги", "Дияф"],
+  "Зеленый салон": ["Камея", "Обереги", "Александр"],
 };
 const SOURCE_COLLECTION_HINTS = [
-  "Мокоши", "Камея", "Жар-птица", "Овация", "Обереги", "Приданное",
+  "Мокоши", "Камея", "Жар-птица", "Овация", "Обереги", "Приданное", "Приданое", "Александр",
   "Оренбургские узоры", "Голубые цветы", "Тайна острова Буяна", "Купель",
   "Кружево", "Орнаменты России", "Фейерверк", "Дияф", "Ледяные узоры",
   "Лунная сказка", "Нити времени", "Юрма", "Текстура", "Дрёмица",
@@ -57,8 +58,64 @@ const sourceCollectionForRow = (row?: CatalogRow) => {
   const name = norm(row?.product_name || "");
   if (name.includes("тайн") && name.includes("остров") && name.includes("буян")) return "Тайна острова Буяна";
   if (name.includes("оренбург") && name.includes("узор")) return "Оренбургские узоры";
+  if (name.includes("александр")) return "Александр";
+  if (name.includes("придан")) return "Приданое";
   return SOURCE_COLLECTION_HINTS.find((value) => name.includes(norm(value))) || "";
 };
+const solutionConfig = (matrix: Record<string, string[]>, name: string) =>
+  Object.entries(matrix).find(([key]) => norm(key) === norm(name))?.[1] || [];
+
+const SOLUTION_REMOVED_PRODUCTS: Record<string, string[]> = {
+  "Зимняя сказка": [
+    "Тарелка десертная Нити времени",
+    "Кружка Нити времени",
+    "Чайная пара Нити времени",
+    "Салфетка Нити времени",
+    "Плейсмат Нити времени",
+    "Дорожка Нити времени",
+    "Свеча с ароматом Сладкий табак Нити Времени",
+    "Свеча с ароматом Копченая клюква Нити Времени",
+  ],
+  "Красные линии": [
+    "Комплект постельного белья с вышивкой Символы",
+    "Гетры Оренбургский узор",
+    "Носки Оренбургский узор",
+  ],
+  "Тёплый брутализм": [
+    "Тарелка глубокая Юрма",
+    "Кружка Юрма",
+    "Кофейная пара Юрма",
+    "Тарелка обеденная Юрма",
+    "Тарелка ассиметричная Юрма",
+    "Тарелка асимметричная Юрма",
+    "Блюдо овальное Юрма",
+    "Стакан Юрма",
+    "Кольцо Дрёмица",
+    "Набор колец текстура",
+    "Хлебница Текстура",
+    "Набор для ванной Текстура",
+  ],
+  "Зеленый салон": [
+    "Чайная пара Многоцвет",
+    "Молочник Многоцвет",
+    "Сахарница Многоцвет",
+    "Скатерть Петербург",
+    "Бульонная пара Овация",
+  ],
+};
+const productBaseName = (row: CatalogRow) => norm(displayProductName(row.product_name).split(":")[0]);
+const isRemovedSolutionProduct = (solutionName: string, row: CatalogRow) => {
+  const removed = new Set(solutionConfig(SOLUTION_REMOVED_PRODUCTS, solutionName).map(norm));
+  return removed.has(productBaseName(row));
+};
+const applySolutionCategoryOverrides = (solutionName: string, row: CatalogRow): CatalogRow => {
+  if (norm(solutionName) !== norm("Зимняя сказка")) return row;
+  const name = productBaseName(row);
+  if (name === norm("Плед из кружева")) return { ...row, product_type: "throw" };
+  if (name === norm("Подушка с кружевом")) return { ...row, product_type: "decorative_pillow" };
+  return row;
+};
+
 const COLOR_HEX: Record<string, string> = {
   "белый":"#f6f5f1","молочный":"#ece6da","бежевый":"#d6c4aa","песочный":"#c8aa84","коричневый":"#7b523b","черный":"#1d1d1b","чёрный":"#1d1d1b","синий":"#38506a","темно-синий":"#12263e","ночной синий":"#10233e","голубой":"#9eb8ca","зеленый":"#6f806b","зелёный":"#6f806b","красный":"#8e3d35","бордовый":"#6d2f31","розовый":"#d3aaa5","желтый":"#cfb168","жёлтый":"#cfb168","золотой":"#b59862","серый":"#969696"
 };
@@ -129,11 +186,11 @@ function ProductCard({option,selected,color,size,quantity,guests,onToggle,onColo
 export function ReadySolutionWizard({scenarioId}:{scenarioId:string}) {
   const solution=findTableSolution(scenarioId); const {catalog,rules,error}=useData();
   const [step,setStep]=useState<1|2|3>(1); const [guests,setGuests]=useState(2); const [selected,setSelected]=useState<Record<string,boolean>>({}); const [colors,setColors]=useState<Record<string,string>>({}); const [sizes,setSizes]=useState<Record<string,string>>({}); const [qty,setQty]=useState<Record<string,number>>({}); const [activeCollections,setActiveCollections]=useState<string[]>([]); const [activeGroup,setActiveGroup]=useState<GroupId|"">(""); const [typeFilter,setTypeFilter]=useState("all"); const [collectionFilter,setCollectionFilter]=useState("all");
-  const baseCollections=useMemo(()=>{if(!solution)return[]; const configured=SOLUTION_BASE_COLLECTIONS[solution.name]; return Array.from(new Set((configured||solution.collections).filter(Boolean)));},[solution]);
-  const baseRows=useMemo(()=>{if(!solution||!catalog)return[]; const resolved=resolveTableSolutionCatalogRows(catalog.catalog,solution).map((row)=>row.collection?row:{...row,collection:sourceCollectionForRow(row)}); if(solution.name!=="Красные линии")return resolved; const allowed=new Set(baseCollections.map(norm)); return resolved.filter((row)=>{const collection=sourceCollectionForRow(row); return !collection||allowed.has(norm(collection));});},[catalog,solution,baseCollections]);
+  const baseCollections=useMemo(()=>{if(!solution)return[]; const configured=solutionConfig(SOLUTION_BASE_COLLECTIONS,solution.name); return Array.from(new Set((configured.length?configured:solution.collections).filter(Boolean)));},[solution]);
+  const baseRows=useMemo(()=>{if(!solution||!catalog)return[]; const resolved=resolveTableSolutionCatalogRows(catalog.catalog,solution).map((row)=>row.collection?row:{...row,collection:sourceCollectionForRow(row)}); const configured=solutionConfig(SOLUTION_BASE_COLLECTIONS,solution.name); if(!configured.length)return resolved; const allowed=new Set(configured.map(norm)); return resolved.filter((row)=>allowed.has(norm(sourceCollectionForRow(row))));},[catalog,solution]);
   useEffect(()=>{if(solution&&!activeCollections.length)setActiveCollections(baseCollections);},[solution,baseCollections,activeCollections.length]);
-  const extraChoices=useMemo(()=>{if(!catalog||!solution)return[]; const available=new Set(catalog.catalog.map((row)=>sourceCollectionForRow(row)).filter(Boolean).map(norm)); return (SOLUTION_EXTRA_COLLECTIONS[solution.name]||[]).filter((name)=>available.has(norm(name))).filter((name)=>!baseCollections.some((base)=>norm(base)===norm(name))).slice(0,6);},[catalog,solution,baseCollections]);
-  const extendedRows=useMemo(()=>{if(!catalog)return baseRows; const keys=new Set(baseRows.map((row)=>String(row.offer_id||row.vendor_code||row.product_name))); const extra=catalog.catalog.filter((row)=>activeCollections.some((c)=>norm(c)===norm(sourceCollectionForRow(row)))&&!keys.has(String(row.offer_id||row.vendor_code||row.product_name))).map((row)=>row.collection?row:{...row,collection:sourceCollectionForRow(row)}); return [...baseRows,...extra];},[catalog,baseRows,activeCollections]);
+  const extraChoices=useMemo(()=>{if(!catalog||!solution)return[]; return solutionConfig(SOLUTION_EXTRA_COLLECTIONS,solution.name).filter((name)=>!baseCollections.some((base)=>norm(base)===norm(name))).slice(0,6);},[catalog,solution,baseCollections]);
+  const extendedRows=useMemo(()=>{if(!catalog||!solution)return baseRows; const keys=new Set(baseRows.map((row)=>String(row.offer_id||row.vendor_code||row.product_name))); const extra=catalog.catalog.filter((row)=>activeCollections.some((c)=>norm(c)===norm(sourceCollectionForRow(row)))&&!keys.has(String(row.offer_id||row.vendor_code||row.product_name))).map((row)=>row.collection?row:{...row,collection:sourceCollectionForRow(row)}); return [...baseRows,...extra].filter((row)=>!isRemovedSolutionProduct(solution.name,row)).map((row)=>applySolutionCategoryOverrides(solution.name,row));},[catalog,solution,baseRows,activeCollections]);
   const categories=useMemo(()=>solution?buildSolutionCategories(extendedRows,solution.space):[],[extendedRows,solution]); const groups=useMemo(()=>buildGroups(categories),[categories]); const options=useMemo(()=>groups.flatMap((g)=>g.items.map((i)=>i.option)),[groups]); const guestOptions=useMemo(()=>solution?deriveGuestOptions(solution,rules):[2,4,6],[solution,rules]);
   useEffect(()=>{if(!groups.length)return; setActiveGroup((current)=>current&&groups.some((g)=>g.id===current)?current:groups[0].id);},[groups]);
   useEffect(()=>{if(!solution||!options.length)return; setGuests((g)=>guestOptions.includes(g)?g:(guestOptions[0]||2)); const defaults=new Set((solution.defaultProductNames||[]).map(norm)); setSelected((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>[o.id,defaults.has(norm(o.title))]))); setColors((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>[o.id,solution.defaultColors?.[o.title]||optionColors(o)[0]||""]))); setSizes((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>{const c=solution.defaultColors?.[o.title]||optionColors(o)[0]||"";return[o.id,solution.defaultSizes?.[o.title]||optionSizes(o,c)[0]||""];}))); setQty((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>[o.id,solution.defaultQuantities?.[o.title]||recommendedOptionQuantity(o,guestOptions[0]||2)])));},[solution,options,guestOptions]);
