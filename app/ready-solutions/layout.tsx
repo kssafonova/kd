@@ -11,6 +11,7 @@ import "./ready-solutions-v69.css";
 import "./ready-solutions-v70.css";
 import "./ready-solutions-v71.css";
 import "./ready-solutions-v78-responsive.css";
+import "./ready-solutions-v79-adaptive.css";
 
 export default function ReadySolutionsLayout({ children }: { children: React.ReactNode }) {
   return children;
