@@ -1,0 +1,67 @@
+/* READY_SOLUTIONS_V82_MOODBOARD_PARITY
+   Result moodboard remains a strict 1:1 square.
+   Odd product count: max 4 photos per row.
+   Even product count: max 3 photos per row.
+   Flex-grow fills incomplete rows so the square has no empty horizontal cells. */
+
+.rs71-moodboard{
+  width:min(100%,1120px)!important;
+  aspect-ratio:1/1!important;
+  height:auto!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-content:stretch!important;
+  align-items:stretch!important;
+  gap:var(--rs79-gap,clamp(4px,.45vw,8px))!important;
+  overflow:hidden!important;
+  grid-template-columns:none!important;
+  grid-template-rows:none!important;
+}
+
+.rs71-moodboard>div,
+.rs71-moodboard>.rs71-mood-1,
+.rs71-moodboard>.rs71-mood-2,
+.rs71-moodboard>.rs71-mood-3,
+.rs71-moodboard>.rs71-mood-4,
+.rs71-moodboard>.rs71-mood-5,
+.rs71-moodboard>.rs71-mood-6,
+.rs71-moodboard>.rs71-mood-7{
+  flex-grow:1!important;
+  flex-shrink:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  width:auto!important;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  overflow:hidden!important;
+}
+
+/* One selected product occupies the complete 1:1 result. */
+.rs71-moodboard:has(>div:only-child)>div{
+  flex-basis:100%!important;
+}
+
+/* ODD count (3,5,7,...) — never more than four product photos in one row. */
+.rs71-moodboard:has(>div:last-child:nth-child(odd)):not(:has(>div:only-child))>div{
+  flex-basis:calc(25% - var(--rs79-gap,6px))!important;
+}
+
+/* EVEN count (2,4,6,...) — never more than three product photos in one row. */
+.rs71-moodboard:has(>div:last-child:nth-child(even))>div{
+  flex-basis:calc(33.333333% - var(--rs79-gap,6px))!important;
+}
+
+.rs71-moodboard>div img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+/* Keep exactly the same parity logic on tablet and mobile: only the whole
+   square scales with the viewport; the merchandising rule does not change. */
+@media(max-width:760px){
+  .rs71-moodboard{width:100%!important;aspect-ratio:1/1!important;}
+}
