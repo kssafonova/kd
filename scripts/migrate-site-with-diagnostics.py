@@ -77,6 +77,7 @@ scripts = [
     "remove-rosy-collection-v77.py",
     "refine-ready-solutions-groups-v80.py",
     "refine-storefront-v81.py",
+    "refine-storefront-v82.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
