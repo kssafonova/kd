@@ -21,6 +21,7 @@ import type { CatalogRow, ConstructorData, FinalConstructorData } from "../const
 // READY_SOLUTIONS_MERCH_V75
 // READY_SOLUTIONS_RED_LINES_ALAYA_NIT_V76
 // READY_SOLUTIONS_REMOVE_ROSY_V77
+// READY_SOLUTIONS_GROUPS_V80
 const CART_KEY = "kultura-cart";
 const CART_OFFSET = 998000;
 const browserBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -158,7 +159,20 @@ const GROUP_META: Record<GroupId,{title:string;categories:string[]}> = {
   bath:{title:"Для ванной",categories:["bath"]},
 };
 const GROUP_ORDER: GroupId[] = ["tableware","tableTextile","bedding","decor","bath"];
-function buildGroups(categories: SolutionCategory[]): FormGroup[] {
+function buildGroups(solutionName: string, categories: SolutionCategory[]): FormGroup[] {
+  if (norm(solutionName) === norm("Зимняя сказка")) {
+    const winterGroups: Array<{ id: GroupId; title: string; categories: string[] }> = [
+      { id: "bedding", title: "Постельное бельё", categories: ["bedding"] },
+      { id: "decor", title: "Пледы и подушки", categories: ["throwsCoverlets", "decorativePillows"] },
+      { id: "tableTextile", title: "Вазы", categories: ["vases"] },
+      { id: "atmosphere", title: "Свечи и диффузоры", categories: ["atmosphere"] },
+    ];
+    return winterGroups.map((group) => {
+      const source = categories.filter((category) => group.categories.includes(category.id));
+      const items = source.flatMap((category) => category.slots.flatMap((slot) => slot.options.map((option) => ({ option, subcategoryId: category.id, subcategoryTitle: category.title }))));
+      return { id: group.id, title: group.title, items };
+    }).filter((group) => group.items.length > 0);
+  }
   return GROUP_ORDER.map((id) => {
     const meta = GROUP_META[id];
     const source = categories.filter((category) => meta.categories.includes(category.id));
@@ -199,7 +213,7 @@ export function ReadySolutionWizard({scenarioId}:{scenarioId:string}) {
   useEffect(()=>{if(solution&&!activeCollections.length)setActiveCollections(baseCollections);},[solution,baseCollections,activeCollections.length]);
   const extraChoices=useMemo(()=>{if(!catalog||!solution)return[]; return solutionConfig(SOLUTION_EXTRA_COLLECTIONS,solution.name).filter((name)=>!baseCollections.some((base)=>norm(base)===norm(name))).slice(0,6);},[catalog,solution,baseCollections]);
   const extendedRows=useMemo(()=>{if(!catalog||!solution)return baseRows; const keys=new Set(baseRows.map((row)=>String(row.offer_id||row.vendor_code||row.product_name))); const extra=catalog.catalog.filter((row)=>activeCollections.some((c)=>norm(c)===norm(sourceCollectionForRow(row)))&&!keys.has(String(row.offer_id||row.vendor_code||row.product_name))).map((row)=>row.collection?row:{...row,collection:sourceCollectionForRow(row)}); return [...baseRows,...extra].filter((row)=>!isRemovedSolutionProduct(solution.name,row)).map((row)=>applySolutionCategoryOverrides(solution.name,row));},[catalog,solution,baseRows,activeCollections]);
-  const categories=useMemo(()=>solution?buildSolutionCategories(extendedRows,solution.space):[],[extendedRows,solution]); const groups=useMemo(()=>buildGroups(categories),[categories]); const options=useMemo(()=>groups.flatMap((g)=>g.items.map((i)=>i.option)),[groups]); const guestOptions=useMemo(()=>solution?deriveGuestOptions(solution,rules):[2,4,6],[solution,rules]);
+  const categories=useMemo(()=>solution?buildSolutionCategories(extendedRows,solution.space):[],[extendedRows,solution]); const groups=useMemo(()=>solution?buildGroups(solution.name,categories):[],[solution,categories]); const options=useMemo(()=>groups.flatMap((g)=>g.items.map((i)=>i.option)),[groups]); const guestOptions=useMemo(()=>solution?deriveGuestOptions(solution,rules):[2,4,6],[solution,rules]);
   useEffect(()=>{if(!groups.length)return; setActiveGroup((current)=>current&&groups.some((g)=>g.id===current)?current:groups[0].id);},[groups]);
   useEffect(()=>{if(!solution||!options.length)return; setGuests((g)=>guestOptions.includes(g)?g:(guestOptions[0]||2)); const defaults=new Set((solution.defaultProductNames||[]).map(norm)); setSelected((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>[o.id,defaults.has(norm(o.title))]))); setColors((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>[o.id,solution.defaultColors?.[o.title]||optionColors(o)[0]||""]))); setSizes((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>{const c=solution.defaultColors?.[o.title]||optionColors(o)[0]||"";return[o.id,solution.defaultSizes?.[o.title]||optionSizes(o,c)[0]||""];}))); setQty((current)=>Object.keys(current).length?current:Object.fromEntries(options.map((o)=>[o.id,solution.defaultQuantities?.[o.title]||recommendedOptionQuantity(o,guestOptions[0]||2)])));},[solution,options,guestOptions]);
   useEffect(()=>{setQty((current)=>{const next={...current}; options.forEach((o)=>{if(o.perPerson)next[o.id]=recommendedOptionQuantity(o,guests);}); return next;});},[guests,options]);
