@@ -5,4 +5,4 @@
 :HL["/kd/_next/static/chunks/0tiyb_ia30onk.css","style"]
 :HL["/kd/_next/static/chunks/16ay--ib~ig9j.css","style"]
 :HL["/kd/_next/static/chunks/148.x_zylutad.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"fairy-tea","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"BtnLpnYtPqjq49-h3YDvh"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"fairy-tea","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"tt0kstT4OQBv4i2LoFJvn"}
