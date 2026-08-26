@@ -18,6 +18,7 @@ import {
 } from "../constructor/table-solution-builder";
 import type { CatalogRow, ConstructorData, FinalConstructorData } from "../constructor/types";
 
+// READY_SOLUTIONS_MERCH_V75
 const CART_KEY = "kultura-cart";
 const CART_OFFSET = 998000;
 const browserBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -37,12 +38,12 @@ const displayProductName = (value: string) => String(value || "")
 // SOURCE collection names, because CSV matching happens before the public alias.
 const SOLUTION_BASE_COLLECTIONS: Record<string, string[]> = {
   "Красные линии": ["Мокоши", "Камея", "Оренбургские узоры"],
-  "Зеленый салон": ["Петербург", "Многоцвет", "Овация", "Весна"],
+  "Зеленый салон": ["Петербург", "Многоцвет", "Овация", "Весна", "Росы"],
 };
 const SOLUTION_EXTRA_COLLECTIONS: Record<string, string[]> = {
-  "Зимняя сказка": ["Жар-птица", "Оренбургские узоры", "Голубые цветы", "Тайна острова Буяна", "Овация"],
+  "Зимняя сказка": ["Оренбургские узоры", "Голубые цветы", "Тайна острова Буяна", "Овация"],
   "Красные линии": ["Овация", "Обереги", "Приданое", "Александр"],
-  "Тёплый брутализм": ["Купель", "Кружево", "Тайна острова Буяна", "Орнаменты России", "Жар-птица"],
+  "Тёплый брутализм": ["Купель", "Кружево", "Тайна острова Буяна", "Орнаменты России"],
   "Зеленый салон": ["Камея", "Обереги", "Александр"],
 };
 const SOURCE_COLLECTION_HINTS = [
@@ -50,7 +51,7 @@ const SOURCE_COLLECTION_HINTS = [
   "Оренбургские узоры", "Голубые цветы", "Тайна острова Буяна", "Купель",
   "Кружево", "Орнаменты России", "Фейерверк", "Дияф", "Ледяные узоры",
   "Лунная сказка", "Нити времени", "Юрма", "Текстура", "Дрёмица",
-  "Петербург", "Многоцвет", "Весна",
+  "Петербург", "Многоцвет", "Весна", "Росы",
 ] as const;
 const sourceCollectionForRow = (row?: CatalogRow) => {
   const explicit = String(row?.collection || "").trim();
@@ -60,6 +61,9 @@ const sourceCollectionForRow = (row?: CatalogRow) => {
   if (name.includes("оренбург") && name.includes("узор")) return "Оренбургские узоры";
   if (name.includes("александр")) return "Александр";
   if (name.includes("придан")) return "Приданое";
+  if (name.includes("росы")) return "Росы";
+  // The eligible feed names this SKU “Весенний сад”; merchandise the requested teapot inside the live “Весна” Green Salon collection.
+  if (name.includes("чайник заварочный весенний сад")) return "Весна";
   return SOURCE_COLLECTION_HINTS.find((value) => name.includes(norm(value))) || "";
 };
 const solutionConfig = (matrix: Record<string, string[]>, name: string) =>
@@ -147,11 +151,11 @@ const GROUP_META: Record<GroupId,{title:string;categories:string[]}> = {
   tableware:{title:"Посуда и сервировка",categories:["plates","bowls","cupsPairs","greenSalonTeaService","redLinesServing","redLinesTeaService","sugarBowls","milkJugs","teapots","serving","drinkware","cutlery"]},
   tableTextile:{title:"Столовый текстиль",categories:["tableTextile"]},
   bedding:{title:"Постельное бельё",categories:["bedding"]},
-  decor:{title:"Декор для дома",categories:["throwsCoverlets","decorativePillows","vases","baskets","games","storage","other"]},
+  decor:{title:"Декор для дома",categories:["throwsCoverlets","decorativePillows","vases","baskets","games","storage","atmosphere","other"]},
   atmosphere:{title:"Свечи и диффузоры",categories:["atmosphere"]},
   bath:{title:"Для ванной",categories:["bath"]},
 };
-const GROUP_ORDER: GroupId[] = ["tableware","tableTextile","bedding","decor","atmosphere","bath"];
+const GROUP_ORDER: GroupId[] = ["tableware","tableTextile","bedding","decor","bath"];
 function buildGroups(categories: SolutionCategory[]): FormGroup[] {
   return GROUP_ORDER.map((id) => {
     const meta = GROUP_META[id];
