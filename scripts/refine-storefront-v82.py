@@ -6,8 +6,11 @@ ready_path=root/'app'/'ready-solutions'/'ready-solutions-v71-client.tsx'
 
 ready=ready_path.read_text(encoding='utf-8')
 # Collection cards in Ready Solutions must never render an empty placeholder when
-# a collection has no standalone feed image: reuse the solution's real hero/product media.
-ready=ready.replace('rowImages(row)[0]||"/images/image-placeholder.svg"', 'rowImages(row)[0]||solution.heroImage||baseRows[0]?.primary_image_url||"/images/editorial/caps_led.png"')
+# a collection has no standalone feed image. Scope the replacement to the two
+# collection-card RemoteImage nodes so product cards keep their own local data.
+old_card='<RemoteImage src={rowImages(row)[0]||"/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={name}/>'
+new_card='<RemoteImage src={rowImages(row)[0]||solution.heroImage||baseRows[0]?.primary_image_url||"/images/editorial/caps_led.png"} fallbackSrc={solution.heroImage||baseRows[0]?.primary_image_url||"/images/editorial/caps_led.png"} alt={name}/>'
+ready=ready.replace(old_card,new_card)
 ready_path.write_text(ready,encoding='utf-8')
 
 page=page_path.read_text(encoding='utf-8')
