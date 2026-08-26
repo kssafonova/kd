@@ -1,0 +1,13 @@
+/* READY_SOLUTIONS_V80
+   Product selection checkbox belongs to the lower-right corner of the product image. */
+.rs71-product-media{position:relative}
+.rs71-product-media .rs71-check{
+  top:auto!important;
+  left:auto!important;
+  right:10px!important;
+  bottom:10px!important;
+  margin:0!important;
+}
+@media(max-width:700px){
+  .rs71-product-media .rs71-check{right:7px!important;bottom:7px!important}
+}
