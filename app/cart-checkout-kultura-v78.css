@@ -1,0 +1,7 @@
+/* CART_CHECKOUT_KULTURA_V78_CACHE_BUST
+   Loads the approved V75 cart/checkout redesign through a new module path so
+   GitHub Pages and mobile browsers request a fresh CSS asset instead of a
+   previously cached Next.js chunk. */
+@import "./cart-checkout-kultura-v75.css";
+
+:root{--kd-commerce-build:78}
