@@ -80,6 +80,7 @@ scripts = [
     "refine-storefront-v82.py",
     "editorial-commerce-v81.py",
     "redesign-checkout-v83.py",
+    "enhance-checkout-bonus-v84.py",
 ]
 
 root = Path(__file__).resolve().parents[1]
