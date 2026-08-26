@@ -14,6 +14,7 @@ import "./ready-solutions-v78-responsive.css";
 import "./ready-solutions-v79-adaptive.css";
 import "./ready-solutions-v80.css";
 import "./ready-solutions-v81-editorial.css";
+import "./ready-solutions-v82-moodboard-parity.css";
 
 export default function ReadySolutionsLayout({ children }: { children: React.ReactNode }) {
   return children;
