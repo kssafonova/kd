@@ -1,0 +1,132 @@
+name: Import product images
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/import-product-images.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  import-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build image list and download
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, re, os, hashlib
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          root = Path(".")
+          urls = set()
+
+          def add_url(value):
+              value = (value or "").strip()
+              if not value:
+                  return
+              if value.startswith(("https://", "http://")):
+                  urls.add(value)
+              elif value.startswith("/kd/images/"):
+                  urls.add("https://kssafonova.github.io" + value)
+              elif value.startswith("/images/"):
+                  urls.add("https://kssafonova.github.io/kd" + value)
+
+          pattern = r'((?:https?://[^"\']+|/(?:kd/)?images/[^"\']+)\.(?:png|jpe?g|webp))'
+          for path in [root / "app/catalog-data-base.ts", root / "app/catalog-data.ts"]:
+              text = path.read_text(encoding="utf-8")
+              for match in re.findall(pattern, text, flags=re.I):
+                  add_url(match)
+
+          ts = (root / "app/constructor/table-solutions.ts").read_text(encoding="utf-8")
+          literals = set(re.findall(r'"([^"\n]+)"', ts))
+
+          def norm(value):
+              text = str(value or "").strip().lower().replace("ё", "е")
+              text = text.replace("«", "").replace("»", "").replace('"', "").replace("'", "")
+              return re.sub(r"\s+", " ", text)
+
+          targets = {norm(value) for value in literals if value.strip()}
+          catalog_path = root / "data/kultura_doma_full_constructor_eligible_catalog.csv"
+          with catalog_path.open("r", encoding="utf-8-sig", newline="") as file:
+              for row in csv.DictReader(file):
+                  name = norm(row.get("product_name", ""))
+                  matched = name in targets or any(name.startswith(t + ":") for t in targets if len(t) > 3)
+                  if not matched:
+                      continue
+                  add_url(row.get("primary_image_url", ""))
+                  for url in (row.get("all_image_urls", "") or "").split("|"):
+                      add_url(url)
+
+          outdir = root / "public/images/imported-products"
+          outdir.mkdir(parents=True, exist_ok=True)
+          rows = []
+          used = {}
+          for url in sorted(urls):
+              basename = os.path.basename(urlparse(url).path) or "image"
+              target = basename
+              if target in used and used[target] != url:
+                  stem, ext = os.path.splitext(basename)
+                  target = f"{stem}-{hashlib.sha1(url.encode()).hexdigest()[:8]}{ext}"
+              used[target] = url
+              rows.append((url, target, f"/images/imported-products/{target}"))
+
+          tsv = Path("/tmp/product-image-manifest.tsv")
+          with tsv.open("w", encoding="utf-8", newline="") as file:
+              for url, filename, public_path in rows:
+                  file.write(f"{url}\t{filename}\t{public_path}\n")
+
+          with (outdir / "manifest.csv").open("w", encoding="utf-8-sig", newline="") as file:
+              writer = csv.writer(file)
+              writer.writerow(["source_url", "filename", "github_pages_path"])
+              writer.writerows(rows)
+
+          print(f"Prepared {len(rows)} image URLs")
+          PY
+
+          mkdir -p public/images/imported-products
+          success=0
+          failed=0
+          while IFS=$'\t' read -r url filename public_path; do
+            tmp="public/images/imported-products/.tmp-${filename}"
+            if curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 120 -A "Mozilla/5.0" "$url" -o "$tmp"; then
+              if [ -s "$tmp" ]; then
+                mv "$tmp" "public/images/imported-products/$filename"
+                success=$((success + 1))
+              else
+                rm -f "$tmp"
+                failed=$((failed + 1))
+              fi
+            else
+              rm -f "$tmp"
+              failed=$((failed + 1))
+              echo "Failed: $url" >&2
+            fi
+          done < /tmp/product-image-manifest.tsv
+          echo "Downloaded: $success; failed: $failed"
+          if [ "$success" -eq 0 ]; then
+            exit 1
+          fi
+
+      - name: Commit imported images
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/images/imported-products
+          if git diff --cached --quiet; then
+            echo "No image changes to commit."
+            exit 0
+          fi
+          git commit -m "Import product images from source URLs"
+          git push
