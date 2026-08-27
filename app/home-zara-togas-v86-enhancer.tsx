@@ -194,6 +194,7 @@ function enhanceSections(home: HTMLElement) {
 function enhanceHome() {
   const home = homeRoot();
   if (!home) return;
+  if (home.dataset.home87 === "1" && home.querySelector(".home87-hero") && home.querySelector(".home87-brand-story")) return;
   home.dataset.home87 = "1";
   installHero(home);
   installBrandStory(home);
