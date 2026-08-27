@@ -12,6 +12,7 @@ permissions:
 jobs:
   import-images:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,33 +24,47 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import csv, re, os, hashlib, shutil, subprocess
+          import csv, re, os, hashlib, shutil, subprocess, time
           from concurrent.futures import ThreadPoolExecutor, as_completed
           from pathlib import Path
-          from urllib.parse import urlparse
+          from urllib.parse import urlparse, urlunparse
 
           root = Path('.')
           outdir = root / 'public/images/imported-products'
           outdir.mkdir(parents=True, exist_ok=True)
           urls = set()
+          product_groups = []
 
           def add_url(value):
               value = (value or '').strip()
               if not value:
-                  return
+                  return ''
               if value.startswith(('https://', 'http://')):
                   urls.add(value)
-              elif value.startswith('/kd/images/'):
-                  urls.add('https://kssafonova.github.io' + value)
-              elif value.startswith('/images/'):
-                  urls.add('https://kssafonova.github.io/kd' + value)
+                  return value
+              if value.startswith('/kd/images/'):
+                  value = 'https://kssafonova.github.io' + value
+                  urls.add(value)
+                  return value
+              if value.startswith('/images/'):
+                  value = 'https://kssafonova.github.io/kd' + value
+                  urls.add(value)
+                  return value
+              return ''
 
+          # Scan storefront source broadly so images used by home, catalog,
+          # collections and editorial blocks are imported too.
           pattern = r'((?:https?://[^"\']+|/(?:kd/)?images/[^"\']+)\.(?:png|jpe?g|webp))'
-          for path in [root / 'app/catalog-data-base.ts', root / 'app/catalog-data.ts']:
-              text = path.read_text(encoding='utf-8')
+          for path in list((root / 'app').rglob('*.ts')) + list((root / 'app').rglob('*.tsx')) + list((root / 'app').rglob('*.css')):
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except Exception:
+                  continue
               for match in re.findall(pattern, text, flags=re.I):
                   add_url(match)
 
+          # Ready-solution products: keep product-level groups so a missing
+          # primary image can fall back to another image of the SAME product.
           ts = (root / 'app/constructor/table-solutions.ts').read_text(encoding='utf-8')
           literals = set(re.findall(r'"([^"\n]+)"', ts))
 
@@ -66,12 +81,20 @@ jobs:
                   matched = name in targets or any(name.startswith(t + ':') for t in targets if len(t) > 3)
                   if not matched:
                       continue
-                  add_url(row.get('primary_image_url', ''))
-                  for url in (row.get('all_image_urls', '') or '').split('|'):
-                      add_url(url)
+                  group = []
+                  primary = add_url(row.get('primary_image_url', ''))
+                  if primary:
+                      group.append(primary)
+                  for raw in (row.get('all_image_urls', '') or '').split('|'):
+                      url = add_url(raw)
+                      if url and url not in group:
+                          group.append(url)
+                  if group:
+                      product_groups.append(group)
 
           used = {}
           rows = []
+          url_to_target = {}
           for url in sorted(urls):
               basename = os.path.basename(urlparse(url).path) or 'image'
               target = basename
@@ -79,6 +102,7 @@ jobs:
                   stem, ext = os.path.splitext(basename)
                   target = f'{stem}-{hashlib.sha1(url.encode()).hexdigest()[:8]}{ext}'
               used[target] = url
+              url_to_target[url] = target
               rows.append((url, target, f'/images/imported-products/{target}'))
 
           def copy_local_github_pages(url, dest):
@@ -87,37 +111,123 @@ jobs:
                   return False
               rel = url[len(prefix):]
               for candidate in (root / rel, root / 'public' / rel):
-                  if candidate.is_file():
+                  if candidate.is_file() and candidate.stat().st_size > 0:
                       shutil.copyfile(candidate, dest)
                       return True
               return False
 
+          def looks_like_image(path):
+              try:
+                  data = path.read_bytes()[:16]
+              except Exception:
+                  return False
+              return (
+                  data.startswith(b'\xff\xd8\xff') or
+                  data.startswith(b'\x89PNG\r\n\x1a\n') or
+                  (data.startswith(b'RIFF') and data[8:12] == b'WEBP')
+              )
+
+          def candidate_urls(url):
+              yield url
+              parsed = urlparse(url)
+              path = parsed.path
+              variants = []
+              if '_big.' in path:
+                  variants += [
+                      path.replace('_big.', '_s.'),
+                      path.replace('_big.', '_small.'),
+                      path.replace('_big.', '.'),
+                  ]
+              hosts = [parsed.netloc]
+              if parsed.netloc == 'kultura-doma.ru':
+                  hosts.append('www.kultura-doma.ru')
+              elif parsed.netloc == 'www.kultura-doma.ru':
+                  hosts.append('kultura-doma.ru')
+              seen = {url}
+              for host in hosts:
+                  for candidate_path in [path, *variants]:
+                      alt = urlunparse((parsed.scheme, host, candidate_path, parsed.params, parsed.query, parsed.fragment))
+                      if alt not in seen:
+                          seen.add(alt)
+                          yield alt
+
+          def curl_image(url, tmp):
+              cmd = [
+                  'curl', '-fL', '--http1.1', '--compressed',
+                  '--retry', '2', '--retry-all-errors', '--retry-delay', '2',
+                  '--connect-timeout', '15', '--max-time', '60',
+                  '-A', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/138 Safari/537.36',
+                  '-H', 'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                  '-H', 'Accept-Language: ru-RU,ru;q=0.9,en;q=0.8',
+                  '-H', 'Cache-Control: no-cache',
+                  '-e', 'https://kultura-doma.ru/',
+                  url, '-o', str(tmp)
+              ]
+              result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+              return result.returncode == 0 and tmp.is_file() and tmp.stat().st_size > 0 and looks_like_image(tmp)
+
           def download(item):
               url, filename, public_path = item
               dest = outdir / filename
-              if dest.is_file() and dest.stat().st_size > 0:
+              if dest.is_file() and dest.stat().st_size > 0 and looks_like_image(dest):
                   return item + ('existing',)
               if copy_local_github_pages(url, dest):
                   return item + ('copied-local',)
               tmp = outdir / f'.tmp-{filename}'
-              for _ in range(2):
-                  result = subprocess.run([
-                      'curl', '-fL', '--retry', '1', '--connect-timeout', '10', '--max-time', '30',
-                      '-A', 'Mozilla/5.0', url, '-o', str(tmp)
-                  ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                  if result.returncode == 0 and tmp.is_file() and tmp.stat().st_size > 0:
-                      tmp.replace(dest)
-                      return item + ('downloaded',)
-                  tmp.unlink(missing_ok=True)
+              for attempt in range(4):
+                  for candidate in candidate_urls(url):
+                      tmp.unlink(missing_ok=True)
+                      if curl_image(candidate, tmp):
+                          tmp.replace(dest)
+                          return item + (('downloaded' if candidate == url else f'downloaded-alt:{candidate}'),)
+                  time.sleep(2 + attempt * 2)
+              tmp.unlink(missing_ok=True)
               return item + ('failed',)
 
           results = []
-          with ThreadPoolExecutor(max_workers=12) as pool:
+          # Low concurrency prevents the origin from rate-limiting whole batches.
+          with ThreadPoolExecutor(max_workers=3) as pool:
               futures = [pool.submit(download, item) for item in rows]
               for future in as_completed(futures):
                   results.append(future.result())
 
-          results.sort(key=lambda row: row[0])
+          status_by_url = {row[0]: row[3] for row in results}
+
+          # If an exact source file is gone, use another successfully imported
+          # gallery image from the SAME product and create an alias under the
+          # missing primary filename. The storefront can then keep its existing URLs.
+          groups_by_url = {}
+          for group in product_groups:
+              for url in group:
+                  groups_by_url.setdefault(url, []).append(group)
+
+          repaired = []
+          for row in results:
+              url, filename, public_path, status = row
+              if status != 'failed':
+                  repaired.append(row)
+                  continue
+              fallback_source = None
+              for group in groups_by_url.get(url, []):
+                  for alt_url in group:
+                      if alt_url == url:
+                          continue
+                      alt_name = url_to_target.get(alt_url)
+                      if not alt_name:
+                          continue
+                      alt_path = outdir / alt_name
+                      if alt_path.is_file() and alt_path.stat().st_size > 0 and looks_like_image(alt_path):
+                          fallback_source = alt_path
+                          break
+                  if fallback_source:
+                      break
+              if fallback_source:
+                  shutil.copyfile(fallback_source, outdir / filename)
+                  repaired.append((url, filename, public_path, f'product-fallback:{fallback_source.name}'))
+              else:
+                  repaired.append(row)
+
+          results = sorted(repaired, key=lambda row: row[0])
           with (outdir / 'manifest.csv').open('w', encoding='utf-8-sig', newline='') as file:
               writer = csv.writer(file)
               writer.writerow(['source_url', 'filename', 'github_pages_path', 'status'])
@@ -125,7 +235,8 @@ jobs:
 
           success = sum(1 for row in results if row[3] != 'failed')
           failed = sum(1 for row in results if row[3] == 'failed')
-          print(f'Prepared: {len(rows)}; imported/existing: {success}; failed: {failed}')
+          fallbacks = sum(1 for row in results if row[3].startswith('product-fallback:'))
+          print(f'Prepared: {len(rows)}; available: {success}; product fallbacks: {fallbacks}; still failed: {failed}')
           if success == 0:
               raise SystemExit(1)
           PY
@@ -141,6 +252,6 @@ jobs:
             echo "No image changes to commit."
             exit 0
           fi
-          git commit -m "Import product images from source URLs"
+          git commit -m "Import resilient product images"
           git pull --rebase origin main
           git push
