@@ -210,7 +210,7 @@ const catalogPreviewColorByArticle:Record<string,string> = {
   "KD-PD-1028":"Белый",
   "KD-PD-1128":"Белый",
 };
-const products: Product[] = baseProducts.map(base=>{
+let products: Product[] = baseProducts.map(base=>{
   const override=catalogProductOverrides[base.id];
   if(!override)return base;
   const preferredColor=catalogPreviewColorByArticle[override.article];
@@ -231,6 +231,66 @@ const products: Product[] = baseProducts.map(base=>{
     colorVariants:colors.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))
   };
 }).filter(product=>!REMOVED_PRODUCT_IDS.has(product.id));
+
+
+type XlsxProductEntityRow = Record<string,string>;
+let xlsxCatalogLoaded = false;
+const XLSX_ENTITY_FILES = Array.from({length:12},(_,index)=>`kultura_doma_product_entities_xlsx_${index+1}.csv`);
+const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
+  const text=source.replace(/^\uFEFF/,"");
+  const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;
+  for(let index=0;index<text.length;index+=1){
+    const char=text[index];
+    if(quoted){
+      if(char==='"'&&text[index+1]==='"'){cell+='"';index+=1}
+      else if(char==='"')quoted=false;
+      else cell+=char;
+    }else if(char==='"')quoted=true;
+    else if(char===","){row.push(cell);cell=""}
+    else if(char==="\n"){row.push(cell.replace(/\r$/,""));if(row.some(value=>value!==""))rows.push(row);row=[];cell=""}
+    else cell+=char;
+  }
+  if(cell.length||row.length){row.push(cell.replace(/\r$/,""));if(row.some(value=>value!==""))rows.push(row)}
+  const [headers=[], ...body]=rows;
+  return body.map(values=>Object.fromEntries(headers.map((header,index)=>[header.trim(),values[index]??""])));
+};
+const entityColorHex=(value:string)=>{
+  const key=String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
+  const colors:Record<string,string>={"белый":"#f7f7f4","молочный":"#e9e1d2","синий":"#8ba7c0","ночной синий":"#10233e","пудровый":"#e6bca8","льняной":"#d2c1aa","небесный":"#9fb2c6","зеленый":"#6f806b","красный":"#8e3d35","черный":"#1d1d1b","золотой":"#b59862","серый":"#969696","бежевый":"#d6c4aa","песочный":"#c9ad88"};
+  return colors[key]||"#d8d5cf";
+};
+const entityId=(article:string,name:string)=>300000+Array.from(`${article}|${name}`).reduce((sum,char)=>((sum*31)+char.charCodeAt(0))%500000,0);
+async function loadXlsxCatalogIntoProducts(){
+  if(xlsxCatalogLoaded)return;
+  xlsxCatalogLoaded=true;
+  const base=process.env.NEXT_PUBLIC_BASE_PATH??"";
+  const chunks=await Promise.all(XLSX_ENTITY_FILES.map(async fileName=>{
+    try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
+  }));
+  const rows=chunks.flat().filter(row=>row["Артикул"]&&row["Название товара"]);
+  if(!rows.length)return;
+  const grouped=new Map<string,XlsxProductEntityRow[]>();
+  rows.forEach(row=>{const key=`${row["Артикул"]}|${row["Название товара"]}`;const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
+  const existingByArticle=new Map(products.map(product=>[String(product.article||"").trim(),product]));
+  const incoming:Product[]=[];
+  grouped.forEach((variants)=>{
+    const first=variants[0]; const article=String(first["Артикул"]||"").trim(); const name=String(first["Название товара"]||"").trim();
+    const existing=existingByArticle.get(article);
+    const id=existing?.id??entityId(article,name);
+    const price=existing?.price??0;
+    const skus:CatalogSku[]=variants.map((row,index)=>{
+      const images=[row["Превью фотография товара"],row["Вторая фотография товара в скролле"],row["Третья фотография в стролле"]].map(value=>String(value||"").trim()).filter(value=>value&&value.toLowerCase()!=="null");
+      const color=String(row["Цвет"]||"").trim()||"Без цвета";
+      const size=String(row["Размер"]||row["Объем"]||row["Диаметр"]||"").trim()||"Единый размер";
+      return {id:`xlsx-${id}-${index}`,article,productId:id,color,colorHex:entityColorHex(color),size,height:String(row["Высота"]||"").trim()||undefined,width:String(row["Ширина"]||"").trim()||undefined,diameter:String(row["Диаметр"]||"").trim()||undefined,packageInfo:String(row["Комплектация / Информация о размере"]||"").trim()||undefined,material:String(row["Материал"]||"").trim(),composition:String(row["Состав"]||"").trim(),details:String(row["Детали"]||"").trim()||undefined,collection:String(row["Коллекция"]||"").trim()||undefined,price,image:images[0]||"/images/image-placeholder.svg",gallery:images.slice(1),available:true};
+    });
+    const firstSku=skus[0];
+    const colorRows=Array.from(new Map(skus.map(item=>[item.color,item])).values());
+    incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))});
+  });
+  const incomingById=new Map(incoming.map(item=>[item.id,item]));
+  products=[...products.map(item=>incomingById.get(item.id)??item),...incoming.filter(item=>!products.some(current=>current.id===item.id))];
+}
 
 const slides:Slide[] = [
   { category: "НОВИНКИ", eyebrow: "НОВАЯ ГЛАВА", title: "Дом в цвету", subtitle: "Авторские вазы и сервировка для долгих летних встреч", image: "/images/editorial-vases.webp", secondaryImage: "/images/editorial-table.webp", mobileVideo: "/images/kultura-home-mobile.mp4", align: "left", destination: "catalog" as View },
@@ -334,6 +394,8 @@ const editorials:Editorial[] = [
 ];
 
 export default function Home() {
+  const [,setXlsxCatalogRevision]=useState(0);
+  useEffect(()=>{loadXlsxCatalogIntoProducts().then(()=>setXlsxCatalogRevision(value=>value+1))},[]);
   const [view, setView] = useState<View>("home");
   const [menu, setMenu] = useState(false);
   const [menuSection, setMenuSection] = useState("");
