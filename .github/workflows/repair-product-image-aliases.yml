@@ -1,0 +1,134 @@
+name: Repair missing product image aliases
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/repair-product-image-aliases.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create same-product aliases for missing image files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, os, re, shutil
+          from collections import defaultdict
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          root = Path('.')
+          outdir = root / 'public/images/imported-products'
+          outdir.mkdir(parents=True, exist_ok=True)
+          catalog = root / 'data/kultura_doma_full_constructor_eligible_catalog.csv'
+
+          def norm(value):
+              value = str(value or '').strip().lower().replace('ё', 'е')
+              value = value.replace('«', '').replace('»', '').replace('"', '').replace("'", '')
+              return re.sub(r'\s+', ' ', value)
+
+          def image_name(url):
+              value = str(url or '').strip()
+              if not value.startswith(('https://', 'http://')):
+                  return ''
+              name = os.path.basename(urlparse(value).path)
+              return name if re.search(r'\.(?:png|jpe?g|webp)$', name, re.I) else ''
+
+          groups = defaultdict(list)
+          with catalog.open('r', encoding='utf-8-sig', newline='') as file:
+              for row in csv.DictReader(file):
+                  key = str(row.get('group_id') or '').strip() or norm(row.get('product_name'))
+                  if not key:
+                      continue
+                  names = []
+                  for raw in [row.get('primary_image_url', ''), *((row.get('all_image_urls', '') or '').split('|'))]:
+                      name = image_name(raw)
+                      if name and name not in names:
+                          names.append(name)
+                  for name in names:
+                      if name not in groups[key]:
+                          groups[key].append(name)
+
+          # Merge product-name groups as an additional safety net for rows whose
+          # group_id differs between color/size offers of the same display product.
+          by_name = defaultdict(list)
+          with catalog.open('r', encoding='utf-8-sig', newline='') as file:
+              for row in csv.DictReader(file):
+                  key = norm(row.get('product_name'))
+                  if not key:
+                      continue
+                  for raw in [row.get('primary_image_url', ''), *((row.get('all_image_urls', '') or '').split('|'))]:
+                      name = image_name(raw)
+                      if name and name not in by_name[key]:
+                          by_name[key].append(name)
+
+          all_groups = list(groups.values()) + list(by_name.values())
+          created = []
+          unresolved = []
+
+          def valid(path):
+              return path.is_file() and path.stat().st_size > 0
+
+          for names in all_groups:
+              if not names:
+                  continue
+              existing = [name for name in names if valid(outdir / name)]
+              if not existing:
+                  continue
+              source_name = existing[0]
+              source = outdir / source_name
+              for name in names:
+                  dest = outdir / name
+                  if valid(dest):
+                      continue
+                  shutil.copyfile(source, dest)
+                  created.append((name, source_name))
+
+          # Report only; do not touch the import manifest so this workflow can
+          # safely run at the same time as the network importer.
+          report = root / 'image-alias-repair-report.txt'
+          unique_created = []
+          seen = set()
+          for item in created:
+              if item[0] in seen:
+                  continue
+              seen.add(item[0])
+              unique_created.append(item)
+          report.write_text(
+              'Created same-product image aliases: %d\n%s\n' % (
+                  len(unique_created),
+                  '\n'.join(f'{dest} <- {src}' for dest, src in unique_created)
+              ),
+              encoding='utf-8'
+          )
+          print(f'Created same-product image aliases: {len(unique_created)}')
+          for dest, src in unique_created[:50]:
+              print(f'  {dest} <- {src}')
+          PY
+
+      - name: Commit repaired image aliases
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/images/imported-products image-alias-repair-report.txt
+          if git diff --cached --quiet; then
+            echo "No aliases needed."
+            exit 0
+          fi
+          git commit -m "Repair missing product image aliases"
+          git pull --rebase origin main
+          git push
