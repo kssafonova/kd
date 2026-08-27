@@ -14,7 +14,7 @@ import type {
 } from "./types";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const XLSX_ENTITY_FILES = Array.from({length:12},(_,index)=>`kultura_doma_product_entities_xlsx_${index+1}.csv`);
+const XLSX_ENTITY_FILES = Array.from({length:5},(_,index)=>`kultura_doma_product_entities_xlsx_${index+1}.csv`);
 
 export const CONSTRUCTOR_DATA_FILES = [
   "kultura-doma-constructor-presets-final.csv",
@@ -100,6 +100,16 @@ const loadCsv = async <T extends Record<string, string>>(fileName: string): Prom
   return rows;
 };
 
+const loadCompressedXlsxEntities=async()=>{
+  try{
+    const response=await fetch(constructorDataUrl("kultura_doma_product_entities_xlsx_extra.b64"),{cache:"no-store"});
+    if(!response.ok||typeof DecompressionStream==="undefined")return [];
+    const encoded=(await response.text()).trim();
+    const bytes=Uint8Array.from(atob(encoded),char=>char.charCodeAt(0));
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return parseCsv<Record<string,string>>(await new Response(stream).text());
+  }catch{return []}
+};
 const xlsxProductType=(row:Record<string,string>)=>{
   const name=String(row["Название товара"]||"").toLocaleLowerCase("ru-RU");
   if(name.includes("тарел"))return "plate"; if(name.includes("салатник")||name.includes("супниц"))return "salad_bowl";
@@ -115,7 +125,8 @@ const loadXlsxCatalog = async (): Promise<CatalogRow[]> => {
   const parts=await Promise.all(XLSX_ENTITY_FILES.map(async fileName=>{
     try{const response=await fetch(constructorDataUrl(fileName),{cache:"no-store"});if(!response.ok)return [];return parseCsv<Record<string,string>>(await response.text())}catch{return []}
   }));
-  return parts.flat().filter(row=>row["Артикул"]&&row["Название товара"]).map((row,index)=>{
+  const extra=await loadCompressedXlsxEntities();
+  return [...parts.flat(),...extra].filter(row=>row["Артикул"]&&row["Название товара"]).map((row,index)=>{
     const images=[row["Превью фотография товара"],row["Вторая фотография товара в скролле"],row["Третья фотография в стролле"]].filter(Boolean);
     return {offer_id:`xlsx-${index+1}`,group_id:`xlsx-${row["Артикул"]}`,vendor_code:row["Артикул"]||"",collection:row["Коллекция"]||"",product_name:row["Название товара"]||"",product_url:"",product_type:xlsxProductType(row),constructor_role:"",mix_role:"",builder_domain:"",palette:"",style_tags:"",price:"0",old_price:"",color:row["Цвет"]||"",size:row["Размер"]||"",material:row["Материал"]||"",volume:row["Объем"]||"",availability_status:"available",primary_image_url:images[0]||"/images/image-placeholder.svg",all_image_urls:images.join("|")} satisfies CatalogRow;
   });
