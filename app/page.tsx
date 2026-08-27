@@ -235,7 +235,7 @@ let products: Product[] = baseProducts.map(base=>{
 
 type XlsxProductEntityRow = Record<string,string>;
 let xlsxCatalogLoaded = false;
-const XLSX_ENTITY_FILES = Array.from({length:12},(_,index)=>`kultura_doma_product_entities_xlsx_${index+1}.csv`);
+const XLSX_ENTITY_FILES = Array.from({length:5},(_,index)=>`kultura_doma_product_entities_xlsx_${index+1}.csv`);
 const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
   const text=source.replace(/^\uFEFF/,"");
   const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;
@@ -254,6 +254,17 @@ const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
   const [headers=[], ...body]=rows;
   return body.map(values=>Object.fromEntries(headers.map((header,index)=>[header.trim(),values[index]??""])));
 };
+const loadCompressedEntityCsv=async()=>{
+  try{
+    const base=process.env.NEXT_PUBLIC_BASE_PATH??"";
+    const response=await fetch(`${base}/data/kultura_doma_product_entities_xlsx_extra.b64`,{cache:"no-store"});
+    if(!response.ok||typeof DecompressionStream==="undefined")return [];
+    const encoded=(await response.text()).trim();
+    const bytes=Uint8Array.from(atob(encoded),char=>char.charCodeAt(0));
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return parseEntityCsv(await new Response(stream).text());
+  }catch{return []}
+};
 const entityColorHex=(value:string)=>{
   const key=String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
   const colors:Record<string,string>={"белый":"#f7f7f4","молочный":"#e9e1d2","синий":"#8ba7c0","ночной синий":"#10233e","пудровый":"#e6bca8","льняной":"#d2c1aa","небесный":"#9fb2c6","зеленый":"#6f806b","красный":"#8e3d35","черный":"#1d1d1b","золотой":"#b59862","серый":"#969696","бежевый":"#d6c4aa","песочный":"#c9ad88"};
@@ -267,7 +278,8 @@ async function loadXlsxCatalogIntoProducts(){
   const chunks=await Promise.all(XLSX_ENTITY_FILES.map(async fileName=>{
     try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
   }));
-  const rows=chunks.flat().filter(row=>row["Артикул"]&&row["Название товара"]);
+  const extra=await loadCompressedEntityCsv();
+  const rows=[...chunks.flat(),...extra].filter(row=>row["Артикул"]&&row["Название товара"]);
   if(!rows.length)return;
   const grouped=new Map<string,XlsxProductEntityRow[]>();
   rows.forEach(row=>{const key=`${row["Артикул"]}|${row["Название товара"]}`;const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
