@@ -1,0 +1,322 @@
+name: Build full product table
+
+on:
+  push:
+    paths:
+      - ".github/workflows/build-full-product-table.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build complete product CSV
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, re
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          root = Path('.')
+          master = root / 'data/kultura_doma_full_constructor_eligible_catalog.csv'
+          out = root / 'data/all_products_screen_format.csv'
+          summary = root / 'data/all_products_collections_summary.csv'
+          manifest_path = root / 'public/images/imported-products/manifest.csv'
+
+          def null(v):
+              v = '' if v is None else str(v).strip()
+              return v if v else 'null'
+
+          # Prefer GitHub-hosted image copies when an image was imported successfully.
+          image_map = {}
+          if manifest_path.exists():
+              with manifest_path.open('r', encoding='utf-8-sig', newline='') as f:
+                  for r in csv.DictReader(f):
+                      if (r.get('status') or '').strip() != 'failed':
+                          src = (r.get('source_url') or '').strip()
+                          fn = (r.get('filename') or '').strip()
+                          if src and fn:
+                              image_map[src] = f'https://kssafonova.github.io/kd/images/imported-products/{fn}'
+
+          def gh_image(url):
+              url = (url or '').strip()
+              if not url:
+                  return 'null'
+              return image_map.get(url, url)
+
+          requested_tokens = [
+              'Алая нить','Мокоши','Петербург','Весна','Камея','Овация','Ледяные узоры',
+              'Лунная сказка','Нити времени','Александр','Дияф','Обереги','Феникс',
+              'Тайна острова Буяна','Юрма','Текстура','Росы','Дрёмица','Оренбургские узоры',
+              'Бархат','Пушица','Жар-птица','Многоцвет','Краса ненаглядная','Классика',
+              'Лунный сад','Стихи','Символы','Эхо'
+          ]
+
+          def infer_collection(source_collection, name):
+              c = (source_collection or '').strip()
+              if c:
+                  return c
+              low = (name or '').lower().replace('ё','е')
+              for token in requested_tokens:
+                  if token.lower().replace('ё','е') in low:
+                      return token
+              return 'null'
+
+          def alias_collection(c):
+              if c == 'Камея':
+                  return 'Эхо / Камея'
+              if c == 'Овация':
+                  return 'Овация / Символы'
+              return c
+
+          def article_from_vendor(vendor):
+              vendor = (vendor or '').strip()
+              if not vendor:
+                  return 'null'
+              m = re.search(r'(\d+)$', vendor)
+              return f'KD-PD-{int(m.group(1))}' if m else vendor
+
+          def split_images(primary, all_images):
+              imgs = []
+              for u in [primary] + (all_images or '').split('|'):
+                  u = (u or '').strip()
+                  if u and u not in imgs:
+                      imgs.append(u)
+              imgs = [gh_image(u) for u in imgs]
+              imgs += ['null'] * (3-len(imgs))
+              return imgs[:3]
+
+          def dims(product_type, name, size):
+              height = width = diameter = 'null'
+              s = (size or '').strip()
+              if not s:
+                  return height, width, diameter
+              nums = re.findall(r'\d+(?:[\.,]\d+)?', s)
+              low_type = (product_type or '').lower()
+              low_name = (name or '').lower()
+              rectangular_types = {
+                  'tablecloth','napkin','placemat','table_runner','bedding_set','pillowcase_set',
+                  'decorative_pillow','blanket','bedspread','other'
+              }
+              round_types = {'dessert_plate','snack_plate','dinner_plate','deep_plate','salad_bowl'}
+              if low_type in round_types and len(nums) == 1 and ('см' in s.lower()):
+                  diameter = nums[0].replace('.', ',') + ' см'
+              elif low_type in rectangular_types and len(nums) >= 2 and ('см' in s.lower()):
+                  height = nums[0].replace('.', ',') + ' см'
+                  width = nums[1].replace('.', ',') + ' см'
+              elif ('свеч' in low_name or 'диффузор' in low_name) and len(nums) == 1 and 'см' in s.lower():
+                  height = nums[0].replace('.', ',') + ' см'
+              return height, width, diameter
+
+          def composition_from_material(material):
+              m = (material or '').strip()
+              ml = m.lower()
+              if not m:
+                  return 'null'
+              if '%' in m:
+                  return m
+              direct = {
+                  'костяной фарфор':'100% костяной фарфор',
+                  'фарфор':'100% фарфор',
+                  'керамика':'100% керамика',
+                  'стекло':'100% стекло',
+                  'хрусталь':'100% хрусталь',
+                  'сатин':'100% сатин',
+                  'тенсель':'100% тенсель',
+                  'лен':'100% лен',
+                  'лён':'100% лен',
+                  'шелк':'100% шелк',
+                  'шёлк':'100% шелк',
+                  'воск':'100% воск',
+                  'парафин':'100% парафин',
+                  'воск пальмовый':'100% пальмовый воск',
+              }
+              return direct.get(ml, 'null')
+
+          def details_from_name(name):
+              low = (name or '').lower()
+              if 'кружев' in low:
+                  return 'Кружево'
+              if 'вышив' in low:
+                  return 'Вышивка'
+              return 'null'
+
+          def package_info(product_type, name):
+              pt = (product_type or '').lower()
+              if pt == 'tea_pair':
+                  return 'Кружка 1 шт, блюдце 1 шт'
+              if pt == 'coffee_pair':
+                  return 'Чашка 1 шт, блюдце 1 шт'
+              if pt in {'dessert_plate','snack_plate','dinner_plate','deep_plate'}:
+                  return 'Тарелка 1 шт'
+              if pt == 'salad_bowl':
+                  return 'Салатник 1 шт'
+              if pt == 'teapot':
+                  return 'Чайник 1 шт'
+              if pt == 'sugar_bowl':
+                  return 'Сахарница 1 шт'
+              if pt == 'milk_jug':
+                  return 'Молочник 1 шт'
+              return 'null'
+
+          def aroma(name, product_type):
+              n = (name or '').strip()
+              low = n.lower()
+              if low.startswith('диффузор '):
+                  return n[len('Диффузор '):].strip(' «»') or 'null'
+              if low.startswith('свеча ') and not low.startswith('свеча корона'):
+                  return n[len('Свеча '):].strip(' «»') or 'null'
+              m = re.search(r'аромат(?:а|ом)?\s*[«\"]?([^,;»\"]+)', n, re.I)
+              return m.group(1).strip() if m else 'null'
+
+          headers = [
+              'Id','Артикул','Название товара','Цвет','Размер',
+              'Превью фотография товара','Вторая фотография товара в скролле','Третья фотография в скролле',
+              'Высота','Ширина','Объем','Диаметр','Комплектация / Информация о размере',
+              'Материал','Состав','Детали','Коллекция','Аромат','Offer ID','URL товара','Тип товара','Источник'
+          ]
+
+          rows = []
+          with master.open('r', encoding='utf-8-sig', newline='') as f:
+              for src in csv.DictReader(f):
+                  name = (src.get('product_name') or '').strip()
+                  collection = alias_collection(infer_collection(src.get('collection'), name))
+                  images = split_images(src.get('primary_image_url'), src.get('all_image_urls'))
+                  h,w,d = dims(src.get('product_type'), name, src.get('size'))
+                  rows.append([
+                      None,
+                      article_from_vendor(src.get('vendor_code')),
+                      null(name),
+                      null(src.get('color')),
+                      null(src.get('size')),
+                      images[0], images[1], images[2],
+                      h,w,null(src.get('volume')),d,
+                      package_info(src.get('product_type'), name),
+                      null(src.get('material')),
+                      composition_from_material(src.get('material')),
+                      details_from_name(name),
+                      collection,
+                      aroma(name, src.get('product_type')),
+                      null(src.get('offer_id')),
+                      null(src.get('product_url')),
+                      null(src.get('product_type')),
+                      'master_catalog'
+                  ])
+
+          # Append custom storefront SKU records from app/catalog-data-base.ts.
+          ts_path = root / 'app/catalog-data-base.ts'
+          if ts_path.exists():
+              text = ts_path.read_text(encoding='utf-8')
+              product_pat = re.compile(
+                  r'makeProduct\((\d+),\"([^\"]+)\",\"([^\"]+)\",\"([^\"]*)\",(\d+),\[\n(.*?)\n\s*\]\),',
+                  re.S
+              )
+              for pm in product_pat.finditer(text):
+                  pid, article, pname, note, base_price, block = pm.groups()
+                  for obj in re.findall(r'\{([^{}]+gallery:\[[^\]]*\][^{}]*)\}', block, re.S):
+                      def getstr(key):
+                          m = re.search(rf'{key}:\"([^\"]*)\"', obj)
+                          return m.group(1) if m else ''
+                      color = getstr('color')
+                      size = getstr('size')
+                      height = getstr('height') or 'null'
+                      width = getstr('width') or 'null'
+                      diameter = getstr('diameter') or 'null'
+                      package = getstr('packageInfo') or 'null'
+                      material = getstr('material') or 'null'
+                      composition = getstr('composition') or 'null'
+                      details = getstr('details') or 'null'
+                      collection = getstr('collection') or infer_collection('', pname)
+                      collection = alias_collection(collection)
+                      image = getstr('image')
+                      gallery_match = re.search(r'gallery:\[([^\]]*)\]', obj, re.S)
+                      gallery = re.findall(r'\"([^\"]+)\"', gallery_match.group(1)) if gallery_match else []
+                      def abs_img(u):
+                          if not u:
+                              return 'null'
+                          if u.startswith('http'):
+                              return gh_image(u)
+                          if u.startswith('/kd/'):
+                              return gh_image('https://kssafonova.github.io' + u)
+                          if u.startswith('/images/'):
+                              return gh_image('https://kssafonova.github.io/kd' + u)
+                          return u
+                      imgs = [abs_img(image)] + [abs_img(u) for u in gallery]
+                      # Deduplicate
+                      seen=[]
+                      for u in imgs:
+                          if u != 'null' and u not in seen:
+                              seen.append(u)
+                      seen += ['null'] * (3-len(seen))
+                      rows.append([
+                          None, article, pname, color or 'null', size or 'null',
+                          seen[0],seen[1],seen[2],
+                          height,width,'null',diameter,package,material,composition,details,
+                          collection or 'null',aroma(pname,''),pid,
+                          f'https://kssafonova.github.io/kd/catalog/product/{pid}/','storefront_sku','app_catalog'
+                      ])
+
+          # Deduplicate exact source rows but intentionally retain size/color variants.
+          dedup=[]
+          seen=set()
+          for r in rows:
+              key=tuple(r[1:])
+              if key in seen:
+                  continue
+              seen.add(key)
+              dedup.append(r)
+          rows=dedup
+
+          # Stable order: collection -> product name -> article -> size -> color.
+          rows.sort(key=lambda r: (
+              '' if r[16]=='null' else r[16].lower(),
+              r[2].lower(), r[1], r[4], r[3]
+          ))
+          for i,r in enumerate(rows,1):
+              r[0]=i
+
+          out.parent.mkdir(parents=True, exist_ok=True)
+          with out.open('w', encoding='utf-8-sig', newline='') as f:
+              w=csv.writer(f)
+              w.writerow(headers)
+              w.writerows(rows)
+
+          # Collection/category summary for QA.
+          counts={}
+          for r in rows:
+              counts[r[16]]=counts.get(r[16],0)+1
+          with summary.open('w', encoding='utf-8-sig', newline='') as f:
+              w=csv.writer(f)
+              w.writerow(['Коллекция','Количество строк/SKU'])
+              for c,n in sorted(counts.items(), key=lambda x:(x[0]=='null',x[0].lower())):
+                  w.writerow([c,n])
+
+          print('Total rows:', len(rows))
+          print('Collections:', len(counts))
+          for must in ['Алая нить','Мокоши','Петербург','Весна','Эхо / Камея','Овация / Символы','Ледяные узоры','Лунная сказка','Нити времени','Александр','Дияф','Обереги','Феникс','Тайна острова Буяна','Юрма','Росы','Оренбургские узоры','Пушица']:
+              print(must, counts.get(must, 0))
+          PY
+
+      - name: Commit generated tables
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/all_products_screen_format.csv data/all_products_collections_summary.csv
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Generate complete product table"
+          git pull --rebase origin main
+          git push
