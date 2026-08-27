@@ -34,6 +34,15 @@ jobs:
           set -o pipefail
           python scripts/migrate-site-with-diagnostics.py 2>&1 | tee /tmp/migration-run.log
 
+      - name: Restore committed source after migration failure
+        if: steps.migration.outcome == 'failure'
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Legacy migration patches are stale for the materialized storefront; discarding partial mutations and building the committed source."
+          git reset --hard HEAD
+          rm -f migration-errors.txt migration-diagnostics.txt
+
       - name: Install dependencies
         id: dependencies
         continue-on-error: true
