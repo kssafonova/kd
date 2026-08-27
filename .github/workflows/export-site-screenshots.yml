@@ -70,7 +70,7 @@ jobs:
           cat > /tmp/capture.cjs <<'JS'
           const fs = require('fs');
           const path = require('path');
-          const { chromium } = require('playwright');
+          const { chromium } = require(process.cwd() + '/node_modules/playwright');
           const routes = fs.readFileSync('routes.txt','utf8').split(/\r?\n/).filter(Boolean);
           const base = 'https://kssafonova.github.io/kd';
           const safe = r => r === '/' ? 'home' : r.replace(/^\/+|\/+$/g,'').replace(/[^a-zA-Z0-9._-]+/g,'__');
