@@ -9,14 +9,36 @@ type RemoteImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & {
   fallbackSrc?: string;
 };
 
+type ImageStage = "mirror" | "direct" | "fetch" | "fallback";
+
+const localMirrorForRemote = (path: string) => {
+  if (!isRemoteAsset(path)) return "";
+  try {
+    const url = new URL(path);
+    if (url.hostname !== "kultura-doma.ru" && url.hostname !== "www.kultura-doma.ru") return "";
+    const fileName = decodeURIComponent(url.pathname.split("/").filter(Boolean).pop() ?? "");
+    if (!fileName) return "";
+    return `/images/imported-products/${fileName}`;
+  } catch {
+    return "";
+  }
+};
+
+const resolveInitialImage = (src: string): { url: string; stage: ImageStage } => {
+  const mirror = localMirrorForRemote(src);
+  if (mirror) return { url: assetUrl(mirror), stage: "mirror" };
+  return { url: assetUrl(src), stage: "direct" };
+};
+
 export function RemoteImage({
   src,
   fallbackSrc = "/images/image-placeholder.svg",
   onError,
   ...props
 }: RemoteImageProps) {
-  const [resolvedSrc, setResolvedSrc] = useState(() => assetUrl(src));
-  const [stage, setStage] = useState<"direct" | "fetch" | "fallback">("direct");
+  const initial = resolveInitialImage(src);
+  const [resolvedSrc, setResolvedSrc] = useState(initial.url);
+  const [stage, setStage] = useState<ImageStage>(initial.stage);
   const objectUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -24,8 +46,10 @@ export function RemoteImage({
       URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = null;
     }
-    setResolvedSrc(assetUrl(src));
-    setStage("direct");
+
+    const next = resolveInitialImage(src);
+    setResolvedSrc(next.url);
+    setStage(next.stage);
 
     return () => {
       if (objectUrlRef.current) {
@@ -69,6 +93,12 @@ export function RemoteImage({
   };
 
   const handleError = (event: SyntheticEvent<HTMLImageElement, Event>) => {
+    if (stage === "mirror") {
+      setStage("direct");
+      setResolvedSrc(assetUrl(src));
+      return;
+    }
+
     if (stage === "direct" && isRemoteAsset(src)) {
       setStage("fetch");
       void requestImageByUrl();
