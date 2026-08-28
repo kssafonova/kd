@@ -57,10 +57,12 @@ import "./checkout-kultura-v82.css";
 import "./checkout-v83.css";
 import "./checkout-bonus-v84.css";
 import "./checkout-kultura-v85.css";
+import "./truth-commerce.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
 import { HomeZaraTogasV86Enhancer } from "./home-zara-togas-v86-enhancer";
+import { TruthCommerceEnhancer } from "./truth-commerce-enhancer";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
@@ -75,6 +77,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CollectionPurchaseEnhancer />
         <ProfileAddressBookEnhancer />
         <HomeZaraTogasV86Enhancer />
+        <TruthCommerceEnhancer />
         {children}
       </body>
     </html>
