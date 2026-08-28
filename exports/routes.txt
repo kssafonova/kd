@@ -10,9 +10,11 @@
 /constructor/table-2/
 /constructor/table-7/
 /constructor/winter-garden-breakfast/
-/ready-solutions/table-1/
-/ready-solutions/table-2/
-/ready-solutions/table-7/
+/ready-solutions/flame-of-sea-depths/
+/ready-solutions/green-salon/
+/ready-solutions/red-lines/
+/ready-solutions/warm-brutalism/
+/ready-solutions/winter-fairy-tale/
 /editorial/scenario/blue-botanical-bedroom/
 /editorial/scenario/blue-hour-bedroom/
 /editorial/scenario/candlelight-supper/
