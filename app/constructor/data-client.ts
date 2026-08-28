@@ -8,9 +8,57 @@ export const EDITORIAL_EXPANSION_FILES=["kultura_doma_scenario_expansion_rules.c
 export const constructorDataUrl=(fileName:string)=>`${BASE_PATH}/data/${fileName}`;
 export const isConstructorCatalogProductVisible=(_productName:string)=>true;
 const filterCatalogRows=(rows:CatalogRow[])=>rows;
-const parseCsv=<T extends Record<string,string>>(source:string):T[]=>{const text=source.replace(/^\uFEFF/,"");const rows:string[][]=[];let row:string[]=[],cell="",quoted=false;for(let index=0;index<text.length;index+=1){const char=text[index];if(quoted){if(char==='"'&&text[index+1]==='"'){cell+='"';index+=1}else if(char==='"')quoted=false;else cell+=char;continue}if(char==='"')quoted=true;else if(char===","){row.push(cell);cell=""}else if(char==="\n"){row.push(cell.replace(/\r$/,""););if(row.some(value=>value!==""))rows.push(row);row=[];cell=""}else cell+=char}if(cell.length||row.length){row.push(cell.replace(/\r$/,""););if(row.some(value=>value!==""))rows.push(row)}const[headers=[],...body]=rows;return body.map(values=>{const result:Record<string,string>={};headers.forEach((header,index)=>{result[header.trim()]=values[index]??""});return result as T})};
-const loadCsv=async<T extends Record<string,string>>(fileName:string):Promise<T[]>=>{let response:Response;try{response=await fetch(constructorDataUrl(fileName),{cache:"no-store"})}catch{throw new Error(`Не удалось загрузить ${fileName}`)}if(!response.ok)throw new Error(`Не удалось загрузить ${fileName}: ${response.status}`);const rows=parseCsv<T>(await response.text());if(!rows.length)throw new Error(`CSV-файл ${fileName} пуст или не распознан`);return rows};
-const loadOptionalCsv=async<T extends Record<string,string>>(fileName:string):Promise<T[]>=>{try{const response=await fetch(constructorDataUrl(fileName),{cache:"force-cache"});if(!response.ok)return[];return parseCsv<T>(await response.text())}catch{return[]}};
+function parseCsv<T extends Record<string, string>>(source: string): T[] {
+  const text = source.replace(/^\uFEFF/, "");
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = "";
+  let quoted = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (quoted) {
+      if (char === '"' && text[index + 1] === '"') {
+        cell += '"';
+        index += 1;
+      } else if (char === '"') {
+        quoted = false;
+      } else {
+        cell += char;
+      }
+      continue;
+    }
+
+    if (char === '"') quoted = true;
+    else if (char === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (char === "\n") {
+      row.push(cell.replace(/\r$/, ""));
+      if (row.some((value) => value !== "")) rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += char;
+    }
+  }
+
+  if (cell.length || row.length) {
+    row.push(cell.replace(/\r$/, ""));
+    if (row.some((value) => value !== "")) rows.push(row);
+  }
+
+  const [headers = [], ...body] = rows;
+  return body.map((values) => {
+    const result: Record<string, string> = {};
+    headers.forEach((header, index) => {
+      result[header.trim()] = values[index] ?? "";
+    });
+    return result as T;
+  });
+}
+async function loadCsv<T extends Record<string, string>>(fileName: string): Promise<T[]> { return await (async()=>{let response:Response;try{response=await fetch(constructorDataUrl(fileName),{cache:"no-store"})}catch{throw new Error(`Не удалось загрузить ${fileName}`)}if(!response.ok)throw new Error(`Не удалось загрузить ${fileName}: ${response.status}`);const rows=parseCsv<T>(await response.text());if(!rows.length)throw new Error(`CSV-файл ${fileName} пуст или не распознан`);return rows})(); }
+async function loadOptionalCsv<T extends Record<string, string>>(fileName: string): Promise<T[]> { return await (async()=>{try{const response=await fetch(constructorDataUrl(fileName),{cache:"force-cache"});if(!response.ok)return[];return parseCsv<T>(await response.text())}catch{return[]}})(); }
 const norm=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
 const truthImage=(value?:string)=>{const source=String(value||"").trim();if(!source||source.toLowerCase()==="null")return"";if(/^https?:\/\//i.test(source))return source;if(source.startsWith("/kd/"))return source.slice(3);if(source.startsWith("/"))return source;return `/images/imported-products/${source}`};
 const xlsxProductType=(row:Record<string,string>)=>{const name=norm(row["Название товара"]),category=norm(row["Категория"]),subcategory=norm(row["Подкатегория"]);if(name.includes("тарелка глубок")||subcategory.includes("глубок"))return"deep_plate";if(name.includes("тарел"))return"plate";if(name.includes("салатник"))return"salad_bowl";if(name.includes("супниц"))return"tureen";if(name.includes("чайная пара"))return"tea_pair";if(name.includes("кофейная пара"))return"coffee_pair";if(name.includes("круж"))return"mug";if(name.includes("чайник"))return"teapot";if(name.includes("молочник")||name.includes("сливочник"))return"milk_jug";if(name.includes("сахарниц"))return"sugar_bowl";if(name.includes("скатерт"))return"tablecloth";if(name.includes("плейсмат"))return"placemat";if(name.includes("салфет"))return"napkin";if(name.includes("дорожк"))return"table_runner";if(name.includes("подушка"))return"decorative_pillow";if(name.includes("плед"))return"throw";if(name.includes("покрывал"))return"coverlet";if(name.includes("пододеяль"))return"duvet";if(name.includes("простын"))return"sheet";if(name.includes("наволоч"))return"pillowcase";if(name.includes("постель")||category.includes("постель"))return"bedding_set";if(name.includes("свеч"))return"candle";if(name.includes("диффуз"))return"diffuser";if(name.includes("ваза"))return"vase";if(name.includes("поднос"))return"tray";if(name.includes("корзин"))return"basket";if(name.includes("домино")||name.includes("шаш")||name.includes("крестики")||name.includes("игра"))return"board_game";if(name.includes("прибор")||name.includes("ложк")||name.includes("вилк")||name.includes("нож"))return"cutlery";if(name.includes("графин"))return"decanter";return"other"};
