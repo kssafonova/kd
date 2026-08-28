@@ -1,0 +1,53 @@
+# Site build diagnostics
+
+migration=failure
+dependencies=success
+build=failure
+
+## Migration runner
+Migration patch failures: apply-story-builder-v2.py, refine-story-builder-v2.py, redesign-home-reference.py, add-home-bedroom-feature.py, remove-editorial-tabs.py, add-editorial-scenario-navigation.py, add-constructor-home-cta.py, add-editorial-story-overlay-v1.py, redesign-home-magazine-v2.py, redesign-home-commerce-v3.py, redesign-home-v4.py, merge-home-traditions-collections-v1.py, refine-home-v7.py, refine-home-v8.py, refine-home-v9.py, refine-home-v11-video.py, refine-cart-controls-v19.py, redesign-commerce-zara-kultura-v41.py, enhance-ready-solutions-result-v59.py, enrich-ready-solutions-collections-v72.py
+Full log: /home/runner/work/kd/kd/migration-errors.txt
+
+## npm install
+npm warn deprecated tsconfck@3.1.6: unmaintained
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.hirok.io
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
+
+added 513 packages in 12s
+
+## Next build
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./app/constructor/data-client.ts:11:48
+Expression expected
+  [90m 9 |[0m ...[36mrt[0m [36mconst[0m isConstructorCatalogProductVisible=(_productName:string)=>[36mtrue[0m;
+  [90m10 |[0m ...[36mt[0m filterCatalogRows=(rows:[33mCatalogRow[0m[])=>rows;
+[31m[1m>[0m [90m11 |[0m ...[36mt[0m parseCsv=<[33mT[0m [36mextends[0m [33mRecord[0m<string,string>>(source:string):[33mT[0m[]=>{[36mconst[0m text=source.rep...
+  [90m   |[0m                                               [31m[1m^[0m
+  [90m12 |[0m ...[36mt[0m loadCsv=[36masync[0m<[33mT[0m [36mextends[0m [33mRecord[0m<string,string>>(fileName:string):[33mPromise[0m<[33mT[0m[]>=>{[36mlet[0m re...
+  [90m13 |[0m ...[36mt[0m loadOptionalCsv=[36masync[0m<[33mT[0m [36mextends[0m [33mRecord[0m<string,string>>(fileName:string):[33mPromise[0m<[33mT[0m[]>=..[36m.[0m
+  [90m14 |[0m ...[36mt[0m norm=(value:string)=>[33mString[0m(value||[32m""[0m).trim().toLocaleLowerCase([32m"ru-RU"[0m).replace([35m/ё/g[0m.[32m..[0m
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./app/constructor/data-client.ts [Client Component Browser]
+    ./app/constructor/ready-solutions-v54.tsx [Client Component Browser]
+    ./app/constructor/ready-solutions-v54.tsx [Server Component]
+    ./app/constructor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/constructor/data-client.ts [Client Component SSR]
+    ./app/constructor/ready-solutions-v54.tsx [Client Component SSR]
+    ./app/constructor/ready-solutions-v54.tsx [Server Component]
+    ./app/constructor/page.tsx [Server Component]
+
+
+    at <unknown> (./app/constructor/data-client.ts:11:48)
+
