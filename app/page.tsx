@@ -599,7 +599,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/images/constructor/bluegold2.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
   ];
   return <main className="home-v81">
-    <nav className="home81-nav" aria-label="Категории">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}<button type="button" onClick={()=>go("collections")}>Коллекции</button><a href={`${readyBase}/ready-solutions/`}>Готовые решения</a></nav>
+    <nav className="home81-nav" aria-label="Категории">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}<button type="button" onClick={()=>go("collections")}>Капсулы</button><a href={`${readyBase}/ready-solutions/`}>Готовые решения</a></nav>
     <section className="home81-hero"><picture><source media="(max-width:700px)" srcSet={assetUrl(hero.mobile)}/><img src={assetUrl(hero.image)} alt={hero.title}/></picture><div><small>{hero.eyebrow}</small><h1>{hero.title}</h1><p>{hero.text}</p><button type="button" onClick={hero.action}>{hero.cta}</button></div><nav>{heroSlides.map((item,index)=><button type="button" aria-label={item.title} className={index===active?"is-active":""} key={item.title} onClick={()=>setSlide(index)}/>)}</nav></section>
     <section className="home81-section home81-categories"><header><small>КАТАЛОГ</small><h2>Для каждой зоны дома</h2><p>Начните с категории или соберите пространство целиком.</p></header><div>{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}><span><img src={assetUrl(item.image)} alt={item.title}/></span><strong>{item.title}</strong><small>Смотреть</small></button>)}</div></section>
     <section className="home81-collections"><div className="home81-collections-hero"><img src={assetUrl(collectionStories[0]?.images[0]||"/images/editorial/caps_led.png")} alt="Коллекции Культура Дома"/><div><small>КОЛЛЕКЦИИ</small><h2>Истории, которые связывают предметы</h2><p>Цвет, орнамент и материал продолжаются от сервировки до текстиля и декора.</p><button type="button" onClick={()=>go("collections")}>Все коллекции</button></div></div><div className="home81-collection-rail">{collectionStories.map(item=><button type="button" key={item.id} onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[0])} alt={item.name}/><span>{item.name}</span></button>)}</div></section>
@@ -773,13 +773,13 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
 
   return <main className="collections-v52">
     <header className="collections-v52-intro">
-      <div><small>КУЛЬТУРА ДОМА · EDITORIAL</small><h1>Коллекции</h1></div>
+      <div><small>КУЛЬТУРА ДОМА · EDITORIAL</small><h1>Капсулы</h1></div>
       <p>Истории для дома, собранные вокруг цвета, орнамента и ритуала. Откройте коллекцию как журнал — и выбирайте предметы только тогда, когда они действительно нужны.</p>
     </header>
-    <section className="collections-v52-index" aria-label="Коллекции Культура Дома">
+    <section className="collections-v52-index" aria-label="Капсулы Культура Дома">
       {editorials.map(editorial=><article className="collections-v52-card" key={editorial.id}>
         <button className="collections-v52-card-media" type="button" onClick={()=>open(editorial)}><img src={assetUrl(editorial.images[0])} alt={editorial.name}/></button>
-        <div className="collections-v52-card-copy"><small>КОЛЛЕКЦИЯ</small><button type="button" onClick={()=>open(editorial)}><h2>{editorial.name}</h2></button><p>{editorial.lead}</p><div><span>{productCountLabel(editorial.productIds.length)}</span><strong>{collectionPrice(editorial)?`от ${fmt(collectionPrice(editorial))}`:""}</strong></div></div>
+        <div className="collections-v52-card-copy"><small>КАПСУЛА</small><button type="button" onClick={()=>open(editorial)}><h2>{editorial.name}</h2></button><p>{editorial.lead}</p><div><span>{productCountLabel(editorial.productIds.length)}</span><strong>{collectionPrice(editorial)?`от ${fmt(collectionPrice(editorial))}`:""}</strong></div></div>
       </article>)}
     </section>
 
@@ -788,7 +788,7 @@ function CollectionsView({ onProduct,onQuick,favorite,favorites,buyBundle,initia
         <header className="v52-story-topbar"><button type="button" onClick={close}>← Коллекции</button><strong>КУЛЬТУРА ДОМА</strong><button type="button" onClick={close} aria-label="Закрыть">×</button></header>
         <div className="v52-story-columns">
           <aside className="v52-story-editorial" aria-label="История коллекции">
-            <div className="v52-story-title"><small>КОЛЛЕКЦИЯ</small><h1>{active.name}</h1><p>{active.lead}</p><span>{productCountLabel(items.length)}</span></div>
+            <div className="v52-story-title"><small>КАПСУЛА</small><h1>{active.name}</h1><p>{active.lead}</p><span>{productCountLabel(items.length)}</span></div>
             {active.images.map((image,index)=><figure key={`${active.id}-${image}`}><img src={assetUrl(image)} alt={`${active.name}, кадр ${index+1}`}/>{index===0&&<figcaption>{active.detail}</figcaption>}</figure>)}
             <div className="v52-story-note"><small>О КОЛЛЕКЦИИ</small><p>{active.description}</p><a className="v52-buy-story v58-ready-solution-link" href={readySolutionHref}>СОБРАТЬ ГОТОВОЕ РЕШЕНИЕ →</a></div>
           </aside>
@@ -1022,7 +1022,7 @@ function Menu({ current, setCurrent, close, go, openCatalog }: { current:string;
 
     <section className="premium-menu-editorial" aria-label="Editorial и готовые решения">
       <small>EDITORIAL</small>
-      <button type="button" onClick={()=>go("collections")}><span>КОЛЛЕКЦИИ</span><Icon name="arrow"/></button>
+      <button type="button" onClick={()=>go("collections")}><span>КАПСУЛЫ</span><Icon name="arrow"/></button>
       <a href={constructorHref} onClick={close}><span>ГОТОВЫЕ РЕШЕНИЯ</span><Icon name="arrow"/></a>
     </section>
 
