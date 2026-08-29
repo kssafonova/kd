@@ -2,5 +2,5 @@
 2:I[73053,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0-~o-8e0ul56t.js","/kd/_next/static/chunks/0bgs0tl1_dcgx.js","/kd/_next/static/chunks/0ecc-a6xjisn9.js"],"ReadySolutionWizard"]
 3:I[97367,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0-~o-8e0ul56t.js"],"OutletBoundary"]
 4:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"winter-fairy-tale"}],[["$","script","script-0",{"src":"/kd/_next/static/chunks/0bgs0tl1_dcgx.js","async":true}],["$","script","script-1",{"src":"/kd/_next/static/chunks/0ecc-a6xjisn9.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"Pc0OhWcSetoOcbKMjZ2Lp"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"winter-fairy-tale"}],[["$","script","script-0",{"src":"/kd/_next/static/chunks/0bgs0tl1_dcgx.js","async":true}],["$","script","script-1",{"src":"/kd/_next/static/chunks/0ecc-a6xjisn9.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"drW2YNhr0nqMfqNpqp6bQ"}
 5:null
