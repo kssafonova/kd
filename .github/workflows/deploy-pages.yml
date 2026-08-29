@@ -40,7 +40,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Legacy migration patches are stale for the materialized storefront; discarding partial mutations and building the committed source."
+          echo "Catalog migration failed; discarding partial mutations and building the committed source."
           git reset --hard HEAD
           rm -f migration-errors.txt migration-diagnostics.txt
 
@@ -138,7 +138,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- app/page.tsx app/globals.css app/catalog-data.ts app/ready-solutions public/images/imported-products
+          git add -- app/page.tsx app/globals.css app/catalog-data.ts app/ready-solutions public/images/imported-products public/data/catalog_xlsx_full.csv scripts/product-source/all_site_products_grouped.csv
           while IFS= read -r name; do
             git add -A -- "$name"
           done < /tmp/pages-output-names
