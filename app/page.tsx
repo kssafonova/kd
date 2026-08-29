@@ -235,7 +235,7 @@ let products: Product[] = baseProducts.map(base=>{
 
 type XlsxProductEntityRow = Record<string,string>;
 let xlsxCatalogLoaded = false;
-const XLSX_ENTITY_FILES = Array.from({length:5},(_,index)=>`kultura_doma_product_entities_xlsx_${index+1}.csv`);
+const XLSX_ENTITY_FILES:string[] = []; // canonical data is loaded from the compressed table snapshot below
 const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
   const text=source.replace(/^\uFEFF/,"");
   const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;
@@ -283,25 +283,39 @@ async function loadXlsxCatalogIntoProducts(){
   if(!rows.length)return;
   const grouped=new Map<string,XlsxProductEntityRow[]>();
   rows.forEach(row=>{const key=`${row["Артикул"]}|${row["Название товара"]}`;const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
-  const existingByArticle=new Map(products.map(product=>[String(product.article||"").trim(),product]));
+  // The canonical table may reuse one article for distinct named products, so article+name is the storefront entity key.
+  // CANONICAL_TABLE_SYNC_V85
   const incoming:Product[]=[];
   grouped.forEach((variants)=>{
     const first=variants[0]; const article=String(first["Артикул"]||"").trim(); const name=String(first["Название товара"]||"").trim();
-    const existing=existingByArticle.get(article);
+    const existing=products.find(product=>String(product.article||"").trim()===article&&String(product.name||"").trim()===name);
     const id=existing?.id??entityId(article,name);
-    const price=existing?.price??0;
+    const tablePrice=Number(String(first["Цена"]||"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
+    const price=tablePrice>0?tablePrice:(existing?.price??0);
+    const tableOldPrice=Number(String(first["Старая цена"]||"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
     const skus:CatalogSku[]=variants.map((row,index)=>{
       const images=[row["Превью фотография товара"],row["Вторая фотография товара в скролле"],row["Третья фотография в стролле"]].map(value=>String(value||"").trim()).filter(value=>value&&value.toLowerCase()!=="null");
       const color=String(row["Цвет"]||"").trim()||"Без цвета";
       const size=String(row["Размер"]||row["Объем"]||row["Диаметр"]||"").trim()||"Единый размер";
-      return {id:`xlsx-${id}-${index}`,article,productId:id,color,colorHex:entityColorHex(color),size,height:String(row["Высота"]||"").trim()||undefined,width:String(row["Ширина"]||"").trim()||undefined,diameter:String(row["Диаметр"]||"").trim()||undefined,packageInfo:String(row["Комплектация / Информация о размере"]||"").trim()||undefined,material:String(row["Материал"]||"").trim(),composition:String(row["Состав"]||"").trim(),details:String(row["Детали"]||"").trim()||undefined,collection:String(row["Коллекция"]||"").trim()||undefined,price,image:images[0]||"/images/image-placeholder.svg",gallery:images.slice(1),available:true};
+      return {id:`xlsx-${id}-${index}`,article,productId:id,color,colorHex:entityColorHex(color),size,height:String(row["Высота"]||"").trim()||undefined,width:String(row["Ширина"]||"").trim()||undefined,diameter:String(row["Диаметр"]||"").trim()||undefined,packageInfo:String(row["Комплектация / Информация о размере"]||"").trim()||undefined,material:String(row["Материал"]||"").trim(),composition:String(row["Состав"]||"").trim(),details:String(row["Детали"]||"").trim()||undefined,collection:String(row["Коллекция"]||"").trim()||undefined,price:Number(String(row["Цена"]||price).replace(/[^\d.,-]/g,"").replace(",","."))||price,image:images[0]||"/images/image-placeholder.svg",gallery:images.slice(1),available:true};
     });
     const firstSku=skus[0];
     const colorRows=Array.from(new Map(skus.map(item=>[item.color,item])).values());
-    incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))});
+    incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))});
   });
-  const incomingById=new Map(incoming.map(item=>[item.id,item]));
-  products=[...products.map(item=>incomingById.get(item.id)??item),...incoming.filter(item=>!products.some(current=>current.id===item.id))];
+  products=incoming;
+  const tableCollectionNames=Array.from(new Set(rows.map(row=>String(row["Коллекция"]||"").trim()).filter(Boolean)));
+  const editorialKey=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
+  const previousEditorials=new Map(editorials.map(item=>[editorialKey(item.name),item]));
+  editorials=tableCollectionNames.map((collection,index)=>{
+    const productIds=products.filter(product=>product.skus?.some(sku=>String(sku.collection||"").trim()===collection)).map(product=>product.id);
+    const productImages=Array.from(new Set(products.filter(product=>productIds.includes(product.id)).flatMap(product=>[product.image,...(product.gallery??[])])).values()).filter(Boolean).slice(0,3);
+    const previous=previousEditorials.get(editorialKey(collection));
+    const next:Editorial=previous
+      ? {...previous,name:collection,kind:"КОЛЛЕКЦИЯ",productIds,images:previous.images?.length?previous.images:productImages}
+      : {id:`table-collection-${index+1}`,name:collection,kind:"КОЛЛЕКЦИЯ",lead:"Предметы коллекции, собранные в единую историю для дома.",detail:"Откройте коллекцию и выберите предметы, которые работают вместе.",description:`Коллекция «${collection}» по актуальной товарной таблице Культура Дома.`,images:productImages.length?productImages:["/images/image-placeholder.svg"],productIds};
+    return next;
+  });
 }
 
 const slides:Slide[] = [
@@ -397,7 +411,7 @@ products.push(...collectionEditorialProducts.filter(item=>!REMOVED_PRODUCT_IDS.h
 type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦИЯ"; lead:string; detail:string; description:string; images:string[]; productIds:number[] };
 // COLLECTIONS_REDESIGN_V65_INDEX
 const collectionProductIds=(collection:string)=>collectionEditorialProducts.filter(item=>!REMOVED_PRODUCT_IDS.has(item.id)&&item.skus?.some(sku=>sku.collection===collection)).map(item=>item.id);
-const editorials:Editorial[] = [
+let editorials:Editorial[] = [
   { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/images/editorial/caps_led.png","/images/editorial/caps_led_podyshka.png","/images/editorial/caps_led_serviz.png"], productIds:[2000,2001,2003,2004,2010] },
   { id:"luna", name:"Лунная сказка", kind:"КОЛЛЕКЦИЯ", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю.", description:"Коллекция о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_serviz.png"], productIds:[4,10,5,6,3] },
   { id:"echo", name:"Эхо", kind:"КОЛЛЕКЦИЯ", lead:"Светлый фарфор и тонкий рельеф для спокойной современной сервировки.", detail:"Эхо строится на белом костяном фарфоре и мягком повторении формы.", description:"Чистая сервировка, где декоративность проявляется через пропорции, рельеф и свет.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a73285a37b_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a50b12627f2e_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a9a9ef4_big.jpg"], productIds:collectionProductIds("Эхо") },
