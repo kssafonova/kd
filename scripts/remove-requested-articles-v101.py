@@ -16,6 +16,8 @@ EXCLUDED_ARTICLES = {
     "KD-PD-11435",
     "KD-PD-8986",
     "KD-PD-10451",
+    "KD-PD-11517",
+    "KD-PD-11433",
 }
 
 for path, delimiter in TARGETS:
@@ -46,6 +48,6 @@ for path, delimiter in TARGETS:
         writer.writeheader()
         writer.writerows(kept)
     print(
-        f"// CATALOG_CORRECTIONS_V104: {path.relative_to(ROOT)} corrected Echo tea-pair article in {corrected} row(s); "
+        f"// CATALOG_CORRECTIONS_V105: {path.relative_to(ROOT)} corrected Echo tea-pair article in {corrected} row(s); "
         f"removed {removed} excluded row(s); {len(kept)} rows remain"
     )
