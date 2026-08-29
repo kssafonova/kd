@@ -420,10 +420,11 @@ let editorials:Editorial[] = [
   { id:"phoenix", name:"Феникс", kind:"КОЛЛЕКЦИЯ", lead:"Тёплые акценты и выразительный орнамент для дома с характером.", detail:"Феникс объединяет сервировку и атмосферный декор в единую историю.", description:"Выразительная коллекция с сильным мотивом и спокойной базой.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/69b3cde6c50d3_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a2034e6d7d40_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f7f739b7a1_big.jpg"], productIds:collectionProductIds("Феникс") },
 ];
 
-export default function Home() {
+export default function Home({initialView="home",initialCatalogCategory="Все товары"}:{initialView?:View;initialCatalogCategory?:string}={}) {
   const [,setXlsxCatalogRevision]=useState(0);
   useEffect(()=>{loadXlsxCatalogIntoProducts().then(()=>setXlsxCatalogRevision(value=>value+1))},[]);
-  const [view, setView] = useState<View>("home");
+  useEffect(()=>setCatalogCategory(initialCatalogCategory),[initialCatalogCategory]);
+  const [view, setView] = useState<View>(initialView);
   const [menu, setMenu] = useState(false);
   const [menuSection, setMenuSection] = useState("");
   const [search, setSearch] = useState(false);
@@ -435,7 +436,7 @@ export default function Home() {
   const [plpAdded, setPlpAdded] = useState<CartItem | null>(null);
   const [selected, setSelected] = useState<Product>(products[1]);
   const [editorial, setEditorial] = useState<Editorial>(editorials[0]);
-  const [catalogCategory,setCatalogCategory]=useState("Все товары");
+  const [catalogCategory,setCatalogCategory]=useState(initialCatalogCategory);
   const [sizeSheet, setSizeSheet] = useState(false);
   const [size, setSize] = useState("Евро 200×220");
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -492,7 +493,7 @@ export default function Home() {
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
   const go = (next: View) => { setView(next); setMenu(false); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const openCatalog=(category="Все товары")=>{setCatalogCategory(category);go("catalog")};
+  const openCatalog=(category="Все товары")=>{setCatalogCategory(category);go("catalog");const base=process.env.NEXT_PUBLIC_BASE_PATH??"";window.history.pushState({},"",`${base}/catalog/?category=${encodeURIComponent(category)}`)};
   const add = (product: Product, chosenSize = size, quantity = product.quantity ?? 1, openDrawer = true) => {
     const selectedVariant = product.colorVariants?.find((variant) => variant.name === product.selectedColor) ?? product.colorVariants?.[0];
     const selectedSku=findProductSku(product,product.selectedColor,chosenSize);
@@ -628,17 +629,22 @@ function CatalogView({ initialCategory, onFilter, onAdd, onProduct, favorite, fa
   const [sort, setSort] = useState("По умолчанию");
   const [category,setCategory]=useState(initialCategory);
   useEffect(()=>setCategory(initialCategory),[initialCategory]);
-  const categoryProductIds:Record<string,number[]>={
-    "Все товары":products.map(product=>product.id),
-    "Посуда и сервировка":[5,10,2001,2004,2010],
-    "Постельное бельё":[2,4,8,11,12],
-    "Пледы и подушки":[3,6,7,2000,2003],
-    "Декор для дома":products.filter(product=>/ваза|свеч|диффуз|декор|подуш|плед/i.test(product.name)).map(product=>product.id),
-    "Свечи и диффузоры":products.filter(product=>/свеч|диффуз/i.test(product.name)).map(product=>product.id),
-    "Для ванной":products.filter(product=>/ванн|полотен|халат/i.test(`${product.name} ${product.note}`)).map(product=>product.id),
-    "Домашняя одежда":products.filter(product=>/халат|пижам|одежд/i.test(`${product.name} ${product.note}`)).map(product=>product.id),
-    "Столовый текстиль":products.filter(product=>/скатерт|салфет|плейсмат|дорожк/i.test(product.name)).map(product=>product.id),
+  const catalogText=(product:Product)=>`${product.name} ${product.note}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
+  const categoryMatchers:Record<string,RegExp>={
+    "Посуда и сервировка":/(тарел|блюд|чаш|круж|бокал|стакан|графин|салатник|сервиз|чайная пара|кофейн|молочник|супниц|прибор)/,
+    "Постельное бельё":/(постель|пододеяль|простын|наволоч)/,
+    "Пледы и подушки":/(плед|подуш)/,
+    "Декор для дома":/(ваза|декор|скульп|панно|подсвеч)/,
+    "Домашняя одежда":/(халат|пижам|сороч|домашн.*одежд)/,
+    "Свечи и диффузоры":/(свеч|диффуз|аромат)/,
+    "Для ванной":/(полотен|ванн)/,
+    "Столовый текстиль":/(скатерт|салфет|раннер|плейсмат|дорожк.*стол)/,
   };
+  const categoryProductIds:Record<string,number[]>=Object.fromEntries([
+    ["Все товары",products.map(item=>item.id)],
+    ...Object.entries(categoryMatchers).map(([key,matcher])=>[key,products.filter(item=>matcher.test(catalogText(item))).map(item=>item.id)]),
+  ]);
+  // DYNAMIC_CATALOG_NAV_V87
   const list = products.filter(product=>(categoryProductIds[category]??[]).includes(product.id)).sort((a,b)=>sort === "Сначала дешевле" ? a.price-b.price : sort === "Сначала дороже" ? b.price-a.price : a.id-b.id);
   return <div className="catalog page"><div className="crumbs">Главная / Каталог / {category}</div><div className="title-line"><h1>{category}</h1><span>{list.length} {list.length===1?"товар":list.length>=2&&list.length<=4?"товара":"товаров"}</span></div>
     <div className="tabs">{["Все товары","Посуда и сервировка","Постельное бельё","Пледы и подушки","Декор для дома","Свечи и диффузоры","Для ванной","Столовый текстиль"].map(x=><button key={x} className={category===x?"active":""} onClick={()=>setCategory(x)}>{x}</button>)}</div>
