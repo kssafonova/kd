@@ -6,6 +6,7 @@ root = Path(__file__).resolve().parents[1]
 scripts = [
     root / "scripts" / "sync-canonical-table-storefront-v85.py",
     root / "scripts" / "fix-catalog-navigation-v87.py",
+    root / "scripts" / "sync-full-xlsx-catalog-v88.py",
 ]
 page = root / "app" / "page.tsx"
 output: list[str] = []
