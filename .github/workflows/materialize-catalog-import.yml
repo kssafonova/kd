@@ -3,7 +3,7 @@ name: Finalize catalog refresh
 on:
   push:
     paths:
-      - data/.catalog_import_ready
+      - data/catalog-refresh-trigger.txt
 
 permissions:
   contents: write
@@ -15,96 +15,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Finalize storefront catalog
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          page_path = Path('app/page.tsx')
-          page = page_path.read_text(encoding='utf-8')
-
-          old = '''  const chosen = variants[colorIndex];
-  const chosenSku=findProductSku(product,chosen.name);
-  const chosenProduct = { ...product, image: chosenSku?.image??chosen.image, gallery:chosenSku?.gallery??chosen.gallery??product.gallery, position: chosen.position ?? product.position, selectedColor: chosen.name, selectedSize:chosenSku?.size, selectedSkuId:chosenSku?.id };
-  const discount=discountOf(product);
-  const hasMultipleSizes=Boolean(product.skus&&new Set(product.skus.map(item=>item.size)).size>1);
-  const knownPrice=priceKnown(product.price);'''
-          new = '''  const chosen = variants[colorIndex];
-  const chosenSku=findProductSku(product,chosen.name);
-  const primarySkus=(product.skus??[]).filter(item=>skuPrimaryMatches(product,item,chosen.name));
-  const cardSkus=primarySkus.length?primarySkus:(product.skus??[]);
-  const pricedCardSkus=cardSkus.filter(item=>priceKnown(item.price));
-  const cardMinSku=pricedCardSkus.reduce<CatalogSku|undefined>((best,item)=>!best||item.price<best.price?item:best,undefined);
-  const cardPrice=cardMinSku?.price??product.price;
-  const cardOldPrice=Number(asVariantSku(cardMinSku)?.oldPrice)||0;
-  const showFromPrice=new Set(cardSkus.map(item=>item.size)).size>1&&new Set(pricedCardSkus.map(item=>item.price)).size>1;
-  const discount=cardOldPrice>cardPrice?Math.round((1-cardPrice/cardOldPrice)*100):0;
-  const knownPrice=priceKnown(cardPrice);
-  const chosenProduct = { ...product, price:cardPrice, oldPrice:cardOldPrice>cardPrice?cardOldPrice:undefined, image: chosenSku?.image??chosen.image, gallery:chosenSku?.gallery??chosen.gallery??product.gallery, position: chosen.position ?? product.position, selectedColor: chosen.name, selectedSize:chosenSku?.size, selectedSkuId:chosenSku?.id };'''
-          if old not in page:
-              raise RuntimeError('ProductCard pricing block not found')
-          page = page.replace(old, new, 1)
-
-          old_price = '''<span className={`price ${discount?"sale-price":""}`}>{knownPrice?<>{hasMultipleSizes?"от ":""}{fmt(product.price)} {product.oldPrice&&<><del>{hasMultipleSizes?"от ":""}{fmt(product.oldPrice)}</del><mark>−{discount}%</mark></>}</>:"Цена уточняется"}</span>'''
-          new_price = '''<span className={`price ${discount?"sale-price":""}`}>{knownPrice?<>{showFromPrice?"от ":""}{fmt(cardPrice)} {cardOldPrice>cardPrice&&<><del>{showFromPrice?"от ":""}{fmt(cardOldPrice)}</del><mark>−{discount}%</mark></>}</>:"Цена уточняется"}</span>'''
-          if old_price not in page:
-              raise RuntimeError('ProductCard price markup not found')
-          page = page.replace(old_price, new_price, 1)
-          page_path.write_text(page, encoding='utf-8')
-
-          Path('app/catalog-data-base.ts').write_text('''export type CatalogSku = {
-  id:string;
-  article:string;
-  productId:number;
-  color:string;
-  colorHex:string;
-  size:string;
-  height?:string;
-  width?:string;
-  diameter?:string;
-  packageInfo?:string;
-  material:string;
-  composition:string;
-  details?:string;
-  collection?:string;
-  capsule?:string;
-  price:number;
-  image:string;
-  gallery:string[];
-  available?:boolean;
-};
-
-export type CatalogProductOverride = {
-  id:number;
-  article:string;
-  name:string;
-  note:string;
-  skus:CatalogSku[];
-};
-
-// The storefront catalog is sourced only from public/data/catalog_xlsx_full.csv.
-export const catalogProductOverrides:Record<number,CatalogProductOverride> = {};
-''', encoding='utf-8')
-
-          Path('app/catalog-data.ts').write_text('''export type { CatalogSku, CatalogProductOverride } from "./catalog-data-base";
-import { catalogProductOverrides as baseOverrides, type CatalogSku } from "./catalog-data-base";
-
-// No legacy hardcoded products: runtime products are loaded from the refreshed CSV catalog.
-export const catalogProductOverrides = baseOverrides;
-
-export const catalogSkuById:Record<string,CatalogSku> = Object.fromEntries(
-  Object.values(catalogProductOverrides).flatMap((product) => product.skus).map((item) => [item.id, item])
-);
-''', encoding='utf-8')
-          PY
-      - name: Commit final cleanup
+      - name: Apply final storefront catalog cleanup
+        run: python scripts/finalize_catalog_refresh.py
+      - name: Commit cleanup
         shell: bash
         run: |
           git config user.name "catalog-import-bot"
           git config user.email "catalog-import-bot@users.noreply.github.com"
-          git add app/page.tsx app/catalog-data.ts app/catalog-data-base.ts
-          git rm -f .github/workflows/materialize-catalog-import.yml data/.catalog_raw_import.b64 data/.catalog_runtime_import.b64 data/.catalog_import_ready
-          git commit -m "Finalize CSV-only catalog and remove legacy products"
+          git add app/page.tsx
+          git rm -f scripts/finalize_catalog_refresh.py .github/workflows/materialize-catalog-import.yml data/catalog-refresh-trigger.txt data/.catalog_raw_import.b64 data/.catalog_runtime_import.b64 || true
+          git commit -m "Finalize CSV-only catalog storefront"
           git pull --rebase origin main
           git push origin HEAD:main
