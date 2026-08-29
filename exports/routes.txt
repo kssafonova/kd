@@ -10,7 +10,6 @@
 /constructor/table-2/
 /constructor/table-7/
 /constructor/winter-garden-breakfast/
-/ready-solutions/flame-of-sea-depths/
 /ready-solutions/green-salon/
 /ready-solutions/red-lines/
 /ready-solutions/warm-brutalism/
