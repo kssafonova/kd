@@ -20,10 +20,10 @@ export type TableSolution = {
 };
 
 /**
- * Static routes for the five ready solutions defined by the XLSX source of truth.
- * Product composition itself is loaded from catalog_truth.json.gz.b64 at runtime,
- * so this file is intentionally routing/metadata only and does not duplicate
- * required/optional product relationships from the spreadsheet.
+ * Ready solutions from the canonical project table.
+ * Product composition is resolved at runtime from catalog_truth.json.gz.b64
+ * using required:/optional: relation tags, so the metadata here only defines
+ * public routes and presentation.
  */
 export const TABLE_SOLUTIONS: readonly TableSolution[] = [
   {
@@ -32,8 +32,9 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     space: "Кухня и столовая",
     name: "Зеленый салон",
     sourceName: "Зеленый салон",
-    previewFile: "",
-    scrollFile: "",
+    previewFile: "green.jpeg",
+    scrollFile: "green2.jpeg",
+    heroImage: "/images/constructor/green.jpeg",
     collections: [],
     productNames: [],
     includeCollectionProducts: false,
@@ -44,8 +45,9 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     space: "Кухня и столовая",
     name: "Красные линии",
     sourceName: "Красные линии",
-    previewFile: "",
-    scrollFile: "",
+    previewFile: "redline1.jpeg",
+    scrollFile: "redline2.jpeg",
+    heroImage: "/images/constructor/redline1.jpeg",
     collections: [],
     productNames: [],
     includeCollectionProducts: false,
@@ -63,25 +65,14 @@ export const TABLE_SOLUTIONS: readonly TableSolution[] = [
     includeCollectionProducts: false,
   },
   {
-    id: "flame-of-sea-depths",
-    sourceId: 4,
-    space: "Интерьер",
-    name: "Пламя морских глубин",
-    sourceName: "Пламя морских глубин",
-    previewFile: "",
-    scrollFile: "",
-    collections: [],
-    productNames: [],
-    includeCollectionProducts: false,
-  },
-  {
     id: "warm-brutalism",
-    sourceId: 5,
+    sourceId: 4,
     space: "Интерьер",
     name: "Теплый брутализм",
     sourceName: "Теплый брутализм",
-    previewFile: "",
-    scrollFile: "",
+    previewFile: "bluegold.jpeg",
+    scrollFile: "bluegold2.jpeg",
+    heroImage: "/images/constructor/bluegold.jpeg",
     collections: [],
     productNames: [],
     includeCollectionProducts: false,
