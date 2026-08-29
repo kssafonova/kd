@@ -34,7 +34,6 @@ type Product = {
   capsule?: string;
   readySolution?: string;
   optionalReadySolution?: string;
-  offerId?: string;
 };
 
 type ColorVariant = { name: string; hex: string; image: string; gallery?: string[]; position?: string };
@@ -242,7 +241,7 @@ let products: Product[] = baseProducts.map(base=>{
 
 type XlsxProductEntityRow = Record<string,string>;
 let xlsxCatalogLoaded = false;
-const XLSX_ENTITY_FILES:string[] = ["catalog_xlsx_full.csv"]; // FULL_XLSX_CATALOG_V88
+const XLSX_ENTITY_FILES:string[] = ["catalog_xlsx_full.csv"]; // FULL_CSV_CATALOG_V89
 const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
   const text=source.replace(/^\uFEFF/,"");
   const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;
@@ -298,7 +297,7 @@ async function loadXlsxCatalogIntoProducts(){
     const existing=products.find(product=>String(product.article||"").trim()===article);
     const id=existing?.id??entityId(article,name);
     const tablePrice=Number(String(first["Цена"]||"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
-    const price=tablePrice>0?tablePrice:(existing?.price??0);
+    const price=tablePrice;
     const tableOldPrice=Number(String(first["Старая цена"]||"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
     const skus:CatalogSku[]=variants.map((row,index)=>{
       const images=[row["Превью фотография товара"],row["Вторая фотография товара в скролле"],row["Третья фотография в стролле"]].map(value=>String(value||"").trim()).filter(value=>value&&value.toLowerCase()!=="null");
@@ -308,7 +307,7 @@ async function loadXlsxCatalogIntoProducts(){
     });
     const firstSku=skus[0];
     const colorRows=Array.from(new Map(skus.map(item=>[item.color,item])).values());
-    incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery})),category:String(first["Категория"]||"").trim()||undefined,subcategory:String(first["Подкатегория"]||"").trim()||undefined,collection:String(first["Коллекция"]||"").trim()||undefined,capsule:String(first["Капсула"]||"").trim()||undefined,readySolution:String(first["Товар входит в готовое решение"]||"").trim()||undefined,optionalReadySolution:String(first["Опционально входит в готовое решение"]||"").trim()||undefined,offerId:String(first["Offer ID"]||"").trim()||undefined});
+    incoming.push({id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery})),category:String(first["Категория"]||"").trim()||undefined,subcategory:String(first["Подкатегория"]||"").trim()||undefined,collection:String(first["Коллекция"]||"").trim()||undefined,capsule:String(first["Капсула"]||"").trim()||undefined,readySolution:String(first["Товар входит в готовое решение"]||"").trim()||undefined,optionalReadySolution:String(first["Опционально входит в готовое решение"]||"").trim()||undefined});
   });
   products=incoming;
   const tableCollectionNames=Array.from(new Set(rows.map(row=>String(row["Коллекция"]||"").trim()).filter(Boolean)));
