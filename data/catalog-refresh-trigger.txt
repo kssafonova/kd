@@ -1,1 +1,0 @@
-finalize csv-only catalog
