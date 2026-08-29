@@ -3,20 +3,27 @@ import subprocess
 import sys
 
 root = Path(__file__).resolve().parents[1]
-script = root / "scripts" / "sync-canonical-table-storefront-v85.py"
+scripts = [
+    root / "scripts" / "sync-canonical-table-storefront-v85.py",
+    root / "scripts" / "fix-catalog-navigation-v87.py",
+]
 page = root / "app" / "page.tsx"
+output: list[str] = []
 
-proc = subprocess.run(
-    [sys.executable, str(script)],
-    cwd=root,
-    text=True,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.STDOUT,
-)
-if proc.returncode != 0:
-    (root / "migration-errors.txt").write_text(proc.stdout, encoding="utf-8")
-    print(proc.stdout)
-    sys.exit(proc.returncode)
+for script in scripts:
+    proc = subprocess.run(
+        [sys.executable, str(script)],
+        cwd=root,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    output.append(f"$ {script.name}\n{proc.stdout}")
+    if proc.returncode != 0:
+        diagnostics = "\n".join(output)
+        (root / "migration-errors.txt").write_text(diagnostics, encoding="utf-8")
+        print(diagnostics)
+        sys.exit(proc.returncode)
 
 
 def replace_once(text: str, old: str, new: str, label: str) -> str:
@@ -48,6 +55,7 @@ text = replace_once(
 )
 page.write_text(text, encoding="utf-8")
 
-message = proc.stdout + "\nArticle-primary storefront grouping applied\n"
-(root / "migration-errors.txt").write_text(message, encoding="utf-8")
-print(message)
+output.append("Article-primary storefront grouping applied\n")
+diagnostics = "\n".join(output)
+(root / "migration-errors.txt").write_text(diagnostics, encoding="utf-8")
+print(diagnostics)
