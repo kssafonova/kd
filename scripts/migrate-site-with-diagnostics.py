@@ -4,7 +4,8 @@ import sys
 
 root = Path(__file__).resolve().parents[1]
 scripts = [
-    root / "scripts" / "sync-full-xlsx-catalog-v88.py",
+    root / "scripts" / "materialize-grouped-source-v97.py",
+    root / "scripts" / "sync-grouped-catalog-v97.py",
     root / "scripts" / "apply-grouped-catalog-v93.py",
     root / "scripts" / "apply-grouped-catalog-v94.py",
     root / "scripts" / "apply-grouped-catalog-v95.py",
