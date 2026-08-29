@@ -98,6 +98,7 @@ function getProductSizeOptions(product:Product,primary?:string,secondaryColor?:s
 function isProductSizeAvailable(product:Product,primary:string|undefined,size:string,secondaryColor?:string){const rows=product.skus?.filter(item=>skuPrimaryMatches(product,item,primary)&&(!secondaryColor||asVariantSku(item)?.sourceColor===secondaryColor)&&item.size===size);if(!rows?.length)return true;return rows.some(item=>item.available!==false)}
 function getUnavailableProductSizes(product:Product,primary:string|undefined,sizes:readonly (readonly [string,number])[],secondaryColor?:string){return sizes.filter(([name])=>!isProductSizeAvailable(product,primary,name,secondaryColor)).map(([name])=>name)}
 
+// GROUPED_CATALOG_V98
 // GROUPED_CATALOG_V96
 function getProductImages(product:Product){
   if(product.skus?.length){
@@ -292,7 +293,7 @@ async function loadXlsxCatalogIntoProducts(){
   const chunks=await Promise.all(XLSX_ENTITY_FILES.map(async fileName=>{
     try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
   }));
-  const rows=chunks.flat().map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as XlsxProductEntityRow).filter(row=>row["Артикул"]&&row["Название товара"]&&row["Категория"]&&row["Подкатегория"]);
+  const rows=chunks.flat().map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as XlsxProductEntityRow).filter(row=>row["Артикул"]&&row["Название товара"]);
   if(!rows.length)return;
   const grouped=new Map<string,XlsxProductEntityRow[]>();
   rows.forEach(row=>{const key=String(row["Артикул"]||"").trim();const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
