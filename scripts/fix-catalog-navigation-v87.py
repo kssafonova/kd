@@ -1,15 +1,15 @@
 from pathlib import Path
+import re
 
 PAGE = Path(__file__).resolve().parents[1] / "app" / "page.tsx"
 MARKER = "// DYNAMIC_CATALOG_NAV_V87"
 
 
-def replace_once(text: str, old: str, new: str, label: str) -> str:
-    if new in text:
-        return text
-    if old not in text:
+def sub_once(text: str, pattern: str, replacement: str, label: str) -> str:
+    next_text, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+    if count != 1:
         raise SystemExit(f"{label}: source fragment not found")
-    return text.replace(old, new, 1)
+    return next_text
 
 
 text = PAGE.read_text(encoding="utf-8")
@@ -17,39 +17,32 @@ if MARKER in text:
     print("Catalog navigation v87 already applied")
     raise SystemExit(0)
 
-text = replace_once(
+text = sub_once(
     text,
-    'export default function Home() {\n  const [view, setView] = useState<View>("home");',
-    'export default function Home({initialView="home",initialCatalogCategory="Все товары"}:{initialView?:View;initialCatalogCategory?:string}={}) {\n  const [view, setView] = useState<View>(initialView);',
-    "home initial view",
+    r'export default function Home\(\) \{',
+    'export default function Home({initialView="home",initialCatalogCategory="Все товары"}:{initialView?:View;initialCatalogCategory?:string}={}) {',
+    "home props",
 )
-text = replace_once(
+text = sub_once(
     text,
-    '  const [catalogCategory,setCatalogCategory]=useState("Все товары");',
-    '  const [catalogCategory,setCatalogCategory]=useState(initialCatalogCategory);',
+    r'const \[view, setView\] = useState<View>\("home"\);',
+    'const [view, setView] = useState<View>(initialView);',
+    "initial view",
+)
+text = sub_once(
+    text,
+    r'const \[catalogCategory,setCatalogCategory\]=useState\("Все товары"\);',
+    'const [catalogCategory,setCatalogCategory]=useState(initialCatalogCategory);',
     "initial catalog category",
 )
-text = replace_once(
+text = sub_once(
     text,
-    '  useEffect(()=>{loadXlsxCatalogIntoProducts().finally(()=>setCatalogRevision(value=>value+1))},[]);',
-    '  useEffect(()=>{loadXlsxCatalogIntoProducts().finally(()=>setCatalogRevision(value=>value+1))},[]);\n  useEffect(()=>setCatalogCategory(initialCatalogCategory),[initialCatalogCategory]);',
-    "sync catalog category prop",
+    r'(useEffect\(\(\)=>\{loadXlsxCatalogIntoProducts\(\)\.then\(\(\)=>setXlsxCatalogRevision\(value=>value\+1\)\)\},\[\]\);)',
+    r'\1\n  useEffect(()=>setCatalogCategory(initialCatalogCategory),[initialCatalogCategory]);',
+    "catalog category synchronization",
 )
 
-old_catalog = '''  const categoryProductIds: Record<string, number[]> = {
-    "Все товары": products.map(item=>item.id),
-    "Посуда и сервировка": [5,10,2001,2002,2003,2004,2005,2006,2007,1590,1591,1592,1593,1594,1595,1596],
-    "Постельное бельё":[2,4,8,11,12],
-    "Пледы и подушки":[9,10,11],
-    "Декор для дома": [5,7,1499],
-    "Домашняя одежда":[6],
-    "Свечи и диффузоры":[1499],
-    "Для ванной":[6],
-    "Столовый текстиль":[7,9],
-  };
-  const tabs=["Все товары","Посуда и сервировка","Постельное бельё","Пледы и подушки","Декор для дома","Свечи и диффузоры","Для ванной","Столовый текстиль"];'''
-
-new_catalog = '''  const catalogText=(product:Product)=>`${product.name} ${product.note}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
+catalog_replacement = '''const catalogText=(product:Product)=>`${product.name} ${product.note}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
   const categoryMatchers:Record<string,RegExp>={
     "Посуда и сервировка":/(тарел|блюд|чаш|круж|бокал|стакан|графин|салатник|сервиз|чайная пара|кофейн|молочник|супниц|прибор)/,
     "Постельное бельё":/(постель|пододеяль|простын|наволоч)/,
@@ -65,14 +58,18 @@ new_catalog = '''  const catalogText=(product:Product)=>`${product.name} ${produ
     ...Object.entries(categoryMatchers).map(([key,matcher])=>[key,products.filter(item=>matcher.test(catalogText(item))).map(item=>item.id)]),
   ]);
   // DYNAMIC_CATALOG_NAV_V87
-  const tabs=["Все товары","Посуда и сервировка","Постельное бельё","Пледы и подушки","Декор для дома","Домашняя одежда","Свечи и диффузоры","Для ванной","Столовый текстиль"];'''
-text = replace_once(text, old_catalog, new_catalog, "dynamic catalog categories")
-
-text = replace_once(
+  '''
+text = sub_once(
     text,
-    '{navCategories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}',
-    '{navCategories.map(item=><a key={item.title} href={`${readyBase}/catalog/?category=${encodeURIComponent(item.category)}`} onClick={(event)=>{event.preventDefault();openCatalog(item.category)}}>{item.title}</a>)}',
-    "catalog top nav links",
+    r'const categoryProductIds:Record<string,number\[]>\s*=\s*\{.*?\};\s*(?=const list\s*=)',
+    catalog_replacement,
+    "dynamic catalog categories",
+)
+text = sub_once(
+    text,
+    r'const openCatalog=\(category="Все товары"\)=>\{setCatalogCategory\(category\);go\("catalog"\)\};',
+    'const openCatalog=(category="Все товары")=>{setCatalogCategory(category);go("catalog");const base=process.env.NEXT_PUBLIC_BASE_PATH??"";window.history.pushState({},"",`${base}/catalog/?category=${encodeURIComponent(category)}`)};',
+    "catalog URL navigation",
 )
 
 PAGE.write_text(text, encoding="utf-8")
