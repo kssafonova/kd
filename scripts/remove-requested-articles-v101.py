@@ -16,10 +16,6 @@ EXCLUDED_ARTICLES = {
     "KD-PD-11435",
     "KD-PD-8986",
     "KD-PD-10451",
-    "KD-PD-1143826",
-}
-EXCLUDED_PRODUCT_NAMES = {
-    "Чайная пара Эхо",
 }
 
 for path, delimiter in TARGETS:
@@ -29,16 +25,27 @@ for path, delimiter in TARGETS:
         reader = csv.DictReader(fh, delimiter=delimiter)
         headers = reader.fieldnames or []
         rows = list(reader)
+
     article_key = "Артикул"
     name_key = "Название товара"
+    corrected = 0
+    for row in rows:
+        article = str(row.get(article_key) or "").strip()
+        name = str(row.get(name_key) or "").strip()
+        if name == "Чайная пара Эхо" and article == "KD-PD-11438":
+            row[article_key] = "KD-PD-1143826"
+            corrected += 1
+
     kept = [
         row for row in rows
         if str(row.get(article_key) or "").strip() not in EXCLUDED_ARTICLES
-        and str(row.get(name_key) or "").strip() not in EXCLUDED_PRODUCT_NAMES
     ]
     removed = len(rows) - len(kept)
     with path.open("w", encoding="utf-8-sig", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=headers, delimiter=delimiter, lineterminator="\n")
         writer.writeheader()
         writer.writerows(kept)
-    print(f"// REMOVE_REQUESTED_ARTICLES_V103: {path.relative_to(ROOT)} removed {removed} rows; {len(kept)} rows remain")
+    print(
+        f"// CATALOG_CORRECTIONS_V104: {path.relative_to(ROOT)} corrected Echo tea-pair article in {corrected} row(s); "
+        f"removed {removed} excluded row(s); {len(kept)} rows remain"
+    )
