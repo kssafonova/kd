@@ -3,60 +3,16 @@ import subprocess
 import sys
 
 root = Path(__file__).resolve().parents[1]
-scripts = [
-    root / "scripts" / "sync-canonical-table-storefront-v85.py",
-    root / "scripts" / "fix-catalog-navigation-v87.py",
-    root / "scripts" / "sync-full-xlsx-catalog-v88.py",
-]
-page = root / "app" / "page.tsx"
-output: list[str] = []
-
-for script in scripts:
-    proc = subprocess.run(
-        [sys.executable, str(script)],
-        cwd=root,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-    output.append(f"$ {script.name}\n{proc.stdout}")
-    if proc.returncode != 0:
-        diagnostics = "\n".join(output)
-        (root / "migration-errors.txt").write_text(diagnostics, encoding="utf-8")
-        print(diagnostics)
-        sys.exit(proc.returncode)
-
-
-def replace_once(text: str, old: str, new: str, label: str) -> str:
-    if old in text:
-        return text.replace(old, new, 1)
-    if new in text:
-        return text
-    raise SystemExit(f"{label}: source fragment not found")
-
-
-text = page.read_text(encoding="utf-8")
-text = replace_once(
-    text,
-    '  rows.forEach(row=>{const key=`${row["Артикул"]}|${row["Название товара"]}`;const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});',
-    '  rows.forEach(row=>{const key=String(row["Артикул"]||"").trim();const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});',
-    "article-only product grouping",
+script = root / "scripts" / "sync-full-xlsx-catalog-v88.py"
+proc = subprocess.run(
+    [sys.executable, str(script)],
+    cwd=root,
+    text=True,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
 )
-text = replace_once(
-    text,
-    '  // The canonical table may reuse one article for distinct named products, so article+name is the storefront entity key.\n  // CANONICAL_TABLE_SYNC_V85',
-    '  // Product identity follows the canonical article: every table row with the same article is one product with SKU variants.\n  // ARTICLE_PRIMARY_GROUPING_V86\n  // CANONICAL_TABLE_SYNC_V85',
-    "article grouping marker",
-)
-text = replace_once(
-    text,
-    '    const existing=products.find(product=>String(product.article||"").trim()===article&&String(product.name||"").trim()===name);',
-    '    const existing=products.find(product=>String(product.article||"").trim()===article);',
-    "article-only existing product lookup",
-)
-page.write_text(text, encoding="utf-8")
-
-output.append("Article-primary storefront grouping applied\n")
-diagnostics = "\n".join(output)
+diagnostics = f"$ {script.name}\n{proc.stdout}"
 (root / "migration-errors.txt").write_text(diagnostics, encoding="utf-8")
 print(diagnostics)
+if proc.returncode != 0:
+    sys.exit(proc.returncode)
