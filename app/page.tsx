@@ -45,10 +45,12 @@ type Profile = { name:string; surname:string; email:string; phone:string; city:s
 const fmt = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
 // PRICE_PENDING_UI_V1
 const priceKnown=(value:number)=>Number.isFinite(value)&&value>0;
-// GROUPED_CATALOG_V92
+// GROUPED_CATALOG_V95
+// GROUPED_CATALOG_V94
+// GROUPED_CATALOG_V93
 const cleanNulls=(value:unknown)=>{const text=String(value??"").trim();return !text||text==="null"?undefined:text};
 const splitMultiline=(value:unknown)=>{const text=cleanNulls(value);return text?text.split(/\\n|\n|\u2028|\u2029/g).map(part=>part.trim()).filter(Boolean):[]};
-const renderMultiline=(value:unknown)=>{const parts=splitMultiline(value);return parts.length?<>{parts.map((part,index)=><p key={`${part}-${index}`}>{part}</p>)}</>:null};
+const renderMultiline=(value:unknown)=>{const parts=splitMultiline(value);return parts.length?<>{parts.map((part,index)=><span key={`${part}-${index}`} style={{display:"block",lineHeight:1.18,margin:0}}>{part}</span>)}</>:null};
 const parseCatalogPrice=(value:unknown)=>Number(String(cleanNulls(value)??"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
 // CATALOG_PRODUCT_NORMALIZATION_V74
 const isAromaProduct=(product:Product)=>product.switchBy==="scent";
@@ -73,41 +75,41 @@ function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}><path d="m8 4 8 8-8 8"/></svg>;
 }
 
-function findProductSku(product:Product,color?:string,size?:string){
+type VariantSku=CatalogSku&{scent?:string;sourceColor?:string;volume?:string;oldPrice?:number};
+const asVariantSku=(sku:CatalogSku|undefined)=>sku as VariantSku|undefined;
+function skuPrimaryMatches(product:Product,sku:CatalogSku,primary?:string){if(!primary||product.switchBy==="none")return true;const extra=asVariantSku(sku);return isAromaProduct(product)?extra?.scent===primary:(extra?.sourceColor??sku.color)===primary}
+function findProductSku(product:Product,primary?:string,size?:string,secondaryColor?:string){
   if(!product.skus?.length)return undefined;
-  const selectedById=product.selectedSkuId?product.skus.find(item=>item.id===product.selectedSkuId):undefined;
-  if(selectedById&&(!color||selectedById.color===color)&&(!size||selectedById.size===size))return selectedById;
-  return product.skus.find(item=>(!color||item.color===color)&&(!size||item.size===size))
-    ??product.skus.find(item=>!color||item.color===color)
-    ??product.skus[0];
+  const match=(item:CatalogSku)=>skuPrimaryMatches(product,item,primary)&&(!secondaryColor||asVariantSku(item)?.sourceColor===secondaryColor)&&(!size||item.size===size);
+  const selected=product.selectedSkuId?product.skus.find(item=>item.id===product.selectedSkuId):undefined;
+  if(selected&&match(selected))return selected;
+  return product.skus.find(match)??product.skus.find(item=>skuPrimaryMatches(product,item,primary))??product.skus[0];
 }
-function getProductSizeOptions(product:Product,color?:string){
-  if(product.skus?.length){
-    const rows=product.skus.filter(item=>!color||item.color===color);
-    return Array.from(new Map(rows.map(item=>[item.size,[item.size,item.price] as const])).values());
-  }
+function getProductSecondaryColors(product:Product,primary?:string){
+  if(!isAromaProduct(product)||!product.skus?.length)return [] as {name:string;hex:string}[];
+  const map=new Map<string,{name:string;hex:string}>();
+  product.skus.filter(item=>skuPrimaryMatches(product,item,primary)).forEach(item=>{const name=cleanNulls(asVariantSku(item)?.sourceColor);if(name&&!map.has(name))map.set(name,{name,hex:item.colorHex})});
+  return Array.from(map.values());
+}
+function getProductSizeOptions(product:Product,primary?:string,secondaryColor?:string){
+  if(product.skus?.length){const rows=product.skus.filter(item=>skuPrimaryMatches(product,item,primary)&&(!secondaryColor||asVariantSku(item)?.sourceColor===secondaryColor));return Array.from(new Map(rows.map(item=>[item.size,[item.size,item.price] as const])).values())}
   return [["Евро 200×220",product.price],["Семейный 150×200",product.price+2000],["Кинг Сайз 220×240",product.price+2000]] as const;
 }
-function isProductSizeAvailable(product:Product,color:string|undefined,size:string){
-  const rows=product.skus?.filter(item=>(!color||item.color===color)&&item.size===size);
-  if(!rows?.length)return true;
-  return rows.some(item=>item.available!==false);
-}
-function getUnavailableProductSizes(product:Product,color:string|undefined,sizes:readonly (readonly [string,number])[]){
-  return sizes.filter(([name])=>!isProductSizeAvailable(product,color,name)).map(([name])=>name);
-}
+function isProductSizeAvailable(product:Product,primary:string|undefined,size:string,secondaryColor?:string){const rows=product.skus?.filter(item=>skuPrimaryMatches(product,item,primary)&&(!secondaryColor||asVariantSku(item)?.sourceColor===secondaryColor)&&item.size===size);if(!rows?.length)return true;return rows.some(item=>item.available!==false)}
+function getUnavailableProductSizes(product:Product,primary:string|undefined,sizes:readonly (readonly [string,number])[],secondaryColor?:string){return sizes.filter(([name])=>!isProductSizeAvailable(product,primary,name,secondaryColor)).map(([name])=>name)}
 
+// GROUPED_CATALOG_V96
 function getProductImages(product:Product){
   if(product.skus?.length){
-    const selectedById=product.selectedSkuId?product.skus.find(item=>item.id===product.selectedSkuId):undefined;
-    const mediaColor=product.selectedColor??selectedById?.color;
-    const mediaSku=product.skus.find(item=>!mediaColor||item.color===mediaColor)??product.skus[0];
-    return Array.from(new Set([mediaSku.image,...mediaSku.gallery].filter(Boolean)));
+    const selected=product.selectedSkuId?product.skus.find(item=>item.id===product.selectedSkuId):undefined;
+    const sku=selected??product.skus[0];
+    return Array.from(new Set([sku?.image,...(sku?.gallery??[])].map(cleanNulls).filter((value):value is string=>Boolean(value))));
   }
   const variant=product.selectedColor?product.colorVariants?.find(item=>item.name===product.selectedColor):undefined;
   const sources=variant?[variant.image,...(variant.gallery??product.gallery??[])]:[product.image,...(product.gallery??[])];
-  return Array.from(new Set(sources.filter(Boolean)));
+  return Array.from(new Set(sources.map(cleanNulls).filter((value):value is string=>Boolean(value))));
 }
+
 function ScrollableProductMedia({product,alt,className="",position,activeIndex,onActiveIndexChange}:{product:Product;alt:string;className?:string;position?:string;activeIndex?:number;onActiveIndexChange?:(index:number)=>void}){
   const images=getProductImages(product);
   const vertical=className.includes("pdp-product-media");
@@ -303,7 +305,7 @@ async function loadXlsxCatalogIntoProducts(){
     const existing=products.find(product=>String(product.article||"").trim()===article),id=existing?.id??entityId(article,name);
     const category=cleanNulls(first["Категория"]),subcategory=cleanNulls(first["Подкатегория"]);
     const colors=Array.from(new Set(variants.map(row=>cleanNulls(row["Цвет"])).filter(Boolean))),scents=Array.from(new Set(variants.map(row=>cleanNulls(row["Аромат"])).filter(Boolean)));
-    const scentMode=category==="Декор для дома"&&subcategory==="Свечи и диффузоры"&&scents.length>1;
+    const scentMode=scents.length>0&&variants.length>1;
     const switchBy:Product["switchBy"]=scentMode?"scent":colors.length>1?"color":"none";
     const skus:CatalogSku[]=variants.map((row,index)=>{
       const images=[row["Превью фотография товара"],row["Вторая фотография товара в скролле"],row["Третья фотография в стролле"]].map(cleanNulls).filter((value):value is string=>Boolean(value));
@@ -636,31 +638,19 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
 }
 
 
-function CatalogView({ initialCategory, onFilter, onAdd, onProduct, favorite, favorites }: { initialCategory:string; onFilter:()=>void; onAdd:(p:Product)=>void; onProduct:(p:Product)=>void; favorite:(n:number)=>void; favorites:number[] }) {
-  const [sort, setSort] = useState("По умолчанию");
-  const [category,setCategory]=useState(initialCategory);
-  useEffect(()=>setCategory(initialCategory),[initialCategory]);
-  const catalogText=(product:Product)=>`${product.name} ${product.note} ${product.category||""} ${product.subcategory||""}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
-  const categoryMatchers:Record<string,RegExp>={
-    "Посуда и сервировка":/(тарел|блюд|чаш|круж|бокал|стакан|графин|салатник|сервиз|чайная пара|кофейн|молочник|супниц|прибор)/,
-    "Постельное бельё":/(постель|пододеяль|простын|наволоч)/,
-    "Пледы и подушки":/(плед|подуш)/,
-    "Декор для дома":/(ваза|декор|скульп|панно|подсвеч)/,
-    "Домашняя одежда":/(халат|пижам|сороч|домашн.*одежд)/,
-    "Свечи и диффузоры":/(свеч|диффуз|аромат)/,
-    "Для ванной":/(полотен|ванн)/,
-    "Столовый текстиль":/(скатерт|салфет|раннер|плейсмат|дорожк.*стол)/,
-  };
-  const categoryProductIds:Record<string,number[]>=Object.fromEntries([
-    ["Все товары",products.map(item=>item.id)],
-    ...Object.entries(categoryMatchers).map(([key,matcher])=>[key,products.filter(item=>matcher.test(catalogText(item))).map(item=>item.id)]),
-  ]);
-  // DYNAMIC_CATALOG_NAV_V87
-  const list = products.filter(product=>(categoryProductIds[category]??[]).includes(product.id)).sort((a,b)=>sort === "Сначала дешевле" ? a.price-b.price : sort === "Сначала дороже" ? b.price-a.price : a.id-b.id);
-  return <div className="catalog page"><div className="crumbs">Главная / Каталог / {category}</div><div className="title-line"><h1>{category}</h1><span>{list.length} {list.length===1?"товар":list.length>=2&&list.length<=4?"товара":"товаров"}</span></div>
-    <div className="tabs">{["Все товары","Посуда и сервировка","Постельное бельё","Пледы и подушки","Декор для дома","Свечи и диффузоры","Для ванной","Столовый текстиль"].map(x=><button key={x} className={category===x?"active":""} onClick={()=>setCategory(x)}>{x}</button>)}</div>
-    <div className="catalog-tools"><select value={sort} onChange={e=>setSort(e.target.value)}><option>По умолчанию</option><option>Сначала дешевле</option><option>Сначала дороже</option></select><button onClick={onFilter}><Icon name="filter"/> Фильтры</button></div>
-    {list.length?<div className="product-grid">{list.map(p=><ProductCard key={`${category}-${p.id}`} product={p} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(p.id)}/>)}</div>:<div className="catalog-empty"><p>В этой категории пока нет товаров</p></div>}
+function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, favorite, favorites }: { initialCategory:string; onFilter:()=>void; onAdd:(p:Product)=>void; onProduct:(p:Product)=>void; favorite:(n:number)=>void; favorites:number[] }) {
+  const [sort,setSort]=useState("По умолчанию");
+  const categoryNames=Array.from(new Set(products.map(product=>cleanNulls(product.category)).filter((value):value is string=>Boolean(value))));
+  const resolveCategory=(value:string)=>categoryNames.find(name=>name.toLocaleLowerCase("ru-RU").replace(/ё/g,"е")===String(value||"").toLocaleLowerCase("ru-RU").replace(/ё/g,"е"))??"Все товары";
+  const [category,setCategory]=useState(()=>resolveCategory(initialCategory));
+  const [subcategory,setSubcategory]=useState("Все подкатегории");
+  useEffect(()=>{setCategory(resolveCategory(initialCategory));setSubcategory("Все подкатегории")},[initialCategory,categoryNames.join("|")]);
+  const subcategories=category==="Все товары"?[]:Array.from(new Set(products.filter(product=>product.category===category).map(product=>cleanNulls(product.subcategory)).filter((value):value is string=>Boolean(value))));
+  const list=products.filter(product=>(category==="Все товары"||product.category===category)&&(subcategory==="Все подкатегории"||product.subcategory===subcategory)).sort((a,b)=>sort==="Сначала дешевле"?a.price-b.price:sort==="Сначала дороже"?b.price-a.price:a.id-b.id);
+  return <div className="catalog page"><div className="crumbs">Главная / Каталог / {category}</div><div className="title-line"><h1>{category}</h1><span>{productCountLabel(list.length)}</span></div>
+    <div className="tabs">{["Все товары",...categoryNames].map(name=><button key={name} className={category===name?"active":""} onClick={()=>{setCategory(name);setSubcategory("Все подкатегории")}}>{name}</button>)}</div>
+    <div className="catalog-tools"><select value={sort} onChange={event=>setSort(event.target.value)}><option>По умолчанию</option><option>Сначала дешевле</option><option>Сначала дороже</option></select>{category!=="Все товары"&&subcategories.length>0&&<label style={{display:"flex",alignItems:"center",gap:8}}><Icon name="filter"/><select aria-label="Подкатегория" value={subcategory} onChange={event=>setSubcategory(event.target.value)}><option>Все подкатегории</option>{subcategories.map(name=><option key={name}>{name}</option>)}</select></label>}</div>
+    {list.length?<div className="product-grid">{list.map(product=><ProductCard key={`${category}-${subcategory}-${product.id}`} product={product} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(product.id)}/>)}</div>:<div className="catalog-empty"><p>В этой категории пока нет товаров</p></div>}
   </div>;
 }
 
@@ -911,29 +901,34 @@ function ProductView({ product, favorite, liked, chooseSize, add, selectProduct,
   const [colorIndex,setColorIndex]=useState(0);
   const [activeImage,setActiveImage]=useState(0);
   const [selectedSize,setSelectedSize]=useState("");
+  const [selectedSecondaryColor,setSelectedSecondaryColor]=useState("");
   const [quantity,setQuantity]=useState(1);
   const [sizePrompt,setSizePrompt]=useState(false);
   const variants=product.colorVariants??[{name:"Молочный",hex:"#eee",image:product.image}];
-  useEffect(()=>{const initial=variants.findIndex(variant=>variant.name===product.selectedColor);const nextIndex=initial>=0?initial:0;setColorIndex(nextIndex);setActiveImage(0);setSelectedSize("");setQuantity(1);setSizePrompt(false)},[product.id,product.selectedColor]);
+  useEffect(()=>{const initial=variants.findIndex(variant=>variant.name===product.selectedColor);const nextIndex=initial>=0?initial:0;setColorIndex(nextIndex);setActiveImage(0);setSelectedSize("");setSelectedSecondaryColor("");setQuantity(1);setSizePrompt(false)},[product.id,product.selectedColor]);
   const color=variants[colorIndex];
-  const sizes=getProductSizeOptions(product,color.name);
-  const unavailableSizes=getUnavailableProductSizes(product,color.name,sizes);
-  const autoSize=sizes.length===1&&isProductSizeAvailable(product,color.name,sizes[0][0])?sizes[0][0]:"";
+  const secondaryColors=getProductSecondaryColors(product,color.name);
+  const secondaryColor=secondaryColors.some(item=>item.name===selectedSecondaryColor)?selectedSecondaryColor:(secondaryColors[0]?.name??"");
+  const sizes=getProductSizeOptions(product,color.name,secondaryColor||undefined);
+  const unavailableSizes=getUnavailableProductSizes(product,color.name,sizes,secondaryColor||undefined);
+  const autoSize=sizes.length===1&&isProductSizeAvailable(product,color.name,sizes[0][0],secondaryColor||undefined)?sizes[0][0]:"";
   const effectiveSelectedSize=selectedSize||autoSize;
-  const sku=effectiveSelectedSize?findProductSku(product,color.name,effectiveSelectedSize):undefined;
-  const mediaSku=findProductSku(product,color.name);
+  const sku=effectiveSelectedSize?findProductSku(product,color.name,effectiveSelectedSize,secondaryColor||undefined):undefined;
+  const mediaSku=findProductSku(product,color.name,undefined,secondaryColor||undefined);
   const gallery=mediaSku?[mediaSku.image,...mediaSku.gallery]:product.hasRichContent?[color.image]:(product.gallery??[color.image,...variants.map(x=>x.image)]).filter((x,i,a)=>a.indexOf(x)===i);
   const unitPrice=sku?.price??(sizes.length?Math.min(...sizes.map(([,value])=>value)):product.price);
-  const selectedProduct={...product,price:unitPrice,image:mediaSku?.image??color.image,gallery:mediaSku?.gallery??product.gallery,selectedColor:color.name,selectedSize:effectiveSelectedSize,selectedSkuId:sku?.id,quantity};
+  const sizePricesDiffer=new Set(sizes.map(([,value])=>value)).size>1;
+  const showFromPrice=sizes.length>1&&sizePricesDiffer&&!selectedSize;
+  const selectedProduct={...product,price:unitPrice,image:mediaSku?.image??color.image,gallery:mediaSku?.gallery??product.gallery,selectedColor:color.name,selectedSize:effectiveSelectedSize,selectedSkuId:(sku??mediaSku)?.id,quantity};
   const specs=sku??mediaSku??product.skus?.[0];
-  const specsExtra=specs as (CatalogSku&{volume?:string;oldPrice?:number})|undefined;
+  const specsExtra=asVariantSku(specs);
   const currentOldPrice=Number(specsExtra?.oldPrice)||0;
   const solutionTags=Array.from(new Set([...splitMultiline(product.readySolution),...splitMultiline(product.optionalReadySolution)]));
-  const needsSize=Boolean(sizes.length&&!effectiveSelectedSize);
-  const selectedUnavailable=Boolean(effectiveSelectedSize&&!isProductSizeAvailable(product,color.name,effectiveSelectedSize));
+  const needsSize=Boolean(sizes.length>1&&!effectiveSelectedSize);
+  const selectedUnavailable=Boolean(effectiveSelectedSize&&!isProductSizeAvailable(product,color.name,effectiveSelectedSize,secondaryColor||undefined));
   const knownUnitPrice=priceKnown(unitPrice);
   const handlePurchase=()=>{if(needsSize||selectedUnavailable||!knownUnitPrice)return;add(selectedProduct)};
-  return <div className={`product-page page ${product.hasRichContent?"has-rich":"standard-pdp"}`}><div className="crumbs">Главная / Домашний текстиль / {product.name}</div><div className={`pdp-grid ${product.hasRichContent?"without-thumbs":""}`}>{!product.hasRichContent&&<div className="thumbs">{gallery.map((src,n)=><button key={src} className={n===activeImage?"active":""} onClick={()=>{setActiveImage(n);if(typeof window!=="undefined"&&window.matchMedia("(min-width: 901px)").matches){document.querySelector(`[data-pdp-image-index="${n}"]`)?.scrollIntoView({behavior:"smooth",block:"start"})}}} aria-label={`Фото товара ${n+1}`}><RemoteImage src={src} alt=""/></button>)}</div>}<div className="pdp-main"><ScrollableProductMedia key={`${product.id}-${color.name}`} product={selectedProduct} alt={`${product.name}, ${color.name}`} className="pdp-product-media" activeIndex={activeImage} onActiveIndexChange={setActiveImage}/></div><div className="pdp-info">{product.badge&&<small className="badge">{product.badge}</small>}<div className="pdp-title"><h1>{product.name}</h1><div><button onClick={()=>favorite(product.id)} aria-label={liked?`Удалить ${product.name} из избранного`:`Добавить ${product.name} в избранное`}><Icon name="heart" filled={liked}/></button><button onClick={()=>navigator.clipboard?.writeText(location.href)} aria-label="Поделиться"><Icon name="share"/></button></div></div><div className={`pdp-price ${currentOldPrice>unitPrice?"sale":""}`}><strong>{knownUnitPrice?(sizes.length>1&&!selectedSize?`от ${fmt(unitPrice)}`:fmt(unitPrice)):"Цена уточняется"}</strong>{knownUnitPrice&&currentOldPrice>unitPrice&&<><del>{fmt(currentOldPrice)}</del><mark>−{Math.round((1-unitPrice/currentOldPrice)*100)}%</mark></>}</div><small className="pdp-code">АРТИКУЛ: {sku?.article??product.article??`KD-PD-${1020+product.id}`}</small>{solutionTags.length>0&&<div className="pdp-aroma-options" aria-label="Готовые решения">{solutionTags.map(tag=><a key={tag} href={`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions`}>{tag}</a>)}</div>}{product.switchBy!=="none"&&<label className="pdp-color-label">{isAromaProduct(product)?"Аромат":"Цвет"}: {color.name}</label>}{isAromaProduct(product)&&variants.length>1&&<div className="pdp-aroma-options">{variants.map((variant,index)=><button key={variant.name} className={index===colorIndex?"active":""} onClick={()=>{setColorIndex(index);setActiveImage(0);setSelectedSize("");setQuantity(1);setSizePrompt(false)}}>{variant.name}</button>)}</div>}{product.switchBy==="color"&&variants.length>1&&<div className="swatches product-swatches">{variants.map((variant,index)=><button key={variant.name} className={index===colorIndex?"active":""} onClick={()=>{setColorIndex(index);setActiveImage(0);setSelectedSize("");setQuantity(1);setSizePrompt(false)}} style={{background:variant.hex}} aria-label={`Цвет ${variant.name}`}/>)}</div>}<p className="pdp-description">Предмет создан в традиции русского гостеприимства: благородная палитра, точная отделка и материалы, которые красиво живут в доме годами.</p><label className="pdp-size-head"><span>РАЗМЕР</span><button onClick={()=>alert(sizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button></label><ProductSizeRows sizes={sizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/><button className={`primary purchase-cta total-cta ${needsSize||selectedUnavailable||!knownUnitPrice?"needs-size":"ready-to-add"}`} disabled={needsSize||selectedUnavailable||!knownUnitPrice} onClick={handlePurchase} aria-live="polite"><span className="purchase-label">{selectedUnavailable?"НЕТ В НАЛИЧИИ":!knownUnitPrice?"ЦЕНА УТОЧНЯЕТСЯ":needsSize?"ВЫБРАТЬ РАЗМЕР":"ДОБАВИТЬ В КОРЗИНУ"}</span>{!needsSize&&!selectedUnavailable&&knownUnitPrice&&<b>{fmt(unitPrice*quantity)}</b>}</button><button className="stores" onClick={()=>setStoresOpen(true)} aria-label="Показать наличие в бутиках"><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button><div className="pdp-accordions">{[
+  return <div className={`product-page page ${product.hasRichContent?"has-rich":"standard-pdp"}`}><div className="crumbs">Главная / {product.category??"Каталог"} / {product.name}</div><div className={`pdp-grid ${product.hasRichContent?"without-thumbs":""}`}>{!product.hasRichContent&&<div className="thumbs">{gallery.map((src,n)=><button key={src} className={n===activeImage?"active":""} onClick={()=>{setActiveImage(n);if(typeof window!=="undefined"&&window.matchMedia("(min-width: 901px)").matches){document.querySelector(`[data-pdp-image-index="${n}"]`)?.scrollIntoView({behavior:"smooth",block:"start"})}}} aria-label={`Фото товара ${n+1}`}><RemoteImage src={src} alt=""/></button>)}</div>}<div className="pdp-main"><ScrollableProductMedia key={`${product.id}-${color.name}`} product={selectedProduct} alt={`${product.name}, ${color.name}`} className="pdp-product-media" activeIndex={activeImage} onActiveIndexChange={setActiveImage}/></div><div className="pdp-info">{product.badge&&<small className="badge">{product.badge}</small>}<div className="pdp-title"><h1>{product.name}</h1><div><button onClick={()=>favorite(product.id)} aria-label={liked?`Удалить ${product.name} из избранного`:`Добавить ${product.name} в избранное`}><Icon name="heart" filled={liked}/></button><button onClick={()=>navigator.clipboard?.writeText(location.href)} aria-label="Поделиться"><Icon name="share"/></button></div></div><div className={`pdp-price ${currentOldPrice>unitPrice?"sale":""}`}><strong>{knownUnitPrice?(showFromPrice?`от ${fmt(unitPrice)}`:fmt(unitPrice)):"Цена уточняется"}</strong>{knownUnitPrice&&currentOldPrice>unitPrice&&<><del>{fmt(currentOldPrice)}</del><mark>−{Math.round((1-unitPrice/currentOldPrice)*100)}%</mark></>}</div><small className="pdp-code">АРТИКУЛ: {sku?.article??product.article??`KD-PD-${1020+product.id}`}</small>{solutionTags.length>0&&<div className="pdp-aroma-options" aria-label="Готовые решения">{solutionTags.map(tag=><a key={tag} href={`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions`}>{tag}</a>)}</div>}{product.switchBy!=="none"&&<label className="pdp-color-label">{isAromaProduct(product)?"Аромат":"Цвет"}: {color.name}</label>}{isAromaProduct(product)&&variants.length>1&&<div className="pdp-aroma-options">{variants.map((variant,index)=><button key={variant.name} className={index===colorIndex?"active":""} onClick={()=>{setColorIndex(index);setSelectedSecondaryColor("");setActiveImage(0);setSelectedSize("");setQuantity(1);setSizePrompt(false)}}>{variant.name}</button>)}</div>}{isAromaProduct(product)&&secondaryColors.length>0&&<><label className="pdp-color-label">Цвет: {secondaryColor}</label>{secondaryColors.length>1&&<div className="swatches product-swatches">{secondaryColors.map(item=><button key={item.name} className={item.name===secondaryColor?"active":""} onClick={()=>{setSelectedSecondaryColor(item.name);setActiveImage(0);setSelectedSize("");setQuantity(1);setSizePrompt(false)}} style={{background:item.hex}} aria-label={`Цвет ${item.name}`}/>)}</div>}</>}{product.switchBy==="color"&&variants.length>1&&<div className="swatches product-swatches">{variants.map((variant,index)=><button key={variant.name} className={index===colorIndex?"active":""} onClick={()=>{setColorIndex(index);setActiveImage(0);setSelectedSize("");setQuantity(1);setSizePrompt(false)}} style={{background:variant.hex}} aria-label={`Цвет ${variant.name}`}/>)}</div>}<p className="pdp-description">Предмет создан в традиции русского гостеприимства: благородная палитра, точная отделка и материалы, которые красиво живут в доме годами.</p>{sizes.length>1&&<><label className="pdp-size-head"><span>РАЗМЕР</span><button onClick={()=>alert(sizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button></label><ProductSizeRows sizes={sizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}<button className={`primary purchase-cta total-cta ${needsSize||selectedUnavailable||!knownUnitPrice?"needs-size":"ready-to-add"}`} disabled={needsSize||selectedUnavailable||!knownUnitPrice} onClick={handlePurchase} aria-live="polite"><span className="purchase-label">{selectedUnavailable?"НЕТ В НАЛИЧИИ":!knownUnitPrice?"ЦЕНА УТОЧНЯЕТСЯ":needsSize?"ВЫБРАТЬ РАЗМЕР":"ДОБАВИТЬ В КОРЗИНУ"}</span>{!needsSize&&!selectedUnavailable&&knownUnitPrice&&<b>{fmt(unitPrice*quantity)}</b>}</button><button className="stores" onClick={()=>setStoresOpen(true)} aria-label="Показать наличие в бутиках"><Icon name="pin"/> НАЛИЧИЕ В МАГАЗИНАХ</button><div className="pdp-accordions">{[
   {title:"ХАРАКТЕРИСТИКИ",content:specs?<dl>{cleanNulls(specs.material)&&<div><dt>Материал</dt><dd>{renderMultiline(specs.material)}</dd></div>}{cleanNulls(specs.composition)&&<div><dt>Состав</dt><dd>{renderMultiline(specs.composition)}</dd></div>}{cleanNulls(specs.height)&&<div><dt>Высота</dt><dd>{renderMultiline(specs.height)}</dd></div>}{cleanNulls(specs.width)&&<div><dt>Ширина</dt><dd>{renderMultiline(specs.width)}</dd></div>}{cleanNulls(specsExtra?.volume)&&<div><dt>Объём</dt><dd>{renderMultiline(specsExtra?.volume)}</dd></div>}{cleanNulls(specs.diameter)&&<div><dt>Диаметр</dt><dd>{renderMultiline(specs.diameter)}</dd></div>}{cleanNulls(specs.packageInfo)&&<div><dt>Комплектация</dt><dd>{renderMultiline(specs.packageInfo)}</dd></div>}{cleanNulls(specs.details)&&<div><dt>Детали</dt><dd>{renderMultiline(specs.details)}</dd></div>}{cleanNulls(specs.collection)&&<div><dt>Коллекция</dt><dd>{renderMultiline(specs.collection)}</dd></div>}{cleanNulls(specs.capsule)&&<div><dt>Капсула</dt><dd>{renderMultiline(specs.capsule)}</dd></div>}</dl>:null},
   {title:"ДОСТАВКА И ВОЗВРАТ",content:<><p>Бесплатная доставка при заказе от 15 000 ₽. Доступны курьерская доставка и самовывоз из бутика.</p><small>Срок и доступные способы рассчитываются при оформлении заказа.</small></>}
 ].map(section=><section className={`pdp-accordion-item ${open===section.title?"open":""}`} key={section.title}><button className="pdp-accordion-trigger" onClick={()=>setOpen(open===section.title?"":section.title)} aria-expanded={open===section.title}><span>{section.title}</span><Icon name="chevron"/></button>{open===section.title&&<div className="pdp-accordion-panel">{section.content}</div>}</section>)}</div></div></div>{product.hasRichContent&&<RichContent product={product} selectProduct={selectProduct}/>}<ProductRecommendations product={product} selectProduct={selectProduct} favorite={favorite} recentlyViewed={recentlyViewed}/>{storesOpen&&<BoutiqueMap close={()=>setStoresOpen(false)}/>}</div>;
