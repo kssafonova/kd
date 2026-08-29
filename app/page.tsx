@@ -28,6 +28,13 @@ type Product = {
   skus?: CatalogSku[];
   selectedSkuId?: string;
   giftPackagingAvailable?: boolean;
+  category?: string;
+  subcategory?: string;
+  collection?: string;
+  capsule?: string;
+  readySolution?: string;
+  optionalReadySolution?: string;
+  offerId?: string;
 };
 
 type ColorVariant = { name: string; hex: string; image: string; gallery?: string[]; position?: string };
@@ -235,7 +242,7 @@ let products: Product[] = baseProducts.map(base=>{
 
 type XlsxProductEntityRow = Record<string,string>;
 let xlsxCatalogLoaded = false;
-const XLSX_ENTITY_FILES:string[] = []; // canonical data is loaded from the compressed table snapshot below
+const XLSX_ENTITY_FILES:string[] = ["catalog_xlsx_full.csv"]; // FULL_XLSX_CATALOG_V88
 const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
   const text=source.replace(/^\uFEFF/,"");
   const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;
@@ -278,8 +285,7 @@ async function loadXlsxCatalogIntoProducts(){
   const chunks=await Promise.all(XLSX_ENTITY_FILES.map(async fileName=>{
     try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
   }));
-  const extra=await loadCompressedEntityCsv();
-  const rows=[...chunks.flat(),...extra].filter(row=>row["Артикул"]&&row["Название товара"]);
+  const rows=chunks.flat().filter(row=>row["Артикул"]&&row["Название товара"]);
   if(!rows.length)return;
   const grouped=new Map<string,XlsxProductEntityRow[]>();
   rows.forEach(row=>{const key=String(row["Артикул"]||"").trim();const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
@@ -296,13 +302,13 @@ async function loadXlsxCatalogIntoProducts(){
     const tableOldPrice=Number(String(first["Старая цена"]||"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
     const skus:CatalogSku[]=variants.map((row,index)=>{
       const images=[row["Превью фотография товара"],row["Вторая фотография товара в скролле"],row["Третья фотография в стролле"]].map(value=>String(value||"").trim()).filter(value=>value&&value.toLowerCase()!=="null");
-      const color=String(row["Цвет"]||"").trim()||"Без цвета";
+      const color=String(row["Аромат"]||row["Цвет"]||"").trim()||"Без цвета";
       const size=String(row["Размер"]||row["Объем"]||row["Диаметр"]||"").trim()||"Единый размер";
-      return {id:`xlsx-${id}-${index}`,article,productId:id,color,colorHex:entityColorHex(color),size,height:String(row["Высота"]||"").trim()||undefined,width:String(row["Ширина"]||"").trim()||undefined,diameter:String(row["Диаметр"]||"").trim()||undefined,packageInfo:String(row["Комплектация / Информация о размере"]||"").trim()||undefined,material:String(row["Материал"]||"").trim(),composition:String(row["Состав"]||"").trim(),details:String(row["Детали"]||"").trim()||undefined,collection:String(row["Коллекция"]||"").trim()||undefined,price:Number(String(row["Цена"]||price).replace(/[^\d.,-]/g,"").replace(",","."))||price,image:images[0]||"/images/image-placeholder.svg",gallery:images.slice(1),available:true};
+      return {id:`xlsx-${id}-${index}`,article,productId:id,color,colorHex:entityColorHex(color),size,height:String(row["Высота"]||"").trim()||undefined,width:String(row["Ширина"]||"").trim()||undefined,diameter:String(row["Диаметр"]||"").trim()||undefined,packageInfo:String(row["Комплектация / Информация о размере"]||"").trim()||undefined,material:String(row["Материал"]||"").trim(),composition:String(row["Состав"]||"").trim(),details:String(row["Детали"]||"").trim()||undefined,collection:String(row["Коллекция"]||"").trim()||undefined,capsule:String(row["Капсула"]||"").trim()||undefined,price:Number(String(row["Цена"]||price).replace(/[^\d.,-]/g,"").replace(",","."))||price,image:images[0]||"/images/image-placeholder.svg",gallery:images.slice(1),available:true};
     });
     const firstSku=skus[0];
     const colorRows=Array.from(new Map(skus.map(item=>[item.color,item])).values());
-    incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))});
+    incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery})),category:String(first["Категория"]||"").trim()||undefined,subcategory:String(first["Подкатегория"]||"").trim()||undefined,collection:String(first["Коллекция"]||"").trim()||undefined,capsule:String(first["Капсула"]||"").trim()||undefined,readySolution:String(first["Товар входит в готовое решение"]||"").trim()||undefined,optionalReadySolution:String(first["Опционально входит в готовое решение"]||"").trim()||undefined,offerId:String(first["Offer ID"]||"").trim()||undefined});
   });
   products=incoming;
   const tableCollectionNames=Array.from(new Set(rows.map(row=>String(row["Коллекция"]||"").trim()).filter(Boolean)));
@@ -629,7 +635,7 @@ function CatalogView({ initialCategory, onFilter, onAdd, onProduct, favorite, fa
   const [sort, setSort] = useState("По умолчанию");
   const [category,setCategory]=useState(initialCategory);
   useEffect(()=>setCategory(initialCategory),[initialCategory]);
-  const catalogText=(product:Product)=>`${product.name} ${product.note}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
+  const catalogText=(product:Product)=>`${product.name} ${product.note} ${product.category||""} ${product.subcategory||""}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
   const categoryMatchers:Record<string,RegExp>={
     "Посуда и сервировка":/(тарел|блюд|чаш|круж|бокал|стакан|графин|салатник|сервиз|чайная пара|кофейн|молочник|супниц|прибор)/,
     "Постельное бельё":/(постель|пододеяль|простын|наволоч)/,
