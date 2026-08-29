@@ -7,8 +7,6 @@ scripts = [
     root / "scripts" / "sync-canonical-table-storefront-v85.py",
     root / "scripts" / "fix-catalog-navigation-v87.py",
     root / "scripts" / "sync-full-xlsx-catalog-v88.py",
-    root / "scripts" / "fix-last-imported-image-v91.py",
-    root / "scripts" / "force-imported-product-images-v90.py",
 ]
 page = root / "app" / "page.tsx"
 output: list[str] = []
