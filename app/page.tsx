@@ -282,13 +282,14 @@ async function loadXlsxCatalogIntoProducts(){
   const rows=[...chunks.flat(),...extra].filter(row=>row["Артикул"]&&row["Название товара"]);
   if(!rows.length)return;
   const grouped=new Map<string,XlsxProductEntityRow[]>();
-  rows.forEach(row=>{const key=`${row["Артикул"]}|${row["Название товара"]}`;const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
-  // The canonical table may reuse one article for distinct named products, so article+name is the storefront entity key.
+  rows.forEach(row=>{const key=String(row["Артикул"]||"").trim();const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
+  // Product identity follows the canonical article: every table row with the same article is one product with SKU variants.
+  // ARTICLE_PRIMARY_GROUPING_V86
   // CANONICAL_TABLE_SYNC_V85
   const incoming:Product[]=[];
   grouped.forEach((variants)=>{
     const first=variants[0]; const article=String(first["Артикул"]||"").trim(); const name=String(first["Название товара"]||"").trim();
-    const existing=products.find(product=>String(product.article||"").trim()===article&&String(product.name||"").trim()===name);
+    const existing=products.find(product=>String(product.article||"").trim()===article);
     const id=existing?.id??entityId(article,name);
     const tablePrice=Number(String(first["Цена"]||"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
     const price=tablePrice>0?tablePrice:(existing?.price??0);
