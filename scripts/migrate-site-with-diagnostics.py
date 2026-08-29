@@ -10,6 +10,7 @@ scripts = [
     root / "scripts" / "apply-grouped-catalog-v94.py",
     root / "scripts" / "apply-grouped-catalog-v95.py",
     root / "scripts" / "apply-grouped-catalog-v96.py",
+    root / "scripts" / "apply-grouped-catalog-v98.py",
 ]
 
 logs=[]
