@@ -48,7 +48,7 @@ const priceKnown=(value:number)=>Number.isFinite(value)&&value>0;
 // GROUPED_CATALOG_V95
 // GROUPED_CATALOG_V94
 // GROUPED_CATALOG_V93
-const cleanNulls=(value:unknown)=>{const text=String(value??"").trim();return !text||text==="null"?undefined:text};
+const cleanNulls=(value:unknown)=>{const text=String(value??"").trim();return !text||text.toLowerCase()==="null"?undefined:text};
 const splitMultiline=(value:unknown)=>{const text=cleanNulls(value);return text?text.split(/\\n|\n|\u2028|\u2029/g).map(part=>part.trim()).filter(Boolean):[]};
 const renderMultiline=(value:unknown)=>{const parts=splitMultiline(value);return parts.length?<>{parts.map((part,index)=><span key={`${part}-${index}`} style={{display:"block",lineHeight:1.18,margin:0}}>{part}</span>)}</>:null};
 const parseCatalogPrice=(value:unknown)=>Number(String(cleanNulls(value)??"").replace(/[^\d.,-]/g,"").replace(",","."))||0;
@@ -167,57 +167,7 @@ function ProductRail({items,onProduct,onQuick,favorite,favorites,className=""}:{
   </div>;
 }
 
-const baseProducts: Product[] = [
-  { id: 1, name: "Постельное бельё «Русский узор»", note: "лён и хлопок, вышивка", price: 18990, oldPrice: 25990, image: "/images/russian-bedroom.png", position: "center", hasRichContent: true, colorVariants: [
-    { name: "Молочный", hex: "#f1eee7", image: "/images/russian-bedroom.png" }, { name: "Песочный", hex: "#c5ad8e", image: "/images/beige-bedroom.png" }, { name: "Ночной синий", hex: "#12243e", image: "/images/zip-collection-night.png" },
-  ] },
-  { id: 2, name: "Хлопковый пододеяльник с оборкой", note: "хлопок, 200×220 см", price: 18990, image: "/images/zip-product-bed.png", badge: "НОВИНКА", gallery: ["/images/zip-product-bed.png","/images/classic-bedroom.png","/images/beige-bedroom.png"], colorVariants: [
-    { name: "Белый", hex: "#f7f6f1", image: "/images/zip-product-bed.png" }, { name: "Льняной", hex: "#d2c1aa", image: "/images/beige-bedroom.png" }, { name: "Небесный", hex: "#9fb2c6", image: "/images/blue-bedroom.png" },
-  ] },
-  { id: 3, name: "Подушка с кружевом", note: "лён, 50×50 см", price: 5990, image: "/images/beige-bedroom.png", badge: "РУЧНАЯ РАБОТА", position: "58% 48%", colorVariants: [
-    { name: "Молочный", hex: "#eee8dc", image: "/images/beige-bedroom.png", position: "center 40%" }, { name: "Белый", hex: "#fafafa", image: "/images/zip-product-bed.png" }, { name: "Синий", hex: "#1c3551", image: "/images/zip-collection-night.png" },
-  ] },
-  { id: 4, name: "Комплект «Нити времени»", note: "сатин, вышивка", price: 24990, image: "/images/time-hero.png", badge: "КАПСУЛА", hasRichContent: true, colorVariants: [
-    { name: "Ночной синий", hex: "#10233e", image: "/images/time-hero.png" }, { name: "Небесно-голубой", hex: "#9eb6cf", image: "/images/blue-bedroom.png" }, { name: "Жемчужный", hex: "#e8e5de", image: "/images/zip-product-bed.png" },
-  ] },
-  { id: 5, name: "Тарелка «Лунная сказка»", note: "фарфор, ручная роспись", price: 5990, image: "/images/moon-plate.png", position: "center", colorVariants: [
-    { name: "Ночной синий", hex: "#0c2340", image: "/images/moon-plate.png" }, { name: "Молочный", hex: "#eee8db", image: "/images/zip-hero-summer.png" },
-  ] },
-  { id: 6, name: "Плед из льна и хлопка", note: "140×200 см", price: 12990, image: "/images/beige-bedroom.png", badge: "РУЧНАЯ РАБОТА", position: "65% 80%", gallery: ["/images/beige-bedroom.png","/images/classic-bedroom.png","/images/zip-product-bed.png"], colorVariants: [
-    { name: "Песочный", hex: "#b69a78", image: "/images/beige-bedroom.png" }, { name: "Белый", hex: "#f4f2ec", image: "/images/zip-product-bed.png" }, { name: "Синий", hex: "#203753", image: "/images/zip-collection-night.png" },
-  ] },
-  { id: 7, name: "Стёганое покрывало «Бархатный ритм»", note: "бархат, 220×240 см", price: 8690, oldPrice: 12990, image: "/images/beige-quilt.jpg", colorVariants: [
-    { name: "Песочный", hex: "#c9a982", image: "/images/beige-quilt.jpg" }, { name: "Пудровый", hex: "#e7bca5", image: "/images/peach-sheet.jpg" },
-  ] },
-  { id: 8, name: "Натяжная простыня из сатина", note: "сатин, 160×200 см", price: 4990, image: "/images/peach-sheet.jpg", colorVariants: [
-    { name: "Пудровый", hex: "#e6bca8", image: "/images/peach-sheet.jpg" }, { name: "Молочный", hex: "#efeae1", image: "/images/zip-product-bed.png" },
-  ] },
-  { id: 9, name: "Сервиз «Северное сияние»", note: "костяной фарфор, 6 персон", price: 24990, image: "/images/russian-service-blue.png", colorVariants:[{name:"Бело-голубой",hex:"#d9edf0",image:"/images/russian-service-blue.png"},{name:"Ночной синий",hex:"#10233e",image:"/images/time-table.png"}] },
-  { id: 10, name: "Чайная пара «Нити времени»", note: "костяной фарфор, 250 мл", price: 6990, image: "/images/time-tea-pair.png", gallery:["/images/time-tea-pair.png","/images/time-mug.png","/images/time-table.png"], colorVariants:[{name:"Ночной синий",hex:"#10233e",image:"/images/time-tea-pair.png"}] },
-  { id: 11, name: "Подушка «Небесная гладь»", note: "бархат, 25×60 см", price: 4990, image: "/images/sky-bolster.png", colorVariants:[{name:"Небесный",hex:"#9fc2d3",image:"/images/sky-bolster.png"},{name:"Ночной синий",hex:"#203753",image:"/images/time-hero.png"}] },
-  { id: 12, name: "Комплект «Голубая светлица»", note: "сатин, вышивка гладью", price: 21990, image: "/images/blue-bedding-vertical.png", hasRichContent: true, colorVariants:[{name:"Ледяной голубой",hex:"#afcbd1",image:"/images/blue-bedding-vertical.png"},{name:"Белый",hex:"#f4f2ec",image:"/images/zip-product-bed.png"}] },
-
-  // ICE_PATTERN_PRODUCTS_V1
-  { id:2000, name:"Декоративная подушка «Ледяные узоры»", note:"хлопок, 50×50 см", price:5990, image:"/images/products/KD-PD-2000-BLUE01.png", colorVariants:[
-    {name:"Ледяной голубой",hex:"#afcbd1",image:"/images/products/KD-PD-2000-BLUE01.png"},
-    {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2000-DARK01.png"},
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2000-WHITE01.png"},
-  ]},
-  { id:2001, name:"Тарелка «Ледяные узоры»", note:"костяной фарфор, 23 см", price:7990, image:"/images/products/KD-PD-2001-DARK01.png", colorVariants:[
-    {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2001-DARK01.png"},
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2001-WHITE01.png"},
-  ]},
-  { id:2003, name:"Плед «Ледяные узоры»", note:"шерсть и хлопок, 140×200 см", price:12990, image:"/images/products/KD-PD-2003-BLUE01.png", gallery:["/images/products/KD-PD-2003-BLUE02.png"], colorVariants:[
-    {name:"Ледяной голубой",hex:"#afcbd1",image:"/images/products/KD-PD-2003-BLUE01.png",gallery:["/images/products/KD-PD-2003-BLUE02.png"]},
-  ]},
-  { id:2004, name:"Чайная пара «Ледяные узоры»", note:"костяной фарфор, 250 мл", price:6990, image:"/images/products/KD-PD-2004-WHITE01.png", colorVariants:[
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2004-WHITE01.png"},
-  ]},
-  { id:2010, name:"Салатник «Ледяные узоры»", note:"костяной фарфор, 24 см", price:9990, image:"/images/products/KD-PD-2010-WHITE01.png", colorVariants:[
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2010-WHITE01.png"},
-    {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2010-DARK01.png"},
-  ]},
-];
+const baseProducts: Product[] = [];
 
 const REMOVED_PRODUCT_IDS = new Set([1,9,1257,1259,1260,1261,1262,1263,1266,1267,1268,1270,1271,1273,1276,1287,1500,1565,1566,1669]);
 // PRODUCT_PREVIEW_RULES_V1
@@ -385,33 +335,7 @@ const makeCollectionEditorialSku = (
   available:true,
 });
 
-const collectionEditorialProducts:Product[] = [
-  // Эхо — полный ассортимент из CSV «Камея», изображения и галереи из фида
-  {id:1552,name:"Блюдо овальное Эхо",note:"костяной фарфор, 25х18 см",price:2233,oldPrice:3190,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a9a9ef4_big.jpg",selectedColor:"Белый",selectedSize:"25х18 см",skus:[makeCollectionEditorialSku(1552,"УТ-00011436","Эхо","Белый","25х18 см","костяной фарфор",2233,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a9a9ef4_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a575b5c5163_big.jpg"])]},
-  {id:1553,name:"Блюдо овальное Эхо",note:"костяной фарфор, 36х26 см",price:4473,oldPrice:6390,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a832033_big.jpg",selectedColor:"Белый",selectedSize:"36х26 см",skus:[makeCollectionEditorialSku(1553,"УТ-00011437","Эхо","Белый","36х26 см","костяной фарфор",4473,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a832033_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a575cbeca53_big.jpg"])]},
-  {id:1554,name:"Молочник Эхо",note:"костяной фарфор, 130 мл",price:1673,oldPrice:2390,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aeea5edf_big.jpg",selectedColor:"Белый",selectedSize:"130 мл",skus:[makeCollectionEditorialSku(1554,"УТ-00011441","Эхо","Белый","130 мл","костяной фарфор",1673,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aeea5edf_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/6a15ad53ba204_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69a5765de48a1_big.jpg"])]},
-  {id:1555,name:"Кружка Эхо",note:"костяной фарфор, 350 мл",price:1953,oldPrice:2790,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aefe9f00_big.jpg",selectedColor:"Белый",selectedSize:"350 мл",skus:[makeCollectionEditorialSku(1555,"УТ-00011442","Эхо","Белый","350 мл","костяной фарфор",1953,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394aefe9f00_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a5787c5c475_big.jpg"])]},
-  {id:1556,name:"Чайная пара Эхо",note:"костяной фарфор, 250 мл",price:2233,oldPrice:3190,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af134502_big.jpg",selectedColor:"Белый",selectedSize:"250 мл",skus:[makeCollectionEditorialSku(1556,"УТ-00011517","Эхо","Белый","250 мл","костяной фарфор",2233,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af134502_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a5760b0ab4b_big.jpg"])]},
-  {id:1557,name:"Кофейная пара Эхо",note:"костяной фарфор, 90 мл",price:1673,oldPrice:2390,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af3ed506_big.jpg",selectedColor:"Белый",selectedSize:"90 мл",skus:[makeCollectionEditorialSku(1557,"УТ-00011518","Эхо","Белый","90 мл","костяной фарфор",1673,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af3ed506_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/6a15ad989a8a5_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af3a736d_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af4453b5_big.jpg"])]},
-  {id:1558,name:"Супница Эхо",note:"костяной фарфор, 31х23,7х14 см",price:7273,oldPrice:10390,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/69f06b7fd6aff_big.jpg",selectedColor:"Белый",selectedSize:"31х23,7х14 см",skus:[makeCollectionEditorialSku(1558,"УТ-00011448","Эхо","Белый","31х23,7х14 см","костяной фарфор",7273,"https://kultura-doma.ru/public/src/images/gallery/catalog/69f06b7fd6aff_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/6a15b01297ff6_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69f06b801a49b_big.jpg"])]},
-  {id:1559,name:"Салатник Эхо",note:"костяной фарфор",price:903,oldPrice:1290,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a85f308820_big.jpg",selectedColor:"Белый",selectedSize:"Единый размер",skus:[makeCollectionEditorialSku(1559,"УТ-00011449","Эхо","Белый","Единый размер","костяной фарфор",903,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a85f308820_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a5751851cd4_big.jpg"])]},
-  {id:1560,name:"Салатник Эхо",note:"костяной фарфор, 20 см",price:3283,oldPrice:4690,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a861165ce4_big.jpg",selectedColor:"Белый",selectedSize:"20 см",skus:[makeCollectionEditorialSku(1560,"УТ-00011450","Эхо","Белый","20 см","костяной фарфор",3283,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a861165ce4_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/6a15afd9285dd_big.jpg"])]},
-  {id:1561,name:"Сахарница Эхо",note:"костяной фарфор",price:2513,oldPrice:3590,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af59a5dc_big.jpg",selectedColor:"Белый",selectedSize:"Единый размер",skus:[makeCollectionEditorialSku(1561,"УТ-00011440","Эхо","Белый","Единый размер","костяной фарфор",2513,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af59a5dc_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/6a15aede2722f_big.jpg"])]},
-  {id:1562,name:"Тарелка десертная Эхо",note:"костяной фарфор, 20,8 см",price:1673,oldPrice:2390,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a73285a37b_big.jpg",selectedColor:"Белый",selectedSize:"20,8 см",skus:[makeCollectionEditorialSku(1562,"УТ-00011432","Эхо","Белый","20,8 см","костяной фарфор",1673,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a73285a37b_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a5772a9dbd2_big.jpg"])]},
-  {id:1563,name:"Тарелка закусочная Эхо",note:"костяной фарфор, 23,5 см",price:2233,oldPrice:3190,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a739923911_big.jpg",selectedColor:"Белый",selectedSize:"23,5 см",skus:[makeCollectionEditorialSku(1563,"УТ-00011433","Эхо","Белый","23,5 см","костяной фарфор",2233,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a739923911_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a576f26a902_big.jpg"])]},
-  {id:1564,name:"Тарелка обеденная Эхо",note:"костяной фарфор, 26,6 см",price:2793,oldPrice:3990,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a06d76222d16_big.jpg",selectedColor:"Белый",selectedSize:"26,6 см",skus:[makeCollectionEditorialSku(1564,"УТ-00011434","Эхо","Белый","26,6 см","костяной фарфор",2793,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a06d76222d16_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a576c56bb35_big.jpg"])]},
-  {id:1565,name:"Тарелка глубокая Эхо",note:"костяной фарфор, 23 см",price:3353,oldPrice:4790,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a7324b8aea_big.jpg",selectedColor:"Белый",selectedSize:"23 см",skus:[makeCollectionEditorialSku(1565,"УТ-00011435","Эхо","Белый","23 см","костяной фарфор",3353,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a7324b8aea_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69a5769a92bc5_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a7324f2ff1_big.jpg"])]},
-  {id:1566,name:"Тарелка для супа Эхо",note:"костяной фарфор, 16х11х5 см",price:1533,oldPrice:2190,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a732cb2a24_big.jpg",selectedColor:"Белый",selectedSize:"16х11х5 см",skus:[makeCollectionEditorialSku(1566,"УТ-00011447","Эхо","Белый","16х11х5 см","костяной фарфор",1533,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a732cb2a24_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/6a15b0794dc81_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/699f0fd03a5c0_big.jpg"])]},
-  {id:1567,name:"Чайник заварочный Эхо",note:"костяной фарфор, 1800 мл",price:5593,oldPrice:7990,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a50b12627f2e_big.jpg",selectedColor:"Белый",selectedSize:"1800 мл",skus:[makeCollectionEditorialSku(1567,"УТ-00011438","Эхо","Белый","1800 мл","костяной фарфор",5593,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a50b12627f2e_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/699f11c473620_big.jpg"])]},
-  {id:1568,name:"Чайник заварочный Эхо",note:"костяной фарфор, 900 мл",price:4473,oldPrice:6390,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af835e91_big.jpg",selectedColor:"Белый",selectedSize:"900 мл",skus:[makeCollectionEditorialSku(1568,"УТ-00011439","Эхо","Белый","900 мл","костяной фарфор",4473,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a394af835e91_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/699d71e583d98_big.jpg"])]},
-
-  // Феникс
-  {id:1264,name:"Кружка Феникс",note:"фарфор, 450 мл",price:2990,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/68ee0feabb4b9_big.png",selectedColor:"Белый",selectedSize:"450 мл",skus:[makeCollectionEditorialSku(1264,"УТ-00010256","Феникс","Белый","450 мл","фарфор",2990,"https://kultura-doma.ru/public/src/images/gallery/catalog/68ee0feabb4b9_big.png")]},
-  {id:1499,article:"KD-PD-2519",name:"Свеча Феникс",note:"кокосовый воск, 10 см",price:4990,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f7f739b7a1_big.jpg",selectedColor:"Дерево жизни",selectedSize:"10 см",colorVariants:[{name:"Дерево жизни",hex:"#5f5143",image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f7f739b7a1_big.jpg",gallery:["https://kultura-doma.ru/public/src/images/gallery/catalog/69ca6e5c7afbf_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6978bca98d11e_big.jpg"]},{name:"Сандал и Шалфей",hex:"#8a806c",image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6978bc918b851_big.jpg",gallery:["https://kultura-doma.ru/public/src/images/gallery/catalog/69ca6e73dc686_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6978bc91dddf6_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a58dffa3a6f1_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a58dffa56bea_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a58dffa6c634_big.jpg"]}],skus:[{...makeCollectionEditorialSku(1499,"KD-PD-2519","Феникс","Дерево жизни","10 см","кокосовый воск",4990,"https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f7f739b7a1_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69ca6e5c7afbf_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6978bca98d11e_big.jpg"]),id:"COL-1499-DEREVO",details:"Аромат: Дерево жизни"},{...makeCollectionEditorialSku(1499,"KD-PD-2520","Феникс","Сандал и Шалфей","10 см","кокосовый воск",4990,"https://kultura-doma.ru/public/src/images/gallery/catalog/6978bc918b851_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/69ca6e73dc686_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6978bc91dddf6_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a58dffa3a6f1_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a58dffa56bea_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a58dffa6c634_big.jpg"]),id:"COL-1499-SANDAL",details:"Аромат: Сандал и Шалфей"}]},
-
-  // Нити — товары из текущего фида «Нити времени»
-  {id:1272,name:"Подушка декоративная Нити",note:"45×45 см",price:2745,oldPrice:5490,image:"https://kultura-doma.ru/public/src/images/gallery/catalog/69e5d18433139_big.jpg",selectedColor:"Голубой",selectedSize:"45×45 см",skus:[makeCollectionEditorialSku(1272,"УТ-00010599","Нити","Голубой","45×45 см","текстиль",2745,"https://kultura-doma.ru/public/src/images/gallery/catalog/69e5d18433139_big.jpg",["https://kultura-doma.ru/public/src/images/gallery/catalog/68e669d46c745_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/68e61cd4aadc6_big.jpg"]) ]},
-];
+const collectionEditorialProducts:Product[] = [];
 
 // COLLECTIONS_REDESIGN_V65
 const normalizeRetiredCatalogName=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/[‐‑‒–—]/g,"-").replace(/\s+/g," ");
@@ -924,7 +848,7 @@ function ProductView({ product, favorite, liked, chooseSize, add, selectProduct,
   const specs=sku??mediaSku??product.skus?.[0];
   const specsExtra=asVariantSku(specs);
   const currentOldPrice=Number(specsExtra?.oldPrice)||0;
-  const solutionTags=Array.from(new Set([...splitMultiline(product.readySolution),...splitMultiline(product.optionalReadySolution)]));
+  const solutionTags:string[]=[];
   const needsSize=Boolean(sizes.length>1&&!effectiveSelectedSize);
   const selectedUnavailable=Boolean(effectiveSelectedSize&&!isProductSizeAvailable(product,color.name,effectiveSelectedSize,secondaryColor||undefined));
   const knownUnitPrice=priceKnown(unitPrice);
