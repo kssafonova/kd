@@ -233,7 +233,7 @@ const loadCompressedEntityCsv=async()=>{
 };
 const entityColorHex=(value:string)=>{
   const key=String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/\s+/g," ");
-  const colors:Record<string,string>={'бежевый':"#CDB99B",'белый':"#F5F5F2",'белый / голубой':"#93B8CB",'белый / золотой':"#B89A5A",'голубой':"#93B8CB",'желтый':"#D9B84E",'зеленый':"#657A61",'коричневый':"#765A46",'красный':"#9E403B",'ледяной голубой':"#93B8CB",'молочный':"#EEE7DA",'ночной синий':"#142A45",'пудровый':"#D8B0A4",'серебряный':"#B9B9B4",'серо-синий':"#667B89",'синий':"#496C8A",'черный':"#1D1D1B",'розовый':"#D7A1A3",'экрю':"#DED0B6"};
+  const colors:Record<string,string>={'бежевый':"#CDB99B",'белый':"#F5F5F2",'белый / голубой':"#93B8CB",'белый / золотой':"#B89A5A",'голубой':"#93B8CB",'желтый':"#D9B84E",'зеленый':"#657A61",'коричневый':"#765A46",'красный':"#9E403B",'ледяной голубой':"#93B8CB",'молочный':"#EEE7DA",'ночной синий':"#142A45",'прозрачный':"#F3F4F2",'пудровый':"#D8B0A4",'серебряный':"#B9B9B4",'серо-синий':"#667B89",'синий':"#496C8A",'черный':"#1D1D1B",'экрю':"#DED0B6"};
   return colors[key]??"#8F8A82";
 };
 const entityId=(article:string,name:string)=>300000+Array.from(`${article}|${name}`).reduce((sum,char)=>((sum*31)+char.charCodeAt(0))%500000,0);
