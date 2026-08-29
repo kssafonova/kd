@@ -5,7 +5,7 @@ import csv
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_DIR = ROOT / "data" / "product-source"
+SOURCE_DIR = ROOT / "scripts" / "product-source"
 PAGE = ROOT / "app" / "page.tsx"
 OUT = ROOT / "public" / "data" / "catalog_xlsx_full.csv"
 MARKER = "// FULL_CSV_CATALOG_V89"
