@@ -15,6 +15,9 @@ INVALID KD-PD-8305: 'Декор для дома' / None
 CONFLICT KD-PD-1024: Название товара
 CONFLICT KD-PD-11438: Название товара, Материал, Подкатегория
 
+$ apply-grouped-catalog-v93.py
+// GROUPED_CATALOG_V93: aroma > color > size, exact CSV categories, subcategory filter, multiline/null rendering
+
 ## npm install
 npm warn deprecated tsconfck@3.1.6: unmaintained
 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.hirok.io
@@ -30,15 +33,15 @@ added 513 packages in 17s
 
 > Build error occurred
 Error: Turbopack build failed with 1 errors:
-./app/page.tsx:1194:957
+./app/page.tsx:1175:957
 Expected a semicolon
-  [90m1192 |[0m ...
-  [90m1193 |[0m ...
-[31m[1m>[0m [90m1194 |[0m ...<[35m/div>{product.switchBy!=="none"&&{product.switchBy!=="none"&&<p className="quick-col...[0m
+  [90m1173 |[0m ...
+  [90m1174 |[0m ...
+[31m[1m>[0m [90m1175 |[0m ...<[35m/div>{product.switchBy!=="none"&&{product.switchBy!=="none"&&<p className="quick-col...[0m
   [90m     |[0m                                              [31m[1m^[0m
-  [90m1195 |[0m ...
-  [90m1196 |[0m ...
-  [90m1197 |[0m ...
+  [90m1176 |[0m ...
+  [90m1177 |[0m ...
+  [90m1178 |[0m ...
 
 Parsing ecmascript source code failed
 
@@ -54,5 +57,5 @@ Import traces:
     ./app/catalog/page.tsx [Server Component]
 
 
-    at <unknown> (./app/page.tsx:1194:957)
+    at <unknown> (./app/page.tsx:1175:957)
 
