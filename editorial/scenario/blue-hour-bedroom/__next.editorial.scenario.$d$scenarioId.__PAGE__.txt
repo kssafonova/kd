@@ -3,5 +3,5 @@
 3:I[97367,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0-~o-8e0ul56t.js"],"OutletBoundary"]
 4:"$Sreact.suspense"
 :HL["/kd/_next/static/chunks/0vqx41a621f2w.css","style"]
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"blue-hour-bedroom"}],[["$","link","0",{"rel":"stylesheet","href":"/kd/_next/static/chunks/0vqx41a621f2w.css","precedence":"next"}],["$","script","script-0",{"src":"/kd/_next/static/chunks/0tfz3x7o78s2a.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"MoUe-VvmhCPEOPPOs73UC"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"scenarioId":"blue-hour-bedroom"}],[["$","link","0",{"rel":"stylesheet","href":"/kd/_next/static/chunks/0vqx41a621f2w.css","precedence":"next"}],["$","script","script-0",{"src":"/kd/_next/static/chunks/0tfz3x7o78s2a.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"ZofQsARuz9v6ZtkIJRPut"}
 5:null
