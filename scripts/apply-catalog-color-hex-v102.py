@@ -79,7 +79,7 @@ entries = ",".join(f'{key!r}:"{value}"' for key, value in observed.items())
 replacement = f'''const entityColorHex=(value:string)=>{{\n  const key=String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/\\s+/g," ");\n  const colors:Record<string,string>={{{entries}}};\n  return colors[key]??"#8F8A82";\n}};'''
 text = PAGE.read_text(encoding="utf-8")
 pattern = r'const entityColorHex=\(value:string\)=>\{.*?\};(?=\nconst entityId=)'
-updated, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+updated, count = re.subn(pattern, lambda _: replacement, text, count=1, flags=re.S)
 if count != 1:
     raise SystemExit("CATALOG_COLOR_HEX_V102: entityColorHex function not found")
 PAGE.write_text(updated, encoding="utf-8")
