@@ -6,6 +6,7 @@ root = Path(__file__).resolve().parents[1]
 scripts = [
     root / "scripts" / "sync-full-xlsx-catalog-v88.py",
     root / "scripts" / "apply-grouped-catalog-v93.py",
+    root / "scripts" / "apply-grouped-catalog-v94.py",
 ]
 
 logs=[]
