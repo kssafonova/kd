@@ -7,6 +7,7 @@ scripts = [
     root / "scripts" / "sync-full-xlsx-catalog-v88.py",
     root / "scripts" / "apply-grouped-catalog-v93.py",
     root / "scripts" / "apply-grouped-catalog-v94.py",
+    root / "scripts" / "apply-grouped-catalog-v95.py",
 ]
 
 logs=[]
