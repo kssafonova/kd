@@ -20,15 +20,13 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import base64, gzip, re
+          import base64, csv, gzip, io
 
-          def decode(path: str) -> bytes:
-              payload = Path(path).read_text(encoding='utf-8').strip()
-              return gzip.decompress(base64.b64decode(payload))
+          payload = Path('data/.catalog_raw_import.b64').read_text(encoding='utf-8').strip()
+          raw = gzip.decompress(base64.b64decode(payload))
+          raw_text = raw.decode('utf-8-sig')
 
-          raw = decode('data/.catalog_raw_import.b64')
-          runtime = decode('data/.catalog_runtime_import.b64')
-
+          # Store the user's source CSV unchanged in canonical repository locations.
           for target in (
               'all_site_products_grouped.csv',
               'data/all_site_products_grouped.csv',
@@ -38,31 +36,45 @@ jobs:
               path.parent.mkdir(parents=True, exist_ok=True)
               path.write_bytes(raw)
 
+          # Build the comma-separated runtime feed expected by the existing storefront loader.
+          reader = csv.DictReader(io.StringIO(raw_text), delimiter=';')
+          source_fields = list(reader.fieldnames or [])
+          rows = list(reader)
+          rename = {
+              'Фото 1': 'Превью фотография товара',
+              'Фото 2': 'Вторая фотография товара в скролле',
+              'Фото 3': 'Третья фотография в стролле',
+              'Комплектация / информация о размере': 'Комплектация / Информация о размере',
+          }
+          runtime_fields = [rename.get(name, name) for name in source_fields if name != 'Капсула.1']
+          runtime_io = io.StringIO(newline='')
+          writer = csv.DictWriter(runtime_io, fieldnames=runtime_fields, lineterminator='\n')
+          writer.writeheader()
+          for row in rows:
+              out = {}
+              for source_name in source_fields:
+                  if source_name == 'Капсула.1':
+                      continue
+                  target_name = rename.get(source_name, source_name)
+                  value = row.get(source_name, '')
+                  if source_name in ('Товар входит в готовое решение', 'Опционально входит в готовое решение'):
+                      value = 'null'
+                  out[target_name] = value
+              writer.writerow(out)
+          runtime = runtime_io.getvalue().encode('utf-8')
           for target in ('data/catalog_xlsx_full.csv', 'public/data/catalog_xlsx_full.csv'):
               Path(target).write_bytes(runtime)
 
           page_path = Path('app/page.tsx')
           page = page_path.read_text(encoding='utf-8')
 
-          page, base_count = re.subn(
-              r'const baseProducts: Product\[\] = \[.*?\n\];\n\nconst REMOVED_PRODUCT_IDS',
-              'const baseProducts: Product[] = [];\n\nconst REMOVED_PRODUCT_IDS',
-              page,
-              count=1,
-              flags=re.S,
-          )
-          if base_count != 1:
-              raise RuntimeError('Could not remove legacy baseProducts catalog')
+          start = page.index('const baseProducts: Product[] = [')
+          end = page.index('\n\nconst REMOVED_PRODUCT_IDS', start)
+          page = page[:start] + 'const baseProducts: Product[] = [];' + page[end:]
 
-          page, editorial_count = re.subn(
-              r'const collectionEditorialProducts:Product\[\] = \[.*?\n\];\n\n// COLLECTIONS_REDESIGN_V65',
-              'const collectionEditorialProducts:Product[] = [];\n\n// COLLECTIONS_REDESIGN_V65',
-              page,
-              count=1,
-              flags=re.S,
-          )
-          if editorial_count != 1:
-              raise RuntimeError('Could not remove legacy collection catalog products')
+          start = page.index('const collectionEditorialProducts:Product[] = [')
+          end = page.index('\n\n// COLLECTIONS_REDESIGN_V65', start)
+          page = page[:start] + 'const collectionEditorialProducts:Product[] = [];' + page[end:]
 
           page = page.replace(
               'const cleanNulls=(value:unknown)=>{const text=String(value??"").trim();return !text||text==="null"?undefined:text};',
@@ -84,5 +96,6 @@ jobs:
             echo "No catalog changes to commit"
           else
             git commit -m "Refresh catalog from all_site_products_grouped.csv"
+            git pull --rebase origin main
             git push origin HEAD:main
           fi
