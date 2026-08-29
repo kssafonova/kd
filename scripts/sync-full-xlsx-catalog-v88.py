@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 import csv
 import re
-import sys
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -13,7 +12,7 @@ PAGE = ROOT / "app" / "page.tsx"
 OUT = ROOT / "public" / "data" / "catalog_xlsx_full.csv"
 MARKER = "// FULL_XLSX_CATALOG_V88"
 
-NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main", "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships"}
+NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 
 
 def col_index(cell_ref: str) -> int:
@@ -32,10 +31,10 @@ def read_first_sheet(path: Path) -> list[list[str]]:
             for si in root.findall("m:si", NS):
                 shared.append("".join(t.text or "" for t in si.iterfind(".//m:t", NS)))
 
-        wb = ET.fromstring(zf.read("xl/workbook.xml"))
+        workbook = ET.fromstring(zf.read("xl/workbook.xml"))
         rels = ET.fromstring(zf.read("xl/_rels/workbook.xml.rels"))
-        rel_map = {r.attrib["Id"]: r.attrib["Target"] for r in rels}
-        sheet = wb.find("m:sheets/m:sheet", NS)
+        rel_map = {item.attrib["Id"]: item.attrib["Target"] for item in rels}
+        sheet = workbook.find("m:sheets/m:sheet", NS)
         rid = sheet.attrib["{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"]
         target = rel_map[rid]
         sheet_path = "xl/" + target.lstrip("/") if not target.startswith("xl/") else target
@@ -60,8 +59,7 @@ def read_first_sheet(path: Path) -> list[list[str]]:
                         value = raw
                 values[idx] = value
             if values:
-                width = max(values) + 1
-                current = [""] * width
+                current = [""] * (max(values) + 1)
                 for idx, value in values.items():
                     current[idx] = value
                 rows.append(current)
@@ -70,9 +68,7 @@ def read_first_sheet(path: Path) -> list[list[str]]:
 
 def normalize_number(value: str) -> str:
     value = (value or "").strip()
-    if re.fullmatch(r"-?\d+\.0", value):
-        return value[:-2]
-    return value
+    return value[:-2] if re.fullmatch(r"-?\d+\.0", value) else value
 
 
 def normalize_image(value: str) -> str:
@@ -81,9 +77,9 @@ def normalize_image(value: str) -> str:
         return ""
     if value.startswith("/kd/images/"):
         return value[3:]
-    prefix = "https://kssafonova.github.io/kd"
-    if value.startswith(prefix + "/images/"):
-        return value[len(prefix):]
+    github_pages = "https://kssafonova.github.io/kd"
+    if value.startswith(github_pages + "/images/"):
+        return value[len(github_pages):]
     if value.startswith("https://kultura-doma.ru/"):
         return "/images/imported-products/" + value.rstrip("/").split("/")[-1]
     if re.match(r"^https?://", value):
@@ -109,15 +105,20 @@ def main() -> None:
         raise SystemExit("XLSX has no product rows")
 
     headers = raw[0]
-    pos = {name: i for i, name in enumerate(headers)}
+    positions: dict[str, list[int]] = {}
+    for i, name in enumerate(headers):
+        positions.setdefault(name, []).append(i)
     required = ["ID", "Артикул", "Название товара", "Цена", "Фото 1"]
-    missing = [name for name in required if name not in pos]
+    missing = [name for name in required if name not in positions]
     if missing:
         raise SystemExit("Missing XLSX columns: " + ", ".join(missing))
 
-    def get(row: list[str], name: str) -> str:
-        i = pos.get(name)
-        return normalize_number(row[i] if i is not None and i < len(row) else "")
+    def get(row: list[str], name: str, occurrence: int = 0) -> str:
+        indexes = positions.get(name, [])
+        if occurrence >= len(indexes):
+            return ""
+        i = indexes[occurrence]
+        return normalize_number(row[i] if i < len(row) else "")
 
     rows: list[dict[str, str]] = []
     for source in raw[1:]:
@@ -143,32 +144,31 @@ def main() -> None:
             "Состав": get(source, "Состав"),
             "Детали": get(source, "Детали"),
             "Коллекция": get(source, "Коллекция"),
-            "Капсула": get(source, "Капсула"),
+            "Капсула": get(source, "Капсула", 0),
             "Категория": get(source, "Категория"),
             "Подкатегория": get(source, "Подкатегория"),
             "Товар входит в готовое решение": get(source, "Товар входит в готовое решение"),
             "Опционально входит в готовое решение": get(source, "Опционально входит в готовое решение"),
-            "Описание готового решения": get(source, "Капсула") if headers.count("Капсула") == 1 else "",
+            "Описание готового решения": get(source, "Капсула", 1),
             "Превью фотография товара": normalize_image(get(source, "Фото 1")),
             "Вторая фотография товара в скролле": normalize_image(get(source, "Фото 2")),
             "Третья фотография в стролле": normalize_image(get(source, "Фото 3")),
             "Offer ID": get(source, "Offer ID"),
         })
 
-    # Fill photo gaps from the same article + aroma/color, then from the article itself.
     by_variant: dict[tuple[str, str], list[str]] = {}
     by_article: dict[str, list[str]] = {}
+    photo_fields = ["Превью фотография товара", "Вторая фотография товара в скролле", "Третья фотография в стролле"]
     for row in rows:
         key = (row["Артикул"], (row["Аромат"] or row["Цвет"]).strip())
-        photos = [row["Превью фотография товара"], row["Вторая фотография товара в скролле"], row["Третья фотография в стролле"]]
+        photos = [row[field] for field in photo_fields]
         if any(photos):
             by_variant.setdefault(key, photos)
             by_article.setdefault(row["Артикул"], photos)
     for row in rows:
         key = (row["Артикул"], (row["Аромат"] or row["Цвет"]).strip())
         fallback = by_variant.get(key) or by_article.get(row["Артикул"]) or []
-        photo_keys = ["Превью фотография товара", "Вторая фотография товара в скролле", "Третья фотография в стролле"]
-        for i, field in enumerate(photo_keys):
+        for i, field in enumerate(photo_fields):
             if not row[field] and i < len(fallback):
                 row[field] = fallback[i]
 
@@ -225,7 +225,7 @@ def main() -> None:
     PAGE.write_text(page, encoding="utf-8")
 
     articles = {row["Артикул"] for row in rows}
-    photos = {row[field] for row in rows for field in ("Превью фотография товара", "Вторая фотография товара в скролле", "Третья фотография в стролле") if row[field]}
+    photos = {row[field] for row in rows for field in photo_fields if row[field]}
     print(f"{MARKER}: {len(rows)} SKU rows, {len(articles)} article products, {len(photos)} referenced images -> {OUT.relative_to(ROOT)}")
 
 
