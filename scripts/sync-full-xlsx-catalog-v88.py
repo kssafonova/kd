@@ -3,67 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 import csv
 import re
-import xml.etree.ElementTree as ET
-import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-XLSX = ROOT / "all_site_products_full.xlsx"
+SOURCE_DIR = ROOT / "data" / "product-source"
 PAGE = ROOT / "app" / "page.tsx"
 OUT = ROOT / "public" / "data" / "catalog_xlsx_full.csv"
-MARKER = "// FULL_XLSX_CATALOG_V88"
-
-NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
-
-
-def col_index(cell_ref: str) -> int:
-    letters = re.match(r"[A-Z]+", cell_ref or "A").group(0)
-    value = 0
-    for ch in letters:
-        value = value * 26 + ord(ch) - 64
-    return value - 1
-
-
-def read_first_sheet(path: Path) -> list[list[str]]:
-    with zipfile.ZipFile(path) as zf:
-        shared: list[str] = []
-        if "xl/sharedStrings.xml" in zf.namelist():
-            root = ET.fromstring(zf.read("xl/sharedStrings.xml"))
-            for si in root.findall("m:si", NS):
-                shared.append("".join(t.text or "" for t in si.iterfind(".//m:t", NS)))
-
-        workbook = ET.fromstring(zf.read("xl/workbook.xml"))
-        rels = ET.fromstring(zf.read("xl/_rels/workbook.xml.rels"))
-        rel_map = {item.attrib["Id"]: item.attrib["Target"] for item in rels}
-        sheet = workbook.find("m:sheets/m:sheet", NS)
-        rid = sheet.attrib["{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"]
-        target = rel_map[rid]
-        sheet_path = "xl/" + target.lstrip("/") if not target.startswith("xl/") else target
-        root = ET.fromstring(zf.read(sheet_path))
-
-        rows: list[list[str]] = []
-        for row in root.findall("m:sheetData/m:row", NS):
-            values: dict[int, str] = {}
-            for cell in row.findall("m:c", NS):
-                idx = col_index(cell.attrib.get("r", "A1"))
-                kind = cell.attrib.get("t")
-                if kind == "inlineStr":
-                    value = "".join(t.text or "" for t in cell.iterfind(".//m:t", NS))
-                else:
-                    node = cell.find("m:v", NS)
-                    raw = node.text if node is not None and node.text is not None else ""
-                    if kind == "s" and raw:
-                        value = shared[int(raw)]
-                    elif kind == "b":
-                        value = "TRUE" if raw == "1" else "FALSE"
-                    else:
-                        value = raw
-                values[idx] = value
-            if values:
-                current = [""] * (max(values) + 1)
-                for idx, value in values.items():
-                    current[idx] = value
-                rows.append(current)
-        return rows
+MARKER = "// FULL_CSV_CATALOG_V89"
+SOURCE_GLOB = "products_part_*.csv"
 
 
 def normalize_number(value: str) -> str:
@@ -89,7 +35,7 @@ def normalize_image(value: str) -> str:
     return value
 
 
-def replace_once(text: str, old: str, new: str, label: str) -> str:
+def replace_required(text: str, old: str, new: str, label: str) -> str:
     if new in text:
         return text
     if old not in text:
@@ -97,21 +43,40 @@ def replace_once(text: str, old: str, new: str, label: str) -> str:
     return text.replace(old, new, 1)
 
 
-def main() -> None:
-    if not XLSX.exists():
-        raise SystemExit(f"Missing {XLSX.name}")
-    raw = read_first_sheet(XLSX)
-    if len(raw) < 2:
-        raise SystemExit("XLSX has no product rows")
+def read_source_rows() -> tuple[list[str], list[list[str]], int]:
+    files = sorted(SOURCE_DIR.glob(SOURCE_GLOB))
+    if not files:
+        raise SystemExit(f"No authoritative CSV parts found in {SOURCE_DIR}")
 
-    headers = raw[0]
+    headers: list[str] | None = None
+    raw_rows: list[list[str]] = []
+    for path in files:
+        with path.open("r", encoding="utf-8-sig", newline="") as fh:
+            reader = csv.reader(fh, delimiter=";")
+            current_headers = next(reader, None)
+            if not current_headers:
+                continue
+            if headers is None:
+                headers = current_headers
+            elif current_headers != headers:
+                raise SystemExit(f"Header mismatch in {path.name}")
+            raw_rows.extend(row for row in reader if any((cell or "").strip() for cell in row))
+
+    if headers is None:
+        raise SystemExit("Authoritative CSV source has no header")
+    return headers, raw_rows, len(files)
+
+
+def main() -> None:
+    headers, raw_rows, source_parts = read_source_rows()
     positions: dict[str, list[int]] = {}
     for i, name in enumerate(headers):
         positions.setdefault(name, []).append(i)
+
     required = ["ID", "Артикул", "Название товара", "Цена", "Фото 1"]
     missing = [name for name in required if name not in positions]
     if missing:
-        raise SystemExit("Missing XLSX columns: " + ", ".join(missing))
+        raise SystemExit("Missing CSV columns: " + ", ".join(missing))
 
     def get(row: list[str], name: str, occurrence: int = 0) -> str:
         indexes = positions.get(name, [])
@@ -121,7 +86,7 @@ def main() -> None:
         return normalize_number(row[i] if i < len(row) else "")
 
     rows: list[dict[str, str]] = []
-    for source in raw[1:]:
+    for source in raw_rows:
         article = get(source, "Артикул").strip()
         name = get(source, "Название товара").strip()
         if not article or not name:
@@ -153,20 +118,24 @@ def main() -> None:
             "Превью фотография товара": normalize_image(get(source, "Фото 1")),
             "Вторая фотография товара в скролле": normalize_image(get(source, "Фото 2")),
             "Третья фотография в стролле": normalize_image(get(source, "Фото 3")),
-            "Offer ID": get(source, "Offer ID"),
         })
 
-    by_variant: dict[tuple[str, str], list[str]] = {}
+    if not rows:
+        raise SystemExit("Authoritative CSV source has no product rows")
+
+    # Fill only missing media values from another SKU of the same product.
+    # Product attributes themselves are never inherited from the previous storefront dataset.
+    by_variant: dict[tuple[str, str, str], list[str]] = {}
     by_article: dict[str, list[str]] = {}
     photo_fields = ["Превью фотография товара", "Вторая фотография товара в скролле", "Третья фотография в стролле"]
     for row in rows:
-        key = (row["Артикул"], (row["Аромат"] or row["Цвет"]).strip())
+        key = (row["Артикул"], row["Цвет"].strip(), row["Аромат"].strip())
         photos = [row[field] for field in photo_fields]
         if any(photos):
             by_variant.setdefault(key, photos)
             by_article.setdefault(row["Артикул"], photos)
     for row in rows:
-        key = (row["Артикул"], (row["Аромат"] or row["Цвет"]).strip())
+        key = (row["Артикул"], row["Цвет"].strip(), row["Аромат"].strip())
         fallback = by_variant.get(key) or by_article.get(row["Артикул"]) or []
         for i, field in enumerate(photo_fields):
             if not row[field] and i < len(fallback):
@@ -180,53 +149,32 @@ def main() -> None:
         writer.writerows(rows)
 
     page = PAGE.read_text(encoding="utf-8")
-    page = replace_once(
-        page,
-        'const XLSX_ENTITY_FILES:string[] = []; // canonical data is loaded from the compressed table snapshot below',
+    page = page.replace(
         'const XLSX_ENTITY_FILES:string[] = ["catalog_xlsx_full.csv"]; // FULL_XLSX_CATALOG_V88',
-        "full XLSX source",
+        'const XLSX_ENTITY_FILES:string[] = ["catalog_xlsx_full.csv"]; // FULL_CSV_CATALOG_V89',
+        1,
     )
-    page = replace_once(
+    page = page.replace("  offerId?: string;\n", "", 1)
+    page = replace_required(
         page,
-        '  const extra=await loadCompressedEntityCsv();\n  const rows=[...chunks.flat(),...extra].filter(row=>row["Артикул"]&&row["Название товара"]);',
-        '  const rows=chunks.flat().filter(row=>row["Артикул"]&&row["Название товара"]);',
-        "disable stale compressed snapshot",
+        '    const price=tablePrice>0?tablePrice:(existing?.price??0);',
+        '    const price=tablePrice;',
+        "table-only product price",
     )
-    page = replace_once(
+    page = replace_required(
         page,
-        '      const color=String(row["Цвет"]||"").trim()||"Без цвета";',
-        '      const color=String(row["Аромат"]||row["Цвет"]||"").trim()||"Без цвета";',
-        "aroma variants",
-    )
-    page = replace_once(
-        page,
-        'collection:String(row["Коллекция"]||"").trim()||undefined,price:',
-        'collection:String(row["Коллекция"]||"").trim()||undefined,capsule:String(row["Капсула"]||"").trim()||undefined,price:',
-        "capsule field",
-    )
-    page = replace_once(
-        page,
-        '  giftPackagingAvailable?: boolean;\n};',
-        '  giftPackagingAvailable?: boolean;\n  category?: string;\n  subcategory?: string;\n  collection?: string;\n  capsule?: string;\n  readySolution?: string;\n  optionalReadySolution?: string;\n  offerId?: string;\n};',
-        "product XLSX metadata fields",
-    )
-    page = replace_once(
-        page,
-        'incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))});',
-        'incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery})),category:String(first["Категория"]||"").trim()||undefined,subcategory:String(first["Подкатегория"]||"").trim()||undefined,collection:String(first["Коллекция"]||"").trim()||undefined,capsule:String(first["Капсула"]||"").trim()||undefined,readySolution:String(first["Товар входит в готовое решение"]||"").trim()||undefined,optionalReadySolution:String(first["Опционально входит в готовое решение"]||"").trim()||undefined,offerId:String(first["Offer ID"]||"").trim()||undefined});',
-        "product XLSX metadata mapping",
-    )
-    page = replace_once(
-        page,
-        'const catalogText=(product:Product)=>`${product.name} ${product.note}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");',
-        'const catalogText=(product:Product)=>`${product.name} ${product.note} ${product.category||""} ${product.subcategory||""}`.toLocaleLowerCase("ru-RU").replace(/ё/g,"е");',
-        "catalog category metadata",
+        '    incoming.push({...existing,id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery})),category:String(first["Категория"]||"").trim()||undefined,subcategory:String(first["Подкатегория"]||"").trim()||undefined,collection:String(first["Коллекция"]||"").trim()||undefined,capsule:String(first["Капсула"]||"").trim()||undefined,readySolution:String(first["Товар входит в готовое решение"]||"").trim()||undefined,optionalReadySolution:String(first["Опционально входит в готовое решение"]||"").trim()||undefined,offerId:String(first["Offer ID"]||"").trim()||undefined});',
+        '    incoming.push({id,name,article,note:[firstSku.material,firstSku.size].filter(Boolean).join(", "),price,oldPrice:tableOldPrice>price?tableOldPrice:undefined,image:firstSku.image,gallery:firstSku.gallery,skus,colorVariants:colorRows.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery})),category:String(first["Категория"]||"").trim()||undefined,subcategory:String(first["Подкатегория"]||"").trim()||undefined,collection:String(first["Коллекция"]||"").trim()||undefined,capsule:String(first["Капсула"]||"").trim()||undefined,readySolution:String(first["Товар входит в готовое решение"]||"").trim()||undefined,optionalReadySolution:String(first["Опционально входит в готовое решение"]||"").trim()||undefined});',
+        "remove stale product fallback and offer id",
     )
     PAGE.write_text(page, encoding="utf-8")
 
     articles = {row["Артикул"] for row in rows}
     photos = {row[field] for row in rows for field in photo_fields if row[field]}
-    print(f"{MARKER}: {len(rows)} SKU rows, {len(articles)} article products, {len(photos)} referenced images -> {OUT.relative_to(ROOT)}")
+    print(
+        f"{MARKER}: {len(rows)} SKU rows, {len(articles)} article products, "
+        f"{len(photos)} referenced images, {source_parts} source parts -> {OUT.relative_to(ROOT)}"
+    )
 
 
 if __name__ == "__main__":
