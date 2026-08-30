@@ -1,0 +1,210 @@
+﻿solution_id;solution_name;product_id;relation_type
+sol_f356f17b3b;Красные линии;KD-PD-00474;required
+sol_f356f17b3b;Красные линии;KD-PD-00574;required
+sol_f356f17b3b;Красные линии;KD-PD-00575;required
+sol_f356f17b3b;Красные линии;KD-PD-00576;required
+sol_f356f17b3b;Красные линии;KD-PD-11574;required
+sol_f356f17b3b;Красные линии;KD-PD-11616;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-1023;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-1026;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-1027;required
+sol_63c095e985;Пламя морских глубин;KD-PD-1027;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-1030;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-1024;required
+sol_63c095e985;Пламя морских глубин;KD-PD-1025;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-1025;required
+sol_63c095e985;Пламя морских глубин;KD-PD-2519;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-2519;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11417;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11417;required
+sol_f356f17b3b;Красные линии;KD-PD-11417;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11415;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11415;required
+sol_f356f17b3b;Красные линии;KD-PD-11415;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11416;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11416;required
+sol_f356f17b3b;Красные линии;KD-PD-11416;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11514;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11514;required
+sol_f356f17b3b;Красные линии;KD-PD-11514;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11428;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11428;required
+sol_f356f17b3b;Красные линии;KD-PD-11428;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11430;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11430;required
+sol_f356f17b3b;Красные линии;KD-PD-11430;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11420;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11420;required
+sol_f356f17b3b;Красные линии;KD-PD-11420;optional
+sol_f356f17b3b;Красные линии;KD-PD-11438;required
+sol_26270f94ad;Зеленый салон;KD-PD-11438;optional
+sol_f356f17b3b;Красные линии;KD-PD-114381;required
+sol_26270f94ad;Зеленый салон;KD-PD-114381;optional
+sol_f356f17b3b;Красные линии;KD-PD-114382;required
+sol_26270f94ad;Зеленый салон;KD-PD-114382;optional
+sol_f356f17b3b;Красные линии;KD-PD-114383;required
+sol_26270f94ad;Зеленый салон;KD-PD-114383;optional
+sol_f356f17b3b;Красные линии;KD-PD-114384;required
+sol_26270f94ad;Зеленый салон;KD-PD-114384;optional
+sol_f356f17b3b;Красные линии;KD-PD-114385;required
+sol_26270f94ad;Зеленый салон;KD-PD-114385;optional
+sol_211b78e5a8;Зимняя сказка;KD-PD-10288;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10288;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-11020;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11020;required
+sol_f356f17b3b;Красные линии;KD-PD-10414;required
+sol_f356f17b3b;Красные линии;KD-PD-10932;required
+sol_f356f17b3b;Красные линии;KD-PD-10587;required
+sol_f356f17b3b;Красные линии;KD-PD-10567;required
+sol_f356f17b3b;Красные линии;KD-PD-10450;required
+sol_f356f17b3b;Красные линии;KD-PD-10400;required
+sol_f356f17b3b;Красные линии;KD-PD-10930;required
+sol_26270f94ad;Зеленый салон;KD-PD-8985;required
+sol_26270f94ad;Зеленый салон;KD-PD-8982;optional
+sol_f356f17b3b;Красные линии;KD-PD-11033;required
+sol_f356f17b3b;Красные линии;KD-PD-11034;required
+sol_f356f17b3b;Красные линии;KD-PD-10841;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10841;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10841;optional
+sol_bea84aa589;Теплый брутализм;KD-PD-10841;optional
+sol_f356f17b3b;Красные линии;KD-PD-10786;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10786;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10786;optional
+sol_bea84aa589;Теплый брутализм;KD-PD-10786;optional
+sol_26270f94ad;Зеленый салон;KD-PD-7947;required
+sol_26270f94ad;Зеленый салон;KD-PD-8312;required
+sol_26270f94ad;Зеленый салон;KD-PD-7941;required
+sol_26270f94ad;Зеленый салон;KD-PD-7942;required
+sol_26270f94ad;Зеленый салон;KD-PD-7242;required
+sol_26270f94ad;Зеленый салон;KD-PD-7938;required
+sol_26270f94ad;Зеленый салон;KD-PD-8256;required
+sol_26270f94ad;Зеленый салон;KD-PD-7939;required
+sol_26270f94ad;Зеленый салон;KD-PD-7944;required
+sol_26270f94ad;Зеленый салон;KD-PD-7940;required
+sol_26270f94ad;Зеленый салон;KD-PD-7937;required
+sol_bea84aa589;Теплый брутализм;KD-PD-9713;required
+sol_bea84aa589;Теплый брутализм;KD-PD-9718;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8768;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8770;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8765;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8777;required
+sol_bea84aa589;Теплый брутализм;KD-PD-9711;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8776;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8758;required
+sol_26270f94ad;Зеленый салон;KD-PD-8967;required
+sol_26270f94ad;Зеленый салон;KD-PD-8977;required
+sol_26270f94ad;Зеленый салон;KD-PD-7227;required
+sol_26270f94ad;Зеленый салон;KD-PD-9976;required
+sol_26270f94ad;Зеленый салон;KD-PD-8242;required
+sol_f356f17b3b;Красные линии;KD-PD-8242;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8242;optional
+sol_26270f94ad;Зеленый салон;KD-PD-8243;required
+sol_f356f17b3b;Красные линии;KD-PD-8243;required
+sol_bea84aa589;Теплый брутализм;KD-PD-8243;optional
+sol_211b78e5a8;Зимняя сказка;KD-PD-11521;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11521;required
+sol_26270f94ad;Зеленый салон;KD-PD-11419;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11419;required
+sol_f356f17b3b;Красные линии;KD-PD-11419;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11431;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11431;required
+sol_f356f17b3b;Красные линии;KD-PD-11431;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11429;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11429;required
+sol_f356f17b3b;Красные линии;KD-PD-11429;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11421;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11421;required
+sol_f356f17b3b;Красные линии;KD-PD-11421;optional
+sol_26270f94ad;Зеленый салон;KD-PD-11418;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11418;required
+sol_f356f17b3b;Красные линии;KD-PD-11418;optional
+sol_f356f17b3b;Красные линии;KD-PD-11436;required
+sol_26270f94ad;Зеленый салон;KD-PD-11436;optional
+sol_f356f17b3b;Красные линии;KD-PD-11518;required
+sol_26270f94ad;Зеленый салон;KD-PD-11518;optional
+sol_f356f17b3b;Красные линии;KD-PD-11441;required
+sol_26270f94ad;Зеленый салон;KD-PD-11441;optional
+sol_f356f17b3b;Красные линии;KD-PD-11449;required
+sol_26270f94ad;Зеленый салон;KD-PD-11449;optional
+sol_f356f17b3b;Красные линии;KD-PD-11440;required
+sol_26270f94ad;Зеленый салон;KD-PD-11440;optional
+sol_26270f94ad;Зеленый салон;KD-PD-9415;required
+sol_26270f94ad;Зеленый салон;KD-PD-9418;required
+sol_26270f94ad;Зеленый салон;KD-PD-8984;required
+sol_26270f94ad;Зеленый салон;KD-PD-9975;required
+sol_26270f94ad;Зеленый салон;KD-PD-9416;required
+sol_26270f94ad;Зеленый салон;KD-PD-9417;required
+sol_26270f94ad;Зеленый салон;KD-PD-10913;optional
+sol_26270f94ad;Зеленый салон;KD-PD-10911;optional
+sol_26270f94ad;Зеленый салон;KD-PD-10925;required
+sol_26270f94ad;Зеленый салон;KD-PD-11141;required
+sol_26270f94ad;Зеленый салон;KD-PD-10928;required
+sol_26270f94ad;Зеленый салон;KD-PD-10917;optional
+sol_26270f94ad;Зеленый салон;KD-PD-10915;optional
+sol_26270f94ad;Зеленый салон;KD-PD-10924;required
+sol_26270f94ad;Зеленый салон;KD-PD-10927;required
+sol_26270f94ad;Зеленый салон;KD-PD-10926;required
+sol_26270f94ad;Зеленый салон;KD-PD-10918;optional
+sol_26270f94ad;Зеленый салон;KD-PD-10919;optional
+sol_26270f94ad;Зеленый салон;KD-PD-10920;required
+sol_26270f94ad;Зеленый салон;KD-PD-10921;required
+sol_26270f94ad;Зеленый салон;KD-PD-10922;optional
+sol_26270f94ad;Зеленый салон;KD-PD-10923;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10944;required
+sol_63c095e985;Пламя морских глубин;KD-PD-11006;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10945;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10590;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10591;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10950;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10459;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10946;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10947;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10948;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10951;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10949;required
+sol_bea84aa589;Теплый брутализм;KD-PD-10287;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10287;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10287;optional
+sol_bea84aa589;Теплый брутализм;KD-PD-10127;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10127;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10127;optional
+sol_bea84aa589;Теплый брутализм;KD-PD-10283;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10283;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10283;optional
+sol_bea84aa589;Теплый брутализм;KD-PD-10284;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10284;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10284;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10256;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10256;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10254;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10254;optional
+sol_211b78e5a8;Зимняя сказка;KD-PD-2000;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-2003;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-2010;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-2001;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-2004;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10376;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10376;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10599;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10599;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-8695;optional
+sol_bea84aa589;Теплый брутализм;KD-PD-8695;optional
+sol_26270f94ad;Зеленый салон;KD-PD-8695;optional
+sol_f356f17b3b;Красные линии;KD-PD-8695;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-8695;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10375;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10375;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10260;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10597;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10981;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10259;required
+sol_63c095e985;Пламя морских глубин;KD-PD-10258;required
+sol_bea84aa589;Теплый брутализм;KD-PD-10244;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10244;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10244;optional
+sol_bea84aa589;Теплый брутализм;KD-PD-10239;required
+sol_211b78e5a8;Зимняя сказка;KD-PD-10239;optional
+sol_63c095e985;Пламя морских глубин;KD-PD-10239;optional
+sol_211b78e5a8;Зимняя сказка;KD-PD-1;required
+sol_63c095e985;Пламя морских глубин;KD-PD-1;required
+sol_bea84aa589;Теплый брутализм;KD-PD-1;optional

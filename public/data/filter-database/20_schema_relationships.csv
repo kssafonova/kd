@@ -1,0 +1,15 @@
+﻿child_table;child_column;parent_table;parent_column;relationship
+02_variants.csv;product_id;01_products.csv;product_id;many-to-one
+02_variants.csv;size_id;04_sizes.csv;size_id;many-to-one
+02_variants.csv;material_id;07_materials.csv;material_id;many-to-one
+02_variants.csv;aroma_id;08_aromas.csv;aroma_id;many-to-one
+02_variants.csv;collection_id;09_collections.csv;collection_id;many-to-one
+02_variants.csv;capsule_id;10_capsules.csv;capsule_id;many-to-one
+02_variants.csv;category_id;11_categories.csv;category_id;many-to-one
+02_variants.csv;subcategory_id;12_subcategories.csv;subcategory_id;many-to-one
+06_variant_colors.csv;variant_id;02_variants.csv;variant_id;many-to-one
+06_variant_colors.csv;color_id;05_colors.csv;color_id;many-to-one
+14_variant_characteristics.csv;variant_id;02_variants.csv;variant_id;many-to-one
+18_ready_solution_products.csv;solution_id;17_ready_solutions.csv;solution_id;many-to-one
+18_ready_solution_products.csv;product_id;01_products.csv;product_id;many-to-one
+19_images.csv;variant_id;02_variants.csv;variant_id;many-to-one

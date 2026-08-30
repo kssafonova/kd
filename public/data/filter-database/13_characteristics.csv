@@ -1,0 +1,17 @@
+﻿characteristic_code;label;source_column;data_type;unit;filterable_default;ui_control;scope;dictionary_table
+category;Категория;Категория;string;;false;select;product;11_categories.csv
+subcategory;Тип товара / подкатегория;Подкатегория;string;;true;checkbox;variant;12_subcategories.csv
+collection;Коллекция;Коллекция;string;;true;checkbox;variant;09_collections.csv
+capsule;Капсула;Капсула;string;;true;checkbox;variant;10_capsules.csv
+material;Материал;Материал;string;;true;checkbox;variant;07_materials.csv
+size;Размер;Размер;string;;true;checkbox;variant;04_sizes.csv
+color;Цвет;Цвет;string;;true;color_swatch;variant;05_colors.csv
+aroma;Аромат;Аромат;string;;true;checkbox;variant;08_aromas.csv
+price;Цена;Цена;number;RUB;true;range;variant;02_variants.csv
+old_price;Старая цена;Старая цена;number;RUB;false;range;variant;02_variants.csv
+height;Высота;Высота;string;;false;text;variant;02_variants.csv
+width;Ширина;Ширина;string;;false;text;variant;02_variants.csv
+volume;Объем;Объем;string;;false;text;variant;02_variants.csv
+diameter;Диаметр;Диаметр;string;;false;text;variant;02_variants.csv
+composition;Состав;Состав;text;;false;text;variant;02_variants.csv
+details;Детали;Детали;text;;false;text;variant;02_variants.csv

@@ -1,0 +1,165 @@
+﻿filter_code;value_id;label;slug;product_count;variant_count;group_or_type;swatch_or_unit
+aroma;aro_5307137d11;Апельсин;apelsin;1;1;;
+aroma;aro_22aa82e2f4;Без аромата;bez-aromata;1;1;;
+aroma;aro_fb0224d609;Ваниль;vanil;1;1;;
+aroma;aro_df65c1cffb;Дерево жизни;derevo-zhizni;1;1;;
+aroma;aro_75af4d2eb2;Древесный табак;drevesnyi-tabak;1;2;;
+aroma;aro_068a1ade53;Кокос;kokos;1;1;;
+aroma;aro_7609b44cad;Мята;myata;1;1;;
+aroma;aro_8158c7d226;Сандал;sandal;1;1;;
+aroma;aro_7e2909c610;Сандал и шалфей;sandal-i-shalfei;1;1;;
+aroma;aro_55bdac670d;Уд;ud;1;2;;
+capsule;cap_616ab631d5;Ледяные узоры;ledyanye-uzory;5;9;;
+capsule;cap_235a4f2c57;Лунная сказка;lunnaya-skazka;5;11;;
+capsule;cap_fe08c5b62f;Нити;niti;2;3;;
+capsule;cap_fbe1debe5c;Тайна;taina;6;11;;
+capsule;cap_0495d7f773;Феникс;feniks;3;4;;
+collection;col_f4cc42144b;Алая нить;alaya-nit;6;6;;
+collection;col_56ec8dad2a;Бархат;bar-at;1;4;;
+collection;col_f61a6a0d8c;Весенний сад;vesennii-sad;16;17;;
+collection;col_1b2574531b;Весна;vesna;8;12;;
+collection;col_9d34c5e77b;Дияф;diyaf;12;13;;
+collection;col_2b1b1d7eb6;Дрёмица;dremica;4;5;;
+collection;col_616ab631d5;Ледяные узоры;ledyanye-uzory;5;9;;
+collection;col_235a4f2c57;Лунная сказка;lunnaya-skazka;3;5;;
+collection;col_d84cdeb339;Многоцвет;mnogocvet;4;8;;
+collection;col_d2a2455e4e;Мокоши;mokoshi;9;10;;
+collection;col_fe08c5b62f;Нити;niti;2;3;;
+collection;col_02264c193e;Овация;ovaciya;12;12;;
+collection;col_6e53a82ab7;Оренбургские узоры;orenburgskie-uzory;2;6;;
+collection;col_23dacecafa;Петербург;peterburg;11;14;;
+collection;col_982eed716f;Росы;rosy;1;1;;
+collection;col_0cf6b281d9;Столовые приборы;stolovye-pribory;2;2;;
+collection;col_fbe1debe5c;Тайна;taina;6;11;;
+collection;col_b9cced354f;Текстура;tekstura;9;16;;
+collection;col_0495d7f773;Феникс;feniks;3;4;;
+collection;col_dfe46751a4;Эхо;e-o;12;13;;
+collection;col_e15812afc0;Юрма;yurma;2;2;;
+color;clr_7ca5cf6f56;Бежевый;bezhevyi;8;8;beige;#D7C3A5
+color;clr_2818a16c64;Белый;belyi;104;126;white;#F5F3EE
+color;clr_a39ee8788e;Голубой;goluboi;17;19;light_blue;#AFC9D7
+color;clr_db1adb0a92;Желтый;zheltyi;1;1;yellow;#D2B65C
+color;clr_2372492028;Зеленый;zelenyi;2;3;green;#72816B
+color;clr_b988d894d3;Золотой;zolotoi;7;9;gold;#C3A05B
+color;clr_df6d4fc5b2;Коричневый;korichnevyi;12;14;brown;#6F4E37
+color;clr_8717c2ffa9;Красный;krasnyi;2;2;red;#9A443B
+color;clr_eaa16fa223;Ледяной Голубой;ledyanoi-goluboi;2;2;ice_blue;#BFD6DE
+color;clr_89001f99bc;Молочный;molochnyi;3;4;ivory;#EEE8DA
+color;clr_9aae9f80f3;Небесный;nebesnyi;1;3;sky_blue;#B7D4E6
+color;clr_7e1922e6be;Ночной синий;nochnoi-sinii;9;15;navy;#243746
+color;clr_6e3a178629;Прозрачный;prozrachnyi;1;1;transparent;#F4F4F2
+color;clr_417dc1f5c1;Пудровый;pudrovyi;3;7;powder;#D8B7AE
+color;clr_812476ce58;Серебряный;serebryanyi;2;2;silver;#B7B9B8
+color;clr_3afdfac7c7;Серо-синий;sero-sinii;1;2;blue_grey;#647985
+color;clr_398bc3d0f7;Синий;sinii;3;3;blue;#35546F
+color;clr_d74fedd1fa;Черный;chernyi;7;7;black;#1E1E1E
+color;clr_78e4123512;Экрю;ekryu;2;2;ecru;#E3D5BD
+material;mat_56ec8dad2a;Бархат;bar-at;1;2;other;
+material;mat_968dc350ce;Дерево / Металл;derevo-metall;4;5;wood;
+material;mat_83c3ac303b;Керамика;keramika;2;2;ceramic;
+material;mat_78141744da;Костяной фарфор;kostyanoi-farfor;21;24;bone_porcelain;
+material;mat_65b3266963;Лён;len;1;1;linen;
+material;mat_9a7e557bb3;Микровелюр;mikrovelyur;1;4;microvelour;
+material;mat_b05c8f9179;Натуральная кожа;naturalnaya-kozha;9;16;leather;
+material;mat_564161e33b;Нержавеющая сталь 18/10;nerzhaveyuschaya-stal-18-10;1;1;steel;
+material;mat_9b2ac80773;Парафин;parafin;1;1;wax;
+material;mat_8134a26777;Сатин;satin;6;8;satin;
+material;mat_58e183f60a;Соевый воск;soevyi-vosk;2;2;wax;
+material;mat_7950cf851a;Сталь;stal;1;1;steel;
+material;mat_e08aad5924;Стекло;steklo;2;5;glass;
+material;mat_2ca5cf94f3;Фарфор;farfor;57;61;porcelain;
+material;mat_84ce26e46a;Хлопок;lopok;16;32;other;
+material;mat_f0098831c8;Хрусталь;rustal;1;1;steel;
+material;mat_1afde5d89a;Шелк;shelk;4;27;silk;
+material;mat_abe1028d51;Шерсть и хлопок;sherst-i-lopok;1;1;wool;
+size;siz_24d7b4453f;10 см;10-sm;1;2;single_dimension;cm
+size;siz_43f3472507;11 см;11-sm;2;7;single_dimension;cm
+size;siz_3c782d85f7;1100 мл;1100-ml;1;1;volume;ml
+size;siz_a8cc77e46a;12×12 см;12-12-sm;1;2;dimensions;cm
+size;siz_655a7a3c8a;12×23 см;12-23-sm;1;1;dimensions;cm
+size;siz_f470eecae1;130 мл;130-ml;2;4;volume;ml
+size;siz_941d591466;1300 мл;1300-ml;1;1;volume;ml
+size;siz_c5bd73e21d;140×200 см;140-200-sm;1;1;dimensions;cm
+size;siz_b3c8463150;15 см;15-sm;1;1;single_dimension;cm
+size;siz_397dcdf588;150 мл;150-ml;1;1;volume;ml
+size;siz_01cc00cc82;150×200 см;150-200-sm;1;3;dimensions;cm
+size;siz_d912785d7f;16 см;16-sm;1;1;single_dimension;cm
+size;siz_afaeec8f84;160 мл;160-ml;1;1;volume;ml
+size;siz_0ae0bcf1dd;165×45 см;165-45-sm;1;1;dimensions;cm
+size;siz_ca6b1b687c;18 см;18-sm;4;4;single_dimension;cm
+size;siz_03210f0271;1800 мл;1800-ml;1;1;volume;ml
+size;siz_a394ecc680;180×180 см;180-180-sm;2;2;dimensions;cm
+size;siz_e7edbe079b;180×250 см;180-250-sm;5;5;dimensions;cm
+size;siz_b5e9a22963;180×350 см;180-350-sm;3;3;dimensions;cm
+size;siz_4863737db2;19 см;19-sm;4;4;single_dimension;cm
+size;siz_f666e724c3;20 см;20-sm;2;2;single_dimension;cm
+size;siz_8b267a4c84;200×220 см;200-220-sm;1;3;dimensions;cm
+size;siz_fa6844a343;21 см;21-sm;2;2;single_dimension;cm
+size;siz_8d48128ce0;21×21×9,5 см;21-21-9-5-sm;1;1;dimensions;cm
+size;siz_09dec09047;22 см;22-sm;1;1;single_dimension;cm
+size;siz_66438ea56f;23 см;23-sm;7;8;single_dimension;cm
+size;siz_4084e2cc5c;24 см;24-sm;2;3;single_dimension;cm
+size;siz_52f22adf9e;240 мл;240-ml;1;1;volume;ml
+size;siz_f161ee1e53;24×16 см;24-16-sm;1;1;dimensions;cm
+size;siz_89b0e8f00b;25 см;25-sm;3;3;single_dimension;cm
+size;siz_e96e39567e;25,5 см;25-5-sm;2;2;single_dimension;cm
+size;siz_6c0bc92bb9;250 мл;250-ml;10;10;volume;ml
+size;siz_6f7a68311a;25×18 см;25-18-sm;1;1;dimensions;cm
+size;siz_2f42bfe345;26 см;26-sm;1;1;single_dimension;cm
+size;siz_33debb8449;260 мл;260-ml;1;1;volume;ml
+size;siz_bee8c2d6bf;27 см;27-sm;4;4;single_dimension;cm
+size;siz_47bf677487;280 см;280-sm;1;1;single_dimension;cm
+size;siz_4c1c44280c;30 мл;30-ml;1;1;volume;ml
+size;siz_02a8197405;30 см;30-sm;4;6;single_dimension;cm
+size;siz_1da3d27caf;300 мл;300-ml;4;4;volume;ml
+size;siz_409c10d9a6;32 см;32-sm;2;2;single_dimension;cm
+size;siz_7646237670;350 мл;350-ml;5;5;volume;ml
+size;siz_3d2c0be121;36 см;36-sm;2;3;single_dimension;cm
+size;siz_b5cef7b3f9;36,5×25×2 см;36-5-25-2-sm;1;1;dimensions;cm
+size;siz_091fe0f1ec;36×25 см;36-25-sm;1;1;dimensions;cm
+size;siz_3f90b1ef30;370 мл;370-ml;1;1;volume;ml
+size;siz_42df2bf66b;40×40 см;40-40-sm;3;3;dimensions;cm
+size;siz_9cc6425ff0;40×50 см;40-50-sm;1;1;dimensions;cm
+size;siz_6f83027196;40×60 см;40-60-sm;1;1;dimensions;cm
+size;siz_dde6fcf663;43×43 см;43-43-sm;1;1;dimensions;cm
+size;siz_e0755f9edd;45 см;45-sm;1;1;single_dimension;cm
+size;siz_3e53916ec5;450 мл;450-ml;4;4;volume;ml
+size;siz_445e9902eb;45×45 см;45-45-sm;8;11;dimensions;cm
+size;siz_2433ce5e05;45×65 см;45-65-sm;1;2;dimensions;cm
+size;siz_373f8280b1;480 см;480-sm;1;1;single_dimension;cm
+size;siz_260e8c4697;50×120 см;50-120-sm;1;1;dimensions;cm
+size;siz_0df7e680c6;50×180 см;50-180-sm;2;2;dimensions;cm
+size;siz_861fde37cf;50×250 см;50-250-sm;1;1;dimensions;cm
+size;siz_ac5570a797;50×50 см;50-50-sm;1;3;dimensions;cm
+size;siz_3beb187929;60×350 см;60-350-sm;1;1;dimensions;cm
+size;siz_ecbdfa3a54;60×60 см;60-60-sm;2;6;dimensions;cm
+size;siz_92d00adbcb;650 мл;650-ml;2;2;volume;ml
+size;siz_c5de05dd2a;75 мл;75-ml;2;2;volume;ml
+size;siz_300e900a10;8 см;8-sm;2;2;single_dimension;cm
+size;siz_a73000bbb7;9 см;9-sm;1;1;single_dimension;cm
+size;siz_d980d864d9;90 мл;90-ml;1;1;volume;ml
+size;siz_fedf66bb17;990 мл;990-ml;2;2;volume;ml
+size;siz_fc83c1a9eb;Евро 200×220 см;evro-200-220-sm;6;12;bedding;cm
+size;siz_da5f51a102;Единый размер;edinyi-razmer;9;12;universal;
+size;siz_d39de78aa3;Кинг сайз 220×240 см;king-saiz-220-240-sm;6;12;bedding;cm
+size;siz_2f0c3b16c6;Полуторный 140×220 см;polutornyi-140-220-sm;3;8;bedding;cm
+subcategory;sub_cabc3a88c6;Блюда и подача;blyuda-i-podacha;14;15;;
+subcategory;sub_670975bdc1;Вазы и предметы интерьера;vazy-i-predmety-interera;2;4;;
+subcategory;sub_06e60bd4fa;Декор для дома;dekor-dlya-doma;2;2;;
+subcategory;sub_a86f8f51fb;Декоративные подушки;dekorativnye-podushki;7;14;;
+subcategory;sub_6167da3955;Игры;igry;3;6;;
+subcategory;sub_d0e0f50010;Канцтовары;kanctovary;1;1;;
+subcategory;sub_2ac728af60;Корзины;korziny;1;2;;
+subcategory;sub_96524f0b0f;Кружки, чайные и кофейные пары;kruzhki-chainye-i-kofeinye-pary;19;19;;
+subcategory;sub_39802e3471;Плед;pled;3;7;;
+subcategory;sub_93a000ac87;Плейсматы;pleismaty;1;3;;
+subcategory;sub_e2ccec5fae;Подносы;podnosy;1;2;;
+subcategory;sub_9d8f8a7b48;Покрывало;pokryvalo;1;4;;
+subcategory;sub_309738921d;Постельное белье;postelnoe-bele;6;31;;
+subcategory;sub_506b04c158;Салатники, cупницы и глубокие тарелки;salatniki-cupnicy-i-glubokie-tarelki;12;14;;
+subcategory;sub_cf0cda3355;Салфетницы;salfetnicy;1;2;;
+subcategory;sub_96372e8877;Свечи и диффузоры;svechi-i-diffuzory;8;16;;
+subcategory;sub_0cf6b281d9;Столовые приборы;stolovye-pribory;2;2;;
+subcategory;sub_9161b9503e;Столовый текстиль;stolovyi-tekstil;18;28;;
+subcategory;sub_e0dae1999b;Тарелки;tarelki;24;27;;
+subcategory;sub_afbde0ee64;Чайники, молочники и сахарницы;chainiki-molochniki-i-sa-arnicy;13;14;;

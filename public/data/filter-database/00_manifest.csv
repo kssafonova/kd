@@ -1,0 +1,21 @@
+﻿file_name;description;primary_key;row_count
+01_products.csv;One row per product card/article;product_id;139
+02_variants.csv;Full normalized SKU/variant table;variant_id;213
+03_filter_config.csv;Filter implementation contract;filter_code;8
+04_sizes.csv;Canonical size dictionary;size_id;71
+05_colors.csv;Atomic canonical color dictionary;color_id;19
+06_variant_colors.csv;"Variant-to-color M:N relation; compound colors are split";variant_id+color_id;230
+07_materials.csv;Canonical material dictionary;material_id;18
+08_aromas.csv;Canonical aroma dictionary;aroma_id;10
+09_collections.csv;Collection dictionary;collection_id;21
+10_capsules.csv;Capsule dictionary;capsule_id;5
+11_categories.csv;Category dictionary;category_id;5
+12_subcategories.csv;Subcategory dictionary;subcategory_id;20
+13_characteristics.csv;Characteristic metadata / filterability dictionary;characteristic_code;16
+14_variant_characteristics.csv;Long EAV characteristics by variant;variant_id+characteristic_code+value;2073
+15_filter_values.csv;Canonical filter values with overall facet counts;filter_code+value_id;164
+16_product_filter_index.csv;Pre-aggregated product-level filter index;product_id;139
+17_ready_solutions.csv;Ready solution dictionary;solution_id;5
+18_ready_solution_products.csv;Ready solution to product relations;solution_id+product_id;209
+19_images.csv;Normalized product images;image_id;267
+20_schema_relationships.csv;Foreign key relationship map;child_table+child_column;14

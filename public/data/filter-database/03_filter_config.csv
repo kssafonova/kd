@@ -1,0 +1,9 @@
+﻿sort_order;filter_code;filter_label;source;ui_control;multi_select;within_group_logic;cross_group_logic;variant_match;values_mode;zero_result_behavior;url_param
+1;subcategory;Тип товара / подкатегория;subcategory_id;checkbox;true;OR;AND;ANY_VARIANT;dynamic;disabled;subcategory
+2;collection;Коллекция;collection_id;checkbox;true;OR;AND;ANY_VARIANT;dynamic;disabled;collection
+3;capsule;Капсула;capsule_id;checkbox;true;OR;AND;ANY_VARIANT;dynamic;disabled;capsule
+4;material;Материал;material_id;checkbox;true;OR;AND;ANY_VARIANT;dynamic;disabled;material
+5;size;Размер;size_id;checkbox;true;OR;AND;ANY_VARIANT;dynamic;disabled;size
+6;color;Цвет;variant_colors.color_id;color_swatch;true;OR;AND;ANY_VARIANT;dynamic;disabled;color
+7;aroma;Аромат;aroma_id;checkbox;true;OR;AND;ANY_VARIANT;dynamic;disabled;aroma
+8;price;Цена;price_rub;range;false;RANGE;AND;ANY_VARIANT;dynamic;disabled;price_from|price_to
