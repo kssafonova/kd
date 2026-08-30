@@ -38,6 +38,7 @@ scripts = [
     root / "scripts" / "optimize-plp-images-v139.py",
     root / "scripts" / "restore-deferred-plp-gallery-v140.py",
     root / "scripts" / "fix-catalog-runtime-v141.py",
+    root / "scripts" / "embed-catalog-products-v142.py",
 ]
 
 logs = []
