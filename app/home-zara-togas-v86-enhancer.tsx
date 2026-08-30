@@ -32,6 +32,37 @@ const BANNERS = [
   },
 ];
 
+const CAPSULE_IMAGES: Record<string, string[]> = {
+  "Ледяные узоры": [
+    "/assets/images/caps_led_podyshka.png",
+    "/assets/images/caps_led_podyshka2.png",
+    "/assets/images/caps_led_serviz.png",
+    "/assets/images/caps_led.png",
+  ],
+  "Лунная сказка": [
+    "/assets/images/caps_luna_postel.png",
+    "/assets/images/caps_luna_postel2.png",
+    "/assets/images/caps_luna_postel3.png",
+    "/assets/images/caps_luna_serviz.png",
+    "/assets/images/caps_luna_serviz2.png",
+    "/assets/images/caps_luna_serviz3.png",
+  ],
+  "Тайна": [
+    "/assets/images/tayna0.jpg",
+    "/assets/images/tayna1.jpg",
+    "/assets/images/tayna2.jpg",
+  ],
+  "Нити": [
+    "/assets/images/niti0.jpg",
+    "/assets/images/niti1.jpg",
+  ],
+  "Феникс": [
+    "/assets/images/feniks0.jpg",
+    "/assets/images/feniks1.jpg",
+    "/assets/images/feniks2.jpg",
+  ],
+};
+
 function asset(path: string) {
   const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return `${base}${path}`;
@@ -74,6 +105,116 @@ function installRailControls(container: HTMLElement, rail: HTMLElement, label: s
   prev?.addEventListener("click", () => scrollRail(rail, -1));
   next?.addEventListener("click", () => scrollRail(rail, 1));
   container.appendChild(controls);
+}
+
+function installCapsuleStyles() {
+  if (document.getElementById("home125-capsule-images")) return;
+  const style = document.createElement("style");
+  style.id = "home125-capsule-images";
+  style.textContent = `
+    .home-v113 .home117-capsule-media.home125-capsule-media{
+      position:relative!important;
+      display:block!important;
+      width:100%!important;
+      aspect-ratio:4/5!important;
+      padding:0!important;
+      overflow:hidden!important;
+      background:#f0eee9!important;
+    }
+    .home-v113 .home125-capsule-image-grid{
+      display:grid!important;
+      width:100%!important;
+      height:100%!important;
+      min-height:100%!important;
+      gap:2px!important;
+      overflow:hidden!important;
+      background:#fff!important;
+    }
+    .home-v113 .home125-capsule-image-grid[data-count="2"]{
+      grid-template-columns:1fr 1fr!important;
+      grid-template-rows:1fr!important;
+    }
+    .home-v113 .home125-capsule-image-grid[data-count="3"]{
+      grid-template-columns:1.35fr .65fr!important;
+      grid-template-rows:1fr 1fr!important;
+    }
+    .home-v113 .home125-capsule-image-grid[data-count="3"] img:first-child{
+      grid-row:1 / 3!important;
+    }
+    .home-v113 .home125-capsule-image-grid[data-count="4"]{
+      grid-template-columns:1fr 1fr!important;
+      grid-template-rows:1fr 1fr!important;
+    }
+    .home-v113 .home125-capsule-image-grid[data-count="6"]{
+      grid-template-columns:1fr 1fr 1fr!important;
+      grid-template-rows:1fr 1fr 1fr!important;
+    }
+    .home-v113 .home125-capsule-image-grid[data-count="6"] img:first-child{
+      grid-column:1 / 3!important;
+      grid-row:1 / 3!important;
+    }
+    .home-v113 .home125-capsule-image-grid img{
+      display:block!important;
+      width:100%!important;
+      height:100%!important;
+      min-width:0!important;
+      min-height:0!important;
+      object-fit:cover!important;
+      object-position:center!important;
+      background:#ece9e2!important;
+      transform:scale(1.001);
+      transition:transform .55s ease,opacity .3s ease!important;
+    }
+    @media(hover:hover){
+      .home-v113 .home117-capsule-card:hover .home125-capsule-image-grid img{
+        transform:scale(1.018);
+      }
+    }
+    @media(max-width:700px){
+      .home-v113 .home117-capsule-media.home125-capsule-media{
+        aspect-ratio:3/4!important;
+      }
+      .home-v113 .home125-capsule-image-grid{
+        gap:1px!important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function installCurrentCapsuleImages() {
+  const section = document.querySelector<HTMLElement>(".home-v113 .home117-capsules");
+  if (!section) return;
+  installCapsuleStyles();
+
+  section.querySelectorAll<HTMLElement>(".home117-capsule-card").forEach((card) => {
+    const title = card.querySelector<HTMLElement>("h3")?.textContent?.trim() || "";
+    const images = CAPSULE_IMAGES[title];
+    const media = card.querySelector<HTMLButtonElement>(".home117-capsule-media");
+    if (!images?.length || !media) return;
+
+    const signature = images.join("|");
+    if (media.dataset.home125Images === signature) return;
+
+    const grid = document.createElement("span");
+    grid.className = "home125-capsule-image-grid";
+    grid.dataset.count = String(images.length);
+    grid.setAttribute("aria-hidden", "true");
+
+    images.forEach((src, index) => {
+      const image = document.createElement("img");
+      image.src = asset(src);
+      image.alt = "";
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.dataset.capsuleImage = `${title}-${index + 1}`;
+      grid.appendChild(image);
+    });
+
+    media.replaceChildren(grid);
+    media.classList.add("home125-capsule-media");
+    media.dataset.home125Images = signature;
+  });
 }
 
 function installHero(home: HTMLElement) {
@@ -204,7 +345,11 @@ function enhanceHome() {
 export function HomeZaraTogasV86Enhancer() {
   useEffect(() => {
     enhanceHome();
-    const observer = new MutationObserver(() => enhanceHome());
+    installCurrentCapsuleImages();
+    const observer = new MutationObserver(() => {
+      enhanceHome();
+      installCurrentCapsuleImages();
+    });
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
   }, []);
