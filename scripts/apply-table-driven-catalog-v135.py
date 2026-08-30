@@ -55,9 +55,9 @@ for variant_id, rows in images_by_variant.items():
     if len(orders) != len(set(orders)):
         raise SystemExit(f"TABLE_DRIVEN_CATALOG_IMAGES_V135: duplicate image sort_order for {variant_id}")
 
-# The modern catalog must never fall back to catalog_master chunks when the
-# normalized database is unavailable. The normalized CSV database is the one
-# runtime source of product/SKU data.
+# The modern catalog must never fall back to legacy catalog chunks. This block is
+# intentionally idempotent: newer catalog loaders may wrap the same database-only
+# contract with runtime/base-path resilience and build-time embedded data.
 page = PAGE.read_text(encoding="utf-8")
 legacy_block = '''  const chunks=await Promise.all(CATALOG_MASTER_FILES.map(async fileName=>{
     try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
@@ -69,7 +69,13 @@ strict_block = '''  const databaseRows=await loadSiteDatabaseCatalogRows(base).c
 if legacy_block in page:
     page = page.replace(legacy_block, strict_block, 1)
 elif strict_block not in page:
-    raise SystemExit("TABLE_DRIVEN_CATALOG_IMAGES_V135: catalog source block not found")
+    modern_database_contract = (
+        "loadSiteDatabaseCatalogRows(base)" in page
+        and "const sourceRows=databaseRows;" in page
+        and "CATALOG_MASTER_FILES.map" not in page
+    )
+    if not modern_database_contract:
+        raise SystemExit("TABLE_DRIVEN_CATALOG_IMAGES_V135: catalog source block not found")
 if MARKER not in page:
     anchor = "// SITE_DATABASE_CONNECTED_V128"
     if anchor not in page:
