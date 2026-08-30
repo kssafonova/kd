@@ -63,6 +63,7 @@ import "./truth-commerce.css";
 import "./catalog-human-eye-v127.css";
 import "./catalog-loading-state-v127.css";
 import "./catalog-mobile-premium-v128.css";
+import "./catalog-mobile-human-eye-v131.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
