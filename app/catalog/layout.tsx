@@ -2,6 +2,7 @@ import "../catalog-filters-v123.css";
 import "../catalog-filters-kultura-v124.css";
 import "../mobile-quick-add.css";
 import "../product-media-scroll.css";
+import "../product-card-gallery.css";
 import "../boutique-drawer.css";
 import "../mobile-pdp-overrides.css";
 import "../zara-editorial.css";
@@ -44,6 +45,7 @@ import "../catalog-mobile-premium-v128.css";
 import "../catalog-mobile-human-eye-v131.css";
 import "../catalog-togas-v132.css";
 import "../cart-checkout-human-eye-v136.css";
+import { ProductCardGalleryEnhancer } from "../product-card-gallery";
 import { CollectionPurchaseEnhancer } from "../collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "../profile-address-book";
 import { TruthCommerceEnhancer } from "../truth-commerce-enhancer";
@@ -53,6 +55,7 @@ import { CartCheckoutHumanEyeV136Enhancer } from "../cart-checkout-human-eye-v13
 
 export default function CatalogLayout({children}:{children:React.ReactNode}){
   return <>
+    <ProductCardGalleryEnhancer />
     <CollectionPurchaseEnhancer />
     <ProfileAddressBookEnhancer />
     <TruthCommerceEnhancer />
