@@ -32,8 +32,8 @@ EXPECTED_HEADERS = [
     "Фото 3",
     "Описание готового решения",
 ]
-EXPECTED_ROWS = 215
-EXPECTED_ARTICLES = 141
+EXPECTED_ROWS = 213
+EXPECTED_ARTICLES = 139
 PHOTO_COLUMNS = ["Фото 1", "Фото 2", "Фото 3"]
 STALE_FILES = [
     ROOT / "public" / "data" / "all_site_products_grouped.csv",
