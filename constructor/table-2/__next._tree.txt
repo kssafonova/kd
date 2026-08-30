@@ -6,4 +6,4 @@
 :HL["/kd/_next/static/chunks/0-lubvrska~9h.css","style"]
 :HL["/kd/_next/static/chunks/12~pd7w2-hzyo.css","style"]
 :HL["/kd/_next/static/chunks/148.x_zylutad.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"table-2","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"KSbZC6nu2G7k9keLETZLp"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"constructor","param":null,"prefetchHints":0,"slots":{"children":{"name":"scenarioId","param":{"type":"d","key":"table-2","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"BlcaT3vrbuYQ4dQHg7KpZ"}

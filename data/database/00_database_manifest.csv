@@ -32,3 +32,6 @@
 31_site_policies.csv;Site-level policy/configuration values exposed in UI;policy_id;3;5;generated
 32_schema_relationships.csv;Foreign-key relationship map;child_table+child_column;23;5;generated
 33_source_tables.csv;Original CSV source files already present in public/data;source_file;9;3;generated
+34_color_groups.csv;Canonical grouped colors used by the catalog filter;group_id;13;5;generated
+35_color_group_members.csv;Raw catalog colors to grouped filter colors M:N relation;color_id+group_id;26;4;generated
+36_product_color_groups.csv;Product-to-grouped-color M:N relation for catalog filtering;product_id+group_id;185;3;generated

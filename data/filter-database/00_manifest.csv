@@ -19,3 +19,5 @@
 18_ready_solution_products.csv;Ready solution to product relations;solution_id+product_id;209
 19_images.csv;Normalized product images;image_id;267
 20_schema_relationships.csv;Foreign key relationship map;child_table+child_column;14
+21_color_groups.csv;Grouped colors displayed in the catalog filter;group_id;13
+22_variant_color_groups.csv;Variant-to-grouped-color M:N relation;variant_id+group_id;230

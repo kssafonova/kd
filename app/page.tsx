@@ -3,7 +3,7 @@
 import { assetUrl } from "./assets";
 import { RemoteImage } from "./remote-image";
 import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
-import { loadSiteDatabaseCatalogRows, SITE_DB_ADDRESS_SUGGESTIONS, SITE_DB_CITIES, SITE_DB_CONTACTS, SITE_DB_DELIVERY_METHODS, SITE_DB_PAYMENT_METHODS, SITE_DB_POLICIES, SITE_DB_PVZ_POINTS, SITE_DB_STORES, SITE_DB_STORE_POINTS } from "./site-database.generated";
+import { loadSiteDatabaseCatalogRows, SITE_DB_ADDRESS_SUGGESTIONS, SITE_DB_CITIES, SITE_DB_CONTACTS, SITE_DB_DELIVERY_METHODS, SITE_DB_PAYMENT_METHODS, SITE_DB_POLICIES, SITE_DB_PVZ_POINTS, SITE_DB_STORES, SITE_DB_STORE_POINTS, SITE_DB_COLOR_GROUPS, SITE_DB_COLOR_GROUP_MEMBERS } from "./site-database.generated";
 // SITE_DATABASE_CONNECTED_V128
 
 // CATALOG_SKU_MODEL_V1
@@ -640,6 +640,27 @@ const hasFacetValueV123=(values:string[],value:string)=>values.some(item=>sameFa
 const withoutFacetValueV123=(values:string[],value:string)=>values.filter(item=>!sameFacetV123(item,value));
 const uniqueFacetValuesV123=(values:(string|undefined)[])=>Array.from(new Map(values.map(cleanNulls).filter((value):value is string=>Boolean(value)).map(value=>[facetNormV123(value),value])).values());
 const catalogSkuColorV123=(sku:CatalogSku)=>cleanNulls(asVariantSku(sku)?.sourceColor)??cleanNulls(sku.color)??"";
+// CATALOG_COLOR_GROUPS_V131
+const catalogColorGroupMembersV131=(()=>{
+  const map=new Map<string,string[]>();
+  SITE_DB_COLOR_GROUP_MEMBERS.forEach(row=>{
+    const key=facetNormV123(row.color_name),name=cleanNulls(row.group_name);
+    if(!key||!name)return;
+    const list=map.get(key)??[];
+    if(!list.some(item=>sameFacetV123(item,name)))list.push(name);
+    map.set(key,list);
+  });
+  return map;
+})();
+const catalogColorGroupHexesV131=new Map(SITE_DB_COLOR_GROUPS.map(row=>[facetNormV123(row.group_name),row.swatch_hex||"#e8e5df"]));
+const catalogSkuColorGroupsV131=(sku:CatalogSku)=>{
+  const raw=catalogSkuColorV123(sku),exact=catalogColorGroupMembersV131.get(facetNormV123(raw));
+  if(exact?.length)return exact;
+  const groups=raw.split(/\s*\/\s*/).flatMap(part=>catalogColorGroupMembersV131.get(facetNormV123(part))??[part]).filter(Boolean);
+  return uniqueFacetValuesV123(groups);
+};
+const catalogColorGroupHexV131=(name:string)=>catalogColorGroupHexesV131.get(facetNormV123(name))??"#e8e5df";
+const normalizeCatalogColorFiltersV131=(values:string[])=>uniqueFacetValuesV123(values.flatMap(value=>catalogColorGroupMembersV131.get(facetNormV123(value))??[value]));
 const availableCatalogSkusV123=(product:Product)=>product.skus?.filter(sku=>sku.available!==false)??[];
 const parseCatalogBoundV123=(value:string)=>{const text=String(value??"").trim();if(!text)return undefined;const parsed=Number(text.replace(/\s/g,""));return Number.isFinite(parsed)&&parsed>=0?parsed:undefined};
 const catalogNumberV123=(value:number)=>new Intl.NumberFormat("ru-RU").format(Math.round(value));
@@ -653,10 +674,11 @@ function skuMatchesCatalogFiltersV123(sku:CatalogSku,filters:CatalogFiltersV123,
   const material=cleanNulls(sku.material)??"";
   const size=cleanNulls(sku.size)??"";
   const color=catalogSkuColorV123(sku);
+  const colorGroups=catalogSkuColorGroupsV131(sku);
   const price=Number(sku.price)||0;
   if(ignore!=="material"&&filters.materials.length&&!filters.materials.some(value=>sameFacetV123(value,material)))return false;
   if(ignore!=="size"&&filters.sizes.length&&!filters.sizes.some(value=>sameFacetV123(value,size)))return false;
-  if(ignore!=="color"&&filters.colors.length&&!filters.colors.some(value=>sameFacetV123(value,color)))return false;
+  if(ignore!=="color"&&filters.colors.length&&!filters.colors.some(value=>colorGroups.some(group=>sameFacetV123(value,group))))return false;
   if(ignore!=="price"){
     const from=parseCatalogBoundV123(filters.priceFrom),to=parseCatalogBoundV123(filters.priceTo);
     if(from!==undefined&&price<from)return false;
@@ -664,7 +686,7 @@ function skuMatchesCatalogFiltersV123(sku:CatalogSku,filters:CatalogFiltersV123,
   }
   if(forced?.group==="material"&&!sameFacetV123(material,forced.value))return false;
   if(forced?.group==="size"&&!sameFacetV123(size,forced.value))return false;
-  if(forced?.group==="color"&&!sameFacetV123(color,forced.value))return false;
+  if(forced?.group==="color"&&!colorGroups.some(group=>sameFacetV123(group,forced.value)))return false;
   return true;
 }
 
@@ -732,7 +754,7 @@ function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, fa
   const parseFiltersFromUrl=()=>{
     const params=new URLSearchParams(window.location.search);
     const list=(key:string)=>params.getAll(key).flatMap(value=>value.split(",")).map(value=>value.trim()).filter(Boolean);
-    const filters:CatalogFiltersV123={subcategories:list("subcategory"),collections:list("collection"),capsules:list("capsule"),materials:list("material"),sizes:list("size"),colors:list("color"),priceFrom:params.get("price_from")??"",priceTo:params.get("price_to")??""};
+    const filters:CatalogFiltersV123={subcategories:list("subcategory"),collections:list("collection"),capsules:list("capsule"),materials:list("material"),sizes:list("size"),colors:normalizeCatalogColorFiltersV131(list("color")),priceFrom:params.get("price_from")??"",priceTo:params.get("price_to")??""};
     const rawSort=params.get("sort");
     const nextSort:CatalogSortV123=rawSort==="price_asc"||rawSort==="price_desc"?rawSort:"popular";
     const nextCategory=resolveCategory(params.get("category")||initialCategory);
@@ -780,9 +802,9 @@ function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, fa
   const skus=baseProducts.flatMap(product=>availableCatalogSkusV123(product));
   const materialOptions=uniqueFacetValuesV123(skus.map(sku=>sku.material));
   const sizeOptions=uniqueFacetValuesV123(skus.map(sku=>sku.size));
-  const colorOptions=uniqueFacetValuesV123(skus.map(sku=>catalogSkuColorV123(sku)));
+  const colorOptions=uniqueFacetValuesV123(skus.flatMap(sku=>catalogSkuColorGroupsV131(sku)));
   const colorHexes=new Map<string,string>();
-  skus.forEach(sku=>{const color=catalogSkuColorV123(sku);if(color&&!colorHexes.has(facetNormV123(color)))colorHexes.set(facetNormV123(color),sku.colorHex||"#e8e5df")});
+  colorOptions.forEach(color=>colorHexes.set(facetNormV123(color),catalogColorGroupHexV131(color)));
   const allPrices=skus.map(sku=>Number(sku.price)||0).filter(price=>priceKnown(price));
   if(!allPrices.length)baseProducts.forEach(product=>{if(priceKnown(product.price))allPrices.push(product.price)});
   const minCatalogPrice=allPrices.length?Math.floor(Math.min(...allPrices)):0;

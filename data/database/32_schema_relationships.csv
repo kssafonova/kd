@@ -22,3 +22,7 @@
 27_address_suggestions.csv;region_id;26_regions.csv;region_id;many-to-one
 28_pickup_points.csv;region_id;26_regions.csv;region_id;many-to-one
 29_stores.csv;region_id;26_regions.csv;region_id;many-to-one
+35_color_group_members.csv;color_id;06_colors.csv;color_id;many-to-one
+35_color_group_members.csv;group_id;34_color_groups.csv;group_id;many-to-one
+36_product_color_groups.csv;product_id;01_products.csv;product_id;many-to-one
+36_product_color_groups.csv;group_id;34_color_groups.csv;group_id;many-to-one
