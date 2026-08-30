@@ -4,6 +4,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "public" / "data" / "catalog_master.csv"
+CANONICAL_IMAGES = ROOT / "assets" / "images"
 EXPECTED_HEADERS = [
     "Артикул",
     "Название товара",
@@ -41,6 +42,7 @@ STALE_FILES = [
     *[ROOT / "public" / "data" / f"kultura_doma_product_entities_xlsx_{index}.csv" for index in range(1, 6)],
     ROOT / "public" / "data" / "kultura_doma_product_entities_xlsx_extra.b64",
 ]
+STALE_IMAGE_DIRS = [ROOT / "public" / "images", ROOT / "images"]
 
 def clean(value):
     text = str(value or "").strip()
@@ -49,6 +51,8 @@ def clean(value):
 errors = []
 if not MASTER.exists():
     raise SystemExit(f"CATALOG_MASTER_V107: missing {MASTER.relative_to(ROOT)}")
+if not CANONICAL_IMAGES.is_dir():
+    errors.append("canonical assets/images folder is missing")
 
 with MASTER.open("r", encoding="utf-8-sig", newline="") as handle:
     reader = csv.DictReader(handle, delimiter=";")
@@ -80,14 +84,14 @@ for row in rows:
         if not ref:
             continue
         photo_refs.append(ref)
-        prefix = "/images/imported-products/"
+        prefix = "/assets/images/"
         if not ref.startswith(prefix):
-            errors.append(f"{article} {column}: non-repository photo path {ref}")
+            errors.append(f"{article} {column}: non-canonical photo path {ref}")
             continue
         filename = ref[len(prefix):]
-        target = ROOT / "public" / "images" / "imported-products" / filename
+        target = CANONICAL_IMAGES / filename
         if not target.is_file():
-            errors.append(f"{article} {column}: missing repository image {filename}")
+            errors.append(f"{article} {column}: missing canonical repository image {filename}")
 
 duplicates = len(rows) - len({tuple(row.get(header, "") for header in EXPECTED_HEADERS) for row in rows})
 if duplicates:
@@ -96,6 +100,9 @@ if duplicates:
 for stale in STALE_FILES:
     if stale.exists():
         errors.append(f"stale catalog file still exists: {stale.relative_to(ROOT)}")
+for stale_dir in STALE_IMAGE_DIRS:
+    if stale_dir.exists():
+        errors.append(f"stale image directory still exists: {stale_dir.relative_to(ROOT)}")
 
 if errors:
     print(f"CATALOG_MASTER_V107: {len(errors)} errors")
@@ -104,8 +111,10 @@ if errors:
 
 categories = {clean(row.get("Категория")) for row in rows if clean(row.get("Категория"))}
 subcategories = {clean(row.get("Подкатегория")) for row in rows if clean(row.get("Подкатегория"))}
+canonical_count = sum(1 for path in CANONICAL_IMAGES.iterdir() if path.is_file())
 print(
     f"// CATALOG_MASTER_V107: {len(rows)} SKU rows / {len(articles)} articles; "
     f"{len(categories)} categories / {len(subcategories)} subcategories; "
-    f"{len(photo_refs)} photo references / {len(set(photo_refs))} unique repository images verified"
+    f"{len(photo_refs)} photo references / {len(set(photo_refs))} unique catalog images verified; "
+    f"{canonical_count} canonical image assets total"
 )
