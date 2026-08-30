@@ -10,6 +10,7 @@ scripts = [
     root / "scripts" / "verify-catalog-master-v107.py",
     root / "scripts" / "apply-pdp-size-quantity-v110.py",
     root / "scripts" / "apply-home-redesign-v113.py",
+    root / "scripts" / "apply-home-zarahome-v114.py",
 ]
 
 logs = []
