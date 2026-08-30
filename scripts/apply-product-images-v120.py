@@ -22,6 +22,11 @@ DIRECT_IMAGE_MAP = {
     "KD-PD-10926": "KD-PD-10926.png",
     "KD-PD-10927": "KD-PD-10927.png",
     "KD-PD-10928": "KD-PD-10928.png",
+    "KD-PD-11429": "KD-PD-11429.jpg",
+    "KD-PD-11436": "KD-PD-11436.jpg",
+    "KD-PD-11440": "KD-PD-11440.jpg",
+    "KD-PD-11441": "KD-PD-11441.jpg",
+    "KD-PD-11449": "KD-PD-11449.jpg",
 }
 
 ARTICLE_GALLERY_MAP = {
@@ -71,6 +76,11 @@ ALL_ASSETS = {
     "KD-PD-10375-02.png",
     "KD-PD-10376-01.png",
     "KD-PD-10376-02.png",
+    "KD-PD-11429.jpg",
+    "KD-PD-11436.jpg",
+    "KD-PD-11440.jpg",
+    "KD-PD-11441.jpg",
+    "KD-PD-11449.jpg",
 }
 
 EXPECTED_DIRECT_COUNTS = {
@@ -89,6 +99,11 @@ EXPECTED_DIRECT_COUNTS = {
     "KD-PD-10926": 1,
     "KD-PD-10927": 1,
     "KD-PD-10928": 1,
+    "KD-PD-11429": 1,
+    "KD-PD-11436": 1,
+    "KD-PD-11440": 1,
+    "KD-PD-11441": 1,
+    "KD-PD-11449": 1,
 }
 EXPECTED_GALLERY_COUNTS = {
     "KD-PD-10376": 2,
@@ -195,6 +210,6 @@ CATALOG.write_text("".join(out), encoding="utf-8")
 updated_rows = sum(direct_counts.values()) + sum(gallery_counts.values()) + sum(color_counts.values())
 print(
     "PRODUCT_IMAGES_V120: replaced product photos with uploaded assets; "
-    f"updated_rows={updated_rows}; linked_assets=28; staged_assets={len(ALL_ASSETS)}; "
+    f"updated_rows={updated_rows}; linked_assets=33; staged_assets={len(ALL_ASSETS)}; "
     "secondary photos kept only for KD-PD-10376 gallery"
 )
