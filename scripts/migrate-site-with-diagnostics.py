@@ -7,6 +7,7 @@ scripts = [
     root / "scripts" / "consolidate-image-assets-v111.py",
     root / "scripts" / "apply-catalog-master-v107.py",
     root / "scripts" / "apply-catalog-supplements-v112.py",
+    root / "scripts" / "apply-spring-product-images-v118.py",
     root / "scripts" / "verify-catalog-master-v107.py",
     root / "scripts" / "apply-pdp-size-quantity-v110.py",
     root / "scripts" / "apply-home-redesign-v113.py",
