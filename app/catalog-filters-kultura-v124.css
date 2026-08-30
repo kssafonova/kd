@@ -1,0 +1,263 @@
+/* CATALOG_FILTERS_KULTURA_V124
+   Brand styling for sorting/filtering: Tenor Sans, warm cream, dark green,
+   thin editorial dividers and restrained caramel accents. */
+.catalog-v123{
+  --catalog-ink:var(--ink,#181a19);
+  --catalog-muted:var(--muted,#797b78);
+  --catalog-line:var(--line,#deded9);
+  --catalog-cream:var(--cream,#f3f0ea);
+  --catalog-dark:var(--dark,#233b3f);
+  --catalog-accent:var(--accent,#aa7650);
+  --catalog-font:var(--serif,'Tenor Sans',Arial,sans-serif);
+}
+
+.catalog-v123 .catalog-tools-v123{
+  margin:26px 0 22px;
+  padding:0 0 18px;
+  border-bottom:1px solid var(--catalog-line);
+}
+.catalog-v123 .catalog-sort-v123{
+  gap:16px;
+  font-family:var(--catalog-font);
+  font-size:10px;
+  letter-spacing:.16em;
+  color:var(--catalog-muted);
+}
+.catalog-v123 .catalog-sort-v123>span{color:#887d72}
+.catalog-v123 .catalog-sort-v123 select{
+  min-width:210px;
+  height:40px;
+  padding:0 30px 0 0;
+  border:0;
+  border-bottom:1px solid #a9a49d;
+  background-color:transparent;
+  color:var(--catalog-ink);
+  font-family:var(--catalog-font);
+  font-size:12px;
+  letter-spacing:.02em;
+  outline:none;
+}
+.catalog-v123 .catalog-sort-v123 select:focus{border-bottom-color:var(--catalog-dark)}
+
+.catalog-v123 .catalog-filter-trigger-v123{
+  height:42px;
+  min-width:132px;
+  padding:0 18px;
+  border:1px solid var(--catalog-dark);
+  background:var(--catalog-dark);
+  color:#fff;
+  font-family:var(--catalog-font);
+  font-size:10px;
+  font-weight:400;
+  letter-spacing:.16em;
+  transition:background .18s ease,color .18s ease;
+}
+.catalog-v123 .catalog-filter-trigger-v123:hover{
+  background:#fff;
+  color:var(--catalog-dark);
+}
+.catalog-v123 .catalog-filter-trigger-v123 svg{width:17px;height:17px;stroke-width:1.45}
+.catalog-v123 .catalog-filter-trigger-v123 b{
+  min-width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--catalog-accent);
+  color:#fff;
+  font-size:9px;
+  font-weight:400;
+}
+
+.catalog-v123 .catalog-active-filters-v123{gap:7px;margin:0 0 27px}
+.catalog-v123 .catalog-filter-chip-v123{
+  min-height:32px;
+  padding:7px 10px 6px 12px;
+  border:1px solid #d8d1c8;
+  background:var(--catalog-cream);
+  color:#403b36;
+  font-family:var(--catalog-font);
+  font-size:11px;
+  letter-spacing:.02em;
+}
+.catalog-v123 .catalog-filter-chip-v123:hover{border-color:#a89b8d;background:#eee9e0}
+.catalog-v123 .catalog-filter-chip-v123 span{color:var(--catalog-accent);font-size:15px}
+.catalog-v123 .catalog-filter-reset-all-v123{
+  margin-left:8px;
+  border-bottom:1px solid var(--catalog-dark);
+  color:var(--catalog-dark);
+  font-family:var(--catalog-font);
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.catalog-v123 .catalog-filter-layer-v123{
+  background:rgba(25,31,30,.36);
+  backdrop-filter:blur(3px);
+}
+.catalog-v123 .catalog-filter-drawer-v123{
+  width:min(500px,100vw);
+  background:#fff;
+  box-shadow:-24px 0 70px rgba(29,32,31,.12);
+}
+.catalog-v123 .catalog-filter-header-v123{
+  padding:30px 32px 24px;
+  border-bottom:1px solid #dcd6cd;
+  background:var(--catalog-cream);
+}
+.catalog-v123 .catalog-filter-header-v123 h2{
+  margin:0 0 7px;
+  color:var(--catalog-dark);
+  font-family:var(--catalog-font);
+  font-size:30px;
+  font-weight:400;
+  line-height:1;
+  letter-spacing:-.02em;
+  text-transform:uppercase;
+}
+.catalog-v123 .catalog-filter-header-v123 span{
+  color:#82796f;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.catalog-v123 .catalog-filter-header-v123>button{
+  color:var(--catalog-dark);
+  border:1px solid transparent;
+}
+.catalog-v123 .catalog-filter-header-v123>button:hover{border-color:#cbc4ba}
+.catalog-v123 .catalog-filter-header-v123>button svg{width:20px;height:20px;stroke-width:1.35}
+
+.catalog-v123 .catalog-filter-body-v123{padding:0 32px 26px}
+.catalog-v123 .catalog-filter-section-v123{
+  padding:25px 0 24px;
+  border-bottom:1px solid var(--catalog-line);
+}
+.catalog-v123 .catalog-filter-section-v123 h3{
+  margin:0 0 15px;
+  color:var(--catalog-dark);
+  font-family:var(--catalog-font);
+  font-size:11px;
+  font-weight:400;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+.catalog-v123 .catalog-filter-options-v123{gap:2px 24px}
+.catalog-v123 .catalog-filter-option-v123{
+  min-height:40px;
+  color:#3b3935;
+  font-family:var(--catalog-font);
+  font-size:12px;
+}
+.catalog-v123 .catalog-filter-option-v123 input{
+  appearance:none;
+  -webkit-appearance:none;
+  width:15px;
+  height:15px;
+  border:1px solid #9f998f;
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+}
+.catalog-v123 .catalog-filter-option-v123 input:checked{
+  border-color:var(--catalog-dark);
+  background:var(--catalog-dark);
+  box-shadow:inset 0 0 0 3px #fff;
+}
+.catalog-v123 .catalog-filter-option-v123:hover:not(.is-disabled){color:var(--catalog-accent)}
+.catalog-v123 .catalog-filter-option-v123.is-disabled{color:#bbb6af}
+.catalog-v123 .catalog-filter-option-v123.is-disabled input{border-color:#ddd8d1;background:#f7f5f2}
+.catalog-v123 .catalog-filter-option-label-v123 small{
+  color:#a18f7f;
+  font-size:8px;
+  letter-spacing:.12em;
+}
+.catalog-v123 .catalog-filter-count-v123{color:#a49d94;font-size:10px}
+.catalog-v123 .catalog-filter-swatch-v123{
+  width:17px;
+  height:17px;
+  border:1px solid rgba(35,59,63,.22);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);
+}
+
+.catalog-v123 .catalog-filter-price-v123 label>span{
+  color:#887d72;
+  font-family:var(--catalog-font);
+  font-size:9px;
+  letter-spacing:.14em;
+}
+.catalog-v123 .catalog-filter-price-v123 label>div{
+  height:46px;
+  border:1px solid #cfc8be;
+  background:#fff;
+}
+.catalog-v123 .catalog-filter-price-v123 label>div:focus-within{border-color:var(--catalog-dark)}
+.catalog-v123 .catalog-filter-price-v123 input{
+  color:var(--catalog-ink);
+  font-family:var(--catalog-font);
+  font-size:13px;
+}
+.catalog-v123 .catalog-filter-price-v123 b{color:#82796f;font-size:12px}
+.catalog-v123 .catalog-filter-price-dash-v123{color:#aaa198}
+
+.catalog-v123 .catalog-filter-footer-v123{
+  gap:12px;
+  padding:18px 32px max(20px,env(safe-area-inset-bottom));
+  border-top:1px solid #dcd6cd;
+  background:var(--catalog-cream);
+}
+.catalog-v123 .catalog-filter-footer-v123 button{
+  min-height:50px;
+  font-family:var(--catalog-font);
+  font-size:10px;
+  font-weight:400;
+  letter-spacing:.14em;
+}
+.catalog-v123 .catalog-filter-reset-v123{
+  border:1px solid #aaa197;
+  background:transparent;
+  color:var(--catalog-dark);
+}
+.catalog-v123 .catalog-filter-reset-v123:hover{border-color:var(--catalog-dark);background:#fff}
+.catalog-v123 .catalog-filter-apply-v123{
+  border:1px solid var(--catalog-dark);
+  background:var(--catalog-dark);
+  color:#fff;
+}
+.catalog-v123 .catalog-filter-apply-v123:hover{background:#1b3033}
+.catalog-v123 .catalog-empty-v123 p{color:#7b756e;font-family:var(--catalog-font)}
+.catalog-v123 .catalog-empty-v123 button{border-bottom-color:var(--catalog-accent);color:var(--catalog-dark);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+
+@media (max-width:700px){
+  .catalog-v123 .catalog-tools-v123{
+    top:0;
+    margin:12px -16px 16px;
+    padding:9px 16px 11px;
+    background:rgba(248,247,244,.97);
+    border-top:1px solid #e3ded6;
+    border-bottom:1px solid #d9d3ca;
+  }
+  .catalog-v123 .catalog-sort-v123 select{
+    height:40px;
+    padding-left:0;
+    border:0;
+    border-bottom:1px solid #aaa39a;
+    background:transparent;
+    font-size:11px;
+  }
+  .catalog-v123 .catalog-filter-trigger-v123{height:40px;min-width:44px;padding:0 12px}
+  .catalog-v123 .catalog-active-filters-v123{margin-bottom:21px}
+  .catalog-v123 .catalog-filter-layer-v123{background:#fff}
+  .catalog-v123 .catalog-filter-header-v123{
+    padding:22px 20px 18px;
+    background:var(--catalog-cream);
+  }
+  .catalog-v123 .catalog-filter-header-v123 h2{font-size:27px}
+  .catalog-v123 .catalog-filter-body-v123{padding:0 20px 22px}
+  .catalog-v123 .catalog-filter-section-v123{padding:23px 0}
+  .catalog-v123 .catalog-filter-option-v123{min-height:43px;font-size:13px}
+  .catalog-v123 .catalog-filter-footer-v123{
+    padding:13px 20px max(15px,env(safe-area-inset-bottom));
+    background:var(--catalog-cream);
+  }
+  .catalog-v123 .catalog-filter-footer-v123 button{min-height:50px;font-size:9px}
+}
