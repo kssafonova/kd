@@ -32,18 +32,26 @@ if plp_context not in page:
     page = page.replace(plp_sizes_line, plp_context, 1)
 
 pdp_old = '''{sizes.length>1&&<><label className="pdp-size-head"><span>РАЗМЕР</span><button onClick={()=>alert(sizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button></label><ProductSizeRows sizes={sizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}'''
-pdp_new = '''{visibleSizes.length>0&&<><label className="pdp-size-head"><span>РАЗМЕР</span>{visibleSizes.length>1&&<button onClick={()=>alert(visibleSizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button>}</label><ProductSizeRows sizes={visibleSizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}{sizes.length===1&&visibleSizes.length===0&&<div className="single-size-quantity"><span>КОЛИЧЕСТВО</span><QuantityControl quantity={quantity} setQuantity={setQuantity}/></div>}'''
+pdp_previous = '''{visibleSizes.length>0&&<><label className="pdp-size-head"><span>РАЗМЕР</span>{visibleSizes.length>1&&<button onClick={()=>alert(visibleSizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button>}</label><ProductSizeRows sizes={visibleSizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}{sizes.length===1&&visibleSizes.length===0&&<div className="single-size-quantity"><span>КОЛИЧЕСТВО</span><QuantityControl quantity={quantity} setQuantity={setQuantity}/></div>}'''
+pdp_new = '''{visibleSizes.length>0&&<><label className="pdp-size-head"><span>РАЗМЕР</span>{visibleSizes.length>1&&<button onClick={()=>alert(visibleSizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button>}</label><ProductSizeRows sizes={visibleSizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}{sizes.length===1&&visibleSizes.length===0&&<div className="single-size-quantity"><span>ЕДИНЫЙ РАЗМЕР</span><QuantityControl quantity={quantity} setQuantity={setQuantity}/></div>}'''
 if pdp_new not in page:
-    if pdp_old not in page:
+    if pdp_previous in page:
+        page = page.replace(pdp_previous, pdp_new, 1)
+    elif pdp_old in page:
+        page = page.replace(pdp_old, pdp_new, 1)
+    else:
         raise SystemExit("PDP_SIZE_QUANTITY_V110: PDP size block not found")
-    page = page.replace(pdp_old, pdp_new, 1)
 
 plp_old = '''{sizes.length>1&&<><div className="sheet-head"><span>РАЗМЕР</span><button onClick={()=>setInfoOpen(true)}>Руководство по размерам</button></div><ProductSizeRows sizes={sizes} selectedSize={chosenSize} setSelectedSize={setChosenSize} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}'''
-plp_new = '''{visibleSizes.length>0&&<><div className="sheet-head"><span>РАЗМЕР</span>{visibleSizes.length>1&&<button onClick={()=>setInfoOpen(true)}>Руководство по размерам</button>}</div><ProductSizeRows sizes={visibleSizes} selectedSize={chosenSize} setSelectedSize={setChosenSize} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}{sizes.length===1&&visibleSizes.length===0&&<div className="single-size-quantity"><span>КОЛИЧЕСТВО</span><QuantityControl quantity={quantity} setQuantity={setQuantity}/></div>}'''
+plp_previous = '''{visibleSizes.length>0&&<><div className="sheet-head"><span>РАЗМЕР</span>{visibleSizes.length>1&&<button onClick={()=>setInfoOpen(true)}>Руководство по размерам</button>}</div><ProductSizeRows sizes={visibleSizes} selectedSize={chosenSize} setSelectedSize={setChosenSize} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}{sizes.length===1&&visibleSizes.length===0&&<div className="single-size-quantity"><span>КОЛИЧЕСТВО</span><QuantityControl quantity={quantity} setQuantity={setQuantity}/></div>}'''
+plp_new = '''{visibleSizes.length>0&&<><div className="sheet-head"><span>РАЗМЕР</span>{visibleSizes.length>1&&<button onClick={()=>setInfoOpen(true)}>Руководство по размерам</button>}</div><ProductSizeRows sizes={visibleSizes} selectedSize={chosenSize} setSelectedSize={setChosenSize} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}{sizes.length===1&&visibleSizes.length===0&&<div className="single-size-quantity"><span>ЕДИНЫЙ РАЗМЕР</span><QuantityControl quantity={quantity} setQuantity={setQuantity}/></div>}'''
 if plp_new not in page:
-    if plp_old not in page:
+    if plp_previous in page:
+        page = page.replace(plp_previous, plp_new, 1)
+    elif plp_old in page:
+        page = page.replace(plp_old, plp_new, 1)
+    else:
         raise SystemExit("PDP_SIZE_QUANTITY_V110: PLP size block not found")
-    page = page.replace(plp_old, plp_new, 1)
 
 css_marker = "/* PDP_SIZE_QUANTITY_V110 */"
 if css_marker not in css:
@@ -53,7 +61,7 @@ required = [
     "const isUniversalSizeLabel=",
     'visibleSizes.length>0&&<><label className="pdp-size-head"',
     'visibleSizes.length>0&&<><div className="sheet-head"',
-    'className="single-size-quantity"',
+    'className="single-size-quantity"><span>ЕДИНЫЙ РАЗМЕР</span>',
     "fmt(unitPrice*quantity)",
 ]
 for marker in required:
@@ -62,13 +70,13 @@ for marker in required:
 
 if page.count(visible_line) < 2:
     raise SystemExit(f"PDP_SIZE_QUANTITY_V110: expected visibleSizes in PDP and PLP, got {page.count(visible_line)}")
-if pdp_old in page or plp_old in page:
-    raise SystemExit("PDP_SIZE_QUANTITY_V110: stale multi-size-only block remains")
+if pdp_old in page or plp_old in page or pdp_previous in page or plp_previous in page:
+    raise SystemExit("PDP_SIZE_QUANTITY_V110: stale size block remains")
 
 PAGE.write_text(page, encoding="utf-8")
 CSS.write_text(css, encoding="utf-8")
 print(
     f"// PDP_SIZE_QUANTITY_V110: single real size is visible and auto-selected with quantity control; "
-    f"universal size label hidden; total CTA remains unit price x quantity; "
+    f"universal size is labeled as ЕДИНЫЙ РАЗМЕР with quantity control; total CTA remains unit price x quantity; "
     f"visibleScopes={page.count(visible_line)}; page_changed={page != original_page}; css_changed={css != original_css}"
 )
