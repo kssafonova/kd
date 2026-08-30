@@ -21,6 +21,7 @@ scripts = [
     root / "scripts" / "apply-home-category-images-v116.py",
     root / "scripts" / "apply-home-new-products-capsules-v117.py",
     root / "scripts" / "apply-catalog-filters-v123.py",
+    root / "scripts" / "apply-catalog-filters-ux-v125.py",
 ]
 
 logs = []
