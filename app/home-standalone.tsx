@@ -97,10 +97,10 @@ export default function HomeStandalone(){
       <div className="header-left"><button className="icon-btn hamburger" aria-label="Открыть меню" onClick={()=>setMenu(true)}><i/><i/><i/></button><button className="boutiques" onClick={()=>document.getElementById("home-boutiques")?.scrollIntoView({behavior:"smooth"})}><Icon name="pin"/> Бутики</button></div>
       <button className="logo" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>КУЛЬТУРА ДОМА</button>
       <div className="header-actions">
-        <button onClick={()=>navigate("/catalog/?search=open")} aria-label="Поиск"><Icon name="search"/></button>
-        <button onClick={()=>navigate("/catalog/?account=open")} aria-label="Профиль"><Icon name="user"/></button>
-        <button className="favorite-header" onClick={()=>navigate("/catalog/?favorites=open")} aria-label={`Избранное: ${favoriteCount}`}><Icon name="heart"/>{favoriteCount>0&&<b>{favoriteCount}</b>}</button>
-        <button className="bag" onClick={()=>navigate("/catalog/?cart=open")} aria-label="Корзина"><Icon name="bag"/>{cartCount>0&&<b>{cartCount}</b>}</button>
+        <button onClick={()=>navigate("/catalog/?open=search")} aria-label="Поиск"><Icon name="search"/></button>
+        <button onClick={()=>navigate("/catalog/?open=account")} aria-label="Профиль"><Icon name="user"/></button>
+        <button className="favorite-header" onClick={()=>navigate("/catalog/?open=favorites")} aria-label={`Избранное: ${favoriteCount}`}><Icon name="heart"/>{favoriteCount>0&&<b>{favoriteCount}</b>}</button>
+        <button className="bag" onClick={()=>navigate("/catalog/?open=cart")} aria-label="Корзина"><Icon name="bag"/>{cartCount>0&&<b>{cartCount}</b>}</button>
       </div>
     </header>
 

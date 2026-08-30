@@ -3,6 +3,7 @@
 import { assetUrl } from "./assets";
 import { RemoteImage } from "./remote-image";
 import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
+import { CATALOG_PRODUCTS_GENERATED } from "./catalog-products.generated";
 import { loadSiteDatabaseCatalogRows, SITE_DB_ADDRESS_SUGGESTIONS, SITE_DB_CITIES, SITE_DB_CONTACTS, SITE_DB_DELIVERY_METHODS, SITE_DB_PAYMENT_METHODS, SITE_DB_POLICIES, SITE_DB_PVZ_POINTS, SITE_DB_STORES, SITE_DB_STORE_POINTS, SITE_DB_COLOR_GROUPS, SITE_DB_COLOR_GROUP_MEMBERS } from "./site-database.generated";
 // SITE_DATABASE_CONNECTED_V128
 // TABLE_DRIVEN_CATALOG_IMAGES_V135
@@ -220,10 +221,11 @@ let products: Product[] = baseProducts.map(base=>{
     colorVariants:colors.map(item=>({name:item.color,hex:item.colorHex,image:item.image,gallery:item.gallery}))
   };
 }).filter(product=>!REMOVED_PRODUCT_IDS.has(product.id));
+if(CATALOG_PRODUCTS_GENERATED.length)products = CATALOG_PRODUCTS_GENERATED as unknown as Product[];
 
 
 type CatalogMasterRow = Record<string,string>;
-let catalogMasterLoaded = false;
+let catalogMasterLoaded = CATALOG_PRODUCTS_GENERATED.length>0;
 const CATALOG_MASTER_FILES:string[] = ["catalog_master.csv"]; // CATALOG_MASTER_V107
 const parseEntityCsv=(source:string):CatalogMasterRow[]=>{
   const text=source.replace(/^\uFEFF/,"");
@@ -376,7 +378,7 @@ let editorials:Editorial[] = [
 ];
 
 export default function Home({initialView="home",initialCatalogCategory="Все товары"}:{initialView?:View;initialCatalogCategory?:string}={}) {
-  const [catalogDataReady,setCatalogDataReady]=useState(()=>catalogMasterLoaded&&products.length>0);
+  const [catalogDataReady,setCatalogDataReady]=useState(()=>products.length>0);
   const [catalogDataError,setCatalogDataError]=useState(false);
   const reloadCatalogData=()=>{catalogMasterLoaded=false;setCatalogDataReady(false);setCatalogDataError(false);void loadCatalogMasterIntoProducts().then(()=>{const ready=products.length>0;setCatalogDataReady(ready);setCatalogDataError(!ready)})};
   useEffect(()=>{let mounted=true;void loadCatalogMasterIntoProducts().then(()=>{if(!mounted)return;const ready=products.length>0;setCatalogDataReady(ready);setCatalogDataError(!ready)});return()=>{mounted=false}},[]);
@@ -391,7 +393,7 @@ export default function Home({initialView="home",initialCatalogCategory="Все 
   const [filters, setFilters] = useState(false);
   const [plpSize, setPlpSize] = useState<Product | null>(null);
   const [plpAdded, setPlpAdded] = useState<CartItem | null>(null);
-  const [selected, setSelected] = useState<Product>(products[1]);
+  const [selected, setSelected] = useState<Product>(()=>products[1]??products[0]??({id:0,name:"",note:"",price:0,image:"/assets/images/image-placeholder.svg"} as Product));
   const [editorial, setEditorial] = useState<Editorial>(editorials[0]);
   const [catalogCategory,setCatalogCategory]=useState(initialCatalogCategory);
   const [sizeSheet, setSizeSheet] = useState(false);
@@ -818,6 +820,8 @@ function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, fa
     window.addEventListener("popstate",restore);
     return()=>window.removeEventListener("popstate",restore);
   },[initialCategory,categoryKey]);
+
+  useEffect(()=>{if(typeof document==="undefined")return;requestAnimationFrame(()=>document.querySelector<HTMLElement>(".view-catalog .catalog-category-slider-v141 button.active")?.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"}))},[category]);
 
   useEffect(()=>{
     if(!filterOpen||typeof document==="undefined")return;
