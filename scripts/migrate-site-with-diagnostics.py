@@ -6,6 +6,7 @@ root = Path(__file__).resolve().parents[1]
 scripts = [
     root / "scripts" / "consolidate-image-assets-v111.py",
     root / "scripts" / "apply-catalog-master-v107.py",
+    root / "scripts" / "apply-catalog-supplements-v112.py",
     root / "scripts" / "verify-catalog-master-v107.py",
     root / "scripts" / "apply-pdp-size-quantity-v110.py",
 ]
