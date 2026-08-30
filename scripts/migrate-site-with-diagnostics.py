@@ -30,6 +30,7 @@ scripts = [
     root / "scripts" / "apply-color-group-filters-v131.py",
     root / "scripts" / "build-site-runtime-v128.py",
     root / "scripts" / "apply-runtime-consumers-v130.py",
+    root / "scripts" / "apply-table-driven-catalog-v135.py",
 ]
 
 logs = []
