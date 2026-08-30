@@ -24,6 +24,7 @@ scripts = [
     root / "scripts" / "apply-home-new-products-capsules-v117.py",
     root / "scripts" / "apply-catalog-filters-v123.py",
     root / "scripts" / "apply-catalog-filters-ux-v125.py",
+    root / "scripts" / "apply-site-database-v128.py",
 ]
 
 logs = []
