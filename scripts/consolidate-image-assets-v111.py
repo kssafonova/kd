@@ -100,6 +100,11 @@ for path in sorted(set(text_files)):
     original = text
     for old, new in sorted(mapping.items(), key=lambda item: len(item[0]), reverse=True):
         text = text.replace(old, new)
+    text = text.replace("/public/images/", "/assets/images/")
+    text = text.replace("public/images/", "assets/images/")
+    text = text.replace("/images/imported-products/", "/assets/images/")
+    text = text.replace("images/imported-products/", "assets/images/")
+    text = re.sub(r"(?<![A-Za-z0-9:])\/images\/", "/assets/images/", text)
     if text != original:
         path.write_text(text, encoding="utf-8")
         changed_files += 1
@@ -117,9 +122,8 @@ for path in sorted(set(text_files)):
         text = path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         continue
-    for needle in ('/images/', 'public/images/', 'images/imported-products/'):
-        if needle in text:
-            legacy_refs.append(f"{path.relative_to(ROOT)} -> {needle}")
+    if "public/images/" in text or "images/imported-products/" in text or re.search(r"(?<![A-Za-z0-9:])\/images\/", text):
+        legacy_refs.append(str(path.relative_to(ROOT)))
 if legacy_refs:
     raise SystemExit("IMAGE_ASSETS_V111: stale image references remain:\n" + "\n".join(legacy_refs[:100]))
 
