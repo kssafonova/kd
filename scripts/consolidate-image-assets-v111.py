@@ -6,11 +6,17 @@ import shutil
 ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = ROOT / "assets" / "images"
 PUBLIC_MIRROR = ROOT / "public" / "assets" / "images"
-IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".svg"}
+IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".svg", ".ico"}
 TEXT_EXTS = {".ts", ".tsx", ".js", ".jsx", ".json", ".csv", ".py", ".yml", ".yaml", ".md", ".css", ".html", ".txt"}
 SOURCE_ROOTS = [ROOT / "app", ROOT / "scripts", ROOT / "public" / "data", ROOT / ".github"]
 
 CANONICAL.mkdir(parents=True, exist_ok=True)
+canonical_preexisting = any(path.is_file() and path.suffix.lower() in IMAGE_EXTS for path in CANONICAL.iterdir())
+
+# Once the canonical library exists, root /images is only a legacy Pages copy.
+# Remove it before scanning so repeated builds cannot remap canonical URLs through stale duplicates.
+if canonical_preexisting and (ROOT / "images").exists():
+    shutil.rmtree(ROOT / "images")
 
 
 def digest(path: Path) -> str:
@@ -149,5 +155,6 @@ if legacy_refs:
 canonical_count = sum(1 for p in CANONICAL.iterdir() if p.is_file() and p.suffix.lower() in IMAGE_EXTS)
 print(
     f"// IMAGE_ASSETS_V111: canonical assets/images contains {canonical_count} image files; "
-    f"moved={moved}; deduped={deduped}; rewritten_files={changed_files}; public mirror materialized"
+    f"moved={moved}; deduped={deduped}; rewritten_files={changed_files}; "
+    f"legacy_root_removed={canonical_preexisting}; public mirror materialized"
 )
