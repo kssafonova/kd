@@ -106,6 +106,13 @@ exact_pattern = None
 if mapping:
     exact_pattern = re.compile("|".join(re.escape(key) for key in sorted(mapping, key=len, reverse=True)))
 
+local_prefix_patterns = [
+    (re.compile(r"(^|[\"'`(=:\s])\/public\/images\/", re.M), r"\1/assets/images/"),
+    (re.compile(r"(^|[\"'`(=:\s])\/images\/imported-products\/", re.M), r"\1/assets/images/"),
+    (re.compile(r"(^|[\"'`(=:\s])images\/imported-products\/", re.M), r"\1assets/images/"),
+    (re.compile(r"(^|[\"'`(=:\s])\/images\/", re.M), r"\1/assets/images/"),
+]
+
 changed_files = 0
 for path in sorted(set(text_files)):
     try:
@@ -115,10 +122,8 @@ for path in sorted(set(text_files)):
     original = text
     if exact_pattern:
         text = exact_pattern.sub(lambda match: mapping[match.group(0)], text)
-    text = re.sub(r'(^|["\'`(=:\s])\/public\/images\/', r'\1/assets/images/', text, flags=re.M)
-    text = re.sub(r'(^|["\'`(=:\s])\/images\/imported-products\/', r'\1/assets/images/', text, flags=re.M)
-    text = re.sub(r'(^|["\'`(=:\s])images\/imported-products\/', r'\1assets/images/', text, flags=re.M)
-    text = re.sub(r'(^|["\'`(=:\s])\/images\/', r'\1/assets/images/', text, flags=re.M)
+    for pattern, replacement in local_prefix_patterns:
+        text = pattern.sub(replacement, text)
     if text != original:
         path.write_text(text, encoding="utf-8")
         changed_files += 1
@@ -129,12 +134,6 @@ for src in CANONICAL.glob("*"):
         shutil.copy2(src, PUBLIC_MIRROR / src.name)
 
 legacy_refs = []
-legacy_patterns = [
-    re.compile(r'(^|["\'`(=:\s])\/public\/images\/', re.M),
-    re.compile(r'(^|["\'`(=:\s])\/images\/imported-products\/', re.M),
-    re.compile(r'(^|["\'`(=:\s])images\/imported-products\/', re.M),
-    re.compile(r'(^|["\'`(=:\s])\/images\/', re.M),
-]
 for path in sorted(set(text_files)):
     if not path.exists():
         continue
@@ -142,7 +141,7 @@ for path in sorted(set(text_files)):
         text = path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         continue
-    if any(pattern.search(text) for pattern in legacy_patterns):
+    if any(pattern.search(text) for pattern, _ in local_prefix_patterns):
         legacy_refs.append(str(path.relative_to(ROOT)))
 if legacy_refs:
     raise SystemExit("IMAGE_ASSETS_V111: stale local image references remain:\n" + "\n".join(legacy_refs[:100]))
