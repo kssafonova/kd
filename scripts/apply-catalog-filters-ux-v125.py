@@ -29,27 +29,27 @@ text = text.replace(old_toolbar, new_toolbar, 1)
 replacements = [
     (
         r'\{subcategoryOptions\.length>0&&<section className="catalog-filter-section-v123"><h3>Тип товара</h3><div className="catalog-filter-options-v123">(.*?)</div></section>\}',
-        lambda m: '{subcategoryOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125" defaultOpen={draft.subcategories.length>0}><summary><span>Тип товара</span>{draft.subcategories.length>0&&<b>{draft.subcategories.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
+        lambda m: '{subcategoryOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125"><summary><span>Тип товара</span>{draft.subcategories.length>0&&<b>{draft.subcategories.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
     ),
     (
         r'\{\(collectionOptions\.length>0\|\|capsuleOptions\.length>0\)&&<section className="catalog-filter-section-v123"><h3>Коллекция / капсула</h3><div className="catalog-filter-options-v123">(.*?)</div></section>\}',
-        lambda m: '{(collectionOptions.length>0||capsuleOptions.length>0)&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125" defaultOpen={(draft.collections.length+draft.capsules.length)>0}><summary><span>Коллекция / капсула</span>{(draft.collections.length+draft.capsules.length)>0&&<b>{draft.collections.length+draft.capsules.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
+        lambda m: '{(collectionOptions.length>0||capsuleOptions.length>0)&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125"><summary><span>Коллекция / капсула</span>{(draft.collections.length+draft.capsules.length)>0&&<b>{draft.collections.length+draft.capsules.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
     ),
     (
         r'\{materialOptions\.length>0&&<section className="catalog-filter-section-v123"><h3>Материал</h3><div className="catalog-filter-options-v123">(.*?)</div></section>\}',
-        lambda m: '{materialOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125" defaultOpen={draft.materials.length>0}><summary><span>Материал</span>{draft.materials.length>0&&<b>{draft.materials.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
+        lambda m: '{materialOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125"><summary><span>Материал</span>{draft.materials.length>0&&<b>{draft.materials.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
     ),
     (
         r'\{sizeOptions\.length>0&&<section className="catalog-filter-section-v123"><h3>Размер</h3><div className="catalog-filter-options-v123">(.*?)</div></section>\}',
-        lambda m: '{sizeOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125" defaultOpen={draft.sizes.length>0}><summary><span>Размер</span>{draft.sizes.length>0&&<b>{draft.sizes.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
+        lambda m: '{sizeOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125"><summary><span>Размер</span>{draft.sizes.length>0&&<b>{draft.sizes.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123">' + m.group(1) + '</div></div></details>}'
     ),
     (
         r'\{colorOptions\.length>0&&<section className="catalog-filter-section-v123"><h3>Цвет</h3><div className="catalog-filter-options-v123 catalog-filter-colors-v123">(.*?)</div></section>\}',
-        lambda m: '{colorOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125" defaultOpen={draft.colors.length>0}><summary><span>Цвет</span>{draft.colors.length>0&&<b>{draft.colors.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123 catalog-filter-colors-v123">' + m.group(1) + '</div></div></details>}'
+        lambda m: '{colorOptions.length>0&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125"><summary><span>Цвет</span>{draft.colors.length>0&&<b>{draft.colors.length}</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125"><div className="catalog-filter-options-v123 catalog-filter-colors-v123">' + m.group(1) + '</div></div></details>}'
     ),
     (
         r'\{\(minCatalogPrice>0\|\|maxCatalogPrice>0\)&&<section className="catalog-filter-section-v123"><h3>Цена</h3>(.*?)</section>\}',
-        lambda m: '{(minCatalogPrice>0||maxCatalogPrice>0)&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125" defaultOpen={Boolean(draft.priceFrom||draft.priceTo)}><summary><span>Цена</span>{(draft.priceFrom||draft.priceTo)&&<b>1</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125">' + m.group(1) + '</div></details>}'
+        lambda m: '{(minCatalogPrice>0||maxCatalogPrice>0)&&<details className="catalog-filter-section-v123 catalog-filter-accordion-v125"><summary><span>Цена</span>{(draft.priceFrom||draft.priceTo)&&<b>1</b>}<Icon name="chevron"/></summary><div className="catalog-filter-accordion-content-v125">' + m.group(1) + '</div></details>}'
     ),
 ]
 
@@ -59,4 +59,4 @@ for pattern, replacement in replacements:
         raise SystemExit(f"CATALOG_FILTERS_UX_V125: section signature not found: {pattern[:60]}")
 
 page_path.write_text(text, encoding="utf-8")
-print("// CATALOG_FILTERS_UX_V125: toolbar simplified; filter groups converted to accessible accordions; active groups reopen on drawer mount")
+print("// CATALOG_FILTERS_UX_V125: toolbar simplified; filter groups converted to accessible native accordions")
