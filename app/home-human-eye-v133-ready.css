@@ -1,0 +1,195 @@
+/* HOME HUMAN EYE V133 — runtime ready solutions correction
+   home-ready-solutions-zara-v126-enhancer injects its own !important styles.
+   These selectors intentionally carry higher specificity so the homepage keeps
+   one coherent hierarchy after hydration. */
+
+.view-home .home-v113 .home113-solutions.home126-ready-solutions{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:78px 0 96px!important;
+  background:#fff!important;
+  color:#191b19!important;
+}
+.view-home .home-v113 .home126-ready-head{
+  width:auto!important;
+  max-width:none!important;
+  margin:0 0 26px!important;
+  padding:0 clamp(18px,4vw,62px)!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:24px!important;
+}
+.view-home .home-v113 .home126-ready-head-copy{
+  max-width:none!important;
+}
+.view-home .home-v113 .home126-ready-head small{
+  display:none!important;
+}
+.view-home .home-v113 .home126-ready-head h2{
+  margin:0!important;
+  color:#191b19!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(30px,3.2vw,46px)!important;
+  font-weight:400!important;
+  line-height:1.04!important;
+  letter-spacing:-.015em!important;
+}
+.view-home .home-v113 .home126-ready-head p{
+  display:none!important;
+}
+.view-home .home-v113 .home126-ready-all{
+  flex:0 0 auto!important;
+  min-height:32px!important;
+  margin:0!important;
+  padding:0 0 3px!important;
+  gap:8px!important;
+  border:0!important;
+  border-bottom:1px solid currentColor!important;
+  color:#191b19!important;
+  font:400 9px/1 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.045em!important;
+  text-transform:none!important;
+}
+.view-home .home-v113 .home126-ready-all span{font-size:11px!important}
+
+.view-home .home-v113 .home126-ready-rail{
+  display:flex!important;
+  grid-template-columns:none!important;
+  gap:14px!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0 clamp(18px,4vw,62px) 10px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:x proximity!important;
+  scroll-padding-inline:clamp(18px,4vw,62px)!important;
+  scrollbar-width:none!important;
+}
+.view-home .home-v113 .home126-ready-rail::-webkit-scrollbar{display:none!important}
+.view-home .home-v113 .home126-ready-card{
+  flex:0 0 clamp(330px,37vw,520px)!important;
+  min-width:0!important;
+  background:#fff!important;
+  scroll-snap-align:start!important;
+}
+.view-home .home-v113 .home126-ready-media{
+  width:100%!important;
+  aspect-ratio:4/5!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:#efede8!important;
+}
+/* A homepage preview needs one visual story, not a mini-gallery collage. */
+.view-home .home-v113 .home126-ready-media img{
+  display:none!important;
+}
+.view-home .home-v113 .home126-ready-media img:first-child{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  transform:none!important;
+}
+@media(hover:hover){
+  .view-home .home-v113 .home126-ready-card:hover .home126-ready-media img:first-child{
+    transform:scale(1.012)!important;
+  }
+}
+.view-home .home-v113 .home126-ready-copy{
+  min-height:0!important;
+  padding:12px 0 0!important;
+  display:block!important;
+}
+.view-home .home-v113 .home126-ready-copy small{
+  display:block!important;
+  margin:0 0 5px!important;
+  color:#898a85!important;
+  font:400 8px/1.2 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.08em!important;
+}
+.view-home .home-v113 .home126-ready-copy h3{
+  margin:0!important;
+  color:#191b19!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(21px,1.8vw,27px)!important;
+  font-weight:400!important;
+  line-height:1.1!important;
+  letter-spacing:-.01em!important;
+}
+.view-home .home-v113 .home126-ready-copy p{
+  display:-webkit-box!important;
+  max-width:430px!important;
+  margin:7px 0 7px!important;
+  overflow:hidden!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  color:#777973!important;
+  font:400 10px/1.45 "Tenor Sans",Arial,sans-serif!important;
+}
+.view-home .home-v113 .home126-ready-link{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-height:28px!important;
+  margin:0!important;
+  padding:0 0 2px!important;
+  border:0!important;
+  border-bottom:1px solid currentColor!important;
+  color:#2d4346!important;
+  font:400 8px/1 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.045em!important;
+  text-transform:none!important;
+}
+.view-home .home-v113 .home126-ready-link span{font-size:10px!important}
+
+@media(max-width:700px){
+  .view-home .home-v113 .home113-solutions.home126-ready-solutions{
+    padding:52px 0 66px!important;
+  }
+  .view-home .home-v113 .home126-ready-head{
+    display:flex!important;
+    margin-bottom:18px!important;
+    padding:0 15px!important;
+    gap:14px!important;
+  }
+  .view-home .home-v113 .home126-ready-head h2{
+    font-size:29px!important;
+  }
+  .view-home .home-v113 .home126-ready-all{
+    min-height:29px!important;
+    margin:0!important;
+    font-size:8px!important;
+  }
+  .view-home .home-v113 .home126-ready-rail{
+    gap:9px!important;
+    margin:0!important;
+    padding:0 15px 8px!important;
+    scroll-padding-inline:15px!important;
+    scroll-snap-type:x mandatory!important;
+  }
+  .view-home .home-v113 .home126-ready-card{
+    flex:0 0 79vw!important;
+    max-width:390px!important;
+  }
+  .view-home .home-v113 .home126-ready-media{
+    aspect-ratio:4/5!important;
+  }
+  .view-home .home-v113 .home126-ready-copy{
+    min-height:0!important;
+    padding-top:10px!important;
+  }
+  .view-home .home-v113 .home126-ready-copy small{font-size:7px!important}
+  .view-home .home-v113 .home126-ready-copy h3{font-size:22px!important}
+  .view-home .home-v113 .home126-ready-copy p{
+    margin:6px 0!important;
+    font-size:9px!important;
+  }
+  .view-home .home-v113 .home126-ready-link{
+    margin:0!important;
+    padding:0 0 2px!important;
+    font-size:8px!important;
+  }
+}
