@@ -532,13 +532,13 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     backgroundPosition:`${(index%6)*20}% ${(Math.floor(index/6)*100)/6}%`,
   });
   const categories=[
-    {title:"Спальня",note:"Постельное бельё",index:0,action:()=>openCatalog("Постельное белье")},
-    {title:"Посуда и сервировка",note:"Кухня и столовая",index:1,action:()=>openCatalog("Посуда и сервировка")},
-    {title:"Столовый текстиль",note:"Скатерти, салфетки, дорожки",index:2,action:()=>openCatalog("Столовый текстиль")},
-    {title:"Декор",note:"Предметы для дома",index:3,action:()=>openCatalog("Декор для дома")},
-    {title:"Текстиль для дома",note:"Пледы и подушки",index:4,action:()=>openCatalog("Пледы и подушки")},
-    {title:"Ванная",note:"Для ежедневных ритуалов",index:5,action:()=>openCatalog()},
-    {title:"Outlet",note:"Особые предложения",index:6,action:()=>openCatalog()},
+    {title:"Спальня",note:"Постельное бельё",image:"/assets/images/1spal.png",action:()=>openCatalog("Постельное белье")},
+    {title:"Посуда и сервировка",note:"Кухня и столовая",image:"/assets/images/2stol.png",action:()=>openCatalog("Посуда и сервировка")},
+    {title:"Столовый текстиль",note:"Скатерти, салфетки, дорожки",image:"/assets/images/3stoltekstil.png",action:()=>openCatalog("Столовый текстиль")},
+    {title:"Декор",note:"Предметы для дома",image:"/assets/images/4dekor.png",action:()=>openCatalog("Декор для дома")},
+    {title:"Текстиль для дома",note:"Пледы и подушки",image:"/assets/images/5homeclothes.png",action:()=>openCatalog("Пледы и подушки")},
+    {title:"Ванная",note:"Для ежедневных ритуалов",image:"/assets/images/6van.png",action:()=>openCatalog()},
+    {title:"Outlet",note:"Особые предложения",image:"/assets/images/7outlet.png",action:()=>openCatalog()},
   ];
   const capsules=[
     {title:"Нити",meta:"КАПСУЛА · ТЕКСТИЛЬ",copy:"Спокойная графика, прохладные оттенки и выразительная фактура.",indices:[7,8]},
@@ -580,7 +580,7 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
 
     <section className="home113-section home113-category-section">
       <header className="home113-section-head"><div><small>КАТАЛОГ</small><h2>Пространства дома</h2></div><p>Начните с комнаты или категории — дальше предметы складываются в общую композицию.</p></header>
-      <div className="home113-category-rail">{categories.map(item=><button type="button" key={item.title} className="home113-category-card" onClick={item.action}><span className="home113-atlas-card" role="img" aria-label={item.title} style={atlasStyle(item.index)}/><strong>{item.title}</strong><small>{item.note}</small></button>)}</div>
+      <div className="home113-category-rail">{categories.map(item=><button type="button" key={item.title} className="home113-category-card" onClick={item.action}><span className="home113-atlas-card home113-category-image" role="img" aria-label={item.title} style={{backgroundImage:`url("${assetUrl(item.image)}")`,backgroundSize:"cover",backgroundPosition:"center center",backgroundRepeat:"no-repeat"}}/><strong>{item.title}</strong><small>{item.note}</small></button>)}</div>
     </section>
 
     <section className="home113-capsules">
