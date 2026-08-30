@@ -16,19 +16,20 @@ if helper not in page:
         raise SystemExit("PDP_SIZE_QUANTITY_V110: size helper insertion point not found")
     page = page.replace(helper_marker, helper + helper_marker, 1)
 
+visible_line = "  const visibleSizes=sizes.filter(([name])=>!isUniversalSizeLabel(name));\n"
 pdp_sizes_line = "  const sizes=getProductSizeOptions(product,color.name,secondaryColor||undefined);\n"
-pdp_visible_line = "  const visibleSizes=sizes.filter(([name])=>!isUniversalSizeLabel(name));\n"
-if pdp_visible_line not in page:
+pdp_context = pdp_sizes_line + visible_line
+if pdp_context not in page:
     if pdp_sizes_line not in page:
         raise SystemExit("PDP_SIZE_QUANTITY_V110: PDP sizes line not found")
-    page = page.replace(pdp_sizes_line, pdp_sizes_line + pdp_visible_line, 1)
+    page = page.replace(pdp_sizes_line, pdp_context, 1)
 
 plp_sizes_line = "  const sizes=getProductSizeOptions(product,selectedColor);\n"
-plp_visible_line = "  const visibleSizes=sizes.filter(([name])=>!isUniversalSizeLabel(name));\n"
-if plp_visible_line not in page:
+plp_context = plp_sizes_line + visible_line
+if plp_context not in page:
     if plp_sizes_line not in page:
         raise SystemExit("PDP_SIZE_QUANTITY_V110: PLP sizes line not found")
-    page = page.replace(plp_sizes_line, plp_sizes_line + plp_visible_line, 1)
+    page = page.replace(plp_sizes_line, plp_context, 1)
 
 pdp_old = '''{sizes.length>1&&<><label className="pdp-size-head"><span>РАЗМЕР</span><button onClick={()=>alert(sizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button></label><ProductSizeRows sizes={sizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}'''
 pdp_new = '''{visibleSizes.length>0&&<><label className="pdp-size-head"><span>РАЗМЕР</span>{visibleSizes.length>1&&<button onClick={()=>alert(visibleSizes.map(([name])=>name).join(" · "))}>Руководство по размерам</button>}</label><ProductSizeRows sizes={visibleSizes} selectedSize={effectiveSelectedSize} setSelectedSize={(name)=>{setSelectedSize(name);setQuantity(1);setSizePrompt(false)}} quantity={quantity} setQuantity={setQuantity} unavailableLast={!product.skus?.length} unavailableSizes={unavailableSizes} oldPrice={product.oldPrice} notify={(name)=>alert(`Спасибо. Сообщим, когда размер «${name}» появится в наличии.`)}/></>}{sizes.length===1&&visibleSizes.length===0&&<div className="single-size-quantity"><span>КОЛИЧЕСТВО</span><QuantityControl quantity={quantity} setQuantity={setQuantity}/></div>}'''
@@ -50,7 +51,6 @@ if css_marker not in css:
 
 required = [
     "const isUniversalSizeLabel=",
-    "const visibleSizes=sizes.filter(([name])=>!isUniversalSizeLabel(name));",
     'visibleSizes.length>0&&<><label className="pdp-size-head"',
     'visibleSizes.length>0&&<><div className="sheet-head"',
     'className="single-size-quantity"',
@@ -60,6 +60,8 @@ for marker in required:
     if marker not in page:
         raise SystemExit(f"PDP_SIZE_QUANTITY_V110: required marker missing: {marker}")
 
+if page.count(visible_line) < 2:
+    raise SystemExit(f"PDP_SIZE_QUANTITY_V110: expected visibleSizes in PDP and PLP, got {page.count(visible_line)}")
 if pdp_old in page or plp_old in page:
     raise SystemExit("PDP_SIZE_QUANTITY_V110: stale multi-size-only block remains")
 
@@ -68,5 +70,5 @@ CSS.write_text(css, encoding="utf-8")
 print(
     f"// PDP_SIZE_QUANTITY_V110: single real size is visible and auto-selected with quantity control; "
     f"universal size label hidden; total CTA remains unit price x quantity; "
-    f"page_changed={page != original_page}; css_changed={css != original_css}"
+    f"visibleScopes={page.count(visible_line)}; page_changed={page != original_page}; css_changed={css != original_css}"
 )
