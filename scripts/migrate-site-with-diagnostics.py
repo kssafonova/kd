@@ -15,6 +15,7 @@ scripts = [
     root / "scripts" / "apply-catalog-preview-colors-v122.py",
     root / "scripts" / "verify-catalog-master-v107.py",
     root / "scripts" / "export-site-database-v126.py",
+    root / "scripts" / "build-site-runtime-v128.py",
     root / "scripts" / "export-filter-database-v127.py",
     root / "scripts" / "apply-pdp-size-quantity-v110.py",
     root / "scripts" / "apply-home-redesign-v113.py",
@@ -26,6 +27,7 @@ scripts = [
     root / "scripts" / "apply-catalog-filters-ux-v125.py",
     root / "scripts" / "fix-site-database-v129.py",
     root / "scripts" / "apply-site-database-v128.py",
+    root / "scripts" / "apply-runtime-consumers-v130.py",
 ]
 
 logs = []
