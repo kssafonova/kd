@@ -61,7 +61,6 @@ for src in sorted(candidates):
         if name.lower() in existing_names and existing_names[name.lower()] != value:
             name = f"{Path(name).stem}__{value[:10]}{src.suffix.lower()}"
         dest = CANONICAL / name
-        dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dest)
         existing_by_hash[value] = dest
         existing_names[dest.name.lower()] = value
@@ -77,22 +76,10 @@ for src in sorted(candidates):
         mapping[public_rel] = new_url.lstrip("/")
     src.unlink()
 
-# Remove obsolete image directories after their files have been consolidated.
 for stale_dir in [ROOT / "public" / "images", ROOT / "images", ROOT / "public" / "assets" / "images"]:
     if stale_dir.exists():
         shutil.rmtree(stale_dir)
 
-# Remove now-empty directories under public and root legacy image trees.
-for base in [ROOT / "public", ROOT]:
-    for path in sorted([p for p in base.rglob("*") if p.is_dir()], key=lambda p: len(p.parts), reverse=True):
-        if path == CANONICAL or CANONICAL in path.parents or path == ROOT:
-            continue
-        try:
-            path.rmdir()
-        except OSError:
-            pass
-
-# Rewrite source/data references to the canonical URL.
 text_files = []
 for base in SOURCE_ROOTS:
     if not base.exists():
@@ -117,7 +104,6 @@ for path in sorted(set(text_files)):
         path.write_text(text, encoding="utf-8")
         changed_files += 1
 
-# Materialize a temporary Next.js public mirror for build only.
 PUBLIC_MIRROR.mkdir(parents=True, exist_ok=True)
 for src in CANONICAL.glob("*"):
     if src.is_file() and src.suffix.lower() in IMAGE_EXTS:
