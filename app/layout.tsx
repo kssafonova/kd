@@ -60,6 +60,7 @@ import "./checkout-v83.css";
 import "./checkout-bonus-v84.css";
 import "./checkout-kultura-v85.css";
 import "./truth-commerce.css";
+import "./catalog-human-eye-v127.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
