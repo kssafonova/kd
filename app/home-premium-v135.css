@@ -1,0 +1,206 @@
+/* HOME PREMIUM V135
+   Final content hierarchy pass: less copy, fewer simultaneous choices,
+   contextual ready-solution tabs and a distinct constructor proposition. */
+
+/* HERO: image first, then one short message and one action. */
+.view-home .home134-hero-copy p{display:none!important}
+.view-home .home134-hero-copy{bottom:58px!important}
+.view-home .home134-hero-copy small{margin-bottom:7px!important;font-size:8px!important;letter-spacing:.12em!important}
+.view-home .home134-hero-copy h1{max-width:560px!important;margin:0 0 9px!important;font-size:clamp(40px,4vw,58px)!important;line-height:1.01!important;letter-spacing:-.018em!important}
+.view-home .home134-hero-copy button{min-height:30px!important;padding-bottom:3px!important;font-size:9px!important;letter-spacing:.02em!important}
+.view-home .home134-hero-footer{justify-content:flex-start!important;bottom:19px!important}
+.view-home .home134-hero-count{display:none!important}
+.view-home .home134-hero-progress{gap:6px!important}
+.view-home .home134-hero-progress button{width:40px!important;height:20px!important}
+
+/* CAPSULES: three equal, quiet stories. No slider, no collage, no metadata. */
+.view-home .home135-capsules{padding:34px 0 40px!important;background:#fff!important}
+.view-home .home135-capsules .home117-section-head{margin-bottom:16px!important}
+.view-home .home135-capsules .home117-section-head>button{font-size:8px!important}
+.view-home .home135-capsules .home117-capsule-rail{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:none!important;
+  gap:10px!important;
+  padding:0 clamp(18px,4vw,58px)!important;
+  overflow:visible!important;
+}
+.view-home .home135-capsules .home117-capsule-card{
+  position:relative!important;
+  display:block!important;
+  grid-row:auto!important;
+  grid-column:auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  overflow:visible!important;
+  background:transparent!important;
+}
+.view-home .home135-capsules .home117-capsule-card:nth-child(n+4){display:none!important}
+.view-home .home135-capsules .home117-capsule-media{
+  position:relative!important;
+  inset:auto!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:4/3!important;
+  overflow:hidden!important;
+  background:#f0eee9!important;
+}
+.view-home .home135-capsules .home125-capsule-image-grid{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  gap:0!important;
+}
+.view-home .home135-capsules .home125-capsule-image-grid img{display:none!important}
+.view-home .home135-capsules .home125-capsule-image-grid img:first-child{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+.view-home .home135-capsules .home117-capsule-copy{
+  position:static!important;
+  display:block!important;
+  padding:8px 0 0!important;
+  background:none!important;
+  color:#191c19!important;
+  text-shadow:none!important;
+}
+.view-home .home135-capsules .home117-capsule-copy:before{display:none!important}
+.view-home .home135-capsules .home117-capsule-copy>small,
+.view-home .home135-capsules .home117-capsule-link{display:none!important}
+.view-home .home135-capsules .home117-capsule-copy button{color:#191c19!important;text-align:left!important}
+.view-home .home135-capsules .home117-capsule-copy h3{
+  margin:0!important;
+  color:#191c19!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(17px,1.55vw,22px)!important;
+  font-weight:400!important;
+  line-height:1.14!important;
+  letter-spacing:0!important;
+}
+
+/* READY SOLUTIONS: choose context first, then see only three relevant options. */
+.view-home .home134-spaces{padding:36px 0 42px!important;background:#fff!important;color:#191c19!important}
+.view-home .home135-ready-head{margin-bottom:15px!important}
+.home135-ready-tabs{
+  display:flex;
+  align-items:center;
+  gap:30px;
+  margin:0 clamp(18px,4vw,58px) 20px;
+  padding:0 0 9px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  border-bottom:1px solid #deddd8;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.home135-ready-tabs::-webkit-scrollbar{display:none}
+.home135-ready-tabs button{
+  position:relative;
+  flex:0 0 auto;
+  min-height:33px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#838580;
+  font:400 11px/1 "Tenor Sans",Arial,sans-serif;
+  letter-spacing:0;
+  white-space:nowrap;
+}
+.home135-ready-tabs button.is-active{color:#1c1f1c}
+.home135-ready-tabs button.is-active:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-10px;
+  height:1px;
+  background:#1c1f1c;
+}
+.home135-ready-tabs button:focus-visible{outline:1px solid #1c1f1c;outline-offset:5px}
+.home135-ready-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  padding:0 clamp(18px,4vw,58px);
+}
+.home135-ready-card{min-width:0;color:#1c1f1c;text-decoration:none}
+.home135-ready-media{display:block;width:100%;aspect-ratio:4/3;overflow:hidden;background:#f0eee9}
+.home135-ready-media img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .38s ease}
+@media(hover:hover){.home135-ready-card:hover .home135-ready-media img{transform:scale(1.01)}}
+.home135-ready-copy{display:block;padding-top:9px}
+.home135-ready-copy strong{display:block;font:400 18px/1.14 "Tenor Sans",Georgia,serif}
+.home135-ready-copy small{display:block;min-height:13px;margin-top:4px;color:#7e807b;font:400 9px/1.35 "Tenor Sans",Arial,sans-serif}
+.home135-ready-copy em{display:inline-block;margin-top:8px;padding-bottom:2px;border-bottom:1px solid #8b8c87;color:#343734;font:400 8px/1 "Tenor Sans",Arial,sans-serif;font-style:normal}
+.home135-ready-all{display:table;margin:17px auto 0;padding:0 0 3px;border-bottom:1px solid #777;color:#252825;font:400 9px/1 "Tenor Sans",Arial,sans-serif;text-decoration:none}
+
+/* CONSTRUCTOR: separate promise after curated solutions — customise instead of browse. */
+.home135-constructor{
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(360px,.65fr);
+  width:calc(100% - clamp(36px,8vw,116px));
+  max-width:1440px;
+  margin:6px auto 42px;
+  border-top:1px solid #dfddd8;
+  border-bottom:1px solid #dfddd8;
+  background:#fff;
+  color:#191c19;
+}
+.home135-constructor-media{min-height:330px;overflow:hidden;background:#efede8}
+.home135-constructor-media img{display:block;width:100%;height:100%;object-fit:cover}
+.home135-constructor-copy{display:flex;flex-direction:column;justify-content:center;padding:34px clamp(26px,4vw,56px)}
+.home135-constructor-copy small{color:#7c7e78;font:400 8px/1 "Tenor Sans",Arial,sans-serif;letter-spacing:.13em}
+.home135-constructor-copy h2{max-width:9.5em;margin:8px 0 12px;font:400 clamp(28px,2.7vw,39px)/1.04 "Tenor Sans",Georgia,serif;letter-spacing:-.012em}
+.home135-constructor-copy p{max-width:430px;margin:0;color:#70736d;font:400 10px/1.6 "Tenor Sans",Arial,sans-serif}
+.home135-constructor-copy a{align-self:flex-start;display:inline-flex;align-items:center;gap:12px;margin-top:18px;padding:0 0 4px;border-bottom:1px solid #252825;color:#252825;font:400 9px/1 "Tenor Sans",Arial,sans-serif;text-decoration:none}
+.home135-constructor-copy a:focus-visible{outline:1px solid #252825;outline-offset:6px}
+
+@media(max-width:700px){
+  .view-home .home134-hero-copy{bottom:51px!important}
+  .view-home .home134-hero-copy small{font-size:7px!important;margin-bottom:6px!important}
+  .view-home .home134-hero-copy h1{max-width:90%!important;margin-bottom:8px!important;font-size:34px!important;line-height:1.02!important}
+  .view-home .home134-hero-copy button{font-size:8px!important}
+  .view-home .home134-hero-footer{bottom:15px!important}
+  .view-home .home134-hero-progress button{width:32px!important}
+
+  .view-home .home135-capsules{padding:26px 0 31px!important}
+  .view-home .home135-capsules .home117-section-head{margin-bottom:13px!important}
+  .view-home .home135-capsules .home117-capsule-rail{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:0 12px!important}
+  .view-home .home135-capsules .home117-capsule-media{aspect-ratio:1/1!important}
+  .view-home .home135-capsules .home117-capsule-copy{padding-top:6px!important}
+  .view-home .home135-capsules .home117-capsule-copy h3{font-size:11px!important;line-height:1.18!important}
+  .view-home .home135-capsules .home117-section-head>button{font-size:7px!important}
+
+  .view-home .home134-spaces{padding:28px 0 32px!important}
+  .view-home .home135-ready-head{margin-bottom:11px!important}
+  .view-home .home135-ready-head p{display:none!important}
+  .home135-ready-tabs{gap:22px;margin:0 12px 15px;padding-bottom:8px}
+  .home135-ready-tabs button{min-height:31px;font-size:9px}
+  .home135-ready-tabs button.is-active:after{bottom:-9px}
+  .home135-ready-grid{display:flex;gap:8px;padding:0 12px 6px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .home135-ready-grid::-webkit-scrollbar{display:none}
+  .home135-ready-card{flex:0 0 72vw;max-width:310px;scroll-snap-align:start}
+  .home135-ready-media{aspect-ratio:4/3}
+  .home135-ready-copy{padding-top:7px}
+  .home135-ready-copy strong{font-size:16px}
+  .home135-ready-copy small{font-size:8px}
+  .home135-ready-copy em{margin-top:7px;font-size:7px}
+  .home135-ready-all{margin-top:13px;font-size:8px}
+
+  .home135-constructor{display:block;width:calc(100% - 24px);margin:3px 12px 31px;border-top:1px solid #dfddd8;border-bottom:1px solid #dfddd8}
+  .home135-constructor-media{min-height:0;aspect-ratio:16/10}
+  .home135-constructor-copy{padding:22px 3px 25px}
+  .home135-constructor-copy small{font-size:7px}
+  .home135-constructor-copy h2{max-width:10em;margin:7px 0 10px;font-size:27px}
+  .home135-constructor-copy p{max-width:94%;font-size:9px;line-height:1.55}
+  .home135-constructor-copy a{margin-top:16px;font-size:8px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .home135-ready-media img{transition:none!important}
+}
