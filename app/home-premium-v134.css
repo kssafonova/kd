@@ -1,0 +1,362 @@
+/* HOME PREMIUM V134
+   Final homepage hierarchy:
+   header -> full viewport hero -> compact category tiles -> brand film ->
+   capsules -> ready solutions by room -> boutiques.
+   Built around emergence, proximity, continuation, progressive disclosure
+   and one clear job per section. */
+
+.view-home{background:#fff!important}
+.view-home>.promo{display:none!important}
+.view-home>.header{
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  z-index:100!important;
+  height:72px!important;
+  min-height:72px!important;
+  padding:0 clamp(20px,3vw,44px)!important;
+  border-bottom:1px solid rgba(28,31,28,.12)!important;
+  background:rgba(255,255,255,.94)!important;
+  color:#181a18!important;
+  backdrop-filter:blur(16px)!important;
+}
+.view-home>.header .logo{font-size:clamp(15px,1.25vw,19px)!important;letter-spacing:.06em!important}
+.view-home>.header .header-actions{gap:clamp(8px,1.2vw,18px)!important}
+.view-home>.header .icon-btn,
+.view-home>.header .header-actions>button,
+.view-home>.header .header-actions>a{min-width:40px!important;min-height:44px!important}
+
+.view-home .home134-hidden{display:none!important}
+.view-home .home-v113{background:#fff!important;color:#1b1d1a!important;overflow:hidden!important}
+.view-home .home113-nav{display:none!important}
+
+/* HERO — the image itself occupies the complete device viewport; header floats on it. */
+.view-home .home113-hero{
+  position:relative!important;
+  width:100%!important;
+  height:100vh!important;
+  height:100svh!important;
+  height:100dvh!important;
+  min-height:100vh!important;
+  min-height:100svh!important;
+  max-height:none!important;
+  margin:0!important;
+  background:#d6d1c8!important;
+}
+.view-home .home113-hero-art{inset:0!important;background-size:cover!important;background-position:center!important}
+.view-home .home113-hero-shade{
+  background:linear-gradient(180deg,rgba(8,10,9,.05) 22%,rgba(8,10,9,.08) 50%,rgba(8,10,9,.52) 100%)!important;
+}
+.view-home .home113-hero-copy{
+  left:clamp(22px,5vw,72px)!important;
+  right:auto!important;
+  bottom:72px!important;
+  width:min(610px,calc(100% - 44px))!important;
+}
+.view-home .home113-hero-copy small{font:400 9px/1.2 "Tenor Sans",Arial,sans-serif!important;letter-spacing:.14em!important}
+.view-home .home113-hero-copy h1{
+  margin:10px 0 14px!important;
+  max-width:620px!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(46px,5vw,76px)!important;
+  font-weight:400!important;
+  line-height:1!important;
+  letter-spacing:-.025em!important;
+}
+.view-home .home113-hero-copy p{display:none!important}
+.view-home .home113-hero-copy button{
+  min-height:38px!important;
+  padding:0 0 4px!important;
+  color:#fff!important;
+  font:400 10px/1 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.045em!important;
+  text-transform:none!important;
+}
+.view-home .home113-hero-controls{bottom:24px!important;width:108px!important}
+
+/* CATEGORY TILES — small, square, immediately scannable. */
+.view-home .home113-section.home113-category-section{
+  padding:28px 0 34px!important;
+  border-bottom:1px solid #ebe9e4!important;
+  background:#fff!important;
+}
+.view-home .home113-category-section .home113-section-head{display:none!important}
+.view-home .home113-category-rail{
+  display:flex!important;
+  align-items:flex-start!important;
+  gap:18px!important;
+  width:100%!important;
+  padding:0 clamp(20px,4vw,62px) 4px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:x proximity!important;
+  scroll-padding-inline:clamp(20px,4vw,62px)!important;
+  scrollbar-width:none!important;
+  -webkit-overflow-scrolling:touch;
+}
+.view-home .home113-category-rail::-webkit-scrollbar{display:none!important}
+.view-home .home113-category-card{
+  flex:0 0 118px!important;
+  width:118px!important;
+  min-width:118px!important;
+  padding:0!important;
+  text-align:center!important;
+  scroll-snap-align:start!important;
+}
+.view-home .home113-category-image{
+  width:118px!important;
+  height:118px!important;
+  aspect-ratio:1!important;
+  border-radius:1px!important;
+  background:#efede8!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+.view-home .home113-category-card strong{
+  display:block!important;
+  margin:8px 0 0!important;
+  color:#262925!important;
+  font:400 11px/1.25 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:0!important;
+}
+.view-home .home113-category-card small{display:none!important}
+
+/* Old commerce rail is intentionally omitted from home: discovery first. */
+.view-home .home117-new-products{display:none!important}
+
+/* BRAND FILM */
+.home134-brand-film{
+  padding:88px clamp(20px,4vw,62px) 104px;
+  background:#f4f1eb;
+  color:#1d201d;
+}
+.home134-film-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(280px,.55fr);
+  gap:12px 56px;
+  align-items:end;
+  margin:0 0 32px;
+}
+.home134-film-head small{grid-column:1/-1;color:#77766f;font:400 8px/1 "Tenor Sans",Arial,sans-serif;letter-spacing:.16em}
+.home134-film-head h2{margin:0;font-family:"Tenor Sans",Georgia,serif;font-size:clamp(38px,4vw,60px);font-weight:400;line-height:1.02;letter-spacing:-.025em}
+.home134-film-head p{max-width:470px;margin:0;color:#70716c;font:400 11px/1.65 "Tenor Sans",Arial,sans-serif}
+.home134-film-frame{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  background:#d6d1c8;
+  isolation:isolate;
+}
+.home134-brand-video,.home134-film-fallback{position:absolute;inset:0;width:100%;height:100%}
+.home134-brand-video{z-index:2;display:block;object-fit:cover;opacity:0;transition:opacity .45s ease;background:#d6d1c8}
+.home134-brand-video-mobile{display:none}
+.home134-film-fallback{z-index:1;overflow:hidden;background:#cbc6bc}
+.home134-film-scene{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  background-image:var(--film-desktop);
+  background-position:center;
+  background-size:cover;
+  animation:home134-film-scene 24s infinite;
+  animation-delay:var(--film-delay);
+}
+.home134-film-scene:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,10,9,.38),transparent 52%)}
+.home134-film-scene>span{position:absolute;z-index:2;left:4.5%;bottom:6%;color:#fff;font-family:"Tenor Sans",Georgia,serif;font-size:clamp(25px,3vw,48px);line-height:1}
+.home134-film-frame.has-desktop-video .home134-brand-video-desktop{opacity:1}
+.home134-film-frame.has-desktop-video .home134-film-fallback{opacity:0}
+.home134-film-mark{position:absolute;z-index:4;left:22px;right:22px;top:19px;display:flex;justify-content:space-between;color:rgba(255,255,255,.86);font:400 8px/1 "Tenor Sans",Arial,sans-serif;letter-spacing:.13em;pointer-events:none}
+.home134-film-mark b{font-weight:400;letter-spacing:.04em}
+@keyframes home134-film-scene{
+  0%{opacity:0;transform:scale(1.035)}
+  3%{opacity:1}
+  22%{opacity:1}
+  25%{opacity:0;transform:scale(1)}
+  100%{opacity:0;transform:scale(1)}
+}
+
+/* CAPSULES — three strong stories, one photograph per story, no collage noise. */
+.view-home .home113-capsules.home117-capsules{
+  padding:92px clamp(20px,4vw,62px) 108px!important;
+  background:#fff!important;
+  color:#1b1d1a!important;
+}
+.view-home .home117-capsules .home117-section-head{
+  margin:0 0 30px!important;
+  padding:0!important;
+}
+.view-home .home117-capsules .home117-section-head small{display:none!important}
+.view-home .home117-capsules .home117-section-head h2{font-size:clamp(36px,3.7vw,54px)!important}
+.view-home .home117-capsule-rail{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:12px!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+.view-home .home117-capsule-card{
+  display:block!important;
+  min-width:0!important;
+  width:auto!important;
+  flex:none!important;
+}
+.view-home .home117-capsule-card:nth-child(n+4){display:none!important}
+.view-home .home117-capsule-media{
+  width:100%!important;
+  aspect-ratio:4/5!important;
+  overflow:hidden!important;
+  background:#eeece7!important;
+}
+.view-home .home125-capsule-image-grid{display:block!important;width:100%!important;height:100%!important}
+.view-home .home125-capsule-image-grid img{display:none!important}
+.view-home .home125-capsule-image-grid img:first-child{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important}
+.view-home .home117-capsule-copy{padding:13px 0 0!important}
+.view-home .home117-capsule-copy>small,.view-home .home117-capsule-link{display:none!important}
+.view-home .home117-capsule-copy h3{margin:0!important;color:#1d201d!important;font-family:"Tenor Sans",Georgia,serif!important;font-size:clamp(23px,2vw,30px)!important;font-weight:400!important;line-height:1.1!important}
+
+/* READY SOLUTIONS BY SPACE */
+.home134-spaces{padding:96px 0 112px;background:#f3f0e9;color:#1a1d1a}
+.home134-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;padding:0 clamp(20px,4vw,62px);margin:0 0 34px}
+.home134-section-head small{display:block;margin-bottom:9px;color:#77766f;font:400 8px/1 "Tenor Sans",Arial,sans-serif;letter-spacing:.15em}
+.home134-section-head h2{max-width:760px;margin:0;font-family:"Tenor Sans",Georgia,serif;font-size:clamp(38px,4vw,60px);font-weight:400;line-height:1.02;letter-spacing:-.025em}
+.home134-section-head>a{flex:0 0 auto;padding:0 0 5px;border-bottom:1px solid #6f716c;color:#20231f;font:400 9px/1 "Tenor Sans",Arial,sans-serif;text-decoration:none}
+.home134-space-rail{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:12px;
+  padding:0 clamp(20px,4vw,62px);
+}
+.home134-space-card{grid-column:span 4;min-width:0;color:inherit;text-decoration:none}
+.home134-space-card:nth-child(1){grid-column:span 7}
+.home134-space-card:nth-child(2){grid-column:span 5}
+.home134-space-card:nth-child(1) .home134-space-media,.home134-space-card:nth-child(2) .home134-space-media{aspect-ratio:16/10}
+.home134-space-card:nth-child(n+3){margin-top:34px}
+.home134-space-media{display:block;width:100%;aspect-ratio:4/5;overflow:hidden;background:#ddd9d0}
+.home134-space-media img{width:100%;height:100%;object-fit:cover;transition:transform .55s ease}
+@media(hover:hover){.home134-space-card:hover .home134-space-media img{transform:scale(1.015)}}
+.home134-space-copy{display:block;padding-top:12px}
+.home134-space-copy strong{display:block;font-family:"Tenor Sans",Georgia,serif;font-size:clamp(21px,2vw,29px);font-weight:400;line-height:1.1}
+.home134-space-copy small{display:block;margin-top:5px;color:#777872;font:400 9px/1.4 "Tenor Sans",Arial,sans-serif}
+.home134-space-copy em{display:inline-block;margin-top:11px;padding-bottom:3px;border-bottom:1px solid #777872;color:#343733;font:400 8px/1 "Tenor Sans",Arial,sans-serif;font-style:normal}
+
+/* BOUTIQUES — editorial destination, not a utility map card. */
+.home134-boutiques{
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(390px,.55fr);
+  min-height:690px;
+  background:#2b4144;
+  color:#f8f5ef;
+}
+.home134-boutiques-media{display:block;min-width:0;overflow:hidden;background:#d1ccc2}
+.home134-boutiques-media img{width:100%;height:100%;min-height:690px;object-fit:cover}
+.home134-boutiques-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(48px,5.5vw,84px)}
+.home134-boutiques-copy>small{margin-bottom:18px;color:rgba(248,245,239,.65);font:400 8px/1 "Tenor Sans",Arial,sans-serif;letter-spacing:.16em}
+.home134-boutiques-copy h2{max-width:8em;margin:0;font-family:"Tenor Sans",Georgia,serif;font-size:clamp(42px,4vw,62px);font-weight:400;line-height:1.01;letter-spacing:-.025em}
+.home134-boutiques-copy p{max-width:390px;margin:20px 0 0;color:rgba(248,245,239,.72);font:400 11px/1.7 "Tenor Sans",Arial,sans-serif}
+.home134-boutiques-cta{align-self:flex-start;display:flex;align-items:center;gap:18px;min-height:42px;margin-top:28px;padding:0 0 5px!important;border-bottom:1px solid rgba(248,245,239,.75)!important;color:#fff!important;font:400 10px/1 "Tenor Sans",Arial,sans-serif!important}
+.home134-boutiques-meta{margin-top:30px;color:rgba(248,245,239,.48);font:400 8px/1.3 "Tenor Sans",Arial,sans-serif;letter-spacing:.055em}
+.view-home .home-boutiques-map{display:none!important}
+.view-home .home113-solutions{display:none!important}
+
+@media(max-width:700px){
+  .view-home>.header{
+    height:62px!important;
+    min-height:62px!important;
+    padding:0 12px!important;
+    grid-template-columns:74px minmax(0,1fr) 132px!important;
+  }
+  .view-home>.header .boutiques{font-size:0!important;gap:0!important}
+  .view-home>.header .header-left,.view-home>.header .header-actions{gap:6px!important}
+  .view-home>.header .header-actions>button:nth-child(2){display:none!important}
+  .view-home>.header .logo{font-size:13px!important;letter-spacing:.045em!important}
+  .view-home>.header svg{width:21px!important;height:21px!important}
+
+  .view-home .home113-hero{
+    height:100vh!important;
+    height:100svh!important;
+    height:100dvh!important;
+    min-height:100svh!important;
+  }
+  .view-home .home113-hero-art-mobile{display:block!important;background-position:center!important}
+  .view-home .home113-hero-copy{left:17px!important;right:17px!important;bottom:61px!important;width:auto!important}
+  .view-home .home113-hero-copy h1{max-width:92%!important;font-size:clamp(38px,12vw,52px)!important;margin:7px 0 10px!important}
+  .view-home .home113-hero-copy button{font-size:9px!important}
+  .view-home .home113-hero-controls{bottom:19px!important}
+
+  .view-home .home113-section.home113-category-section{padding:20px 0 24px!important}
+  .view-home .home113-category-rail{gap:11px!important;padding:0 14px 3px!important;scroll-padding-inline:14px!important}
+  .view-home .home113-category-card{flex-basis:88px!important;width:88px!important;min-width:88px!important}
+  .view-home .home113-category-image{width:88px!important;height:88px!important}
+  .view-home .home113-category-card strong{margin-top:7px!important;font-size:9px!important;line-height:1.22!important}
+
+  .home134-brand-film{padding:58px 14px 66px}
+  .home134-film-head{display:block;margin-bottom:20px}
+  .home134-film-head small{display:block;margin-bottom:9px;font-size:7px}
+  .home134-film-head h2{font-size:34px;line-height:1.02}
+  .home134-film-head p{margin-top:13px;max-width:92%;font-size:10px}
+  .home134-film-frame{aspect-ratio:9/16;max-height:78dvh}
+  .home134-brand-video-desktop{display:none}
+  .home134-brand-video-mobile{display:block}
+  .home134-film-scene{background-image:var(--film-mobile)}
+  .home134-film-frame.has-desktop-video .home134-film-fallback{opacity:1}
+  .home134-film-frame.has-mobile-video .home134-film-fallback{opacity:0}
+  .home134-film-frame.has-mobile-video .home134-brand-video-mobile{opacity:1}
+  .home134-film-scene>span{left:18px;bottom:25px;font-size:31px}
+  .home134-film-mark{left:14px;right:14px;top:14px;font-size:7px}
+
+  .view-home .home113-capsules.home117-capsules{padding:58px 0 68px!important}
+  .view-home .home117-capsules .home117-section-head{padding:0 14px!important;margin-bottom:20px!important}
+  .view-home .home117-capsules .home117-section-head h2{font-size:31px!important}
+  .view-home .home117-capsule-rail{
+    display:flex!important;
+    gap:9px!important;
+    padding:0 14px 8px!important;
+    overflow-x:auto!important;
+    scroll-snap-type:x mandatory!important;
+    scrollbar-width:none!important;
+  }
+  .view-home .home117-capsule-rail::-webkit-scrollbar{display:none!important}
+  .view-home .home117-capsule-card{flex:0 0 72vw!important;max-width:340px!important;scroll-snap-align:start!important}
+  .view-home .home117-capsule-media{aspect-ratio:4/5!important}
+  .view-home .home117-capsule-copy{padding-top:10px!important}
+  .view-home .home117-capsule-copy h3{font-size:23px!important}
+
+  .home134-spaces{padding:62px 0 72px}
+  .home134-section-head{align-items:flex-end;gap:13px;padding:0 14px;margin-bottom:22px}
+  .home134-section-head small{font-size:7px;margin-bottom:7px}
+  .home134-section-head h2{max-width:270px;font-size:31px;line-height:1.03}
+  .home134-section-head>a{font-size:8px;white-space:nowrap}
+  .home134-space-rail{
+    display:flex;
+    gap:9px;
+    padding:0 14px 8px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-padding-inline:14px;
+    scrollbar-width:none;
+  }
+  .home134-space-rail::-webkit-scrollbar{display:none}
+  .home134-space-card,.home134-space-card:nth-child(1),.home134-space-card:nth-child(2){flex:0 0 78vw;max-width:360px;grid-column:auto;margin-top:0;scroll-snap-align:start}
+  .home134-space-card:nth-child(1) .home134-space-media,.home134-space-card:nth-child(2) .home134-space-media,.home134-space-media{aspect-ratio:4/5}
+  .home134-space-copy{padding-top:10px}
+  .home134-space-copy strong{font-size:22px}
+  .home134-space-copy small{font-size:8px}
+
+  .home134-boutiques{display:flex;flex-direction:column;min-height:0;background:#2b4144}
+  .home134-boutiques-media{height:58dvh;min-height:430px}
+  .home134-boutiques-media img{height:100%;min-height:0;object-fit:cover}
+  .home134-boutiques-copy{padding:42px 18px 52px}
+  .home134-boutiques-copy>small{margin-bottom:12px;font-size:7px}
+  .home134-boutiques-copy h2{font-size:39px}
+  .home134-boutiques-copy p{margin-top:15px;font-size:10px}
+  .home134-boutiques-cta{margin-top:22px;font-size:9px!important}
+  .home134-boutiques-meta{margin-top:24px;font-size:7px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .home134-film-scene{animation:none!important;opacity:0!important;transform:none!important}
+  .home134-film-scene:first-child{opacity:1!important}
+  .home134-space-media img,.view-home .home113-category-image{transition:none!important}
+}
