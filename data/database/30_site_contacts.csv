@@ -1,0 +1,3 @@
+﻿contact_id;contact_type;value;purpose;is_active
+support_phone;Телефон;+78005553535;customer_support;true
+support_email;Email;hello@kultura-doma.ru;customer_support;true

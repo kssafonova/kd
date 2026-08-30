@@ -1,0 +1,34 @@
+﻿file_name;description;primary_key;row_count;column_count;source_type
+01_products.csv;Current catalog grouped by article;product_id;139;20;generated
+02_product_variants.csv;All current SKU/variant rows;variant_id;213;32;generated
+03_product_images.csv;Normalized product gallery images;image_id;267;5;generated
+04_sizes.csv;Unique size dictionary;size_id;81;7;generated
+05_product_sizes.csv;Product-to-size M:N links;product_id+size_id;160;3;generated
+06_colors.csv;Unique color dictionary;color_id;24;3;generated
+07_product_colors.csv;Product-to-color M:N links;product_id+color_id;169;3;generated
+08_aromas.csv;Unique aroma dictionary;aroma_id;10;3;generated
+09_product_aromas.csv;Product-to-aroma M:N links;product_id+aroma_id;10;3;generated
+10_materials.csv;Unique material dictionary;material_id;19;3;generated
+11_product_materials.csv;Product-to-material M:N links;product_id+material_id;131;3;generated
+12_categories.csv;Catalog categories;category_id;5;3;generated
+13_subcategories.csv;Catalog subcategories;subcategory_id;21;5;generated
+14_collections.csv;Collections derived from catalog;collection_id;21;6;generated
+15_product_collections.csv;Product-to-collection links;product_id+collection_id;130;3;generated
+16_capsules.csv;Capsules derived from catalog;capsule_id;5;6;generated
+17_product_capsules.csv;Product-to-capsule links;product_id+capsule_id;21;3;generated
+18_ready_solutions.csv;Ready solutions derived from current catalog relations;solution_id;5;9;generated
+19_ready_solution_products.csv;Required/optional product links for ready solutions;solution_id+product_id;209;6;generated
+20_ready_solution_entities.csv;Collections/capsules participating in each ready solution;solution_id+entity_type+entity_id;51;5;generated
+21_constructor_scenarios.csv;Constructor scenario definitions from repository source data;scenario_id;9;7;generated
+22_constructor_scenario_items.csv;Constructor scenario item links;scenario_id+sort_order;28;18;generated
+23_payment_methods.csv;Live checkout payment options;payment_method_id;2;8;generated
+24_delivery_methods.csv;Live checkout delivery options;delivery_method_id;3;10;generated
+25_pricing_rules.csv;Checkout discount and delivery price rules;rule_id;3;8;generated
+26_regions.csv;Cities available in checkout autocomplete;region_id;10;8;generated
+27_address_suggestions.csv;Checkout courier address suggestions;address_id;29;6;generated
+28_pickup_points.csv;PVZ and store pickup options;point_id;24;7;generated
+29_stores.csv;Boutiques shown on the site;store_id;3;8;generated
+30_site_contacts.csv;Footer contact channels;contact_id;2;5;generated
+31_site_policies.csv;Site-level policy/configuration values exposed in UI;policy_id;3;5;generated
+32_schema_relationships.csv;Foreign-key relationship map;child_table+child_column;23;5;generated
+33_source_tables.csv;Original CSV source files already present in public/data;source_file;9;3;generated

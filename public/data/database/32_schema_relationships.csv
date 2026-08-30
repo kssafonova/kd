@@ -1,0 +1,24 @@
+﻿child_table;child_column;parent_table;parent_column;relationship
+02_product_variants.csv;product_id;01_products.csv;product_id;many-to-one
+03_product_images.csv;variant_id;02_product_variants.csv;variant_id;many-to-one
+05_product_sizes.csv;product_id;01_products.csv;product_id;many-to-one
+05_product_sizes.csv;size_id;04_sizes.csv;size_id;many-to-one
+07_product_colors.csv;product_id;01_products.csv;product_id;many-to-one
+07_product_colors.csv;color_id;06_colors.csv;color_id;many-to-one
+09_product_aromas.csv;product_id;01_products.csv;product_id;many-to-one
+09_product_aromas.csv;aroma_id;08_aromas.csv;aroma_id;many-to-one
+11_product_materials.csv;product_id;01_products.csv;product_id;many-to-one
+11_product_materials.csv;material_id;10_materials.csv;material_id;many-to-one
+13_subcategories.csv;category_id;12_categories.csv;category_id;many-to-one
+15_product_collections.csv;product_id;01_products.csv;product_id;many-to-one
+15_product_collections.csv;collection_id;14_collections.csv;collection_id;many-to-one
+17_product_capsules.csv;product_id;01_products.csv;product_id;many-to-one
+17_product_capsules.csv;capsule_id;16_capsules.csv;capsule_id;many-to-one
+19_ready_solution_products.csv;solution_id;18_ready_solutions.csv;solution_id;many-to-one
+19_ready_solution_products.csv;product_id;01_products.csv;product_id;many-to-one
+20_ready_solution_entities.csv;solution_id;18_ready_solutions.csv;solution_id;many-to-one
+22_constructor_scenario_items.csv;scenario_id;21_constructor_scenarios.csv;scenario_id;many-to-one
+22_constructor_scenario_items.csv;product_id;01_products.csv;product_id;optional many-to-one
+27_address_suggestions.csv;region_id;26_regions.csv;region_id;many-to-one
+28_pickup_points.csv;region_id;26_regions.csv;region_id;many-to-one
+29_stores.csv;region_id;26_regions.csv;region_id;many-to-one

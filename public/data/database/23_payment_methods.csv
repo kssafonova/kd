@@ -1,0 +1,3 @@
+﻿payment_method_id;name;timing;instruments;discount_percent;currency;is_active;sort_order
+online;Онлайн — картой / СБП;prepaid;bank_card|sbp;3.0;RUB;true;1
+upon;При получении;on_receipt;bank_card|cash;0;RUB;true;2

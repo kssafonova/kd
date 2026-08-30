@@ -1,0 +1,4 @@
+﻿delivery_method_id;name;min_days;max_days;base_fee_rub;free_from_rub;currency;destination_type;is_active;sort_order
+courier;Курьером;2;3;300;15000;RUB;address;true;1
+store;Самовывоз;2;3;0;0;RUB;store;true;2
+pvz;ПВЗ;2;3;0;0;RUB;pvz;true;3

@@ -1,0 +1,10 @@
+﻿source_file;repository_path;size_bytes
+catalog_master.csv;public/data/catalog_master.csv;82618
+kultura-doma-constructor-presets-final.csv;public/data/kultura-doma-constructor-presets-final.csv;10237
+kultura_doma_constructor_scenarios.csv;public/data/kultura_doma_constructor_scenarios.csv;3018
+kultura_doma_full_constructor_eligible_catalog.csv;public/data/kultura_doma_full_constructor_eligible_catalog.csv;825320
+kultura_doma_scenario_candidates.csv;public/data/kultura_doma_scenario_candidates.csv;77940
+kultura_doma_scenario_expansion_patch.csv;public/data/kultura_doma_scenario_expansion_patch.csv;126
+kultura_doma_scenario_expansion_rules.csv;public/data/kultura_doma_scenario_expansion_rules.csv;12731
+kultura_doma_scenarios_full_variants.csv;public/data/kultura_doma_scenarios_full_variants.csv;27722
+kultura_doma_scenarios_summary.csv;public/data/kultura_doma_scenarios_summary.csv;1857

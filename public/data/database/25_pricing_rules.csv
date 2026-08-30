@@ -1,0 +1,4 @@
+﻿rule_id;rule_name;condition;effect_type;effect_value;threshold_rub;currency;is_active
+online_payment_discount;Скидка при онлайн-оплате;payment_method=online;percent_discount;3.0;;RUB;true
+courier_free_threshold;Бесплатная курьерская доставка от порога;delivery_method=courier AND order_total>=15000;shipping_fee;0;15000;RUB;true
+courier_base_fee;Базовая стоимость курьерской доставки;delivery_method=courier AND order_total<15000;shipping_fee;300;15000;RUB;true

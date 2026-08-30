@@ -1,0 +1,30 @@
+﻿address_id;region_id;city;address;address_type;sort_order
+reg_2d4e532143__addr001;reg_2d4e532143;Москва;ул. Петровка, 12;courier_suggestion;1
+reg_2d4e532143__addr002;reg_2d4e532143;Москва;Тверская ул., 18;courier_suggestion;2
+reg_2d4e532143__addr003;reg_2d4e532143;Москва;Большая Дмитровка ул., 9;courier_suggestion;3
+reg_2d4e532143__addr004;reg_2d4e532143;Москва;Ленинградский проспект, 36;courier_suggestion;4
+reg_2d4e532143__addr005;reg_2d4e532143;Москва;Кутузовский проспект, 22;courier_suggestion;5
+reg_f881a88f78__addr001;reg_f881a88f78;Санкт-Петербург;Невский проспект, 28;courier_suggestion;1
+reg_f881a88f78__addr002;reg_f881a88f78;Санкт-Петербург;Большая Конюшенная ул., 15;courier_suggestion;2
+reg_f881a88f78__addr003;reg_f881a88f78;Санкт-Петербург;Литейный проспект, 24;courier_suggestion;3
+reg_f881a88f78__addr004;reg_f881a88f78;Санкт-Петербург;Московский проспект, 73;courier_suggestion;4
+reg_1296df0246__addr001;reg_1296df0246;Казань;ул. Баумана, 44;courier_suggestion;1
+reg_1296df0246__addr002;reg_1296df0246;Казань;ул. Пушкина, 17;courier_suggestion;2
+reg_1296df0246__addr003;reg_1296df0246;Казань;проспект Ямашева, 46;courier_suggestion;3
+reg_e12aeea540__addr001;reg_e12aeea540;Екатеринбург;проспект Ленина, 25;courier_suggestion;1
+reg_e12aeea540__addr002;reg_e12aeea540;Екатеринбург;ул. Малышева, 51;courier_suggestion;2
+reg_e12aeea540__addr003;reg_e12aeea540;Екатеринбург;ул. Вайнера, 10;courier_suggestion;3
+reg_863d3dc117__addr001;reg_863d3dc117;Новосибирск;Красный проспект, 50;courier_suggestion;1
+reg_863d3dc117__addr002;reg_863d3dc117;Новосибирск;ул. Ленина, 12;courier_suggestion;2
+reg_863d3dc117__addr003;reg_863d3dc117;Новосибирск;ул. Советская, 35;courier_suggestion;3
+reg_93e5c9da7a__addr001;reg_93e5c9da7a;Омск;ул. Ленина, 20;courier_suggestion;1
+reg_93e5c9da7a__addr002;reg_93e5c9da7a;Омск;проспект Карла Маркса, 24;courier_suggestion;2
+reg_93e5c9da7a__addr003;reg_93e5c9da7a;Омск;ул. Гагарина, 8;courier_suggestion;3
+reg_ac0f13faf8__addr001;reg_ac0f13faf8;Нижний Новгород;Большая Покровская ул., 28;courier_suggestion;1
+reg_ac0f13faf8__addr002;reg_ac0f13faf8;Нижний Новгород;ул. Белинского, 61;courier_suggestion;2
+reg_8f21d75425__addr001;reg_8f21d75425;Самара;Ленинградская ул., 38;courier_suggestion;1
+reg_8f21d75425__addr002;reg_8f21d75425;Самара;Московское шоссе, 17;courier_suggestion;2
+reg_7d5c601332__addr001;reg_7d5c601332;Ростов-на-Дону;Большая Садовая ул., 65;courier_suggestion;1
+reg_7d5c601332__addr002;reg_7d5c601332;Ростов-на-Дону;проспект Будённовский, 32;courier_suggestion;2
+reg_110035d704__addr001;reg_110035d704;Краснодар;Красная ул., 74;courier_suggestion;1
+reg_110035d704__addr002;reg_110035d704;Краснодар;Северная ул., 324;courier_suggestion;2

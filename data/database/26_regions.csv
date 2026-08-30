@@ -1,0 +1,11 @@
+﻿region_id;city;sort_order;has_store;address_suggestion_count;pvz_count;currency;country_code
+reg_2d4e532143;Москва;1;true;5;3;RUB;RU
+reg_f881a88f78;Санкт-Петербург;2;true;4;2;RUB;RU
+reg_1296df0246;Казань;3;true;3;2;RUB;RU
+reg_e12aeea540;Екатеринбург;4;false;3;2;RUB;RU
+reg_863d3dc117;Новосибирск;5;false;3;2;RUB;RU
+reg_93e5c9da7a;Омск;6;false;3;2;RUB;RU
+reg_ac0f13faf8;Нижний Новгород;7;false;2;2;RUB;RU
+reg_8f21d75425;Самара;8;false;2;2;RUB;RU
+reg_7d5c601332;Ростов-на-Дону;9;false;2;2;RUB;RU
+reg_110035d704;Краснодар;10;false;2;2;RUB;RU

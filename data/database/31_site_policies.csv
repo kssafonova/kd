@@ -1,0 +1,4 @@
+﻿policy_id;policy_name;value;unit;is_active
+return_period_days;Срок возврата;14;days;true
+delivery_min_days;Минимальный заявленный срок доставки по России;1;days;true
+currency;Валюта магазина;RUB;ISO-4217;true
