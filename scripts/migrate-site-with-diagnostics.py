@@ -34,6 +34,7 @@ scripts = [
     root / "scripts" / "fix-table-driven-catalog-v136.py",
     root / "scripts" / "apply-table-driven-catalog-v135.py",
     root / "scripts" / "finalize-route-split-v137.py",
+    root / "scripts" / "optimize-catalog-runtime-v138.py",
 ]
 
 logs = []
