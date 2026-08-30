@@ -1,0 +1,370 @@
+/* CATALOG TOGAS-INSPIRED V132
+   Reference pattern: compact premium PLP with title, category rail, one utility
+   row and merchandise-first cards. Visual language stays Kultura Doma. */
+
+@media(max-width:700px){
+  .view-catalog .catalog.page.catalog-v123{
+    padding:20px 13px 72px!important;
+  }
+
+  /* Heading hierarchy */
+  .view-catalog .catalog-v123 .title-line{
+    justify-content:center!important;
+    align-items:baseline!important;
+    min-height:42px!important;
+    margin:5px 0 13px!important;
+    gap:8px!important;
+    text-align:center;
+  }
+  .view-catalog .catalog-v123 .title-line h1{
+    font-size:31px!important;
+    line-height:1.03!important;
+    letter-spacing:-.025em!important;
+  }
+  .view-catalog .catalog-v123 .title-line>span{
+    color:#767975!important;
+    font-size:10px!important;
+    line-height:1!important;
+    letter-spacing:0!important;
+    text-transform:none!important;
+  }
+
+  /* Category rail — text tabs, not pills. The next label is intentionally
+     partially visible so horizontal continuation is obvious. */
+  .view-catalog .catalog-v123 .tabs{
+    display:flex!important;
+    align-items:flex-end!important;
+    gap:29px!important;
+    margin:0 -13px 10px!important;
+    padding:0 13px 1px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    border-bottom:1px solid #deded9!important;
+    scroll-padding-inline:13px;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .view-catalog .catalog-v123 .tabs::-webkit-scrollbar{display:none}
+  .view-catalog .catalog-v123 .tabs button{
+    flex:0 0 auto!important;
+    min-height:42px!important;
+    padding:2px 0 10px!important;
+    border:0!important;
+    border-bottom:1.5px solid transparent!important;
+    border-radius:0!important;
+    background:transparent!important;
+    color:#8b8d89!important;
+    font-size:10px!important;
+    font-weight:400!important;
+    line-height:1.15!important;
+    letter-spacing:.01em!important;
+    scroll-snap-align:start;
+    white-space:nowrap;
+  }
+  .view-catalog .catalog-v123 .tabs button.active{
+    border-bottom-color:#273c3f!important;
+    background:transparent!important;
+    color:#202321!important;
+  }
+
+  /* The utility bar mirrors the reference's semantic simplicity, not its brand. */
+  .view-catalog .catalog-v123 .catalog-tools-v123{
+    position:sticky!important;
+    top:56px!important;
+    z-index:19!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) auto!important;
+    align-items:center!important;
+    gap:0!important;
+    min-height:56px!important;
+    margin:0 -13px 12px!important;
+    padding:0 13px!important;
+    border:0!important;
+    border-bottom:1px solid #e5e3de!important;
+    background:rgba(255,255,255,.97)!important;
+    backdrop-filter:blur(12px)!important;
+    box-shadow:none!important;
+  }
+
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123{
+    height:56px!important;
+    min-height:56px!important;
+    padding:0 8px 0 0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:6px!important;
+    border:0!important;
+    background:transparent!important;
+    text-align:left!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123::before{
+    content:"";
+    width:18px;
+    height:16px;
+    flex:0 0 18px;
+    background:
+      linear-gradient(#263b3e,#263b3e) 0 2px/18px 1px no-repeat,
+      linear-gradient(#263b3e,#263b3e) 0 8px/18px 1px no-repeat,
+      linear-gradient(#263b3e,#263b3e) 0 14px/18px 1px no-repeat,
+      radial-gradient(circle,#263b3e 0 2px,transparent 2.3px) 4px 2px/5px 5px no-repeat,
+      radial-gradient(circle,#263b3e 0 2px,transparent 2.3px) 11px 8px/5px 5px no-repeat,
+      radial-gradient(circle,#263b3e 0 2px,transparent 2.3px) 6px 14px/5px 5px no-repeat;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123>span{
+    font-size:10px!important;
+    line-height:1!important;
+    letter-spacing:0!important;
+    text-transform:none!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123>b{
+    min-width:17px!important;
+    height:17px!important;
+    padding:0 4px!important;
+    border-radius:50%!important;
+    background:#40565b!important;
+    color:#fff!important;
+    font-size:8px!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123::after{display:none!important}
+
+  /* Native select remains the source of truth but is visually replaced by a
+     predictable custom menu, matching the reference's explicit option list. */
+  .view-catalog .catalog-v123 .catalog-sort-native-v132{
+    position:absolute!important;
+    width:1px!important;
+    height:1px!important;
+    overflow:hidden!important;
+    clip:rect(0 0 0 0)!important;
+    clip-path:inset(50%)!important;
+    white-space:nowrap!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+  .catalog-sort-trigger-v132{
+    min-width:0;
+    height:56px;
+    padding:0 9px!important;
+    display:grid!important;
+    grid-template-columns:18px minmax(0,1fr) 12px;
+    align-items:center;
+    gap:5px;
+    color:#202321;
+    text-align:left;
+  }
+  .catalog-sort-icon-v132{
+    font-size:19px;
+    line-height:1;
+    transform:translateY(-1px);
+  }
+  .catalog-sort-copy-v132{
+    min-width:0;
+    display:grid;
+    gap:2px;
+  }
+  .catalog-sort-copy-v132 small{
+    display:none;
+  }
+  .catalog-sort-copy-v132 b{
+    overflow:hidden;
+    font-size:10px;
+    font-weight:400;
+    line-height:1.1;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .catalog-sort-chevron-v132{
+    font-size:13px;
+    line-height:1;
+    color:#6e716e;
+  }
+
+  .catalog-sort-popover-v132{
+    position:absolute;
+    top:56px;
+    left:24%;
+    z-index:50;
+    width:min(276px,72vw);
+    display:none;
+    padding:8px 0;
+    border:1px solid #e6e3dc;
+    background:#fff;
+    box-shadow:0 12px 30px rgba(18,24,22,.12);
+  }
+  .catalog-sort-popover-v132.is-open{display:block}
+  .catalog-sort-option-v132{
+    width:100%;
+    min-height:52px;
+    padding:0 18px!important;
+    display:grid!important;
+    grid-template-columns:28px minmax(0,1fr);
+    align-items:center;
+    color:#2d302e;
+    font-size:11px;
+    text-align:left;
+  }
+  .catalog-sort-option-v132:hover,
+  .catalog-sort-option-v132:focus-visible{
+    background:#f5f2ed;
+  }
+  .catalog-sort-option-v132.is-selected{color:#1c302f}
+  .catalog-sort-check-v132{
+    font-size:18px;
+    line-height:1;
+  }
+
+  /* Density switch follows the reference but uses Kultura Doma's quiet linework. */
+  .catalog-view-switch-v132{
+    height:56px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding-left:8px;
+  }
+  .catalog-view-switch-v132 button{
+    width:29px;
+    height:36px;
+    padding:0!important;
+    display:grid!important;
+    place-items:center;
+    opacity:.32;
+  }
+  .catalog-view-switch-v132 button.is-active{opacity:1}
+  .grid-icon-v132{
+    width:23px;
+    height:23px;
+    display:grid;
+    gap:2px;
+  }
+  .grid-icon-v132 i{display:block;background:#40565b}
+  .grid-icon-compact-v132{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+  .grid-icon-large-v132{grid-template-columns:1fr;grid-template-rows:1fr}
+  .grid-icon-large-v132 i{background:#b9bbb7}
+
+  /* Merchandise-first grid */
+  .view-catalog .catalog-v123 .product-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:25px 10px!important;
+  }
+  .view-catalog .catalog-v123[data-grid="1"] .product-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:32px!important;
+  }
+  .view-catalog .product-image,
+  .view-catalog .product-media-scroll{
+    background:#f1f0ec!important;
+  }
+  .view-catalog .product-image img,
+  .view-catalog .product-image .product-media-scroll>img{
+    aspect-ratio:1/1!important;
+    object-fit:cover!important;
+  }
+  .view-catalog .product-copy{
+    padding:9px 33px 0 0!important;
+    gap:1px!important;
+  }
+  .view-catalog .product-copy strong{
+    font-size:12px!important;
+    line-height:1.22!important;
+  }
+  .view-catalog .product-copy small{
+    margin-top:4px!important;
+    display:-webkit-box;
+    -webkit-line-clamp:1;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    color:#858783!important;
+    font-size:9px!important;
+    line-height:1.3!important;
+  }
+  .view-catalog .price{
+    margin-top:8px!important;
+    font-size:11px!important;
+  }
+  .view-catalog .product-card>.heart{
+    top:7px!important;
+    right:7px!important;
+    width:31px!important;
+    height:31px!important;
+    border-radius:0!important;
+    background:rgba(255,255,255,.04)!important;
+    color:#fff!important;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.28))!important;
+  }
+  .view-catalog .product-card>.heart svg{
+    width:24px!important;
+    height:24px!important;
+    stroke-width:1.25!important;
+  }
+  .view-catalog .product-card>.quick{
+    right:-1px!important;
+    bottom:-2px!important;
+    width:34px!important;
+    height:34px!important;
+    border-radius:0!important;
+    background:transparent!important;
+  }
+  .view-catalog .product-card>.quick .cart-add-icon{
+    width:20px!important;
+    height:20px!important;
+  }
+
+  .view-catalog .catalog-v123[data-grid="1"] .product-image img,
+  .view-catalog .catalog-v123[data-grid="1"] .product-image .product-media-scroll>img{
+    aspect-ratio:4/5!important;
+  }
+  .view-catalog .catalog-v123[data-grid="1"] .product-copy{
+    padding-right:40px!important;
+  }
+  .view-catalog .catalog-v123[data-grid="1"] .product-copy strong{
+    font-size:15px!important;
+  }
+  .view-catalog .catalog-v123[data-grid="1"] .product-copy small{
+    font-size:10px!important;
+  }
+  .view-catalog .catalog-v123[data-grid="1"] .price{
+    font-size:13px!important;
+  }
+
+  /* Filter result chips stay secondary and scroll horizontally. */
+  .view-catalog .catalog-v123 .catalog-active-filters-v123{
+    margin:-3px -13px 14px!important;
+    padding:0 13px 3px!important;
+  }
+
+  /* Quick add: compact commerce sheet, no large blank image region. */
+  .plp-flow .plp-modal{
+    max-height:86svh!important;
+    border-radius:13px 13px 0 0!important;
+  }
+  .plp-flow .plp-modal-media{
+    top:32px!important;
+    width:104px!important;
+    height:126px!important;
+  }
+  .plp-flow .plp-modal-info::before{
+    width:116px!important;
+    height:130px!important;
+  }
+  .plp-flow .plp-modal-info h2{
+    font-size:18px!important;
+  }
+  .plp-flow .plp-modal-info .modal-price b{
+    font-size:14px!important;
+  }
+}
+
+@media(max-width:380px){
+  .view-catalog .catalog.page.catalog-v123{padding-left:10px!important;padding-right:10px!important}
+  .view-catalog .catalog-v123 .tabs{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}
+  .view-catalog .catalog-v123 .catalog-tools-v123{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}
+  .catalog-sort-popover-v132{left:19%;width:min(270px,76vw)}
+  .catalog-view-switch-v132{gap:2px;padding-left:5px}
+  .catalog-view-switch-v132 button{width:27px}
+  .view-catalog .catalog-v123 .product-grid{gap-column:7px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .view-catalog .catalog-v123 .tabs{scroll-behavior:auto}
+}
