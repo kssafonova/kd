@@ -2560,3 +2560,13 @@ footer{background:#202a2b}
   .home-v113 .home-boutiques-map{border-top:0!important}
 }
 /* END_HOME_ZARAHOME_V114 */
+
+/* HOME_HERO_DIRECT_IMAGES_V115 */
+.home113-hero-art{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important}
+.home113-hero-art-desktop{display:block!important}
+.home113-hero-art-mobile{display:none!important}
+@media(max-width:760px){
+  .home113-hero-art-desktop{display:none!important}
+  .home113-hero-art-mobile{display:block!important;background-size:cover!important;background-position:center center!important}
+}
+/* END_HOME_HERO_DIRECT_IMAGES_V115 */

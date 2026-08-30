@@ -520,13 +520,12 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
   void onProduct; void favorite; void favorites; void onAdd; void openEditorial;
   const readyBase=process.env.NEXT_PUBLIC_BASE_PATH??"";
   const heroSlides=[
-    {eyebrow:"НОВИНКИ",title:"Новые истории дома",text:"Предметы, которые собирают пространство в цельный образ — от спальни до сервировки.",cta:"Смотреть новинки",action:()=>openCatalog()},
-    {eyebrow:"СПАЛЬНЯ",title:"Тактильный покой",text:"Сатин, мягкий свет и спокойные оттенки для пространства, в котором хочется остаться.",cta:"Перейти в спальню",action:()=>openCatalog("Постельное белье")},
-    {eyebrow:"СТОЛОВАЯ",title:"Сервировка как ритуал",text:"Фарфор, текстиль и детали стола в современной культуре русского дома.",cta:"Смотреть сервировку",action:()=>openCatalog("Посуда и сервировка")},
+    {eyebrow:"НОВИНКИ",title:"Новые истории дома",text:"Предметы, которые собирают пространство в цельный образ — от спальни до сервировки.",cta:"Смотреть новинки",desktop:"/assets/images/1_new_desktop.png",mobile:"/assets/images/1_new_mobile.png",action:()=>openCatalog()},
+    {eyebrow:"СПАЛЬНЯ",title:"Тактильный покой",text:"Сатин, мягкий свет и спокойные оттенки для пространства, в котором хочется остаться.",cta:"Перейти в спальню",desktop:"/assets/images/2_sleep_desktop.png",mobile:"/assets/images/2_sleep_mobile.png",action:()=>openCatalog("Постельное белье")},
+    {eyebrow:"СТОЛОВАЯ",title:"Сервировка как ритуал",text:"Фарфор, текстиль и детали стола в современной культуре русского дома.",cta:"Смотреть сервировку",desktop:"/assets/images/3_stol_desktop.png",mobile:"/assets/images/3_stol_mobile.png",action:()=>openCatalog("Посуда и сервировка")},
   ];
   const active=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[active];
-  const heroPosition=`${active*50}% 50%`;
   const atlasStyle=(index:number)=>({
     backgroundImage:`url("${assetUrl("/assets/images/home113-editorial-atlas.svg")}")`,
     backgroundSize:"600% 700%",
@@ -567,8 +566,8 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     </nav>
 
     <section className="home113-hero" aria-label="Главные истории">
-      <div className="home113-hero-art home113-hero-art-desktop" aria-hidden="true" style={{backgroundImage:`url("${assetUrl("/assets/images/home113-hero-desktop.svg")}")`,backgroundPosition:heroPosition}}/>
-      <div className="home113-hero-art home113-hero-art-mobile" aria-hidden="true" style={{backgroundImage:`url("${assetUrl("/assets/images/home113-hero-mobile.svg")}")`,backgroundPosition:heroPosition}}/>
+      <div className="home113-hero-art home113-hero-art-desktop" aria-hidden="true" style={{backgroundImage:`url("${assetUrl(hero.desktop)}")`}}/>
+      <div className="home113-hero-art home113-hero-art-mobile" aria-hidden="true" style={{backgroundImage:`url("${assetUrl(hero.mobile)}")`}}/>
       <div className="home113-hero-shade"/>
       <div className="home113-hero-copy">
         <small>{hero.eyebrow}</small>
