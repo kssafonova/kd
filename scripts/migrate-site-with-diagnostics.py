@@ -27,6 +27,8 @@ scripts = [
     root / "scripts" / "apply-catalog-filters-ux-v125.py",
     root / "scripts" / "fix-site-database-v129.py",
     root / "scripts" / "apply-site-database-v128.py",
+    root / "scripts" / "apply-color-group-filters-v131.py",
+    root / "scripts" / "build-site-runtime-v128.py",
     root / "scripts" / "apply-runtime-consumers-v130.py",
 ]
 
