@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./catalog-filters-v123.css";
+import "./catalog-filters-kultura-v124.css";
 import "./mobile-quick-add.css";
 import "./product-media-scroll.css";
 import "./product-card-gallery.css";
