@@ -35,6 +35,7 @@ scripts = [
     root / "scripts" / "apply-table-driven-catalog-v135.py",
     root / "scripts" / "finalize-route-split-v137.py",
     root / "scripts" / "optimize-catalog-runtime-v138.py",
+    root / "scripts" / "optimize-plp-images-v139.py",
 ]
 
 logs = []
