@@ -1,14 +1,12 @@
-"use client";
+import CatalogClient from "./catalog-client";
 
-import { useEffect, useState } from "react";
-import Home from "../page";
+const BASE=process.env.NEXT_PUBLIC_BASE_PATH??"";
 
 export default function CatalogPage(){
-  const [category,setCategory]=useState("Все товары");
-
-  useEffect(()=>{
-    setCategory(new URLSearchParams(window.location.search).get("category")||"Все товары");
-  },[]);
-
-  return <Home initialView="catalog" initialCatalogCategory={category}/>;
+  return <>
+    <link rel="preload" as="fetch" href={`${BASE}/data/database/01_products.csv`} crossOrigin="anonymous" />
+    <link rel="preload" as="fetch" href={`${BASE}/data/database/02_product_variants.csv`} crossOrigin="anonymous" />
+    <link rel="preload" as="fetch" href={`${BASE}/data/database/03_product_images.csv`} crossOrigin="anonymous" />
+    <CatalogClient />
+  </>;
 }

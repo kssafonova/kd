@@ -4,6 +4,7 @@ import sys
 
 root = Path(__file__).resolve().parents[1]
 scripts = [
+    root / "scripts" / "prepare-route-split-v137.py",
     root / "scripts" / "consolidate-image-assets-v111.py",
     root / "scripts" / "apply-catalog-master-v107.py",
     root / "scripts" / "apply-catalog-supplements-v112.py",
@@ -32,6 +33,7 @@ scripts = [
     root / "scripts" / "apply-runtime-consumers-v130.py",
     root / "scripts" / "fix-table-driven-catalog-v136.py",
     root / "scripts" / "apply-table-driven-catalog-v135.py",
+    root / "scripts" / "finalize-route-split-v137.py",
 ]
 
 logs = []
