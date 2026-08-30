@@ -199,10 +199,10 @@ let products: Product[] = baseProducts.map(base=>{
 }).filter(product=>!REMOVED_PRODUCT_IDS.has(product.id));
 
 
-type XlsxProductEntityRow = Record<string,string>;
-let xlsxCatalogLoaded = false;
-const XLSX_ENTITY_FILES:string[] = ["catalog_xlsx_full.csv"]; // FULL_CSV_CATALOG_V89
-const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
+type CatalogMasterRow = Record<string,string>;
+let catalogMasterLoaded = false;
+const CATALOG_MASTER_FILES:string[] = ["catalog_master.csv"]; // CATALOG_MASTER_V107
+const parseEntityCsv=(source:string):CatalogMasterRow[]=>{
   const text=source.replace(/^\uFEFF/,"");
   const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;
   for(let index=0;index<text.length;index+=1){
@@ -212,7 +212,7 @@ const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
       else if(char==='"')quoted=false;
       else cell+=char;
     }else if(char==='"')quoted=true;
-    else if(char===","){row.push(cell);cell=""}
+    else if(char===delimiter){row.push(cell);cell=""}
     else if(char==="\n"){row.push(cell.replace(/\r$/,""));if(row.some(value=>value!==""))rows.push(row);row=[];cell=""}
     else cell+=char;
   }
@@ -220,33 +220,22 @@ const parseEntityCsv=(source:string):XlsxProductEntityRow[]=>{
   const [headers=[], ...body]=rows;
   return body.map(values=>Object.fromEntries(headers.map((header,index)=>[header.trim(),values[index]??""])));
 };
-const loadCompressedEntityCsv=async()=>{
-  try{
-    const base=process.env.NEXT_PUBLIC_BASE_PATH??"";
-    const response=await fetch(`${base}/data/kultura_doma_product_entities_xlsx_extra.b64`,{cache:"no-store"});
-    if(!response.ok||typeof DecompressionStream==="undefined")return [];
-    const encoded=(await response.text()).trim();
-    const bytes=Uint8Array.from(atob(encoded),char=>char.charCodeAt(0));
-    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-    return parseEntityCsv(await new Response(stream).text());
-  }catch{return []}
-};
 const entityColorHex=(value:string)=>{
   const key=String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/\s+/g," ");
   const colors:Record<string,string>={'бежевый':"#CDB99B",'белый':"#F5F5F2",'белый / голубой':"#93B8CB",'белый / золотой':"#B89A5A",'голубой':"#93B8CB",'желтый':"#D9B84E",'зеленый':"#657A61",'коричневый':"#765A46",'красный':"#9E403B",'ледяной голубой':"#93B8CB",'молочный':"#EEE7DA",'ночной синий':"#142A45",'прозрачный':"#F3F4F2",'пудровый':"#D8B0A4",'серебряный':"#B9B9B4",'серо-синий':"#667B89",'синий':"#496C8A",'черный':"#1D1D1B",'экрю':"#DED0B6"};
   return colors[key]??"#8F8A82";
 };
 const entityId=(article:string,name:string)=>300000+Array.from(`${article}|${name}`).reduce((sum,char)=>((sum*31)+char.charCodeAt(0))%500000,0);
-async function loadXlsxCatalogIntoProducts(){
-  if(xlsxCatalogLoaded)return;
-  xlsxCatalogLoaded=true;
+async function loadCatalogMasterIntoProducts(){
+  if(catalogMasterLoaded)return;
+  catalogMasterLoaded=true;
   const base=process.env.NEXT_PUBLIC_BASE_PATH??"";
-  const chunks=await Promise.all(XLSX_ENTITY_FILES.map(async fileName=>{
+  const chunks=await Promise.all(CATALOG_MASTER_FILES.map(async fileName=>{
     try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
   }));
-  const rows=chunks.flat().map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as XlsxProductEntityRow).filter(row=>row["Артикул"]&&row["Название товара"]);
+  const rows=chunks.flat().map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as CatalogMasterRow).filter(row=>row["Артикул"]&&row["Название товара"]);
   if(!rows.length)return;
-  const grouped=new Map<string,XlsxProductEntityRow[]>();
+  const grouped=new Map<string,CatalogMasterRow[]>();
   rows.forEach(row=>{const key=String(row["Артикул"]||"").trim();const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
   // Product identity follows the canonical article: every table row with the same article is one product with SKU variants.
   // ARTICLE_PRIMARY_GROUPING_V86
@@ -260,10 +249,10 @@ async function loadXlsxCatalogIntoProducts(){
     const scentMode=scents.length>0&&variants.length>1;
     const switchBy:Product["switchBy"]=scentMode?"scent":colors.length>1?"color":"none";
     const skus:CatalogSku[]=variants.map((row,index)=>{
-      const images=[row["Превью фотография товара"],row["Вторая фотография товара в скролле"],row["Третья фотография в стролле"]].map(cleanNulls).filter((value):value is string=>Boolean(value));
+      const images=[row["Фото 1"],row["Фото 2"],row["Фото 3"]].map(cleanNulls).filter((value):value is string=>Boolean(value));
       const sourceColor=cleanNulls(row["Цвет"]),scent=cleanNulls(row["Аромат"]),key=(switchBy==="scent"?scent:switchBy==="color"?sourceColor:undefined)??"Единый вариант";
       const size=cleanNulls(row["Размер"])??cleanNulls(row["Объем"])??cleanNulls(row["Диаметр"])??"Единый размер",price=parseCatalogPrice(row["Цена"]),oldPrice=parseCatalogPrice(row["Старая цена"]);
-      return {id:`xlsx-${id}-${index}`,article,productId:id,color:key,colorHex:entityColorHex(sourceColor??key),size,height:cleanNulls(row["Высота"]),width:cleanNulls(row["Ширина"]),diameter:cleanNulls(row["Диаметр"]),packageInfo:cleanNulls(row["Комплектация / Информация о размере"]),material:cleanNulls(row["Материал"])??"",composition:cleanNulls(row["Состав"])??"",details:cleanNulls(row["Детали"]),collection:cleanNulls(row["Коллекция"]),capsule:cleanNulls(row["Капсула"]),price,image:images[0]??"/images/image-placeholder.svg",gallery:images.slice(1),available:true,...({volume:cleanNulls(row["Объем"]),oldPrice:oldPrice>price?oldPrice:undefined,sourceColor,scent} as any)};
+      return {id:`master-${id}-${index}`,article,productId:id,color:key,colorHex:entityColorHex(sourceColor??key),size,height:cleanNulls(row["Высота"]),width:cleanNulls(row["Ширина"]),diameter:cleanNulls(row["Диаметр"]),packageInfo:cleanNulls(row["Комплектация / информация о размере"]),material:cleanNulls(row["Материал"])??"",composition:cleanNulls(row["Состав"])??"",details:cleanNulls(row["Детали"]),collection:cleanNulls(row["Коллекция"]),capsule:cleanNulls(row["Капсула"]),price,image:images[0]??"/images/image-placeholder.svg",gallery:images.slice(1),available:true,...({volume:cleanNulls(row["Объем"]),oldPrice:oldPrice>price?oldPrice:undefined,sourceColor,scent} as any)};
     });
     const firstSku=skus[0],priced=skus.filter(item=>priceKnown(item.price)),minSku=priced.reduce<CatalogSku|undefined>((best,item)=>!best||item.price<best.price?item:best,undefined),price=minSku?.price??0;
     const switchRows=Array.from(new Map(skus.map(item=>[item.color,item])).values());
@@ -355,8 +344,8 @@ let editorials:Editorial[] = [
 ];
 
 export default function Home({initialView="home",initialCatalogCategory="Все товары"}:{initialView?:View;initialCatalogCategory?:string}={}) {
-  const [,setXlsxCatalogRevision]=useState(0);
-  useEffect(()=>{loadXlsxCatalogIntoProducts().then(()=>setXlsxCatalogRevision(value=>value+1))},[]);
+  const [,setCatalogMasterRevision]=useState(0);
+  useEffect(()=>{loadCatalogMasterIntoProducts().then(()=>setCatalogMasterRevision(value=>value+1))},[]);
   useEffect(()=>setCatalogCategory(initialCatalogCategory),[initialCatalogCategory]);
   const [view, setView] = useState<View>(initialView);
   const [menu, setMenu] = useState(false);
