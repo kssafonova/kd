@@ -1,0 +1,443 @@
+/* CATALOG MOBILE HUMAN EYE V131
+   UX principles used here:
+   - clear information hierarchy and proximity;
+   - one control = one job (category / filter / sort);
+   - visible state and affordance;
+   - progressive disclosure for facets;
+   - quick add stays a quick task, not a compressed PDP. */
+
+@media(max-width:700px){
+  /* CATEGORY NAVIGATION
+     Keep the category switcher visible. The clipped horizontal rail is an
+     intentional overflow affordance; the active state is explicit. */
+  .view-catalog .catalog-v123 .tabs{
+    display:flex!important;
+    align-items:center;
+    gap:7px!important;
+    width:auto;
+    margin:0 -12px 14px!important;
+    padding:1px 12px 8px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    border:0!important;
+    scroll-snap-type:x proximity;
+    scroll-padding-inline:12px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .view-catalog .catalog-v123 .tabs::-webkit-scrollbar{display:none}
+  .view-catalog .catalog-v123 .tabs button{
+    flex:0 0 auto;
+    min-height:35px;
+    padding:0 13px!important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #d9d6d0!important;
+    border-radius:999px;
+    background:#fff;
+    color:#383a38;
+    font-size:9px;
+    font-weight:400!important;
+    line-height:1;
+    letter-spacing:.035em;
+    scroll-snap-align:start;
+    transition:background .16s ease,color .16s ease,border-color .16s ease;
+  }
+  .view-catalog .catalog-v123 .tabs button.active{
+    border-color:#263d40!important;
+    background:#263d40!important;
+    color:#fff!important;
+  }
+  .view-catalog .catalog-v123 .title-line{
+    min-height:39px!important;
+    margin-bottom:7px!important;
+  }
+
+  /* FILTER / SORT TOOLBAR
+     Category is navigation. These are utilities and therefore sit together,
+     but each control explains its own purpose and current state. */
+  .view-catalog .catalog-v123 .catalog-tools-v123{
+    grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;
+    min-height:56px!important;
+    margin:0 -12px 20px!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123{
+    height:56px!important;
+    min-height:56px!important;
+    padding:9px 12px 8px!important;
+    display:grid!important;
+    grid-template-columns:auto auto;
+    grid-template-rows:auto auto;
+    align-content:center;
+    justify-content:center!important;
+    column-gap:6px!important;
+    row-gap:3px!important;
+    text-align:center;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123>span{
+    grid-column:1;
+    grid-row:1;
+    font-size:10px;
+    line-height:1;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123>b{
+    grid-column:2;
+    grid-row:1;
+    align-self:center;
+    min-width:17px!important;
+    height:17px!important;
+    padding:0 4px;
+    border-radius:999px;
+    background:#263d40;
+    color:#fff;
+    font-size:8px!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-trigger-v123::after{
+    content:"Размер · цвет · материал";
+    grid-column:1 / 3;
+    grid-row:2;
+    color:#96958f;
+    font-size:7px;
+    font-weight:400;
+    line-height:1;
+    letter-spacing:.03em;
+    text-transform:none;
+  }
+
+  .view-catalog .catalog-v123 .catalog-sort-v123{
+    height:56px!important;
+    min-height:56px!important;
+    padding:8px 12px!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:auto auto;
+    align-content:center;
+    justify-items:start!important;
+    gap:3px!important;
+    text-align:left;
+  }
+  .view-catalog .catalog-v123 .catalog-sort-v123>span:first-child{
+    display:block!important;
+    grid-row:1;
+    color:#96958f;
+    font-size:7px;
+    line-height:1;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+  }
+  .view-catalog .catalog-v123 .catalog-sort-select-v125{
+    grid-row:2;
+    width:100%!important;
+    min-width:0;
+    justify-content:flex-start!important;
+  }
+  .view-catalog .catalog-v123 .catalog-sort-select-v125 select,
+  .view-catalog .catalog-v123 .catalog-sort-v123 select{
+    width:100%!important;
+    max-width:none!important;
+    height:21px!important;
+    min-height:21px;
+    padding:0 20px 0 0!important;
+    border:0;
+    background:transparent;
+    color:#262826;
+    font-size:10px!important;
+    font-weight:400;
+    line-height:21px;
+    text-align:left!important;
+    text-align-last:left;
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  .view-catalog .catalog-v123 .catalog-sort-select-v125>svg{
+    right:0!important;
+    top:50%;
+    width:12px!important;
+    height:12px!important;
+    transform:translateY(-50%) rotate(90deg);
+    pointer-events:none;
+  }
+
+  /* Selected filters are context, not another navigation bar. */
+  .view-catalog .catalog-v123 .catalog-active-filters-v123{
+    flex-wrap:nowrap!important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .view-catalog .catalog-v123 .catalog-active-filters-v123::-webkit-scrollbar{display:none}
+  .view-catalog .catalog-v123 .catalog-filter-chip-v123,
+  .view-catalog .catalog-v123 .catalog-filter-reset-all-v123{
+    flex:0 0 auto;
+    scroll-snap-align:start;
+  }
+
+  /* FILTER DRAWER
+     Keep facet titles readable and values close to the facet they belong to. */
+  .view-catalog .catalog-v123 .catalog-filter-header-v123{
+    min-height:66px!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-header-v123 h2{
+    font-size:18px!important;
+    letter-spacing:.035em!important;
+    text-transform:none;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-header-v123 span{
+    font-size:9px!important;
+    color:#8e8d87;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-accordion-v125>summary{
+    min-height:56px!important;
+    font-size:10px!important;
+    letter-spacing:.055em!important;
+    text-transform:none;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-option-v123{
+    min-height:42px!important;
+    font-size:11px!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-option-label-v123 small{
+    display:block!important;
+    margin:2px 0 0!important;
+    color:#9a9993;
+    font-size:7px!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-footer-v123{
+    grid-template-columns:96px minmax(0,1fr)!important;
+  }
+  .view-catalog .catalog-v123 .catalog-filter-apply-v123{
+    font-size:9px!important;
+  }
+
+  /* QUICK ADD FROM PLP
+     The task is: recognise item -> choose variant/size -> quantity -> add.
+     Use a thumbnail, not a hero image. Remove the generic editorial copy that
+     creates vertical dead space and competes with the task. */
+  .plp-flow{
+    align-items:flex-end!important;
+    justify-content:center!important;
+    padding:0!important;
+  }
+  .plp-flow .overlay-bg{
+    background:rgba(18,20,19,.46)!important;
+  }
+  .plp-flow .plp-modal{
+    position:relative!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:88svh!important;
+    margin:0!important;
+    display:block!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain;
+    border-radius:16px 16px 0 0!important;
+    background:#fff;
+    box-shadow:0 -12px 40px rgba(0,0,0,.16)!important;
+  }
+  .plp-flow .plp-modal::before{display:none!important}
+  .plp-flow .flow-handle{
+    position:sticky;
+    top:0;
+    z-index:8;
+    width:36px;
+    height:4px;
+    margin:7px auto 3px;
+    border-radius:999px;
+    background:#c9c8c3;
+  }
+  .plp-flow .plp-modal>.close{
+    position:absolute!important;
+    top:13px!important;
+    right:13px!important;
+    z-index:10;
+    width:34px!important;
+    height:34px!important;
+    display:grid!important;
+    place-items:center!important;
+    border-radius:50%;
+    background:rgba(255,255,255,.94)!important;
+    box-shadow:0 1px 8px rgba(0,0,0,.08);
+  }
+  .plp-flow .plp-modal>.close svg{
+    width:19px!important;
+    height:19px!important;
+  }
+
+  /* Thumbnail occupies only the space required for recognition. */
+  .plp-flow .plp-modal-media{
+    position:absolute!important;
+    top:31px!important;
+    left:16px!important;
+    z-index:2;
+    width:96px!important;
+    height:122px!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:hidden!important;
+    border-radius:2px;
+    background:#f1f0ec!important;
+  }
+  .plp-flow .plp-modal-media .product-media-scroll{
+    width:100%!important;
+    height:100%!important;
+    overflow:hidden!important;
+  }
+  .plp-flow .plp-modal-media .product-media-scroll>img{
+    display:none!important;
+  }
+  .plp-flow .plp-modal-media .product-media-scroll>img:first-child{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    object-position:center!important;
+    background:#f1f0ec!important;
+  }
+
+  .plp-flow .plp-modal-info{
+    min-height:0!important;
+    overflow:visible!important;
+    padding:17px 16px max(18px,env(safe-area-inset-bottom))!important;
+  }
+  /* Reserve thumbnail width while the compact product summary wraps beside it. */
+  .plp-flow .plp-modal-info::before{
+    content:"";
+    float:left;
+    width:108px;
+    height:126px;
+  }
+  .plp-flow .plp-modal-info>small{
+    display:block;
+    padding-right:42px;
+    color:#8d8c86;
+    font-size:7px!important;
+    line-height:1.2;
+    letter-spacing:.11em;
+  }
+  .plp-flow .plp-modal-info h2{
+    margin:5px 36px 4px 0!important;
+    font-size:17px!important;
+    line-height:1.16!important;
+  }
+  .plp-flow .plp-modal-info .modal-note{
+    margin:0 36px 7px 0!important;
+    color:#8d8c86;
+    font-size:8px!important;
+    line-height:1.35!important;
+    letter-spacing:0!important;
+    text-transform:none!important;
+  }
+  .plp-flow .plp-modal-info .modal-price{
+    margin:6px 36px 6px 0!important;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:5px;
+  }
+  .plp-flow .plp-modal-info .modal-price b{
+    font-size:13px!important;
+  }
+  .plp-flow .plp-modal-info>p.quick-color{
+    margin:0 36px 0 0!important;
+    color:#62635f;
+    font-size:8px!important;
+    line-height:1.35;
+  }
+  .plp-flow .quick-description{
+    display:none!important;
+  }
+  .plp-flow .quick-info-link{
+    clear:both;
+    width:100%;
+    min-height:40px!important;
+    margin:9px 0 0!important;
+    padding:0!important;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-top:1px solid #e3e1dc!important;
+    border-bottom:1px solid #e3e1dc!important;
+    font-size:8px!important;
+    letter-spacing:.06em;
+  }
+  .plp-flow .quick-info-link span{
+    text-decoration:none!important;
+  }
+  .plp-flow .quick-info-link svg{
+    width:12px;
+    height:12px;
+  }
+  .plp-flow .plp-modal-info .sheet-head{
+    clear:both;
+    margin:15px 0 7px!important;
+  }
+  .plp-flow .plp-modal-info .sheet-head>span{
+    font-size:8px!important;
+    letter-spacing:.09em;
+  }
+  .plp-flow .plp-modal-info .sheet-head button{
+    font-size:8px!important;
+  }
+  .plp-flow .plp-modal-info .quantity-sizes{
+    margin-top:7px!important;
+    border-color:#d9d7d1!important;
+  }
+  .plp-flow .plp-modal-info .quantity-sizes .size-row{
+    min-height:46px!important;
+    padding:0 4px!important;
+  }
+  .plp-flow .plp-modal-info .quantity-sizes .size-row>button,
+  .plp-flow .plp-modal-info .quantity-sizes .size-row>button b{
+    font-size:10px!important;
+  }
+  .plp-flow .single-size-quantity{
+    clear:both;
+    min-height:52px;
+    margin-top:12px;
+    padding:0 2px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-top:1px solid #dedcd7;
+    border-bottom:1px solid #dedcd7;
+  }
+  .plp-flow .single-size-quantity>span{
+    font-size:8px;
+    letter-spacing:.09em;
+  }
+  .plp-flow .plp-modal-info .primary.total-cta{
+    min-height:49px!important;
+    margin-top:12px!important;
+    padding:0 14px!important;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:9px!important;
+    letter-spacing:.08em;
+  }
+  .plp-flow .plp-modal-info .primary.total-cta.choose-size-disabled{
+    background:#d9d8d4!important;
+    color:#6f706d!important;
+  }
+  .plp-flow .plp-modal-info .stores{
+    min-height:38px;
+    padding:11px 0 2px!important;
+    font-size:8px!important;
+    text-decoration:none;
+  }
+}
+
+@media(max-width:380px){
+  .view-catalog .catalog-v123 .tabs{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}
+  .plp-flow .plp-modal-media{left:14px!important;width:88px!important;height:114px!important}
+  .plp-flow .plp-modal-info{padding-left:14px!important;padding-right:14px!important}
+  .plp-flow .plp-modal-info::before{width:100px;height:118px}
+  .plp-flow .plp-modal-info h2{font-size:16px!important}
+}
