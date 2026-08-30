@@ -36,6 +36,7 @@ scripts = [
     root / "scripts" / "finalize-route-split-v137.py",
     root / "scripts" / "optimize-catalog-runtime-v138.py",
     root / "scripts" / "optimize-plp-images-v139.py",
+    root / "scripts" / "restore-deferred-plp-gallery-v140.py",
 ]
 
 logs = []
