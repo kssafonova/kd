@@ -13,10 +13,17 @@ SOURCE_ROOTS = [ROOT / "app", ROOT / "scripts", ROOT / "public" / "data", ROOT /
 CANONICAL.mkdir(parents=True, exist_ok=True)
 canonical_preexisting = any(path.is_file() and path.suffix.lower() in IMAGE_EXTS for path in CANONICAL.iterdir())
 
-# Once the canonical library exists, root /images is only a legacy Pages copy.
-# Remove it before scanning so repeated builds cannot remap canonical URLs through stale duplicates.
-if canonical_preexisting and (ROOT / "images").exists():
-    shutil.rmtree(ROOT / "images")
+# Once the canonical library exists, root-level published image copies are legacy only.
+# Remove them before scanning so repeated builds cannot remap canonical URLs through stale duplicates.
+legacy_removed = 0
+if canonical_preexisting:
+    if (ROOT / "images").exists():
+        shutil.rmtree(ROOT / "images")
+        legacy_removed += 1
+    for path in list(ROOT.iterdir()):
+        if path.is_file() and path.suffix.lower() in IMAGE_EXTS:
+            path.unlink()
+            legacy_removed += 1
 
 
 def digest(path: Path) -> str:
@@ -156,5 +163,5 @@ canonical_count = sum(1 for p in CANONICAL.iterdir() if p.is_file() and p.suffix
 print(
     f"// IMAGE_ASSETS_V111: canonical assets/images contains {canonical_count} image files; "
     f"moved={moved}; deduped={deduped}; rewritten_files={changed_files}; "
-    f"legacy_root_removed={canonical_preexisting}; public mirror materialized"
+    f"legacy_removed={legacy_removed}; public mirror materialized"
 )
