@@ -5,6 +5,7 @@ import { RemoteImage } from "./remote-image";
 import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
 import { loadSiteDatabaseCatalogRows, SITE_DB_ADDRESS_SUGGESTIONS, SITE_DB_CITIES, SITE_DB_CONTACTS, SITE_DB_DELIVERY_METHODS, SITE_DB_PAYMENT_METHODS, SITE_DB_POLICIES, SITE_DB_PVZ_POINTS, SITE_DB_STORES, SITE_DB_STORE_POINTS, SITE_DB_COLOR_GROUPS, SITE_DB_COLOR_GROUP_MEMBERS } from "./site-database.generated";
 // SITE_DATABASE_CONNECTED_V128
+// TABLE_DRIVEN_CATALOG_IMAGES_V135
 
 // CATALOG_SKU_MODEL_V1
 
@@ -235,11 +236,8 @@ async function loadCatalogMasterIntoProducts(){
   if(catalogMasterLoaded)return;
   catalogMasterLoaded=true;
   const base=process.env.NEXT_PUBLIC_BASE_PATH??"";
-  const chunks=await Promise.all(CATALOG_MASTER_FILES.map(async fileName=>{
-    try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
-  }));
   const databaseRows=await loadSiteDatabaseCatalogRows(base).catch(()=>[] as CatalogMasterRow[]);
-  const sourceRows=databaseRows.length?databaseRows:chunks.flat();
+  const sourceRows=databaseRows;
   const rows=sourceRows.map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as CatalogMasterRow).filter(row=>row["Артикул"]&&row["Название товара"]);
   if(!rows.length)return;
   const grouped=new Map<string,CatalogMasterRow[]>();

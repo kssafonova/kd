@@ -1,4 +1,5 @@
 /* SITE_DATABASE_GENERATED_V128
+   TABLE_DRIVEN_CATALOG_IMAGES_V135: catalog gallery source is 03_product_images.csv only.
    Generated from public/data/database/*.csv by scripts/apply-site-database-v128.py.
    Do not hand-edit this file; edit the CSV source/export pipeline instead. */
 
@@ -46,15 +47,19 @@ const fetchSiteDbTable=async(base:string,fileName:string)=>{
 };
 
 export async function loadSiteDatabaseCatalogRows(base=""):Promise<SiteDatabaseRow[]> {
-  const [products,variants,solutions,links]=await Promise.all([
+  const [products,variants,images,solutions,links]=await Promise.all([
     fetchSiteDbTable(base,"01_products.csv"),
     fetchSiteDbTable(base,"02_product_variants.csv"),
+    fetchSiteDbTable(base,"03_product_images.csv"),
     fetchSiteDbTable(base,"18_ready_solutions.csv"),
     fetchSiteDbTable(base,"19_ready_solution_products.csv"),
   ]);
   if(!products.length||!variants.length)return [];
   const productMap=new Map(products.map(row=>[row.product_id,row]));
   const solutionMap=new Map(solutions.map(row=>[row.solution_id,row]));
+  const imageMap=new Map<string,SiteDatabaseRow[]>();
+  images.forEach(image=>{const list=imageMap.get(image.variant_id)??[];list.push(image);imageMap.set(image.variant_id,list)});
+  imageMap.forEach(list=>list.sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0)));
   const required=new Map<string,string[]>(),optional=new Map<string,string[]>(),descriptions=new Map<string,string>();
   links.forEach(link=>{
     const target=link.relation_type==="optional"?optional:required;
@@ -63,6 +68,8 @@ export async function loadSiteDatabaseCatalogRows(base=""):Promise<SiteDatabaseR
   });
   return variants.map(variant=>{
     const product=productMap.get(variant.product_id)??{};
+    const photos=imageMap.get(variant.variant_id)??[];
+    const photo=(order:number)=>photos.find(row=>Number(row.sort_order||0)===order)?.image_path??"";
     return {
       "Артикул":variant.article||variant.product_id,
       "Название товара":product.name||"",
@@ -85,9 +92,9 @@ export async function loadSiteDatabaseCatalogRows(base=""):Promise<SiteDatabaseR
       "Подкатегория":variant.subcategory_name||product.subcategory_name||"",
       "Товар входит в готовое решение":(required.get(variant.product_id)??[]).join("\n"),
       "Опционально входит в готовое решение":(optional.get(variant.product_id)??[]).join("\n"),
-      "Фото 1":variant.image_1||product.primary_image||"",
-      "Фото 2":variant.image_2||"",
-      "Фото 3":variant.image_3||"",
+      "Фото 1":photo(1),
+      "Фото 2":photo(2),
+      "Фото 3":photo(3),
       "Описание готового решения":descriptions.get(variant.product_id)||"",
     };
   });

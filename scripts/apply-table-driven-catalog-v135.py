@@ -137,7 +137,7 @@ strict_loader = r'''export async function loadSiteDatabaseCatalogRows(base=""):P
 }
 '''
 loader_pattern = r'export async function loadSiteDatabaseCatalogRows\(base=""\):Promise<SiteDatabaseRow\[]> \{.*?\n\}\n'
-generated, count = re.subn(loader_pattern, strict_loader, generated, count=1, flags=re.S)
+generated, count = re.subn(loader_pattern, lambda _match: strict_loader, generated, count=1, flags=re.S)
 if count != 1:
     raise SystemExit("TABLE_DRIVEN_CATALOG_IMAGES_V135: generated catalog loader not found")
 if MARKER not in generated:
