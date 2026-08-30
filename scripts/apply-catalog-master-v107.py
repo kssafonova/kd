@@ -24,14 +24,18 @@ replacements = [
 for old, new in replacements:
     text = text.replace(old, new)
 
-needle = '  const text=source.replace(/^\\\\uFEFF/,"");\n'
-if needle in text and 'const delimiter=headerLine.includes(";")?";":",";' not in text:
-    text = text.replace(
-        needle,
-        needle + '  const headerLine=text.split(/\\\\r?\\\\n/,1)[0]??"";\n'
-        '  const delimiter=headerLine.includes(";")?";":",";\n',
-        1,
+# The master is semicolon-delimited. Insert delimiter detection immediately before
+# the parser row state so this patch is idempotent even after older partial patches.
+rows_marker = '  const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;\n'
+if 'const delimiter=headerLine.includes(";")?";":",";' not in text:
+    if rows_marker not in text:
+        raise SystemExit("CATALOG_MASTER_UI_V108: CSV parser row marker not found")
+    delimiter_lines = (
+        '  const headerLine=text.split(/\\r?\\n/,1)[0]??"";\n'
+        '  const delimiter=headerLine.includes(";")?";":",";\n'
     )
+    text = text.replace(rows_marker, delimiter_lines + rows_marker, 1)
+
 text = text.replace('else if(char===","){row.push(cell);cell=""}', 'else if(char===delimiter){row.push(cell);cell=""}')
 
 compressed_pattern = re.compile(
@@ -49,21 +53,22 @@ for stale in [
     "Комплектация / Информация о размере",
 ]:
     if stale in text:
-        raise SystemExit(f"CATALOG_MASTER_UI_V107: stale reference remains: {stale}")
+        raise SystemExit(f"CATALOG_MASTER_UI_V108: stale reference remains: {stale}")
 
 required = [
     'const CATALOG_MASTER_FILES:string[] = ["catalog_master.csv"];',
     'row["Фото 1"],row["Фото 2"],row["Фото 3"]',
     'row["Комплектация / информация о размере"]',
+    'const delimiter=headerLine.includes(";")?";":",";',
     "char===delimiter",
     "loadCatalogMasterIntoProducts",
 ]
 for marker in required:
     if marker not in text:
-        raise SystemExit(f"CATALOG_MASTER_UI_V107: required marker missing: {marker}")
+        raise SystemExit(f"CATALOG_MASTER_UI_V108: required marker missing: {marker}")
 
 PAGE.write_text(text, encoding="utf-8")
 print(
-    f"// CATALOG_MASTER_UI_V107: page loader uses catalog_master.csv semicolon schema; "
+    f"// CATALOG_MASTER_UI_V108: page loader uses catalog_master.csv semicolon schema; "
     f"compressed legacy loader removed={removed}; changed={text != original}"
 )
