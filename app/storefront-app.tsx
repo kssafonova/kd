@@ -58,6 +58,15 @@ const parseCatalogPrice=(value:unknown)=>Number(String(cleanNulls(value)??"").re
 // CATALOG_PRODUCT_NORMALIZATION_V74
 const isAromaProduct=(product:Product)=>product.switchBy==="scent";
 const productCountLabel=(count:number)=>`${count} ${count===1?"товар":count>=2&&count<=4?"товара":"товаров"}`;
+const runtimeStorefrontBase=()=>{
+  const configured=(process.env.NEXT_PUBLIC_BASE_PATH??"").replace(/\/$/,"");
+  if(configured)return configured;
+  if(typeof window==="undefined")return "";
+  const path=window.location.pathname;
+  if(path==="/kd"||path.startsWith("/kd/"))return "/kd";
+  if(window.location.hostname.endsWith("github.io")){const first=path.split("/").filter(Boolean)[0];return first?`/${first}`:""}
+  return "";
+};
 
 type IconName = "pin" | "search" | "user" | "heart" | "bag" | "cart-add" | "filter" | "close" | "chevron" | "share" | "plus" | "minus" | "arrow" | "mail";
 function Icon({ name, filled = false }: { name: IconName; filled?: boolean }) {
@@ -244,13 +253,20 @@ const entityColorHex=(value:string)=>{
 const entityId=(article:string,name:string)=>300000+Array.from(`${article}|${name}`).reduce((sum,char)=>((sum*31)+char.charCodeAt(0))%500000,0);
 const tableAssetImage=(value:unknown)=>{const image=cleanNulls(value);if(!image)return undefined;if(image.startsWith("/assets/"))return image;if(image.startsWith("assets/"))return `/${image}`;return undefined};
 async function loadCatalogMasterIntoProducts(){
-  if(catalogMasterLoaded)return;
-  catalogMasterLoaded=true;
-  const base=process.env.NEXT_PUBLIC_BASE_PATH??"";
-  const databaseRows=await loadSiteDatabaseCatalogRows(base).catch(()=>[] as CatalogMasterRow[]);
+  if(catalogMasterLoaded&&products.length)return;
+  const base=runtimeStorefrontBase();
+  let databaseRows=await loadSiteDatabaseCatalogRows(base).catch(()=>[] as CatalogMasterRow[]);
+  if(!databaseRows.length&&typeof window!=="undefined"){
+    try{
+      const directUrl=new URL(`${base}/data/catalog_master.csv`,window.location.origin).toString();
+      const response=await fetch(directUrl,{cache:"force-cache"});
+      if(response.ok)databaseRows=parseEntityCsv(await response.text());
+    }catch{}
+  }
   const sourceRows=databaseRows;
   const rows=sourceRows.map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as CatalogMasterRow).filter(row=>row["Артикул"]&&row["Название товара"]);
-  if(!rows.length)return;
+  if(!rows.length){catalogMasterLoaded=false;return;}
+  catalogMasterLoaded=true;
   const grouped=new Map<string,CatalogMasterRow[]>();
   rows.forEach(row=>{const key=String(row["Артикул"]||"").trim();const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
   // Product identity follows the canonical article: every table row with the same article is one product with SKU variants.
@@ -360,8 +376,10 @@ let editorials:Editorial[] = [
 ];
 
 export default function Home({initialView="home",initialCatalogCategory="Все товары"}:{initialView?:View;initialCatalogCategory?:string}={}) {
-  const [,setCatalogMasterRevision]=useState(0);
-  useEffect(()=>{loadCatalogMasterIntoProducts().then(()=>setCatalogMasterRevision(value=>value+1))},[]);
+  const [catalogDataReady,setCatalogDataReady]=useState(()=>catalogMasterLoaded&&products.length>0);
+  const [catalogDataError,setCatalogDataError]=useState(false);
+  const reloadCatalogData=()=>{catalogMasterLoaded=false;setCatalogDataReady(false);setCatalogDataError(false);void loadCatalogMasterIntoProducts().then(()=>{const ready=products.length>0;setCatalogDataReady(ready);setCatalogDataError(!ready)})};
+  useEffect(()=>{let mounted=true;void loadCatalogMasterIntoProducts().then(()=>{if(!mounted)return;const ready=products.length>0;setCatalogDataReady(ready);setCatalogDataError(!ready)});return()=>{mounted=false}},[]);
   useEffect(()=>setCatalogCategory(initialCatalogCategory),[initialCatalogCategory]);
   const [view, setView] = useState<View>(initialView);
   const [menu, setMenu] = useState(false);
@@ -431,8 +449,8 @@ export default function Home({initialView="home",initialCatalogCategory="Все 
 
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
-  const go = (next: View) => { if(next==="home"){const base=process.env.NEXT_PUBLIC_BASE_PATH??"";window.location.href=`${base}/`;return;} setView(next); setMenu(false); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const openCatalog=(category="Все товары")=>{setCatalogCategory(category);go("catalog");const base=process.env.NEXT_PUBLIC_BASE_PATH??"";window.history.pushState({},"",`${base}/catalog/?category=${encodeURIComponent(category)}`)};
+  const go = (next: View) => { if(next==="home"){window.location.href=`${runtimeStorefrontBase()}/`;return;} setView(next); setMenu(false); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const openCatalog=(category="Все товары")=>{setCatalogCategory(category);go("catalog");window.history.pushState({},"",`${runtimeStorefrontBase()}/catalog/?category=${encodeURIComponent(category)}`)};
   const add = (product: Product, chosenSize = size, quantity = product.quantity ?? 1, openDrawer = true) => {
     const selectedVariant = product.colorVariants?.find((variant) => variant.name === product.selectedColor) ?? product.colorVariants?.[0];
     const selectedSku=findProductSku(product,product.selectedColor,chosenSize);
@@ -465,7 +483,7 @@ export default function Home({initialView="home",initialCatalogCategory="Все 
       <div className="promo">БЕСПЛАТНАЯ ДОСТАВКА ОТ 15 000 ₽ <button onClick={() => go("catalog")}>ПОДРОБНЕЕ</button></div>
       <Header onMenu={() => { setMenuSection(""); setMenu(true); }} onSearch={() => setSearch(true)} onAccount={() => setAccount(true)} onFavorites={() => setFavoritesOpen(true)} onCart={() => setCartOpen(true)} onBoutiques={() => setBoutiquesOpen(true)} count={cartCount} favoriteCount={favorites.length} go={go} />
       {view === "home" && <HomeView go={go} openCatalog={openCatalog} slide={slide} setSlide={setSlide} onProduct={openProduct} favorite={favorite} favorites={favorites} onAdd={setPlpSize} openEditorial={(item)=>{setEditorial(item);go("editorial")}} />}
-      {view === "catalog" && <CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />}
+      {view === "catalog" && (catalogDataReady?<CatalogView initialCategory={catalogCategory} onFilter={() => setFilters(true)} onAdd={setPlpSize} onProduct={openProduct} favorite={favorite} favorites={favorites} />:<CatalogBootStateV141 error={catalogDataError} retry={reloadCatalogData}/>)}
       {view === "collections" && <CollectionsView onProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
       {view === "editorial" && <EditorialView editorial={editorial} selectProduct={openProduct} onQuick={setPlpSize} favorite={favorite} favorites={favorites} buyBundle={addBundle} />}
       {view === "product" && <ProductView product={selected} favorite={favorite} liked={favorites.includes(selected.id)} chooseSize={() => setSizeSheet(true)} add={(p) => add(p,p.selectedSize,p.quantity)} selectProduct={openProduct} recentlyViewed={recentlyViewed} />}
@@ -485,6 +503,10 @@ export default function Home({initialView="home",initialCatalogCategory="Все 
       {toast && <div className="toast">{toast}</div>}
     </main>
   );
+}
+
+function CatalogBootStateV141({error,retry}:{error:boolean;retry:()=>void}){
+  return <section className="catalog-boot-v141" aria-live="polite"><p>КАТАЛОГ</p><h1>{error?"Не удалось загрузить каталог":"Загружаем каталог"}</h1>{error?<><p className="catalog-boot-v141-error">Проверьте соединение и попробуйте ещё раз.</p><button type="button" onClick={retry}>Повторить</button></>:<div className="catalog-boot-v141-grid" aria-hidden="true">{Array.from({length:6},(_,index)=><div className="catalog-boot-v141-card" key={index}><span/><i/><b/></div>)}</div>}</section>;
 }
 
 function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, onBoutiques, count, favoriteCount, go }: { onMenu:()=>void; onSearch:()=>void; onAccount:()=>void; onFavorites:()=>void; onCart:()=>void; onBoutiques:()=>void; count:number; favoriteCount:number; go:(v:View)=>void }) {
@@ -855,9 +877,9 @@ function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, fa
   const renderChip=(key:CatalogMultiFilterKeyV123,value:string)=><button key={`${key}-${value}`} className="catalog-filter-chip-v123" onClick={()=>removeAppliedValue(key,value)}>{value}<span>×</span></button>;
 
   return <div className="catalog page catalog-v123">
-    <div className="crumbs">Главная / Каталог / {category}</div>
+    <nav className="crumbs catalog-crumbs-v141" aria-label="Хлебные крошки"><button type="button" onClick={()=>{window.location.href=`${runtimeStorefrontBase()}/`}}>Главная</button><span>/</span><button type="button" onClick={()=>changeCategory("Все товары")}>Каталог</button>{category!=="Все товары"&&<><span>/</span><b>{category}</b></>}</nav>
     <div className="title-line"><h1>{category}</h1><span>{productCountLabel(list.length)}</span></div>
-    <div className="tabs">{["Все товары",...categoryNames].map(name=><button key={name} className={category===name?"active":""} onClick={()=>changeCategory(name)}>{name}</button>)}</div>
+    <div className="tabs catalog-category-slider-v141" role="tablist" aria-label="Категории каталога">{["Все товары",...categoryNames].map(name=><button key={name} role="tab" aria-selected={category===name} className={category===name?"active":""} onClick={()=>changeCategory(name)}>{name}</button>)}</div>
     <div className="catalog-tools catalog-tools-v123">
       <button className="catalog-filter-trigger-v123" type="button" onClick={openFilters}><span>Фильтры</span>{activeCount>0&&<b>{activeCount}</b>}</button>
       <label className="catalog-sort-v123"><span>Сортировка</span><span className="catalog-sort-select-v125"><select value={sort} onChange={event=>changeSort(event.target.value as CatalogSortV123)} aria-label="Сортировка товаров"><option value="popular">По популярности</option><option value="price_asc">Сначала дешевле</option><option value="price_desc">Сначала дороже</option></select><Icon name="chevron"/></span></label>

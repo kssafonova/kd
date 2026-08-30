@@ -47,7 +47,7 @@ export function CatalogTogasV132Enhancer(){
       if(!catalog)return;
 
       const filterLabel=catalog.querySelector<HTMLElement>(".catalog-filter-trigger-v123>span");
-      if(filterLabel&&filterLabel.textContent!=="Все фильтры")filterLabel.textContent="Все фильтры";
+      if(filterLabel&&filterLabel.textContent!=="Фильтры")filterLabel.textContent="Фильтры";
 
       const tools=catalog.querySelector<HTMLElement>(".catalog-tools-v123");
       const nativeSort=catalog.querySelector<HTMLElement>(".catalog-sort-v123");
