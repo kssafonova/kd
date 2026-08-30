@@ -31,6 +31,7 @@ ARTICLE_GALLERY_MAP = {
 COLOR_IMAGE_MAP = {
     ("KD-PD-1027", "молочный"): "KD-PD-1027МОЛОЧНЫИ\u0306.png",
     ("KD-PD-1027", "серо-синий"): "KD-PD-1027СЕРОСИНИИ\u0306.png",
+    ("KD-PD-10786", "бежевый"): "KD-PD-10786БЕЖЕВЫИ\u0306.png",
     ("KD-PD-10786", "голубой"): "KD-PD-10786ГОЛУБОИ\u0306.png",
     ("KD-PD-10786", "экрю"): "KD-PD-10786ЭКРЮ.png",
     ("KD-PD-10841", "бежевый"): "KD-PD-10841БЕЖЕВЫИ\u0306.png",
@@ -41,9 +42,6 @@ COLOR_IMAGE_MAP = {
     ("KD-PD-9718", "бежевый"): "KD-PD-9718БЕЖЕВЫИ\u0306.png",
 }
 
-# All screenshots supplied by the user are kept in canonical assets. The beige
-# KD-PD-10786 image is intentionally staged but not linked: that color has no
-# catalog row today, so linking it to another color would show the wrong variant.
 ALL_ASSETS = {
     "KD-PD-1027МОЛОЧНЫИ\u0306.png",
     "KD-PD-1027СЕРОСИНИИ\u0306.png",
@@ -98,6 +96,7 @@ EXPECTED_GALLERY_COUNTS = {
 EXPECTED_COLOR_COUNTS = {
     ("KD-PD-1027", "молочный"): 2,
     ("KD-PD-1027", "серо-синий"): 2,
+    ("KD-PD-10786", "бежевый"): 1,
     ("KD-PD-10786", "голубой"): 1,
     ("KD-PD-10786", "экрю"): 1,
     ("KD-PD-10841", "бежевый"): 1,
@@ -196,6 +195,6 @@ CATALOG.write_text("".join(out), encoding="utf-8")
 updated_rows = sum(direct_counts.values()) + sum(gallery_counts.values()) + sum(color_counts.values())
 print(
     "PRODUCT_IMAGES_V120: replaced product photos with uploaded assets; "
-    f"updated_rows={updated_rows}; linked_assets=27; staged_assets={len(ALL_ASSETS)}; "
+    f"updated_rows={updated_rows}; linked_assets=28; staged_assets={len(ALL_ASSETS)}; "
     "secondary photos kept only for KD-PD-10376 gallery"
 )
