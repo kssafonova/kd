@@ -27,90 +27,24 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run all migration patches
-        id: migration
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -o pipefail
-          python scripts/migrate-site-with-diagnostics.py 2>&1 | tee /tmp/migration-run.log
-
-      - name: Restore committed source after migration failure
-        if: steps.migration.outcome == 'failure'
+      - name: Apply and validate catalog master
         shell: bash
         run: |
           set -euo pipefail
-          echo "Catalog migration failed; discarding partial mutations and building the committed source."
-          git reset --hard HEAD
-          rm -f migration-errors.txt migration-diagnostics.txt
+          python scripts/migrate-site-with-diagnostics.py
 
       - name: Install dependencies
-        id: dependencies
-        continue-on-error: true
         shell: bash
-        run: |
-          set -o pipefail
-          npm install 2>&1 | tee /tmp/npm-install.log
+        run: npm install
 
       - name: Build static site
-        id: storefront_build
-        continue-on-error: true
-        if: steps.dependencies.outcome == 'success'
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NEXT_PUBLIC_BASE_PATH: /kd
         shell: bash
-        run: |
-          set -o pipefail
-          npx next build 2>&1 | tee /tmp/storefront-build.log
-
-      - name: Persist build diagnostics
-        if: always() && (steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
-        shell: bash
-        run: |
-          set -euo pipefail
-          {
-            echo "# Site build diagnostics"
-            echo
-            echo "migration=${{ steps.migration.outcome }}"
-            echo "dependencies=${{ steps.dependencies.outcome }}"
-            echo "build=${{ steps.storefront_build.outcome }}"
-            echo
-            if [ -f migration-errors.txt ]; then
-              echo "## Migration patches"
-              cat migration-errors.txt
-              echo
-            elif [ -f /tmp/migration-run.log ]; then
-              echo "## Migration runner"
-              cat /tmp/migration-run.log
-              echo
-            fi
-            if [ -f /tmp/npm-install.log ]; then
-              echo "## npm install"
-              cat /tmp/npm-install.log
-              echo
-            fi
-            if [ -f /tmp/storefront-build.log ]; then
-              echo "## Next build"
-              cat /tmp/storefront-build.log
-              echo
-            fi
-          } > migration-diagnostics.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- migration-diagnostics.txt
-          if ! git diff --cached --quiet; then
-            git commit -m "Capture migration diagnostics"
-            git pull --rebase --autostash origin main
-            git push origin HEAD:main
-          fi
-
-      - name: Stop after build failure
-        if: always() && (steps.dependencies.outcome == 'failure' || steps.storefront_build.outcome == 'failure')
-        run: exit 1
+        run: npx next build
 
       - name: Prepare legacy Pages source
-        if: steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -132,19 +66,15 @@ jobs:
           mv "$names_file" /tmp/pages-output-names
 
       - name: Commit storefront source and static export
-        if: steps.dependencies.outcome == 'success' && steps.storefront_build.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- app/page.tsx app/globals.css app/catalog-data.ts app/ready-solutions public/images/imported-products public/data/catalog_xlsx_full.csv scripts/product-source/all_site_products_grouped.csv
+          git add -- app/page.tsx app/globals.css app/catalog-data.ts app/ready-solutions public/images/imported-products public/data/catalog_master.csv scripts/apply-catalog-master-v107.py scripts/verify-catalog-master-v107.py scripts/migrate-site-with-diagnostics.py
           while IFS= read -r name; do
             git add -A -- "$name"
           done < /tmp/pages-output-names
-          if [ -f migration-diagnostics.txt ]; then
-            git rm -f migration-diagnostics.txt || true
-          fi
           if git diff --cached --quiet; then
             echo "Static storefront is already current"
             exit 0
