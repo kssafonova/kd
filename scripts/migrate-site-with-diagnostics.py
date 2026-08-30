@@ -37,6 +37,7 @@ scripts = [
     root / "scripts" / "optimize-catalog-runtime-v138.py",
     root / "scripts" / "optimize-plp-images-v139.py",
     root / "scripts" / "restore-deferred-plp-gallery-v140.py",
+    root / "scripts" / "fix-catalog-runtime-v141.py",
 ]
 
 logs = []
