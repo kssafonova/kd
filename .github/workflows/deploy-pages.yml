@@ -48,6 +48,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          rm -rf public/assets/images
           touch out/.nojekyll
           names_file="$(mktemp)"
           for item in out/* out/.[!.]*; do
@@ -71,7 +72,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- app/page.tsx app/globals.css app/catalog-data.ts app/ready-solutions public/images/imported-products public/data/catalog_master.csv scripts/apply-catalog-master-v107.py scripts/verify-catalog-master-v107.py scripts/migrate-site-with-diagnostics.py
+          git add -A -- app public scripts assets
           while IFS= read -r name; do
             git add -A -- "$name"
           done < /tmp/pages-output-names
