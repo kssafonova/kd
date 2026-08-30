@@ -232,6 +232,7 @@ const entityColorHex=(value:string)=>{
   return colors[key]??"#8F8A82";
 };
 const entityId=(article:string,name:string)=>300000+Array.from(`${article}|${name}`).reduce((sum,char)=>((sum*31)+char.charCodeAt(0))%500000,0);
+const tableAssetImage=(value:unknown)=>{const image=cleanNulls(value);if(!image)return undefined;if(image.startsWith("/assets/"))return image;if(image.startsWith("assets/"))return `/${image}`;return undefined};
 async function loadCatalogMasterIntoProducts(){
   if(catalogMasterLoaded)return;
   catalogMasterLoaded=true;
@@ -254,7 +255,7 @@ async function loadCatalogMasterIntoProducts(){
     const scentMode=scents.length>0&&variants.length>1;
     const switchBy:Product["switchBy"]=scentMode?"scent":colors.length>1?"color":"none";
     const skus:CatalogSku[]=variants.map((row,index)=>{
-      const images=[row["Фото 1"],row["Фото 2"],row["Фото 3"]].map(cleanNulls).filter((value):value is string=>Boolean(value));
+      const images=[row["Фото 1"],row["Фото 2"],row["Фото 3"]].map(tableAssetImage).filter((value):value is string=>Boolean(value));
       const sourceColor=cleanNulls(row["Цвет"]),scent=cleanNulls(row["Аромат"]),key=(switchBy==="scent"?scent:switchBy==="color"?sourceColor:undefined)??"Единый вариант";
       const size=cleanNulls(row["Размер"])??cleanNulls(row["Объем"])??cleanNulls(row["Диаметр"])??"Единый размер",price=parseCatalogPrice(row["Цена"]),oldPrice=parseCatalogPrice(row["Старая цена"]);
       return {id:`master-${id}-${index}`,article,productId:id,color:key,colorHex:entityColorHex(sourceColor??key),size,height:cleanNulls(row["Высота"]),width:cleanNulls(row["Ширина"]),diameter:cleanNulls(row["Диаметр"]),packageInfo:cleanNulls(row["Комплектация / информация о размере"]),material:cleanNulls(row["Материал"])??"",composition:cleanNulls(row["Состав"])??"",details:cleanNulls(row["Детали"]),collection:cleanNulls(row["Коллекция"]),capsule:cleanNulls(row["Капсула"]),price,image:images[0]??"/assets/images/image-placeholder.svg",gallery:images.slice(1),available:true,...({volume:cleanNulls(row["Объем"]),oldPrice:oldPrice>price?oldPrice:undefined,sourceColor,scent} as any)};
@@ -743,6 +744,8 @@ function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, fa
   const [filterOpen,setFilterOpen]=useState(false);
   const [applied,setApplied]=useState<CatalogFiltersV123>(()=>emptyCatalogFiltersV123());
   const [draft,setDraft]=useState<CatalogFiltersV123>(()=>emptyCatalogFiltersV123());
+  const [visibleCount,setVisibleCount]=useState(24);
+  const loadMoreRef=useRef<HTMLDivElement>(null);
   const categoryNames=Array.from(new Set(products.map(product=>cleanNulls(product.category)).filter((value):value is string=>Boolean(value))));
   const categoryKey=categoryNames.join("|");
   const resolveCategory=(value:string)=>categoryNames.find(name=>sameFacetV123(name,value))??"Все товары";
@@ -817,6 +820,17 @@ function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, fa
     return (popularityIndex.get(left.id)??Number.MAX_SAFE_INTEGER)-(popularityIndex.get(right.id)??Number.MAX_SAFE_INTEGER);
   });
 
+  const resultKey=[category,sort,applied.subcategories.join("~"),applied.collections.join("~"),applied.capsules.join("~"),applied.materials.join("~"),applied.sizes.join("~"),applied.colors.join("~"),applied.priceFrom,applied.priceTo].join("|");
+  useEffect(()=>{setVisibleCount(24)},[resultKey]);
+  useEffect(()=>{
+    const node=loadMoreRef.current;
+    if(!node||visibleCount>=list.length||typeof IntersectionObserver==="undefined")return;
+    const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting))setVisibleCount(current=>Math.min(current+24,list.length))},{rootMargin:"900px 0px"});
+    observer.observe(node);
+    return()=>observer.disconnect();
+  },[visibleCount,list.length,resultKey]);
+  const visibleList=list.slice(0,visibleCount);
+
   const openFilters=()=>{setDraft(cloneCatalogFiltersV123(applied));setFilterOpen(true)};
   const changeDraft=(key:CatalogMultiFilterKeyV123,value:string)=>setDraft(current=>toggleCatalogFilterValueV123(current,key,value));
   const applyDraft=()=>{const next=cloneCatalogFiltersV123(draft);setApplied(next);setFilterOpen(false);writeCatalogUrl(next,sort,category,"push")};
@@ -839,7 +853,7 @@ function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, fa
       <label className="catalog-sort-v123"><span>Сортировка</span><span className="catalog-sort-select-v125"><select value={sort} onChange={event=>changeSort(event.target.value as CatalogSortV123)} aria-label="Сортировка товаров"><option value="popular">По популярности</option><option value="price_asc">Сначала дешевле</option><option value="price_desc">Сначала дороже</option></select><Icon name="chevron"/></span></label>
     </div>
     {activeCount>0&&<div className="catalog-active-filters-v123" aria-label="Выбранные фильтры">{applied.subcategories.map(value=>renderChip("subcategories",value))}{applied.collections.map(value=>renderChip("collections",value))}{applied.capsules.map(value=>renderChip("capsules",value))}{applied.materials.map(value=>renderChip("materials",value))}{applied.sizes.map(value=>renderChip("sizes",value))}{applied.colors.map(value=>renderChip("colors",value))}{priceChip&&<button className="catalog-filter-chip-v123" onClick={removePrice}>{priceChip}<span>×</span></button>}<button className="catalog-filter-reset-all-v123" onClick={resetAll}>Сбросить все</button></div>}
-    {list.length?<div className="product-grid">{list.map(product=><ProductCard key={`${category}-${product.id}-${product.selectedSkuId??product.selectedColor??"default"}`} product={product} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(product.id)}/>)}</div>:<div className="catalog-empty catalog-empty-v123"><p>По выбранным параметрам товаров не найдено</p><button type="button" onClick={resetAll}>Сбросить фильтры</button></div>}
+    {list.length?<><div className="product-grid">{visibleList.map(product=><ProductCard key={`${category}-${product.id}-${product.selectedSkuId??product.selectedColor??"default"}`} product={product} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(product.id)}/>)}</div>{visibleCount<list.length&&<div ref={loadMoreRef} aria-hidden="true" style={{height:1}}/>}</>:<div className="catalog-empty catalog-empty-v123"><p>По выбранным параметрам товаров не найдено</p><button type="button" onClick={resetAll}>Сбросить фильтры</button></div>}
     {filterOpen&&<div className="catalog-filter-layer-v123" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)setFilterOpen(false)}}>
       <aside className="catalog-filter-drawer-v123" role="dialog" aria-modal="true" aria-label="Фильтры каталога">
         <header className="catalog-filter-header-v123"><div><h2>Фильтры</h2><span>{productCountLabel(draftCount)}</span></div><button type="button" onClick={()=>setFilterOpen(false)} aria-label="Закрыть фильтры"><Icon name="close"/></button></header>
@@ -885,7 +899,7 @@ function ProductCard({ product, onClick, onQuick, favorite, liked, selectionMode
     const sku=findProductSku(product,variant.name);
     onVariantChange?.({...product,image:sku?.image??variant.image,gallery:sku?.gallery??variant.gallery??product.gallery,position:variant.position??product.position,selectedColor:variant.name,selectedSize:sku?.size,selectedSkuId:sku?.id});
   };
-  return <article className="product-card"><button className={`heart ${liked?"liked":""}`} onClick={()=>favorite(product.id)} aria-label={liked?`Удалить ${product.name} из избранного`:`Добавить ${product.name} в избранное`}><Icon name="heart" filled={liked}/></button><button className="product-image" onClick={()=>onClick(chosenProduct)}><ScrollableProductMedia key={`${product.id}-${chosen.name}`} product={chosenProduct} alt={`${product.name}, цвет ${chosen.name}`} position={chosen.position||product.position}/>{product.badge&&<span>{product.badge}</span>}</button><div className="product-copy"><button className="product-link" onClick={()=>onClick(chosenProduct)}><strong>{product.name}</strong><small>{product.switchBy==="none"?product.note:<>{chosen.name.toLowerCase()}, {product.note}</>}</small></button>{isAromaProduct(product)&&variants.length>1&&<div className="plp-aroma-options" role="group" aria-label={`Аромат товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} onClick={()=>chooseVariant(i)} aria-label={`Выбрать аромат ${variant.name}`}>{variant.name}</button>)}</div>}{!isAromaProduct(product)&&variants.length>1&&<div className="plp-swatches" role="group" aria-label={`Цвет товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>chooseVariant(i)} aria-label={`Выбрать цвет ${variant.name}`} title={variant.name}/>)}</div>}<span className={`price ${discount?"sale-price":""}`}>{knownPrice?<>{showFromPrice?"от ":""}{fmt(cardPrice)} {cardOldPrice>cardPrice&&<><del>{showFromPrice?"от ":""}{fmt(cardOldPrice)}</del><mark>−{discount}%</mark></>}</>:"Цена уточняется"}</span></div>{selectionMode?<button className={`quick selection-check ${pending?"pending":selected?"selected":""}`} type="button" onClick={(event)=>{event.stopPropagation();onSelect?.()}} aria-pressed={selected} aria-label={pending?`Выберите размер для ${product.name}`:selected?`Убрать ${product.name}`:`Выбрать ${product.name}`}>{pending?"?":selected?"✓":""}</button>:<button className="quick" disabled={!knownPrice} onClick={()=>knownPrice&&onQuick(chosenProduct)} aria-label={knownPrice?`Добавить в корзину ${product.name}`:`Цена товара ${product.name} уточняется`}><Icon name="cart-add"/></button>}</article>;
+  return <article className="product-card"><button className={`heart ${liked?"liked":""}`} onClick={()=>favorite(product.id)} aria-label={liked?`Удалить ${product.name} из избранного`:`Добавить ${product.name} в избранное`}><Icon name="heart" filled={liked}/></button><button className="product-image" onClick={()=>onClick(chosenProduct)}><RemoteImage src={chosenProduct.image} alt={`${product.name}, ${chosen.name}`} loading="lazy" decoding="async" draggable={false} style={{objectPosition:chosen.position||product.position||"center"}}/>{product.badge&&<span>{product.badge}</span>}</button><div className="product-copy"><button className="product-link" onClick={()=>onClick(chosenProduct)}><strong>{product.name}</strong><small>{product.switchBy==="none"?product.note:<>{chosen.name.toLowerCase()}, {product.note}</>}</small></button>{isAromaProduct(product)&&variants.length>1&&<div className="plp-aroma-options" role="group" aria-label={`Аромат товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} onClick={()=>chooseVariant(i)} aria-label={`Выбрать аромат ${variant.name}`}>{variant.name}</button>)}</div>}{!isAromaProduct(product)&&variants.length>1&&<div className="plp-swatches" role="group" aria-label={`Цвет товара ${product.name}`}>{variants.map((variant,i)=><button key={variant.name} className={i===colorIndex?"active":""} style={{background:variant.hex}} onClick={()=>chooseVariant(i)} aria-label={`Выбрать цвет ${variant.name}`} title={variant.name}/>)}</div>}<span className={`price ${discount?"sale-price":""}`}>{knownPrice?<>{showFromPrice?"от ":""}{fmt(cardPrice)} {cardOldPrice>cardPrice&&<><del>{showFromPrice?"от ":""}{fmt(cardOldPrice)}</del><mark>−{discount}%</mark></>}</>:"Цена уточняется"}</span></div>{selectionMode?<button className={`quick selection-check ${pending?"pending":selected?"selected":""}`} type="button" onClick={(event)=>{event.stopPropagation();onSelect?.()}} aria-pressed={selected} aria-label={pending?`Выберите размер для ${product.name}`:selected?`Убрать ${product.name}`:`Выбрать ${product.name}`}>{pending?"?":selected?"✓":""}</button>:<button className="quick" disabled={!knownPrice} onClick={()=>knownPrice&&onQuick(chosenProduct)} aria-label={knownPrice?`Добавить в корзину ${product.name}`:`Цена товара ${product.name} уточняется`}><Icon name="cart-add"/></button>}</article>;
 }
 
 // EDITORIAL_STORY_OVERLAY_V1
