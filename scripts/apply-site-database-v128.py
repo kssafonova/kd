@@ -243,7 +243,7 @@ const SITE_PVZ_POINTS=Object.keys(SITE_DB_PVZ_POINTS).length?SITE_DB_PVZ_POINTS:
     text = text.replace('const stores=storePoints[form.city]??[];', 'const stores=activeStorePoints[form.city]??[];', 1)
 
     for function_name in ("HomeBoutiques", "BoutiqueMap"):
-        pattern = rf'(function {function_name}\([^)]*\)\{{\n  )const boutiques=(\[.*?\]);'
+        pattern = rf'(function {function_name}[^\n]*\{{\n  )const boutiques=(\[.*?\]);'
         match = re.search(pattern, text, re.S)
         if not match:
             raise SystemExit(f"SITE_DATABASE_CONNECTED_V128: {function_name} boutiques block not found")
@@ -275,7 +275,7 @@ const SITE_PVZ_POINTS=Object.keys(SITE_DB_PVZ_POINTS).length?SITE_DB_PVZ_POINTS:
     text = text.replace(delivery_old, delivery_new, 1)
 
     payment_old = '<div className="checkout-v69-payments"><button type="button" className={payment==="online"?"active":""} onClick={()=>setPayment("online")}><i/><span><b>Онлайн — картой / СБП <mark>−3%</mark></b><small>−3% при оплате сейчас</small></span></button><button type="button" className={payment==="upon"?"active":""} onClick={()=>setPayment("upon")}><i/><span><b>При получении</b><small>Картой или наличными</small></span></button></div>'
-    payment_new = '<div className="checkout-v69-payments">{paymentMethods.map(method=><button key={method.id} type="button" className={payment===method.id?"active":""} onClick={()=>setPayment(method.id as PaymentMethod)}><i/><span><b>{method.name}{Number(method.discountPercent)>0&&<mark>−{method.discountPercent}%</mark>}</b><small>{Number(method.discountPercent)>0?`−${method.discountPercent}% при оплате сейчас`:method.instruments.includes("cash")?"Картой или наличными":"Оплата при оформлении"}</small></span></button>)}</div>'
+    payment_new = '<div className="checkout-v69-payments">{paymentMethods.map(method=><button key={method.id} type="button" className={payment===method.id?"active":""} onClick={()=>setPayment(method.id as PaymentMethod)}><i/><span><b>{method.name}{Number(method.discountPercent)>0&&<mark>−{method.discountPercent}%</mark>}</b><small>{Number(method.discountPercent)>0?`−${method.discountPercent}% при оплате сейчас`:(method.instruments as readonly string[]).includes("cash")?"Картой или наличными":"Оплата при оформлении"}</small></span></button>)}</div>'
     if payment_old not in text:
         raise SystemExit("SITE_DATABASE_CONNECTED_V128: payment options anchor not found")
     text = text.replace(payment_old, payment_new, 1)

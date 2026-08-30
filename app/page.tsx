@@ -3,6 +3,8 @@
 import { assetUrl } from "./assets";
 import { RemoteImage } from "./remote-image";
 import { catalogProductOverrides, type CatalogSku } from "./catalog-data";
+import { loadSiteDatabaseCatalogRows, SITE_DB_ADDRESS_SUGGESTIONS, SITE_DB_CITIES, SITE_DB_CONTACTS, SITE_DB_DELIVERY_METHODS, SITE_DB_PAYMENT_METHODS, SITE_DB_POLICIES, SITE_DB_PVZ_POINTS, SITE_DB_STORES, SITE_DB_STORE_POINTS } from "./site-database.generated";
+// SITE_DATABASE_CONNECTED_V128
 
 // CATALOG_SKU_MODEL_V1
 
@@ -236,7 +238,9 @@ async function loadCatalogMasterIntoProducts(){
   const chunks=await Promise.all(CATALOG_MASTER_FILES.map(async fileName=>{
     try{const response=await fetch(`${base}/data/${fileName}`,{cache:"no-store"});if(!response.ok)return [];return parseEntityCsv(await response.text())}catch{return []}
   }));
-  const rows=chunks.flat().map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as CatalogMasterRow).filter(row=>row["Артикул"]&&row["Название товара"]);
+  const databaseRows=await loadSiteDatabaseCatalogRows(base).catch(()=>[] as CatalogMasterRow[]);
+  const sourceRows=databaseRows.length?databaseRows:chunks.flat();
+  const rows=sourceRows.map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>[key,cleanNulls(value)??""])) as CatalogMasterRow).filter(row=>row["Артикул"]&&row["Название товара"]);
   if(!rows.length)return;
   const grouped=new Map<string,CatalogMasterRow[]>();
   rows.forEach(row=>{const key=String(row["Артикул"]||"").trim();const list=grouped.get(key)||[];list.push(row);grouped.set(key,list)});
@@ -485,11 +489,12 @@ function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, onBoutiques,
 
 // HOME_BOUTIQUES_MAP_V11
 function HomeBoutiques(){
-  const boutiques=[
+  const legacyBoutiques=[
     {city:"Москва",address:"Петровка",hours:"Ежедневно · 10:00–22:00",lat:55.7636,lon:37.6156},
     {city:"Санкт-Петербург",address:"Невский проспект",hours:"Ежедневно · 10:00–22:00",lat:59.9357,lon:30.3259},
     {city:"Казань",address:"Улица Баумана",hours:"Ежедневно · 10:00–21:00",lat:55.7903,lon:49.1124},
   ];
+  const boutiques=SITE_DB_STORES.length?SITE_DB_STORES:legacyBoutiques;
   const [selected,setSelected]=useState(0);
   const boutique=boutiques[selected];
   const delta=.04;
@@ -1127,11 +1132,12 @@ function ProductView({ product, favorite, liked, chooseSize, add, selectProduct,
 }
 
 function BoutiqueMap({close}:{close:()=>void}){
-  const boutiques=[
+  const legacyBoutiques=[
     {city:"Москва",address:"Петровка",hours:"Ежедневно · 10:00–22:00",lat:55.7636,lon:37.6156},
     {city:"Санкт-Петербург",address:"Невский проспект",hours:"Ежедневно · 10:00–22:00",lat:59.9357,lon:30.3259},
     {city:"Казань",address:"Улица Баумана",hours:"Ежедневно · 10:00–21:00",lat:55.7903,lon:49.1124}
   ];
+  const boutiques=SITE_DB_STORES.length?SITE_DB_STORES:legacyBoutiques;
   const [selected,setSelected]=useState(0);
   const boutique=boutiques[selected];
   const delta=.035;
@@ -1289,17 +1295,20 @@ const KD_PVZ_POINTS:Record<string,string[]>={
   "Ростов-на-Дону":["Большая Садовая, 65","Будённовский, 32"],
   "Краснодар":["Красная, 74","Северная, 324"],
 };
+const SITE_CITY_SUGGESTIONS=SITE_DB_CITIES.length?SITE_DB_CITIES:KD_CITY_SUGGESTIONS;
+const SITE_ADDRESS_SUGGESTIONS=Object.keys(SITE_DB_ADDRESS_SUGGESTIONS).length?SITE_DB_ADDRESS_SUGGESTIONS:KD_ADDRESS_SUGGESTIONS;
+const SITE_PVZ_POINTS=Object.keys(SITE_DB_PVZ_POINTS).length?SITE_DB_PVZ_POINTS:KD_PVZ_POINTS;
 
 function CitySuggestField({value,onChange,label="Город",required=false}:{value:string;onChange:(value:string)=>void;label?:string;required?:boolean}){
   const [open,setOpen]=useState(false);
   const query=value.trim().toLowerCase();
-  const items=KD_CITY_SUGGESTIONS.filter(city=>!query||city.toLowerCase().includes(query)).slice(0,6);
+  const items=SITE_CITY_SUGGESTIONS.filter(city=>!query||city.toLowerCase().includes(query)).slice(0,6);
   return <label className="v43-field v43-suggest-field"><span>{label}{required?" *":""}</span><input value={value} autoComplete="address-level2" aria-autocomplete="list" onFocus={()=>setOpen(true)} onBlur={()=>window.setTimeout(()=>setOpen(false),120)} onChange={event=>{onChange(event.target.value);setOpen(true)}} placeholder="Начните вводить город"/>{open&&items.length>0&&<div className="v43-suggestions" role="listbox">{items.map(city=><button type="button" key={city} onMouseDown={event=>event.preventDefault()} onClick={()=>{onChange(city);setOpen(false)}}>{city}</button>)}</div>}</label>;
 }
 
 function AddressSuggestField({city,value,onChange,label="Улица и дом",required=false}:{city:string;value:string;onChange:(value:string)=>void;label?:string;required?:boolean}){
   const [open,setOpen]=useState(false);
-  const source=KD_ADDRESS_SUGGESTIONS[city]??[];
+  const source=SITE_ADDRESS_SUGGESTIONS[city]??[];
   const query=value.trim().toLowerCase();
   const items=source.filter(address=>!query||address.toLowerCase().includes(query)).slice(0,6);
   return <label className="v43-field v43-suggest-field"><span>{label}{required?" *":""}</span><input value={value} autoComplete="street-address" aria-autocomplete="list" onFocus={()=>setOpen(true)} onBlur={()=>window.setTimeout(()=>setOpen(false),120)} onChange={event=>{onChange(event.target.value);setOpen(true)}} placeholder="Начните вводить адрес"/>{open&&items.length>0&&<div className="v43-suggestions" role="listbox">{items.map(address=><button type="button" key={address} onMouseDown={event=>event.preventDefault()} onClick={()=>{onChange(address);setOpen(false)}}><b>{address}</b><small>{city}</small></button>)}</div>}</label>;
@@ -1458,6 +1467,8 @@ function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];to
   type PaymentMethod="online"|"upon";
   const [delivery,setDelivery]=useState<DeliveryMethod>("courier");
   const [payment,setPayment]=useState<PaymentMethod>("online");
+  const paymentMethods=SITE_DB_PAYMENT_METHODS.length?SITE_DB_PAYMENT_METHODS:[{id:"online",name:"Онлайн — картой / СБП",timing:"prepaid",instruments:["bank_card","sbp"],discountPercent:3,currency:"RUB",active:true,sortOrder:1},{id:"upon",name:"При получении",timing:"on_receipt",instruments:["bank_card","cash"],discountPercent:0,currency:"RUB",active:true,sortOrder:2}] as const;
+  const deliveryMethods=SITE_DB_DELIVERY_METHODS.length?SITE_DB_DELIVERY_METHODS:[{id:"courier",name:"Курьером",minDays:2,maxDays:3,baseFeeRub:300,freeFromRub:15000,currency:"RUB",destinationType:"address",active:true,sortOrder:1},{id:"store",name:"Самовывоз",minDays:2,maxDays:3,baseFeeRub:0,freeFromRub:0,currency:"RUB",destinationType:"store",active:true,sortOrder:2},{id:"pvz",name:"ПВЗ",minDays:2,maxDays:3,baseFeeRub:0,freeFromRub:0,currency:"RUB",destinationType:"pvz",active:true,sortOrder:3}] as const;
   const [recipientName,setRecipientName]=useState(profile?.name??"");
   const [form,setForm]=useState<Profile>(profile??{name:"",surname:"",email:"",phone:"",city:"Москва",address:""});
   const [phoneVerified,setPhoneVerified]=useState(Boolean(profile?.phone));
@@ -1481,8 +1492,9 @@ function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];to
     "Санкт-Петербург":["Культура Дома · Невский проспект"],
     "Казань":["Культура Дома · улица Баумана"],
   };
-  const pvz=KD_PVZ_POINTS[form.city]??[];
-  const stores=storePoints[form.city]??[];
+  const activeStorePoints=Object.keys(SITE_DB_STORE_POINTS).length?SITE_DB_STORE_POINTS:storePoints;
+  const pvz=SITE_PVZ_POINTS[form.city]??[];
+  const stores=activeStorePoints[form.city]??[];
   const filteredPvz=pvz.filter(point=>!pvzQuery.trim()||point.toLocaleLowerCase("ru-RU").includes(pvzQuery.trim().toLocaleLowerCase("ru-RU")));
   const phoneDigits=form.phone.replace(/\D/g,"");
   const profileDigits=(profile?.phone||"").replace(/\D/g,"");
@@ -1495,8 +1507,10 @@ function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];to
   const deliveryOk=delivery==="courier"
     ? Boolean(form.city.trim()&&form.address.trim().length>3)
     : delivery==="store"?Boolean(form.city.trim()&&storePoint):Boolean(form.city.trim()&&pickupPoint);
-  const onlineDiscount=payment==="online"?Math.round(total*.03):0;
-  const shipping=delivery==="courier"?(total>=15000?0:300):0;
+  const paymentConfig=paymentMethods.find(item=>item.id===payment);
+  const deliveryConfig=deliveryMethods.find(item=>item.id===delivery);
+  const onlineDiscount=paymentConfig?.discountPercent?Math.round(total*(Number(paymentConfig.discountPercent)/100)):0;
+  const shipping=deliveryConfig?(Number(deliveryConfig.freeFromRub)>0&&total>=Number(deliveryConfig.freeFromRub)?0:Number(deliveryConfig.baseFeeRub)||0):0;
   const payable=Math.max(0,total-onlineDiscount+shipping);
   const canSubmit=contactOk&&deliveryOk&&agreed;
   const selectedPoint=delivery==="store"?storePoint:pickupPoint;
@@ -1554,9 +1568,7 @@ function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];to
         <section className="checkout-v69-section" aria-labelledby="v69-delivery-title">
           <h2 id="v69-delivery-title">Способ получения</h2>
           <div className="checkout-v69-delivery-tabs" role="radiogroup" aria-label="Способ получения">
-            <button type="button" className={delivery==="courier"?"active":""} onClick={()=>chooseDelivery("courier")}><span>▱</span><b>Курьером</b><small>2–3 дня · {shipping===0?"0 ₽":"300 ₽"}</small></button>
-            <button type="button" className={delivery==="store"?"active":""} onClick={()=>chooseDelivery("store")}><span>⌂</span><b>Самовывоз</b><small>2–3 дня · 0 ₽</small></button>
-            <button type="button" className={delivery==="pvz"?"active":""} onClick={()=>chooseDelivery("pvz")}><span>▦</span><b>ПВЗ</b><small>2–3 дня · 0 ₽</small></button>
+            {deliveryMethods.map(method=><button key={method.id} type="button" className={delivery===method.id?"active":""} onClick={()=>chooseDelivery(method.id as DeliveryMethod)}><span>{method.id==="courier"?"▱":method.id==="store"?"⌂":"▦"}</span><b>{method.name}</b><small>{method.minDays}–{method.maxDays} дня · {(method.id===delivery&&shipping===0)||Number(method.baseFeeRub)===0?"0 ₽":fmt(Number(method.baseFeeRub))}</small></button>)}
           </div>
 
           <div className="checkout-v69-delivery-body">
@@ -1577,7 +1589,7 @@ function Checkout({cart,total,profile,close,editCart,submit}:{cart:CartItem[];to
 
         <section className="checkout-v69-section" aria-labelledby="v69-payment-title">
           <h2 id="v69-payment-title">Способ оплаты</h2>
-          <div className="checkout-v69-payments"><button type="button" className={payment==="online"?"active":""} onClick={()=>setPayment("online")}><i/><span><b>Онлайн — картой / СБП <mark>−3%</mark></b><small>−3% при оплате сейчас</small></span></button><button type="button" className={payment==="upon"?"active":""} onClick={()=>setPayment("upon")}><i/><span><b>При получении</b><small>Картой или наличными</small></span></button></div>
+          <div className="checkout-v69-payments">{paymentMethods.map(method=><button key={method.id} type="button" className={payment===method.id?"active":""} onClick={()=>setPayment(method.id as PaymentMethod)}><i/><span><b>{method.name}{Number(method.discountPercent)>0&&<mark>−{method.discountPercent}%</mark>}</b><small>{Number(method.discountPercent)>0?`−${method.discountPercent}% при оплате сейчас`:(method.instruments as readonly string[]).includes("cash")?"Картой или наличными":"Оплата при оформлении"}</small></span></button>)}</div>
         </section>
 
         <section className="checkout-v69-section checkout-v69-order" aria-labelledby="v69-order-title">
@@ -1600,4 +1612,4 @@ function CheckoutMap({points,selected,choose,mode}:{points:string[];selected:str
   return <div className="checkout-map"><div className="map-canvas" aria-label="Карта выбора адреса">{points.map((point,index)=><button type="button" key={point} className={`map-pin pin-${index} ${selected===point?"active":""}`} onClick={()=>choose(point)} aria-label={`Выбрать ${point}`}><Icon name="pin"/><span>{index+1}</span></button>)}<i className="river"/><span className="map-label moscow">МОСКВА</span><span className="map-label center">САДОВОЕ КОЛЬЦО</span></div><div className="map-points"><p>{mode==="pickup"?"ВЫБЕРИТЕ БУТИК":"УТОЧНИТЕ ТОЧКУ НА КАРТЕ"}</p>{points.map((point,index)=><button type="button" key={point} className={selected===point?"active":""} onClick={()=>choose(point)}><b>{index+1}</b><span>{point}<small>{mode==="pickup"?"Сегодня до 22:00":"Курьерская доставка"}</small></span></button>)}</div></div>;
 }
 
-function Footer({ go, notice }: { go:(v:View)=>void; notice:(s:string)=>void }) { return <footer><div className="footer-brand"><div className="logo">КУЛЬТУРА ДОМА</div><p>Подпишитесь на письма о новых коллекциях</p><div><input placeholder="Ваш email"/><button onClick={()=>notice("Спасибо за подписку")}>→</button></div></div><div><p>ПОКУПАТЕЛЯМ</p><button onClick={()=>go("catalog")}>Каталог</button><button onClick={()=>alert("Доставка по России от 1 дня")}>Доставка и оплата</button><button onClick={()=>alert("Возврат в течение 14 дней")}>Возврат</button></div><div><p>О БРЕНДЕ</p><button onClick={()=>go("collections")}>Коллекции</button><button onClick={()=>alert("Русский бренд предметов для дома")}>Наша история</button><button onClick={()=>alert("Москва · Санкт-Петербург · Казань")}>Бутики</button></div><div><p>СВЯЗАТЬСЯ</p><a href="tel:+78005553535">8 800 555-35-35</a><a href="mailto:hello@kultura-doma.ru">hello@kultura-doma.ru</a></div><small>© 2026 Культура дома &nbsp; · &nbsp; Политика конфиденциальности</small></footer> }
+function Footer({ go, notice }: { go:(v:View)=>void; notice:(s:string)=>void }) { return <footer><div className="footer-brand"><div className="logo">КУЛЬТУРА ДОМА</div><p>Подпишитесь на письма о новых коллекциях</p><div><input placeholder="Ваш email"/><button onClick={()=>notice("Спасибо за подписку")}>→</button></div></div><div><p>ПОКУПАТЕЛЯМ</p><button onClick={()=>go("catalog")}>Каталог</button><button onClick={()=>alert(`Доставка по России от ${SITE_DB_POLICIES.delivery_min_days??"1"} дня`)}>Доставка и оплата</button><button onClick={()=>alert(`Возврат в течение ${SITE_DB_POLICIES.return_period_days??"14"} дней`)}>Возврат</button></div><div><p>О БРЕНДЕ</p><button onClick={()=>go("collections")}>Коллекции</button><button onClick={()=>alert("Русский бренд предметов для дома")}>Наша история</button><button onClick={()=>alert(Array.from(new Set(SITE_DB_STORES.map(store=>store.city))).join(" · ")||"Москва · Санкт-Петербург · Казань")}>Бутики</button></div><div><p>СВЯЗАТЬСЯ</p><a href={`tel:${SITE_DB_CONTACTS.support_phone??"+78005553535"}`}>8 800 555-35-35</a><a href={`mailto:${SITE_DB_CONTACTS.support_email??"hello@kultura-doma.ru"}`}>{SITE_DB_CONTACTS.support_email??"hello@kultura-doma.ru"}</a></div><small>© 2026 Культура дома &nbsp; · &nbsp; Политика конфиденциальности</small></footer> }
