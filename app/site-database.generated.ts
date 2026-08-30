@@ -108,5 +108,12 @@ async function loadSiteDatabaseCatalogRowsUncached(base=""):Promise<SiteDatabase
 const SITE_DB_CATALOG_CACHE=new Map<string,Promise<SiteDatabaseRow[]>>();
 export function loadSiteDatabaseCatalogRows(base=""):Promise<SiteDatabaseRow[]> {
   const key=base||"/";const cached=SITE_DB_CATALOG_CACHE.get(key);if(cached)return cached;
-  const task=loadSiteDatabaseCatalogRowsUncached(base);SITE_DB_CATALOG_CACHE.set(key,task);task.catch(()=>SITE_DB_CATALOG_CACHE.delete(key));return task;
+  const task=(async()=>{
+    try{
+      const response=await fetch(`${base}/data/catalog_master.csv`,{cache:"force-cache"});
+      if(response.ok){const projected=parseSiteDbCsv(await response.text());if(projected.length)return projected}
+    }catch{}
+    return loadSiteDatabaseCatalogRowsUncached(base);
+  })();
+  SITE_DB_CATALOG_CACHE.set(key,task);task.catch(()=>SITE_DB_CATALOG_CACHE.delete(key));return task;
 }

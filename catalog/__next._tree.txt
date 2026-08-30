@@ -4,7 +4,5 @@
 :HL["/kd/_next/static/chunks/0dzi0l1geow17.css","style"]
 :HL["/kd/_next/static/chunks/0kcqvref5w25c.css","style"]
 :HL["/kd/_next/static/chunks/0~5xob8px~nnm.css","style"]
-:HL["/kd/data/database/01_products.csv","fetch",{"crossOrigin":"anonymous"}]
-:HL["/kd/data/database/02_product_variants.csv","fetch",{"crossOrigin":"anonymous"}]
-:HL["/kd/data/database/03_product_images.csv","fetch",{"crossOrigin":"anonymous"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"catalog","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"giiz8v4-B7WvRz93Sr3KP"}
+:HL["/kd/data/catalog_master.csv","fetch",{"crossOrigin":"anonymous"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"catalog","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"C8LERpzRyYtU1eGtQIJde"}
