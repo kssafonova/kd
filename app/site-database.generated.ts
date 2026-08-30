@@ -42,11 +42,15 @@ const parseSiteDbCsv=(source:string):SiteDatabaseRow[]=>{
   return rows.map(values=>Object.fromEntries(headers.map((key,index)=>[key,(values[index]??"").trim()])) as SiteDatabaseRow);
 };
 
-const fetchSiteDbTable=async(base:string,fileName:string)=>{
-  try{const response=await fetch(`${base}/data/database/${fileName}`,{cache:"no-store"});if(!response.ok)return [] as SiteDatabaseRow[];return parseSiteDbCsv(await response.text())}catch{return [] as SiteDatabaseRow[]}
+const SITE_DB_TABLE_CACHE=new Map<string,Promise<SiteDatabaseRow[]>>();
+const fetchSiteDbTable=(base:string,fileName:string)=>{
+  const key=`${base}|${fileName}`;
+  const cached=SITE_DB_TABLE_CACHE.get(key);if(cached)return cached;
+  const task=(async()=>{try{const response=await fetch(`${base}/data/database/${fileName}`,{cache:"force-cache"});if(!response.ok)return [] as SiteDatabaseRow[];return parseSiteDbCsv(await response.text())}catch{return [] as SiteDatabaseRow[]}})();
+  SITE_DB_TABLE_CACHE.set(key,task);task.catch(()=>SITE_DB_TABLE_CACHE.delete(key));return task;
 };
 
-export async function loadSiteDatabaseCatalogRows(base=""):Promise<SiteDatabaseRow[]> {
+async function loadSiteDatabaseCatalogRowsUncached(base=""):Promise<SiteDatabaseRow[]> {
   const [products,variants,images,solutions,links]=await Promise.all([
     fetchSiteDbTable(base,"01_products.csv"),
     fetchSiteDbTable(base,"02_product_variants.csv"),
@@ -98,4 +102,11 @@ export async function loadSiteDatabaseCatalogRows(base=""):Promise<SiteDatabaseR
       "Описание готового решения":descriptions.get(variant.product_id)||"",
     };
   });
+}
+
+
+const SITE_DB_CATALOG_CACHE=new Map<string,Promise<SiteDatabaseRow[]>>();
+export function loadSiteDatabaseCatalogRows(base=""):Promise<SiteDatabaseRow[]> {
+  const key=base||"/";const cached=SITE_DB_CATALOG_CACHE.get(key);if(cached)return cached;
+  const task=loadSiteDatabaseCatalogRowsUncached(base);SITE_DB_CATALOG_CACHE.set(key,task);task.catch(()=>SITE_DB_CATALOG_CACHE.delete(key));return task;
 }

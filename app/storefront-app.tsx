@@ -420,7 +420,7 @@ export default function Home({initialView="home",initialCatalogCategory="Все 
 
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
-  const go = (next: View) => { setView(next); setMenu(false); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const go = (next: View) => { if(next==="home"){const base=process.env.NEXT_PUBLIC_BASE_PATH??"";window.location.href=`${base}/`;return;} setView(next); setMenu(false); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const openCatalog=(category="Все товары")=>{setCatalogCategory(category);go("catalog");const base=process.env.NEXT_PUBLIC_BASE_PATH??"";window.history.pushState({},"",`${base}/catalog/?category=${encodeURIComponent(category)}`)};
   const add = (product: Product, chosenSize = size, quantity = product.quantity ?? 1, openDrawer = true) => {
     const selectedVariant = product.colorVariants?.find((variant) => variant.name === product.selectedColor) ?? product.colorVariants?.[0];

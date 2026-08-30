@@ -1,9 +1,9 @@
 1:"$Sreact.fragment"
-2:I[47257,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0v8vw8ir~b07v.js"],"ClientPageRoot"]
-3:I[31250,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0v8vw8ir~b07v.js","/kd/_next/static/chunks/0jes8o~0qsu4l.js","/kd/_next/static/chunks/0zbg5cwkvg5tz.js"],"default"]
-6:I[97367,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/0v8vw8ir~b07v.js"],"OutletBoundary"]
-7:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/kd/_next/static/chunks/0jes8o~0qsu4l.js","async":true}],["$","script","script-1",{"src":"/kd/_next/static/chunks/0zbg5cwkvg5tz.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"SU73AxjPuuSYsT85vPOpH"}
-4:{}
-5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
-8:null
+2:I[95670,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js","/kd/_next/static/chunks/14-r8yq6oiabs.js","/kd/_next/static/chunks/0r~8aoh8utj-5.js","/kd/_next/static/chunks/0hzkglvixbw6_.js"],"default"]
+3:I[97367,["/kd/_next/static/chunks/01xlw8hd842-c.js","/kd/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+:HL["/kd/data/database/01_products.csv","fetch",{"crossOrigin":"anonymous"}]
+:HL["/kd/data/database/02_product_variants.csv","fetch",{"crossOrigin":"anonymous"}]
+:HL["/kd/data/database/03_product_images.csv","fetch",{"crossOrigin":"anonymous"}]
+0:{"rsc":["$","$1","c",{"children":[[["$","link",null,{"rel":"preload","as":"fetch","href":"/kd/data/database/01_products.csv","crossOrigin":"anonymous"}],["$","link",null,{"rel":"preload","as":"fetch","href":"/kd/data/database/02_product_variants.csv","crossOrigin":"anonymous"}],["$","link",null,{"rel":"preload","as":"fetch","href":"/kd/data/database/03_product_images.csv","crossOrigin":"anonymous"}],["$","$L2",null,{}]],[["$","script","script-0",{"src":"/kd/_next/static/chunks/0r~8aoh8utj-5.js","async":true}],["$","script","script-1",{"src":"/kd/_next/static/chunks/0hzkglvixbw6_.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"giiz8v4-B7WvRz93Sr3KP"}
+5:null
