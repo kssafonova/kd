@@ -66,6 +66,7 @@ import "./catalog-mobile-premium-v128.css";
 import "./catalog-mobile-human-eye-v131.css";
 import "./catalog-togas-v132.css";
 import "./home-human-eye-v133.css";
+import "./home-human-eye-v133-ready.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
