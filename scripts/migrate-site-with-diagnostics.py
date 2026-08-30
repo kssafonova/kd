@@ -14,6 +14,7 @@ scripts = [
     root / "scripts" / "remove-catalog-products-v121.py",
     root / "scripts" / "apply-catalog-preview-colors-v122.py",
     root / "scripts" / "verify-catalog-master-v107.py",
+    root / "scripts" / "export-site-database-v126.py",
     root / "scripts" / "apply-pdp-size-quantity-v110.py",
     root / "scripts" / "apply-home-redesign-v113.py",
     root / "scripts" / "apply-home-zarahome-v114.py",
