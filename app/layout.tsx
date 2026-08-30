@@ -61,12 +61,14 @@ import "./checkout-bonus-v84.css";
 import "./checkout-kultura-v85.css";
 import "./truth-commerce.css";
 import "./catalog-human-eye-v127.css";
+import "./catalog-loading-state-v127.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
 import { HomeZaraTogasV86Enhancer } from "./home-zara-togas-v86-enhancer";
 import { HomeReadySolutionsZaraV126Enhancer } from "./home-ready-solutions-zara-v126-enhancer";
 import { TruthCommerceEnhancer } from "./truth-commerce-enhancer";
+import { CatalogLoadingStateV127 } from "./catalog-loading-state-v127";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
@@ -83,6 +85,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <HomeZaraTogasV86Enhancer />
         <HomeReadySolutionsZaraV126Enhancer />
         <TruthCommerceEnhancer />
+        <CatalogLoadingStateV127 />
         {children}
       </body>
     </html>
