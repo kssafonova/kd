@@ -1,0 +1,61 @@
+name: Retry final catalog master v109
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retry-final-catalog-master-v109.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install final master without workflow mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import base64, gzip, json, re
+
+          root = Path.cwd()
+          source = (root / '.github/workflows/import-final-catalog-master-v108.yml').read_text(encoding='utf-8')
+          match = re.search(r"CATALOG_BUNDLE_GZ_B64:\s*'([^']+)'", source)
+          if not match:
+              raise SystemExit('Embedded final catalog bundle not found')
+          bundle = json.loads(gzip.decompress(base64.b64decode(match.group(1))).decode('utf-8'))
+
+          for relative, content in bundle['files'].items():
+              if relative.startswith('.github/workflows/'):
+                  continue
+              path = root / relative
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_text(content, encoding='utf-8')
+
+          for relative in bundle['delete']:
+              if relative.startswith('.github/workflows/'):
+                  continue
+              path = root / relative
+              if path.exists():
+                  path.unlink()
+          PY
+
+          python scripts/apply-catalog-master-v107.py
+          python scripts/verify-catalog-master-v107.py
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- app public/data scripts
+          if git diff --cached --quiet; then
+            echo "Final catalog data already current"
+            exit 0
+          fi
+          git commit -m "Replace catalog data with final catalog_master"
+          git pull --rebase --autostash origin main
+          git push origin HEAD:main
