@@ -516,40 +516,93 @@ function HomeBoutiques(){
 
 // EDITORIAL_COMMERCE_V81
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
-  // HOME_STOREFRONT_V81
+  // HOME_REDESIGN_V113 — supplied homepage ZIP, 47 source photographs represented.
+  void onProduct; void favorite; void favorites; void onAdd; void openEditorial;
+  const readyBase=process.env.NEXT_PUBLIC_BASE_PATH??"";
   const heroSlides=[
-    {eyebrow:"НОВАЯ ИСТОРИЯ",title:"Дом как единая композиция",text:"Текстиль, сервировка и декор в современном русском прочтении.",image:"/assets/images/caps_luna_postel2.png",mobile:"/assets/images/caps_luna_postel.png",cta:"Смотреть коллекции",action:()=>go("collections")},
-    {eyebrow:"ГОТОВЫЕ РЕШЕНИЯ",title:"Соберите пространство целиком",text:"Выберите готовую основу и измените только нужные предметы.",image:"/assets/images/green.jpeg",mobile:"/assets/images/green.jpeg",cta:"Выбрать решение",action:()=>{window.location.href=`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions/`}},
-    {eyebrow:"СЕРВИРОВКА",title:"Предметы для ежедневных ритуалов",text:"Фарфор, стекло и текстиль, которые работают вместе.",image:"/assets/images/time-table.png",mobile:"/assets/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
+    {eyebrow:"НОВИНКИ",title:"Новые истории дома",text:"Предметы, которые собирают пространство в цельный образ — от спальни до сервировки.",cta:"Смотреть новинки",action:()=>openCatalog()},
+    {eyebrow:"СПАЛЬНЯ",title:"Тактильный покой",text:"Сатин, мягкий свет и спокойные оттенки для пространства, в котором хочется остаться.",cta:"Перейти в спальню",action:()=>openCatalog("Постельное белье")},
+    {eyebrow:"СТОЛОВАЯ",title:"Сервировка как ритуал",text:"Фарфор, текстиль и детали стола в современной культуре русского дома.",cta:"Смотреть сервировку",action:()=>openCatalog("Посуда и сервировка")},
   ];
   const active=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[active];
+  const heroPosition=`${active*50}% 50%`;
+  const atlasStyle=(index:number)=>({
+    backgroundImage:`url("${assetUrl("/assets/images/home113-editorial-atlas.svg")}")`,
+    backgroundSize:"600% 700%",
+    backgroundPosition:`${(index%6)*20}% ${(Math.floor(index/6)*100)/6}%`,
+  });
   const categories=[
-    {title:"Постельное бельё",image:"/assets/images/blue-bedroom.png",category:"Постельное бельё"},
-    {title:"Посуда и сервировка",image:"/assets/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {title:"Пледы и подушки",image:"/assets/images/beige-bedroom.png",category:"Пледы и подушки"},
-    {title:"Декор для дома",image:"/assets/images/caps_led_podyshka.png",category:"Декор для дома"},
-    {title:"Свечи и диффузоры",image:"/assets/images/caps_luna_serviz.png",category:"Свечи и диффузоры"},
-    {title:"Для ванной",image:"/assets/images/russian-bedroom.png",category:"Для ванной"},
+    {title:"Спальня",note:"Постельное бельё",index:0,action:()=>openCatalog("Постельное белье")},
+    {title:"Посуда и сервировка",note:"Кухня и столовая",index:1,action:()=>openCatalog("Посуда и сервировка")},
+    {title:"Столовый текстиль",note:"Скатерти, салфетки, дорожки",index:2,action:()=>openCatalog("Столовый текстиль")},
+    {title:"Декор",note:"Предметы для дома",index:3,action:()=>openCatalog("Декор для дома")},
+    {title:"Текстиль для дома",note:"Пледы и подушки",index:4,action:()=>openCatalog("Пледы и подушки")},
+    {title:"Ванная",note:"Для ежедневных ритуалов",index:5,action:()=>openCatalog()},
+    {title:"Outlet",note:"Особые предложения",index:6,action:()=>openCatalog()},
   ];
-  const collectionStories=editorials.slice(0,5);
-  const readyBase=process.env.NEXT_PUBLIC_BASE_PATH??"";
+  const capsules=[
+    {title:"Нити",meta:"КАПСУЛА · ТЕКСТИЛЬ",copy:"Спокойная графика, прохладные оттенки и выразительная фактура.",indices:[7,8]},
+    {title:"Феникс",meta:"КАПСУЛА · ДЕКОР",copy:"Тёплая палитра, огонь и золотистые детали для камерного интерьера.",indices:[9,10,11]},
+    {title:"Лунная сказка",meta:"КАПСУЛА · СПАЛЬНЯ И СЕРВИРОВКА",copy:"Ночной синий, молочные оттенки и тонкие акценты объединяют дом в одну историю.",indices:[12,13,14,15,16,17]},
+    {title:"Ледяные узоры",meta:"КАПСУЛА · ЗИМНЯЯ ИСТОРИЯ",copy:"Свет, хрустальная чистота и морозная графика в текстиле и фарфоре.",indices:[18,19,20,21]},
+    {title:"Тайна",meta:"КАПСУЛА · ТЁМНАЯ ЭСТЕТИКА",copy:"Глубокие оттенки и тактильные материалы для выразительной, спокойной атмосферы.",indices:[22,23,24]},
+  ];
   const solutions=[
-    {title:"Зеленый салон",space:"СТОЛОВАЯ",image:"/assets/images/green.jpeg",href:`${readyBase}/ready-solutions/table-1/`},
-    {title:"Красные линии",space:"СТОЛОВАЯ",image:"/assets/images/redline1.jpeg",href:`${readyBase}/ready-solutions/table-2/`},
-    {title:"Зимняя сказка",space:"СПАЛЬНЯ",image:"/assets/images/caps_led.png",href:`${readyBase}/ready-solutions/table-7/`},
-    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/assets/images/bluegold2.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
+    {title:"Зелёный салон",meta:"ГОТОВОЕ РЕШЕНИЕ · СТОЛОВАЯ",copy:"Свежая сервировка с зелёными акцентами и светлым текстилем.",indices:[25,26],href:`${readyBase}/ready-solutions/green-salon/`},
+    {title:"Красные линии",meta:"ГОТОВОЕ РЕШЕНИЕ · СТОЛОВАЯ",copy:"Графичная композиция, построенная на красных акцентах и белом фарфоре.",indices:[27,28],href:`${readyBase}/ready-solutions/red-lines/`},
+    {title:"Зимняя сказка",meta:"ГОТОВОЕ РЕШЕНИЕ · ДОМ",copy:"Сценарий для зимнего дома: спальня, стол и декор в единой холодной палитре.",indices:[29,30,31,32,33,34],href:`${readyBase}/ready-solutions/winter-fairy-tale/`},
+    {title:"Пламя морских глубин",meta:"ГОТОВОЕ РЕШЕНИЕ · СТОЛОВАЯ",copy:"Глубокий синий и тёплый свет — драматичная композиция для вечерней сервировки.",indices:[35,36,37],href:`${readyBase}/ready-solutions/`},
+    {title:"Тёплый брутализм",meta:"ГОТОВОЕ РЕШЕНИЕ · ИНТЕРЬЕР",copy:"Кожа, дерево и сдержанные фактуры в собранном мужском интерьере.",indices:[38,39,40],href:`${readyBase}/ready-solutions/warm-brutalism/`},
   ];
-  return <main className="home-v81">
-    <nav className="home81-nav" aria-label="Категории">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}<button type="button" onClick={()=>go("collections")}>Капсулы</button><a href={`${readyBase}/ready-solutions/`}>Готовые решения</a></nav>
-    <section className="home81-hero"><picture><source media="(max-width:700px)" srcSet={assetUrl(hero.mobile)}/><img src={assetUrl(hero.image)} alt={hero.title}/></picture><div><small>{hero.eyebrow}</small><h1>{hero.title}</h1><p>{hero.text}</p><button type="button" onClick={hero.action}>{hero.cta}</button></div><nav>{heroSlides.map((item,index)=><button type="button" aria-label={item.title} className={index===active?"is-active":""} key={item.title} onClick={()=>setSlide(index)}/>)}</nav></section>
-    <section className="home81-section home81-categories"><header><small>КАТАЛОГ</small><h2>Для каждой зоны дома</h2><p>Начните с категории или соберите пространство целиком.</p></header><div>{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}><span><img src={assetUrl(item.image)} alt={item.title}/></span><strong>{item.title}</strong><small>Смотреть</small></button>)}</div></section>
-    <section className="home81-collections"><div className="home81-collections-hero"><img src={assetUrl(collectionStories[0]?.images[0]||"/assets/images/caps_led.png")} alt="Коллекции Культура Дома"/><div><small>КОЛЛЕКЦИИ</small><h2>Истории, которые связывают предметы</h2><p>Цвет, орнамент и материал продолжаются от сервировки до текстиля и декора.</p><button type="button" onClick={()=>go("collections")}>Все коллекции</button></div></div><div className="home81-collection-rail">{collectionStories.map(item=><button type="button" key={item.id} onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[0])} alt={item.name}/><span>{item.name}</span></button>)}</div></section>
-    <section className="home81-section home81-solutions"><header><small>ГОТОВЫЕ РЕШЕНИЯ</small><h2>Выберите настроение — состав можно изменить</h2><p>Готовая композиция становится отправной точкой: количество, коллекции и предметы настраиваются внутри.</p><a href={`${readyBase}/ready-solutions/`}>Все решения</a></header><div>{solutions.map(item=><a href={item.href} key={item.title}><span><img src={assetUrl(item.image)} alt={item.title}/></span><small>{item.space}</small><strong>{item.title}</strong><em>Настроить</em></a>)}</div></section>
+
+  return <main className="home-v113">
+    <nav className="home113-nav" aria-label="Навигация по главной">
+      <button type="button" onClick={()=>openCatalog()}>Новинки</button>
+      <button type="button" onClick={()=>openCatalog("Постельное белье")}>Спальня</button>
+      <button type="button" onClick={()=>openCatalog("Посуда и сервировка")}>Кухня и столовая</button>
+      <button type="button" onClick={()=>openCatalog("Декор для дома")}>Декор</button>
+      <button type="button" onClick={()=>go("collections")}>Капсулы</button>
+      <a href={`${readyBase}/ready-solutions/`}>Готовые решения</a>
+    </nav>
+
+    <section className="home113-hero" aria-label="Главные истории">
+      <div className="home113-hero-art home113-hero-art-desktop" aria-hidden="true" style={{backgroundImage:`url("${assetUrl("/assets/images/home113-hero-desktop.svg")}")`,backgroundPosition:heroPosition}}/>
+      <div className="home113-hero-art home113-hero-art-mobile" aria-hidden="true" style={{backgroundImage:`url("${assetUrl("/assets/images/home113-hero-mobile.svg")}")`,backgroundPosition:heroPosition}}/>
+      <div className="home113-hero-shade"/>
+      <div className="home113-hero-copy">
+        <small>{hero.eyebrow}</small>
+        <h1>{hero.title}</h1>
+        <p>{hero.text}</p>
+        <button type="button" onClick={hero.action}>{hero.cta}<span aria-hidden="true">↗</span></button>
+      </div>
+      <div className="home113-hero-controls" aria-label="Выбор баннера">{heroSlides.map((item,index)=><button type="button" key={item.title} className={index===active?"is-active":""} onClick={()=>setSlide(index)}><span>{String(index+1).padStart(2,"0")}</span><b>{item.eyebrow}</b></button>)}</div>
+    </section>
+
+    <section className="home113-section home113-category-section">
+      <header className="home113-section-head"><div><small>КАТАЛОГ</small><h2>Пространства дома</h2></div><p>Начните с комнаты или категории — дальше предметы складываются в общую композицию.</p></header>
+      <div className="home113-category-rail">{categories.map(item=><button type="button" key={item.title} className="home113-category-card" onClick={item.action}><span className="home113-atlas-card" role="img" aria-label={item.title} style={atlasStyle(item.index)}/><strong>{item.title}</strong><small>{item.note}</small></button>)}</div>
+    </section>
+
+    <section className="home113-capsules">
+      <header className="home113-editorial-head"><small>КАПСУЛЫ</small><h2>Истории в деталях</h2><p>Каждая капсула соединяет текстиль, сервировку и декор через цвет, материал и настроение.</p><button type="button" onClick={()=>go("collections")}>Смотреть все капсулы</button></header>
+      <div className="home113-story-list">{capsules.map((item,storyIndex)=><article className="home113-story" key={item.title}>
+        <div className="home113-story-copy"><small>{item.meta}</small><h3>{item.title}</h3><p>{item.copy}</p><button type="button" onClick={()=>go("collections")}>Открыть капсулу <span aria-hidden="true">↗</span></button></div>
+        <div className="home113-photo-rail" aria-label={`Фотографии капсулы ${item.title}`}>{item.indices.map((atlasIndex,imageIndex)=><button type="button" key={atlasIndex} className="home113-photo-card" onClick={()=>go("collections")} aria-label={`${item.title}, фото ${imageIndex+1}`}><span role="img" aria-label={`${item.title}, фото ${imageIndex+1}`} style={atlasStyle(atlasIndex)}/></button>)}</div>
+      </article>)}</div>
+    </section>
+
+    <section className="home113-solutions">
+      <header className="home113-editorial-head home113-editorial-head-light"><small>ГОТОВЫЕ РЕШЕНИЯ</small><h2>Интерьер уже собран</h2><p>Выберите готовую композицию как отправную точку и настройте предметы под своё пространство.</p><a href={`${readyBase}/ready-solutions/`}>Все готовые решения</a></header>
+      <div className="home113-solution-list">{solutions.map(item=><article className="home113-solution" key={item.title}>
+        <div className="home113-solution-copy"><small>{item.meta}</small><h3>{item.title}</h3><p>{item.copy}</p><a href={item.href}>Собрать решение <span aria-hidden="true">↗</span></a></div>
+        <div className="home113-photo-rail home113-solution-rail" aria-label={`Фотографии решения ${item.title}`}>{item.indices.map((atlasIndex,imageIndex)=><a href={item.href} key={atlasIndex} className="home113-photo-card" aria-label={`${item.title}, фото ${imageIndex+1}`}><span role="img" aria-label={`${item.title}, фото ${imageIndex+1}`} style={atlasStyle(atlasIndex)}/></a>)}</div>
+      </article>)}</div>
+    </section>
+
     <HomeBoutiques/>
   </main>;
 }
-
 
 function CatalogView({ initialCategory, onFilter:_onFilter, onAdd, onProduct, favorite, favorites }: { initialCategory:string; onFilter:()=>void; onAdd:(p:Product)=>void; onProduct:(p:Product)=>void; favorite:(n:number)=>void; favorites:number[] }) {
   const [sort,setSort]=useState("По умолчанию");
