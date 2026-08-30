@@ -10,6 +10,7 @@ scripts = [
     root / "scripts" / "apply-priority-products-v120.py",
     root / "scripts" / "apply-spring-product-images-v118.py",
     root / "scripts" / "apply-diyaf-product-images-v119.py",
+    root / "scripts" / "apply-product-images-v120.py",
     root / "scripts" / "verify-catalog-master-v107.py",
     root / "scripts" / "apply-pdp-size-quantity-v110.py",
     root / "scripts" / "apply-home-redesign-v113.py",
