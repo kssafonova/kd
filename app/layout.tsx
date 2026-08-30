@@ -68,6 +68,7 @@ import "./catalog-togas-v132.css";
 import "./home-human-eye-v133.css";
 import "./home-human-eye-v133-ready.css";
 import "./home-premium-v134.css";
+import "./home-premium-v135.css";
 import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
@@ -76,6 +77,7 @@ import { TruthCommerceEnhancer } from "./truth-commerce-enhancer";
 import { CatalogLoadingStateV127 } from "./catalog-loading-state-v127";
 import { CatalogTogasV132Enhancer } from "./catalog-togas-v132-enhancer";
 import { HomePremiumV134Enhancer } from "./home-premium-v134-enhancer";
+import { HomePremiumV135Enhancer } from "./home-premium-v135-enhancer";
 
 export const metadata: Metadata = {
   title: "Культура дома — премиальные товары для дома",
@@ -94,6 +96,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CatalogLoadingStateV127 />
         <CatalogTogasV132Enhancer />
         <HomePremiumV134Enhancer />
+        <HomePremiumV135Enhancer />
         {children}
       </body>
     </html>
