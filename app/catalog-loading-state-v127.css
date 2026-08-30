@@ -1,0 +1,10 @@
+.view-catalog .catalog-data-loading-v127 .title-line>span{font-size:0!important}
+.view-catalog .catalog-data-loading-v127 .title-line>span::after{content:"Загрузка…";color:#888a86;font-size:10px;line-height:1;letter-spacing:.07em}
+.view-catalog .catalog-data-loading-v127 .catalog-empty-v123{min-height:42vh}
+.view-catalog .catalog-data-loading-v127 .catalog-empty-v123 p{font-size:0!important;color:#777975}
+.view-catalog .catalog-data-loading-v127 .catalog-empty-v123 p::after{content:"Загружаем каталог";font:400 16px/1.4 var(--serif,'Tenor Sans',Arial,sans-serif);letter-spacing:.01em}
+.view-catalog .catalog-data-loading-v127 .catalog-empty-v123 button{display:none}
+.view-catalog .catalog-data-loading-v127 .catalog-empty-v123::after{content:"";display:block;width:36px;height:1px;background:#b9b7b1;animation:catalogLoadingV127 1.1s ease-in-out infinite}
+@keyframes catalogLoadingV127{0%,100%{transform:scaleX(.35);opacity:.45}50%{transform:scaleX(1);opacity:1}}
+@media(max-width:520px){.view-catalog .catalog-data-loading-v127 .title-line>span::after{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.view-catalog .catalog-data-loading-v127 .catalog-empty-v123::after{animation:none;width:24px}}
