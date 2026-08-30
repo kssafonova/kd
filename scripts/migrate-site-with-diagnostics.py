@@ -12,6 +12,7 @@ scripts = [
     root / "scripts" / "apply-home-redesign-v113.py",
     root / "scripts" / "apply-home-zarahome-v114.py",
     root / "scripts" / "apply-home-hero-images-v115.py",
+    root / "scripts" / "apply-home-category-images-v116.py",
 ]
 
 logs = []
