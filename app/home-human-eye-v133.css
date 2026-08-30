@@ -1,0 +1,694 @@
+/* HOME HUMAN EYE V133
+   Kultura Doma homepage refinement based on:
+   - clear hierarchy / emergence;
+   - proximity and grouping;
+   - progressive disclosure;
+   - merchandise-first ecommerce rhythm;
+   - one visual job per section.
+
+   This file is intentionally loaded LAST for the homepage. */
+
+.view-home .home-v113{
+  --home133-ink:#191b19;
+  --home133-muted:#777973;
+  --home133-line:#e2e0da;
+  --home133-paper:#ffffff;
+  --home133-warm:#f4f1eb;
+  --home133-green:#2d4346;
+  width:100%;
+  max-width:none;
+  margin:0;
+  background:var(--home133-paper)!important;
+  color:var(--home133-ink)!important;
+  overflow:hidden;
+}
+
+/* ---------------------------------------------------------
+   PRIMARY HOME NAVIGATION
+   It is navigation, not hero decoration. Keeping it outside the
+   photograph makes the category model legible before editorial content.
+   --------------------------------------------------------- */
+.view-home .home113-nav{
+  position:relative!important;
+  inset:auto!important;
+  z-index:8!important;
+  height:48px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:clamp(22px,3vw,46px)!important;
+  padding:0 clamp(20px,4vw,58px)!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  border-bottom:1px solid var(--home133-line)!important;
+  background:#fff!important;
+  color:var(--home133-ink)!important;
+  white-space:nowrap;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.view-home .home113-nav::-webkit-scrollbar{display:none}
+.view-home .home113-nav button,
+.view-home .home113-nav a{
+  flex:0 0 auto;
+  min-height:48px!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  border:0!important;
+  background:transparent!important;
+  color:var(--home133-ink)!important;
+  font:400 10px/1 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.045em!important;
+  text-transform:none!important;
+  text-decoration:none!important;
+  opacity:1!important;
+}
+@media(hover:hover){
+  .view-home .home113-nav button:hover,
+  .view-home .home113-nav a:hover{opacity:.55!important}
+}
+
+/* ---------------------------------------------------------
+   HERO
+   Photography is level 1; title + CTA are level 2. Supporting copy is
+   present on desktop and removed on mobile where it competes for space.
+   --------------------------------------------------------- */
+.view-home .home113-hero{
+  position:relative!important;
+  height:min(780px,calc(100svh - 157px))!important;
+  min-height:590px!important;
+  max-height:780px!important;
+  background:#d8d4cc!important;
+  color:#fff!important;
+  isolation:isolate;
+}
+.view-home .home113-hero-art{
+  background-size:cover!important;
+  background-position:center!important;
+  transform:none!important;
+}
+.view-home .home113-hero-shade{
+  background:
+    linear-gradient(180deg,rgba(10,12,11,.05) 24%,rgba(10,12,11,.10) 54%,rgba(10,12,11,.53) 100%)!important;
+}
+.view-home .home113-hero-copy{
+  left:clamp(24px,5vw,76px)!important;
+  right:auto!important;
+  bottom:72px!important;
+  width:min(590px,calc(100% - 48px))!important;
+  max-width:590px!important;
+}
+.view-home .home113-hero-copy small{
+  color:rgba(255,255,255,.88)!important;
+  font:400 9px/1.2 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.13em!important;
+}
+.view-home .home113-hero-copy h1{
+  max-width:620px!important;
+  margin:9px 0 13px!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(42px,4.7vw,68px)!important;
+  font-weight:400!important;
+  line-height:1.02!important;
+  letter-spacing:-.018em!important;
+  text-wrap:balance;
+}
+.view-home .home113-hero-copy p{
+  display:block!important;
+  max-width:440px!important;
+  margin:0 0 18px!important;
+  color:rgba(255,255,255,.87)!important;
+  font:400 12px/1.55 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:0!important;
+}
+.view-home .home113-hero-copy button{
+  min-height:36px!important;
+  gap:9px!important;
+  padding:0 0 4px!important;
+  color:#fff!important;
+  font:400 9px/1 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.08em!important;
+  text-transform:none!important;
+}
+.view-home .home113-hero-copy button span{font-size:12px!important}
+.view-home .home113-hero-controls{
+  left:50%!important;
+  right:auto!important;
+  bottom:24px!important;
+  width:108px!important;
+  transform:translateX(-50%)!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:6px!important;
+  border:0!important;
+}
+.view-home .home113-hero-controls button{
+  position:relative!important;
+  height:18px!important;
+  min-height:18px!important;
+  padding:0!important;
+  display:block!important;
+  border:0!important;
+  background:transparent!important;
+  color:transparent!important;
+  font-size:0!important;
+}
+.view-home .home113-hero-controls button::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  top:8px!important;
+  height:1px!important;
+  background:rgba(255,255,255,.46)!important;
+}
+.view-home .home113-hero-controls button.is-active::before{
+  height:2px!important;
+  background:#fff!important;
+}
+.view-home .home113-hero-controls button span,
+.view-home .home113-hero-controls button b{display:none!important}
+
+/* ---------------------------------------------------------
+   SHARED SECTION HEADERS
+   Same function => same visual language.
+   --------------------------------------------------------- */
+.view-home .home113-section-head,
+.view-home .home117-section-head,
+.view-home .home113-editorial-head{
+  width:auto!important;
+  min-height:0!important;
+  margin:0 0 26px!important;
+  padding:0 clamp(18px,4vw,62px)!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:24px!important;
+}
+.view-home .home113-section-head>div,
+.view-home .home117-section-head>div{min-width:0}
+.view-home .home113-section-head small,
+.view-home .home117-section-head small,
+.view-home .home113-editorial-head>small{
+  display:none!important;
+}
+.view-home .home113-section-head h2,
+.view-home .home117-section-head h2,
+.view-home .home113-editorial-head h2{
+  margin:0!important;
+  color:var(--home133-ink)!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(30px,3.2vw,46px)!important;
+  font-weight:400!important;
+  line-height:1.04!important;
+  letter-spacing:-.015em!important;
+  text-transform:none!important;
+}
+.view-home .home113-section-head p,
+.view-home .home113-editorial-head p{display:none!important}
+.view-home .home117-section-head>button,
+.view-home .home113-editorial-head>a,
+.view-home .home113-editorial-head>button{
+  flex:0 0 auto!important;
+  min-height:32px!important;
+  margin:0!important;
+  padding:0 0 3px!important;
+  border:0!important;
+  border-bottom:1px solid currentColor!important;
+  background:transparent!important;
+  color:var(--home133-ink)!important;
+  font:400 9px/1 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.045em!important;
+  text-transform:none!important;
+  text-decoration:none!important;
+  white-space:nowrap;
+}
+
+/* ---------------------------------------------------------
+   CATEGORY DISCOVERY
+   More than one option visible at once = faster recognition and clearer
+   horizontal continuation than one oversized card per viewport.
+   --------------------------------------------------------- */
+.view-home .home113-section.home113-category-section{
+  padding:62px 0 76px!important;
+  background:#fff!important;
+}
+.view-home .home113-category-rail{
+  display:flex!important;
+  gap:10px!important;
+  padding:0 clamp(18px,4vw,62px) 8px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:x proximity!important;
+  scroll-padding-inline:clamp(18px,4vw,62px);
+  scrollbar-width:none!important;
+}
+.view-home .home113-category-rail::-webkit-scrollbar{display:none!important}
+.view-home .home113-category-card{
+  flex:0 0 clamp(205px,17vw,270px)!important;
+  min-width:0!important;
+  padding:0!important;
+  scroll-snap-align:start!important;
+}
+.view-home .home113-category-image{
+  width:100%!important;
+  aspect-ratio:4/5!important;
+  background-color:#efede8!important;
+  transition:transform .45s ease!important;
+}
+@media(hover:hover){.view-home .home113-category-card:hover .home113-category-image{transform:scale(1.012)!important}}
+.view-home .home113-category-card strong{
+  margin:10px 0 0!important;
+  color:var(--home133-ink)!important;
+  font:400 15px/1.25 "Tenor Sans",Georgia,serif!important;
+  letter-spacing:0!important;
+}
+.view-home .home113-category-card small{
+  display:block!important;
+  margin-top:3px!important;
+  color:var(--home133-muted)!important;
+  font:400 9px/1.35 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:0!important;
+}
+
+/* ---------------------------------------------------------
+   NEW PRODUCTS
+   Commerce density follows PLP: images dominate, two decisions can be
+   compared without swiping away the first product.
+   --------------------------------------------------------- */
+.view-home .home117-new-products{
+  padding:68px 0 82px!important;
+  background:#fff!important;
+  color:var(--home133-ink)!important;
+  border-top:1px solid #f0eee9;
+}
+.view-home .home117-product-rail{
+  display:flex!important;
+  gap:12px!important;
+  padding:0 clamp(18px,4vw,62px) 10px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:x proximity!important;
+  scrollbar-width:none!important;
+}
+.view-home .home117-product-rail::-webkit-scrollbar{display:none!important}
+.view-home .home117-product-item{
+  flex:0 0 clamp(220px,21vw,315px)!important;
+  min-width:0!important;
+  scroll-snap-align:start!important;
+}
+.view-home .home117-product-item .product-card{position:relative!important;width:100%!important;margin:0!important}
+.view-home .home117-product-item .product-image{
+  width:100%!important;
+  overflow:hidden!important;
+  background:#f1f0ec!important;
+}
+.view-home .home117-product-item .product-image img{
+  width:100%!important;
+  aspect-ratio:1/1.08!important;
+  object-fit:cover!important;
+  transition:transform .35s ease!important;
+}
+@media(hover:hover){.view-home .home117-product-item .product-image:hover img{transform:scale(1.012)!important}}
+.view-home .home117-product-item .heart{
+  top:9px!important;
+  right:9px!important;
+  width:34px!important;
+  height:34px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:50%!important;
+  background:rgba(255,255,255,.9)!important;
+  color:#202321!important;
+  filter:none!important;
+}
+.view-home .home117-product-item .heart svg{width:20px!important;height:20px!important}
+.view-home .home117-product-item .product-copy{
+  width:calc(100% - 38px)!important;
+  min-height:74px!important;
+  padding:9px 0 0!important;
+  gap:0!important;
+}
+.view-home .home117-product-item .product-copy strong{
+  display:block!important;
+  font:400 13px/1.25 "Tenor Sans",Georgia,serif!important;
+  letter-spacing:0!important;
+}
+.view-home .home117-product-item .product-copy small{
+  min-height:15px;
+  margin-top:3px!important;
+  color:#989994!important;
+  font-size:9px!important;
+  line-height:1.3!important;
+}
+.view-home .home117-product-item .price{
+  margin-top:7px!important;
+  font:400 12px/1 "Tenor Sans",Arial,sans-serif!important;
+}
+.view-home .home117-product-item .quick{
+  right:0!important;
+  bottom:2px!important;
+  width:34px!important;
+  height:34px!important;
+}
+.view-home .home117-product-item .quick>svg{width:26px!important;height:26px!important}
+
+/* ---------------------------------------------------------
+   CAPSULES
+   One larger editorial object is appropriate here; its job is inspiration,
+   not rapid product comparison.
+   --------------------------------------------------------- */
+.view-home .home113-capsules.home117-capsules{
+  padding:78px 0 92px!important;
+  background:var(--home133-warm)!important;
+  color:var(--home133-ink)!important;
+}
+.view-home .home117-capsule-rail{
+  gap:14px!important;
+  padding:0 clamp(18px,4vw,62px) 10px!important;
+}
+.view-home .home117-capsule-card{
+  flex:0 0 clamp(320px,34vw,500px)!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+.view-home .home117-capsule-media{
+  background:#e7e3da!important;
+}
+.view-home .home117-capsule-media>span{
+  aspect-ratio:4/5!important;
+  transition:transform .45s ease!important;
+}
+@media(hover:hover){.view-home .home117-capsule-card:hover .home117-capsule-media>span{transform:scale(1.012)!important}}
+.view-home .home117-capsule-copy{
+  padding:12px 0 0!important;
+}
+.view-home .home117-capsule-copy>small{
+  color:#888984!important;
+  font:400 8px/1.2 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.08em!important;
+}
+.view-home .home117-capsule-copy h3{
+  margin:5px 0 0!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(22px,2vw,30px)!important;
+  font-weight:400!important;
+  line-height:1.05!important;
+}
+.view-home .home117-capsule-link{
+  min-height:30px!important;
+  margin-top:4px!important;
+  padding:0 0 2px!important;
+  border-bottom:1px solid currentColor!important;
+  color:var(--home133-ink)!important;
+  font-size:8px!important;
+  letter-spacing:.04em!important;
+  text-transform:none!important;
+}
+
+/* ---------------------------------------------------------
+   READY SOLUTIONS
+   Homepage previews the concept. It does not reproduce the whole ready-
+   solutions landing page. Each solution becomes one scannable card.
+   --------------------------------------------------------- */
+.view-home .home113-solutions{
+  padding:78px 0 96px!important;
+  background:#fff!important;
+  color:var(--home133-ink)!important;
+}
+.view-home .home113-solutions .home113-editorial-head{
+  margin-bottom:28px!important;
+}
+.view-home .home113-solution-list{
+  display:flex!important;
+  flex-direction:row!important;
+  gap:14px!important;
+  padding:0 clamp(18px,4vw,62px) 10px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:x proximity!important;
+  scrollbar-width:none!important;
+}
+.view-home .home113-solution-list::-webkit-scrollbar{display:none!important}
+.view-home .home113-solution{
+  flex:0 0 clamp(330px,37vw,520px)!important;
+  min-width:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  margin:0!important;
+  padding:0!important;
+  scroll-snap-align:start!important;
+}
+.view-home .home113-solution-copy{
+  order:2!important;
+  position:static!important;
+  display:block!important;
+  padding:12px 0 0!important;
+  color:var(--home133-ink)!important;
+}
+.view-home .home113-solution-copy small{
+  display:block!important;
+  margin:0 0 5px!important;
+  color:#898a85!important;
+  font:400 8px/1.2 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.08em!important;
+}
+.view-home .home113-solution-copy h3{
+  margin:0!important;
+  color:var(--home133-ink)!important;
+  font-family:"Tenor Sans",Georgia,serif!important;
+  font-size:clamp(21px,1.8vw,27px)!important;
+  font-weight:400!important;
+  line-height:1.1!important;
+  letter-spacing:-.01em!important;
+}
+.view-home .home113-solution-copy p{
+  display:-webkit-box!important;
+  max-width:430px!important;
+  margin:7px 0 7px!important;
+  overflow:hidden!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  color:var(--home133-muted)!important;
+  font:400 10px/1.45 "Tenor Sans",Arial,sans-serif!important;
+}
+.view-home .home113-solution-copy a{
+  min-height:28px!important;
+  padding:0 0 2px!important;
+  border-bottom:1px solid currentColor!important;
+  color:var(--home133-green)!important;
+  font:400 8px/1 "Tenor Sans",Arial,sans-serif!important;
+  letter-spacing:.045em!important;
+  text-transform:none!important;
+}
+.view-home .home113-solution-rail{
+  order:1!important;
+  display:block!important;
+  width:100%!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.view-home .home113-solution-rail .home113-photo-card{
+  display:none!important;
+}
+.view-home .home113-solution-rail .home113-photo-card:first-child{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:4/5!important;
+  margin:0!important;
+  background:#eeece7!important;
+}
+.view-home .home113-solution-rail .home113-photo-card:first-child>span{
+  background-repeat:no-repeat!important;
+}
+
+/* Boutiques belongs to the end of the shopping journey, not to the visual
+   hierarchy of the editorial blocks above it. */
+.view-home .home-v113 .home-boutiques-map{
+  margin-top:0!important;
+  border-top:1px solid var(--home133-line)!important;
+}
+
+/* Accessible interaction states */
+.view-home .home-v113 button:focus-visible,
+.view-home .home-v113 a:focus-visible{
+  outline:2px solid var(--home133-green)!important;
+  outline-offset:3px!important;
+}
+
+@media(max-width:760px){
+  /* Top navigation: one clean horizontal row, no overlay on photography. */
+  .view-home .home113-nav{
+    height:43px!important;
+    justify-content:flex-start!important;
+    gap:24px!important;
+    padding:0 15px!important;
+    scroll-padding-inline:15px;
+  }
+  .view-home .home113-nav button,
+  .view-home .home113-nav a{
+    min-height:43px!important;
+    font-size:9px!important;
+  }
+
+  /* Show a controlled portion of the next section below the hero rather than
+     forcing an entire browser viewport of imagery. */
+  .view-home .home113-hero{
+    height:min(660px,72svh)!important;
+    min-height:520px!important;
+    max-height:660px!important;
+  }
+  .view-home .home113-hero-copy{
+    left:17px!important;
+    right:17px!important;
+    bottom:59px!important;
+    width:auto!important;
+  }
+  .view-home .home113-hero-copy small{font-size:8px!important}
+  .view-home .home113-hero-copy h1{
+    max-width:92%!important;
+    margin:7px 0 13px!important;
+    font-size:clamp(35px,10.5vw,47px)!important;
+    line-height:1.02!important;
+  }
+  .view-home .home113-hero-copy p{display:none!important}
+  .view-home .home113-hero-copy button{font-size:8px!important}
+  .view-home .home113-hero-controls{bottom:17px!important;width:92px!important}
+
+  .view-home .home113-section-head,
+  .view-home .home117-section-head,
+  .view-home .home113-editorial-head{
+    margin-bottom:18px!important;
+    padding:0 15px!important;
+    gap:14px!important;
+  }
+  .view-home .home113-section-head h2,
+  .view-home .home117-section-head h2,
+  .view-home .home113-editorial-head h2{
+    font-size:29px!important;
+    line-height:1.05!important;
+  }
+  .view-home .home117-section-head>button,
+  .view-home .home113-editorial-head>a,
+  .view-home .home113-editorial-head>button{
+    min-height:29px!important;
+    font-size:8px!important;
+  }
+
+  /* Two category choices are visible together, instead of one oversized card. */
+  .view-home .home113-section.home113-category-section{
+    padding:43px 0 54px!important;
+  }
+  .view-home .home113-category-rail{
+    gap:8px!important;
+    padding:0 15px 7px!important;
+    scroll-padding-inline:15px;
+  }
+  .view-home .home113-category-card{
+    flex-basis:45vw!important;
+  }
+  .view-home .home113-category-image{aspect-ratio:4/5!important}
+  .view-home .home113-category-card strong{
+    margin-top:8px!important;
+    font-size:13px!important;
+  }
+  .view-home .home113-category-card small{
+    display:none!important;
+  }
+
+  /* New products adopt real PLP comparison density: ~2 cards visible. */
+  .view-home .home117-new-products{
+    padding:48px 0 58px!important;
+  }
+  .view-home .home117-product-rail{
+    gap:8px!important;
+    padding:0 15px 8px!important;
+    scroll-padding-inline:15px;
+    scroll-snap-type:x mandatory!important;
+  }
+  .view-home .home117-product-item{
+    flex-basis:45vw!important;
+    max-width:none!important;
+  }
+  .view-home .home117-product-item .product-copy{
+    min-height:70px!important;
+    padding-top:8px!important;
+  }
+  .view-home .home117-product-item .product-copy strong{
+    font-size:11px!important;
+    line-height:1.25!important;
+  }
+  .view-home .home117-product-item .product-copy small{font-size:8px!important}
+  .view-home .home117-product-item .price{font-size:11px!important}
+  .view-home .home117-product-item .heart{
+    top:7px!important;
+    right:7px!important;
+    width:31px!important;
+    height:31px!important;
+  }
+  .view-home .home117-product-item .heart svg{width:18px!important;height:18px!important}
+  .view-home .home117-product-item .quick{width:31px!important;height:31px!important}
+  .view-home .home117-product-item .quick>svg{width:24px!important;height:24px!important}
+
+  /* Capsules remain editorial: one large story plus a clear hint of the next. */
+  .view-home .home113-capsules.home117-capsules{
+    padding:52px 0 62px!important;
+  }
+  .view-home .home117-capsule-rail{
+    gap:9px!important;
+    padding:0 15px 8px!important;
+  }
+  .view-home .home117-capsule-card{
+    flex-basis:79vw!important;
+    max-width:390px!important;
+  }
+  .view-home .home117-capsule-copy{padding-top:10px!important}
+  .view-home .home117-capsule-copy h3{font-size:25px!important}
+
+  /* Ready solutions become a preview rail instead of a very long page. */
+  .view-home .home113-solutions{
+    padding:52px 0 66px!important;
+  }
+  .view-home .home113-solution-list{
+    gap:9px!important;
+    padding:0 15px 8px!important;
+    scroll-padding-inline:15px;
+    scroll-snap-type:x mandatory!important;
+  }
+  .view-home .home113-solution{
+    flex-basis:79vw!important;
+    max-width:390px!important;
+  }
+  .view-home .home113-solution-copy{
+    padding-top:10px!important;
+  }
+  .view-home .home113-solution-copy small{font-size:7px!important}
+  .view-home .home113-solution-copy h3{font-size:22px!important}
+  .view-home .home113-solution-copy p{
+    margin:6px 0!important;
+    font-size:9px!important;
+  }
+  .view-home .home113-solution-copy a{font-size:8px!important}
+}
+
+@media(max-width:380px){
+  .view-home .home113-category-card,
+  .view-home .home117-product-item{flex-basis:46vw!important}
+  .view-home .home113-hero-copy h1{font-size:36px!important}
+  .view-home .home113-section-head h2,
+  .view-home .home117-section-head h2,
+  .view-home .home113-editorial-head h2{font-size:27px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .view-home .home-v113 *,
+  .view-home .home-v113 *::before,
+  .view-home .home-v113 *::after{
+    scroll-behavior:auto!important;
+    transition:none!important;
+    animation:none!important;
+  }
+}
