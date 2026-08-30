@@ -64,6 +64,7 @@ import { ProductCardGalleryEnhancer } from "./product-card-gallery";
 import { CollectionPurchaseEnhancer } from "./collection-purchase-enhancer";
 import { ProfileAddressBookEnhancer } from "./profile-address-book";
 import { HomeZaraTogasV86Enhancer } from "./home-zara-togas-v86-enhancer";
+import { HomeReadySolutionsZaraV126Enhancer } from "./home-ready-solutions-zara-v126-enhancer";
 import { TruthCommerceEnhancer } from "./truth-commerce-enhancer";
 
 export const metadata: Metadata = {
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CollectionPurchaseEnhancer />
         <ProfileAddressBookEnhancer />
         <HomeZaraTogasV86Enhancer />
+        <HomeReadySolutionsZaraV126Enhancer />
         <TruthCommerceEnhancer />
         {children}
       </body>
