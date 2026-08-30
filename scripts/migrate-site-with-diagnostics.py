@@ -13,6 +13,7 @@ scripts = [
     root / "scripts" / "apply-home-zarahome-v114.py",
     root / "scripts" / "apply-home-hero-images-v115.py",
     root / "scripts" / "apply-home-category-images-v116.py",
+    root / "scripts" / "apply-home-new-products-capsules-v117.py",
 ]
 
 logs = []
