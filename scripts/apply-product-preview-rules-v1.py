@@ -44,10 +44,10 @@ if next_product == -1:
 block = catalog[start:next_product]
 
 block = block.replace('color:"Песочный"', 'color:"Серо-синий"')
-block = block.replace('gallery:["/kd/images/products/KD-PD-1027-MOL02.png"]', 'gallery:[]')
-block = block.replace('gallery:["/kd/images/products/KD-PD-1027-PES02.png"]', 'gallery:[]')
-block = block.replace('gallery:["https://kssafonova.github.io/kd/images/products/KD-PD-1027-MOL02.png"]', 'gallery:[]')
-block = block.replace('gallery:["https://kssafonova.github.io/kd/images/products/KD-PD-1027-PES02.png"]', 'gallery:[]')
+block = block.replace('gallery:["/kd/assets/images/KD-PD-1027-MOL02.png"]', 'gallery:[]')
+block = block.replace('gallery:["/kd/assets/images/KD-PD-1027-PES02.png"]', 'gallery:[]')
+block = block.replace('gallery:["https://kssafonova.github.io/kd/assets/images/KD-PD-1027-MOL02.png"]', 'gallery:[]')
+block = block.replace('gallery:["https://kssafonova.github.io/kd/assets/images/KD-PD-1027-PES02.png"]', 'gallery:[]')
 
 if "KD-PD-1027-MOL02.png" in block or "KD-PD-1027-PES02.png" in block:
     raise SystemExit("KD-PD-1027 still references removed secondary media")

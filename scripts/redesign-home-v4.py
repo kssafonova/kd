@@ -6,9 +6,9 @@ text = path.read_text(encoding="utf-8")
 
 replacement = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   const heroSlides=[
-    {label:"НОВИНКИ",title:"Новинки",desktopImage:"/images/time-hero.png",mobileImage:"/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
-    {label:"СПАЛЬНЯ",title:"Спальня",desktopImage:"/images/blue-bedroom.png",mobileImage:"/images/editorial/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
-    {label:"ДЕКОР ДЛЯ ДОМА",title:"Декор для дома",desktopImage:"/images/beige-bedroom.png",mobileImage:"/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
+    {label:"НОВИНКИ",title:"Новинки",desktopImage:"/assets/images/time-hero.png",mobileImage:"/assets/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
+    {label:"СПАЛЬНЯ",title:"Спальня",desktopImage:"/assets/images/blue-bedroom.png",mobileImage:"/assets/images/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
+    {label:"ДЕКОР ДЛЯ ДОМА",title:"Декор для дома",desktopImage:"/assets/images/beige-bedroom.png",mobileImage:"/assets/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
   ];
   const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[activeIndex];
@@ -39,15 +39,15 @@ replacement = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduc
 
   const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
   const capsuleCards=[
-    {id:"ice",kind:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",image:"/images/editorial/caps_led_serviz.png"},
-    {id:"luna",kind:"КАПСУЛА",title:"Лунная сказка",image:"/images/editorial/caps_luna_postel2.png"},
+    {id:"ice",kind:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",image:"/assets/images/caps_led_serviz.png"},
+    {id:"luna",kind:"КАПСУЛА",title:"Лунная сказка",image:"/assets/images/caps_luna_postel2.png"},
   ];
   const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
   const solutions=[
-    {room:"ГОСТИНАЯ",title:"Тихая гостиная",image:"/images/beige-bedroom.png"},
-    {room:"СПАЛЬНЯ",title:"Синий бархат ночи",image:"/images/blue-bedroom.png"},
-    {room:"КАБИНЕТ",title:"Кабинетное ретро",image:"/images/time-collection.png"},
-    {room:"КУХНЯ",title:"Утро в зимнем саду",image:"/images/buyan-editorial.png"},
+    {room:"ГОСТИНАЯ",title:"Тихая гостиная",image:"/assets/images/beige-bedroom.png"},
+    {room:"СПАЛЬНЯ",title:"Синий бархат ночи",image:"/assets/images/blue-bedroom.png"},
+    {room:"КАБИНЕТ",title:"Кабинетное ретро",image:"/assets/images/time-collection.png"},
+    {room:"КУХНЯ",title:"Утро в зимнем саду",image:"/assets/images/buyan-editorial.png"},
   ];
 
   return <main className="home-v4 home-reference-v5">
@@ -74,9 +74,9 @@ replacement = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduc
 
     <section className="hv4-traditions" aria-label="Традиции в каждом доме">
       <div className="hv4-traditions-media">
-        <img src={assetUrl("/images/russian-bedroom.png")} alt="Современная русская спальня"/>
-        <img src={assetUrl("/images/editorial-table.webp")} alt="Сервировка дома"/>
-        <img src={assetUrl("/images/time-hero.png")} alt="Предметы Культура дома"/>
+        <img src={assetUrl("/assets/images/russian-bedroom.png")} alt="Современная русская спальня"/>
+        <img src={assetUrl("/assets/images/editorial-table.webp")} alt="Сервировка дома"/>
+        <img src={assetUrl("/assets/images/time-hero.png")} alt="Предметы Культура дома"/>
         <div className="hv4-traditions-copy"><div><small>BRAND STORY</small><h2>Традиции в каждом доме</h2></div><span>КУЛЬТУРА ДОМА</span></div>
       </div>
     </section>
@@ -98,7 +98,7 @@ replacement = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduc
 
     <section className="hv4-brand-boutiques">
       <div className="hv4-brand-copy"><small>О БРЕНДЕ</small><h2>Культура дома</h2><p>Современный взгляд на русские традиции через текстиль, посуду и предметы интерьера.</p><div className="hv4-boutiques-list" aria-label="Бутики"><span>МОСКВА · ПЕТРОВКА</span><span>САНКТ-ПЕТЕРБУРГ · НЕВСКИЙ</span><span>КАЗАНЬ · БАУМАНА</span></div><button type="button" onClick={()=>alert("Бутики: Москва · Петровка, Санкт-Петербург · Невский проспект, Казань · улица Баумана")}>НАШИ БУТИКИ</button></div>
-      <div className="hv4-brand-media"><img src={assetUrl("/images/russian-bedroom.png")} alt="Культура дома — интерьер"/><span>КУЛЬТУРА ДОМА · БУТИКИ</span></div>
+      <div className="hv4-brand-media"><img src={assetUrl("/assets/images/russian-bedroom.png")} alt="Культура дома — интерьер"/><span>КУЛЬТУРА ДОМА · БУТИКИ</span></div>
     </section>
   </main>;
 }'''

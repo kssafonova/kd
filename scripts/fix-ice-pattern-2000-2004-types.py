@@ -12,23 +12,23 @@ catalog = CATALOG.read_text(encoding="utf-8")
 
 catalog_products = {
 2000: '''makeProduct(2000,"KD-PD-2000","Декоративная подушка «Ледяные узоры»","хлопок, 50×50 см",5990,[
-    {color:"Ледяной голубой",size:"50×50 см",height:"50 см",width:"50 см",packageInfo:"Декоративная подушка 1 шт",material:"Хлопок",composition:"Внешняя часть: 100% хлопок, наполнитель: 100% пух",details:"Декоративный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2000-BLUE01.png",gallery:[]},
-    {color:"Ночной синий",size:"50×50 см",height:"50 см",width:"50 см",packageInfo:"Декоративная подушка 1 шт",material:"Хлопок",composition:"Внешняя часть: 100% хлопок, наполнитель: 100% пух",details:"Декоративный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2000-DARK01.png",gallery:[]},
-    {color:"Белый",size:"50×50 см",height:"50 см",width:"50 см",packageInfo:"Декоративная подушка 1 шт",material:"Хлопок",composition:"Внешняя часть: 100% хлопок, наполнитель: 100% пух",details:"Декоративный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2000-WHITE01.png",gallery:[]},
+    {color:"Ледяной голубой",size:"50×50 см",height:"50 см",width:"50 см",packageInfo:"Декоративная подушка 1 шт",material:"Хлопок",composition:"Внешняя часть: 100% хлопок, наполнитель: 100% пух",details:"Декоративный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2000-BLUE01.png",gallery:[]},
+    {color:"Ночной синий",size:"50×50 см",height:"50 см",width:"50 см",packageInfo:"Декоративная подушка 1 шт",material:"Хлопок",composition:"Внешняя часть: 100% хлопок, наполнитель: 100% пух",details:"Декоративный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2000-DARK01.png",gallery:[]},
+    {color:"Белый",size:"50×50 см",height:"50 см",width:"50 см",packageInfo:"Декоративная подушка 1 шт",material:"Хлопок",composition:"Внешняя часть: 100% хлопок, наполнитель: 100% пух",details:"Декоративный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2000-WHITE01.png",gallery:[]},
   ])''',
 2001: '''makeProduct(2001,"KD-PD-2001","Тарелка «Ледяные узоры»","костяной фарфор, 23 см",7990,[
-    {color:"Ночной синий",size:"23 см",diameter:"23 см",packageInfo:"Тарелка 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Деколь с орнаментом «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2001-DARK01.png",gallery:[]},
-    {color:"Белый",size:"23 см",diameter:"23 см",packageInfo:"Тарелка 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2001-WHITE01.png",gallery:[]},
+    {color:"Ночной синий",size:"23 см",diameter:"23 см",packageInfo:"Тарелка 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Деколь с орнаментом «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2001-DARK01.png",gallery:[]},
+    {color:"Белый",size:"23 см",diameter:"23 см",packageInfo:"Тарелка 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2001-WHITE01.png",gallery:[]},
   ])''',
 2003: '''makeProduct(2003,"KD-PD-2003","Плед «Ледяные узоры»","шерсть и хлопок, 140×200 см",12990,[
-    {color:"Ледяной голубой",size:"140×200 см",height:"140 см",width:"200 см",packageInfo:"Плед 1 шт",material:"Шерсть и хлопок",composition:"70% шерсть, 30% хлопок",details:"Жаккардовый орнамент",collection:"Ледяные узоры",image:"/images/products/KD-PD-2003-BLUE01.png",gallery:["/images/products/KD-PD-2003-BLUE02.png"]},
+    {color:"Ледяной голубой",size:"140×200 см",height:"140 см",width:"200 см",packageInfo:"Плед 1 шт",material:"Шерсть и хлопок",composition:"70% шерсть, 30% хлопок",details:"Жаккардовый орнамент",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2003-BLUE01.png",gallery:["/assets/images/KD-PD-2003-BLUE02.png"]},
   ])''',
 2004: '''makeProduct(2004,"KD-PD-2004","Чайная пара «Ледяные узоры»","костяной фарфор, 250 мл",6990,[
-    {color:"Белый",size:"250 мл",diameter:"15 см",packageInfo:"Чашка 1 шт, блюдце 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2004-WHITE01.png",gallery:[]},
+    {color:"Белый",size:"250 мл",diameter:"15 см",packageInfo:"Чашка 1 шт, блюдце 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2004-WHITE01.png",gallery:[]},
   ])''',
 2010: '''makeProduct(2010,"KD-PD-2010","Салатник «Ледяные узоры»","костяной фарфор, 24 см",9990,[
-    {color:"Белый",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2010-WHITE01.png",gallery:[]},
-    {color:"Ночной синий",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Деколь с орнаментом «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2010-DARK01.png",gallery:[]},
+    {color:"Белый",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2010-WHITE01.png",gallery:[]},
+    {color:"Ночной синий",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Деколь с орнаментом «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2010-DARK01.png",gallery:[]},
   ])''',
 }
 
@@ -44,24 +44,24 @@ for product_id, replacement in catalog_products.items():
         raise SystemExit(f"KD-PD-{product_id} catalog entry not found")
 
 page_products = {
-2000: '''{ id:2000, name:"Декоративная подушка «Ледяные узоры»", note:"хлопок, 50×50 см", price:5990, image:"/images/products/KD-PD-2000-BLUE01.png", colorVariants:[
-    {name:"Ледяной голубой",hex:"#afcbd1",image:"/images/products/KD-PD-2000-BLUE01.png"},
-    {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2000-DARK01.png"},
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2000-WHITE01.png"},
+2000: '''{ id:2000, name:"Декоративная подушка «Ледяные узоры»", note:"хлопок, 50×50 см", price:5990, image:"/assets/images/KD-PD-2000-BLUE01.png", colorVariants:[
+    {name:"Ледяной голубой",hex:"#afcbd1",image:"/assets/images/KD-PD-2000-BLUE01.png"},
+    {name:"Ночной синий",hex:"#10233e",image:"/assets/images/KD-PD-2000-DARK01.png"},
+    {name:"Белый",hex:"#f7f7f4",image:"/assets/images/KD-PD-2000-WHITE01.png"},
   ]}''',
-2001: '''{ id:2001, name:"Тарелка «Ледяные узоры»", note:"костяной фарфор, 23 см", price:7990, image:"/images/products/KD-PD-2001-DARK01.png", colorVariants:[
-    {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2001-DARK01.png"},
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2001-WHITE01.png"},
+2001: '''{ id:2001, name:"Тарелка «Ледяные узоры»", note:"костяной фарфор, 23 см", price:7990, image:"/assets/images/KD-PD-2001-DARK01.png", colorVariants:[
+    {name:"Ночной синий",hex:"#10233e",image:"/assets/images/KD-PD-2001-DARK01.png"},
+    {name:"Белый",hex:"#f7f7f4",image:"/assets/images/KD-PD-2001-WHITE01.png"},
   ]}''',
-2003: '''{ id:2003, name:"Плед «Ледяные узоры»", note:"шерсть и хлопок, 140×200 см", price:12990, image:"/images/products/KD-PD-2003-BLUE01.png", gallery:["/images/products/KD-PD-2003-BLUE02.png"], colorVariants:[
-    {name:"Ледяной голубой",hex:"#afcbd1",image:"/images/products/KD-PD-2003-BLUE01.png",gallery:["/images/products/KD-PD-2003-BLUE02.png"]},
+2003: '''{ id:2003, name:"Плед «Ледяные узоры»", note:"шерсть и хлопок, 140×200 см", price:12990, image:"/assets/images/KD-PD-2003-BLUE01.png", gallery:["/assets/images/KD-PD-2003-BLUE02.png"], colorVariants:[
+    {name:"Ледяной голубой",hex:"#afcbd1",image:"/assets/images/KD-PD-2003-BLUE01.png",gallery:["/assets/images/KD-PD-2003-BLUE02.png"]},
   ]}''',
-2004: '''{ id:2004, name:"Чайная пара «Ледяные узоры»", note:"костяной фарфор, 250 мл", price:6990, image:"/images/products/KD-PD-2004-WHITE01.png", colorVariants:[
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2004-WHITE01.png"},
+2004: '''{ id:2004, name:"Чайная пара «Ледяные узоры»", note:"костяной фарфор, 250 мл", price:6990, image:"/assets/images/KD-PD-2004-WHITE01.png", colorVariants:[
+    {name:"Белый",hex:"#f7f7f4",image:"/assets/images/KD-PD-2004-WHITE01.png"},
   ]}''',
-2010: '''{ id:2010, name:"Салатник «Ледяные узоры»", note:"костяной фарфор, 24 см", price:9990, image:"/images/products/KD-PD-2010-WHITE01.png", colorVariants:[
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2010-WHITE01.png"},
-    {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2010-DARK01.png"},
+2010: '''{ id:2010, name:"Салатник «Ледяные узоры»", note:"костяной фарфор, 24 см", price:9990, image:"/assets/images/KD-PD-2010-WHITE01.png", colorVariants:[
+    {name:"Белый",hex:"#f7f7f4",image:"/assets/images/KD-PD-2010-WHITE01.png"},
+    {name:"Ночной синий",hex:"#10233e",image:"/assets/images/KD-PD-2010-DARK01.png"},
   ]}''',
 }
 

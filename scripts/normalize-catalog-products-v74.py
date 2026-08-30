@@ -132,7 +132,7 @@ def patch_ready_solution_ui() -> None:
     marker = "// READY_AROMA_VARIANT_V74"
     if marker in text:
         return
-    row_anchor = '  const colors=optionColors(option), sizes=optionSizes(option,color), row=pickOptionVariant(option,color,size), image=rowImages(row)[0]||"/images/image-placeholder.svg";\n'
+    row_anchor = '  const colors=optionColors(option), sizes=optionSizes(option,color), row=pickOptionVariant(option,color,size), image=rowImages(row)[0]||"/assets/images/image-placeholder.svg";\n'
     row_new = row_anchor + '  // READY_AROMA_VARIANT_V74\n  const aromaVariant=norm(displayProductName(option.title))===norm("Свеча Феникс");\n'
     if row_anchor not in text:
         raise RuntimeError("V74 ready ProductCard anchor not found")

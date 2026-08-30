@@ -40,8 +40,8 @@ def patch_page() -> None:
         )
         text = replace_once(
             text,
-            'collection:String(row["Коллекция"]||"").trim()||undefined,price,image:images[0]||"/images/image-placeholder.svg"',
-            'collection:String(row["Коллекция"]||"").trim()||undefined,price:Number(String(row["Цена"]||price).replace(/[^\\d.,-]/g,"").replace(",","."))||price,image:images[0]||"/images/image-placeholder.svg"',
+            'collection:String(row["Коллекция"]||"").trim()||undefined,price,image:images[0]||"/assets/images/image-placeholder.svg"',
+            'collection:String(row["Коллекция"]||"").trim()||undefined,price:Number(String(row["Цена"]||price).replace(/[^\\d.,-]/g,"").replace(",","."))||price,image:images[0]||"/assets/images/image-placeholder.svg"',
             "sku price",
         )
         text = replace_once(
@@ -65,7 +65,7 @@ def patch_page() -> None:
     const previous=previousEditorials.get(editorialKey(collection));
     const next:Editorial=previous
       ? {...previous,name:collection,kind:"КОЛЛЕКЦИЯ",productIds,images:previous.images?.length?previous.images:productImages}
-      : {id:`table-collection-${index+1}`,name:collection,kind:"КОЛЛЕКЦИЯ",lead:"Предметы коллекции, собранные в единую историю для дома.",detail:"Откройте коллекцию и выберите предметы, которые работают вместе.",description:`Коллекция «${collection}» по актуальной товарной таблице Культура Дома.`,images:productImages.length?productImages:["/images/image-placeholder.svg"],productIds};
+      : {id:`table-collection-${index+1}`,name:collection,kind:"КОЛЛЕКЦИЯ",lead:"Предметы коллекции, собранные в единую историю для дома.",detail:"Откройте коллекцию и выберите предметы, которые работают вместе.",description:`Коллекция «${collection}» по актуальной товарной таблице Культура Дома.`,images:productImages.length?productImages:["/assets/images/image-placeholder.svg"],productIds};
     return next;
   });
 }''',

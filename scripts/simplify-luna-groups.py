@@ -12,8 +12,8 @@ component=r'''function LunaEditorialView({ editorial, selectProduct, favorite, f
   const [sizes,setSizes]=useState<Record<number,string>>({});
   const [qty,setQty]=useState<Record<number,number>>({});
   const colorById:Record<number,string>={4:"Ночной синий",10:"Ночной синий",5:"Ночной синий",6:"Синий",3:"Синий"};
-  const previewById:Record<number,string>={4:"/images/products/KD-PD-1024-DARK02.png",6:"/images/products/KD-PD-1026-BLUE01.png",3:"/images/products/KD-PD-1023-BLUE02.png"};
-  const fallbacks=["/images/time-hero.png","/images/blue-bedroom.png","/images/night-editorial.png","/images/time-table.png","/images/time-tea-pair.png","/images/moon-plate.png"];
+  const previewById:Record<number,string>={4:"/assets/images/KD-PD-1024-DARK02.png",6:"/assets/images/KD-PD-1026-BLUE01.png",3:"/assets/images/KD-PD-1023-BLUE02.png"};
+  const fallbacks=["/assets/images/time-hero.png","/assets/images/blue-bedroom.png","/assets/images/night-editorial.png","/assets/images/time-table.png","/assets/images/time-tea-pair.png","/assets/images/moon-plate.png"];
 
   const prepare=(product:Product):Product=>{
     const color=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;

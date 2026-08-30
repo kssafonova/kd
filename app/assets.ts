@@ -8,5 +8,5 @@ export const assetUrl = (path: string) => {
   const value = normalizeAssetPath(path);
   if (!value) return "";
   if (isRemoteAsset(value) || value.startsWith("data:") || value.startsWith("blob:")) return value;
-  return value.startsWith("/images/") ? `${BASE_PATH}${value}` : value;
+  return value.startsWith("/assets/images/") ? `${BASE_PATH}${value}` : value;
 };

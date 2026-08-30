@@ -255,7 +255,7 @@ async function loadCatalogMasterIntoProducts(){
       const images=[row["Фото 1"],row["Фото 2"],row["Фото 3"]].map(cleanNulls).filter((value):value is string=>Boolean(value));
       const sourceColor=cleanNulls(row["Цвет"]),scent=cleanNulls(row["Аромат"]),key=(switchBy==="scent"?scent:switchBy==="color"?sourceColor:undefined)??"Единый вариант";
       const size=cleanNulls(row["Размер"])??cleanNulls(row["Объем"])??cleanNulls(row["Диаметр"])??"Единый размер",price=parseCatalogPrice(row["Цена"]),oldPrice=parseCatalogPrice(row["Старая цена"]);
-      return {id:`master-${id}-${index}`,article,productId:id,color:key,colorHex:entityColorHex(sourceColor??key),size,height:cleanNulls(row["Высота"]),width:cleanNulls(row["Ширина"]),diameter:cleanNulls(row["Диаметр"]),packageInfo:cleanNulls(row["Комплектация / информация о размере"]),material:cleanNulls(row["Материал"])??"",composition:cleanNulls(row["Состав"])??"",details:cleanNulls(row["Детали"]),collection:cleanNulls(row["Коллекция"]),capsule:cleanNulls(row["Капсула"]),price,image:images[0]??"/images/image-placeholder.svg",gallery:images.slice(1),available:true,...({volume:cleanNulls(row["Объем"]),oldPrice:oldPrice>price?oldPrice:undefined,sourceColor,scent} as any)};
+      return {id:`master-${id}-${index}`,article,productId:id,color:key,colorHex:entityColorHex(sourceColor??key),size,height:cleanNulls(row["Высота"]),width:cleanNulls(row["Ширина"]),diameter:cleanNulls(row["Диаметр"]),packageInfo:cleanNulls(row["Комплектация / информация о размере"]),material:cleanNulls(row["Материал"])??"",composition:cleanNulls(row["Состав"])??"",details:cleanNulls(row["Детали"]),collection:cleanNulls(row["Коллекция"]),capsule:cleanNulls(row["Капсула"]),price,image:images[0]??"/assets/images/image-placeholder.svg",gallery:images.slice(1),available:true,...({volume:cleanNulls(row["Объем"]),oldPrice:oldPrice>price?oldPrice:undefined,sourceColor,scent} as any)};
     });
     const firstSku=skus[0],priced=skus.filter(item=>priceKnown(item.price)),minSku=priced.reduce<CatalogSku|undefined>((best,item)=>!best||item.price<best.price?item:best,undefined),price=minSku?.price??0;
     const switchRows=Array.from(new Map(skus.map(item=>[item.color,item])).values());
@@ -271,25 +271,25 @@ async function loadCatalogMasterIntoProducts(){
     const previous=previousEditorials.get(editorialKey(collection));
     const next:Editorial=previous
       ? {...previous,name:collection,kind:"КОЛЛЕКЦИЯ",productIds,images:previous.images?.length?previous.images:productImages}
-      : {id:`table-collection-${index+1}`,name:collection,kind:"КОЛЛЕКЦИЯ",lead:"Предметы коллекции, собранные в единую историю для дома.",detail:"Откройте коллекцию и выберите предметы, которые работают вместе.",description:`Коллекция «${collection}» по актуальной товарной таблице Культура Дома.`,images:productImages.length?productImages:["/images/image-placeholder.svg"],productIds};
+      : {id:`table-collection-${index+1}`,name:collection,kind:"КОЛЛЕКЦИЯ",lead:"Предметы коллекции, собранные в единую историю для дома.",detail:"Откройте коллекцию и выберите предметы, которые работают вместе.",description:`Коллекция «${collection}» по актуальной товарной таблице Культура Дома.`,images:productImages.length?productImages:["/assets/images/image-placeholder.svg"],productIds};
     return next;
   });
 }
 
 const slides:Slide[] = [
-  { category: "НОВИНКИ", eyebrow: "НОВАЯ ГЛАВА", title: "Дом в цвету", subtitle: "Авторские вазы и сервировка для долгих летних встреч", image: "/images/editorial-vases.webp", secondaryImage: "/images/editorial-table.webp", mobileVideo: "/images/kultura-home-mobile.mp4", align: "left", destination: "catalog" as View },
-  { category: "СПАЛЬНЯ", eyebrow: "СПАЛЬНЯ", title: "Белая глава", subtitle: "Постельное бельё с деликатной вышивкой", image: "/images/russian-bedroom.png", align: "left", destination: "catalog" as View },
-  { category: "ДЕКОР ДЛЯ ДОМА", eyebrow: "ТИХИЕ ДЕТАЛИ", title: "Естественные оттенки", subtitle: "Тактильный декор для спокойного интерьера", image: "/images/beige-bedroom.png", align: "left", destination: "catalog" as View },
+  { category: "НОВИНКИ", eyebrow: "НОВАЯ ГЛАВА", title: "Дом в цвету", subtitle: "Авторские вазы и сервировка для долгих летних встреч", image: "/assets/images/editorial-vases.webp", secondaryImage: "/assets/images/editorial-table.webp", mobileVideo: "/assets/images/kultura-home-mobile.mp4", align: "left", destination: "catalog" as View },
+  { category: "СПАЛЬНЯ", eyebrow: "СПАЛЬНЯ", title: "Белая глава", subtitle: "Постельное бельё с деликатной вышивкой", image: "/assets/images/russian-bedroom.png", align: "left", destination: "catalog" as View },
+  { category: "ДЕКОР ДЛЯ ДОМА", eyebrow: "ТИХИЕ ДЕТАЛИ", title: "Естественные оттенки", subtitle: "Тактильный декор для спокойного интерьера", image: "/assets/images/beige-bedroom.png", align: "left", destination: "catalog" as View },
 ];
 
 const discountOf = (product: Product) => product.oldPrice ? Math.round((1-product.price/product.oldPrice)*100) : 0;
 
 const categories = [
-  ["Спальня", "/images/classic-bedroom.png"],
-  ["Кухня и столовая", "/images/moon-plate.png"],
-  ["Коллекции", "/images/time-collection.png"],
-  ["Домашний текстиль", "/images/russian-bedroom.png"],
-  ["Ванная", "/images/zip-product-bed.png"],
+  ["Спальня", "/assets/images/classic-bedroom.png"],
+  ["Кухня и столовая", "/assets/images/moon-plate.png"],
+  ["Коллекции", "/assets/images/time-collection.png"],
+  ["Домашний текстиль", "/assets/images/russian-bedroom.png"],
+  ["Ванная", "/assets/images/zip-product-bed.png"],
 ];
 
 const slideProductIds = [
@@ -339,10 +339,10 @@ type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦ
 // COLLECTIONS_REDESIGN_V65_INDEX
 const collectionProductIds=(collection:string)=>collectionEditorialProducts.filter(item=>!REMOVED_PRODUCT_IDS.has(item.id)&&item.skus?.some(sku=>sku.collection===collection)).map(item=>item.id);
 let editorials:Editorial[] = [
-  { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/images/editorial/caps_led.png","/images/editorial/caps_led_podyshka.png","/images/editorial/caps_led_serviz.png"], productIds:[2000,2001,2003,2004,2010] },
-  { id:"luna", name:"Лунная сказка", kind:"КОЛЛЕКЦИЯ", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю.", description:"Коллекция о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_serviz.png"], productIds:[4,10,5,6,3] },
+  { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/assets/images/caps_led.png","/assets/images/caps_led_podyshka.png","/assets/images/caps_led_serviz.png"], productIds:[2000,2001,2003,2004,2010] },
+  { id:"luna", name:"Лунная сказка", kind:"КОЛЛЕКЦИЯ", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю.", description:"Коллекция о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/assets/images/caps_luna_postel.png","/assets/images/caps_luna_postel2.png","/assets/images/caps_luna_serviz.png"], productIds:[4,10,5,6,3] },
   { id:"echo", name:"Эхо", kind:"КОЛЛЕКЦИЯ", lead:"Светлый фарфор и тонкий рельеф для спокойной современной сервировки.", detail:"Эхо строится на белом костяном фарфоре и мягком повторении формы.", description:"Чистая сервировка, где декоративность проявляется через пропорции, рельеф и свет.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a73285a37b_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a50b12627f2e_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a9a9ef4_big.jpg"], productIds:collectionProductIds("Эхо") },
-  { id:"niti", name:"Нити", kind:"КОЛЛЕКЦИЯ", lead:"Синий орнамент, сатин и фарфор связывают текстиль и сервировку.", detail:"Нити соединяет предметы стола и мягкий декор через холодную синюю палитру.", description:"Коллекция о повторяющемся орнаменте и тактильных слоях.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/68f21aab5a5cf_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f82bc133aa_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69e5d18433139_big.jpg"], productIds:collectionProductIds("Нити") },
+  { id:"niti", name:"Нити", kind:"КОЛЛЕКЦИЯ", lead:"Синий орнамент, сатин и фарфор связывают текстиль и сервировку.", detail:"Нити соединяет предметы стола и мягкий декор через холодную синюю палитру.", description:"Коллекция о повторяющемся орнаменте и тактильных слоях.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/68f21aab5a5cf_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f82bc133aa_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/assets/images/69e5d18433139_big__83f18d3de5.jpg"], productIds:collectionProductIds("Нити") },
   { id:"phoenix", name:"Феникс", kind:"КОЛЛЕКЦИЯ", lead:"Тёплые акценты и выразительный орнамент для дома с характером.", detail:"Феникс объединяет сервировку и атмосферный декор в единую историю.", description:"Выразительная коллекция с сильным мотивом и спокойной базой.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/69b3cde6c50d3_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a2034e6d7d40_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f7f739b7a1_big.jpg"], productIds:collectionProductIds("Феникс") },
 ];
 
@@ -518,33 +518,33 @@ function HomeBoutiques(){
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   // HOME_STOREFRONT_V81
   const heroSlides=[
-    {eyebrow:"НОВАЯ ИСТОРИЯ",title:"Дом как единая композиция",text:"Текстиль, сервировка и декор в современном русском прочтении.",image:"/images/editorial/caps_luna_postel2.png",mobile:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекции",action:()=>go("collections")},
-    {eyebrow:"ГОТОВЫЕ РЕШЕНИЯ",title:"Соберите пространство целиком",text:"Выберите готовую основу и измените только нужные предметы.",image:"/images/constructor/green.jpeg",mobile:"/images/constructor/green.jpeg",cta:"Выбрать решение",action:()=>{window.location.href=`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions/`}},
-    {eyebrow:"СЕРВИРОВКА",title:"Предметы для ежедневных ритуалов",text:"Фарфор, стекло и текстиль, которые работают вместе.",image:"/images/time-table.png",mobile:"/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
+    {eyebrow:"НОВАЯ ИСТОРИЯ",title:"Дом как единая композиция",text:"Текстиль, сервировка и декор в современном русском прочтении.",image:"/assets/images/caps_luna_postel2.png",mobile:"/assets/images/caps_luna_postel.png",cta:"Смотреть коллекции",action:()=>go("collections")},
+    {eyebrow:"ГОТОВЫЕ РЕШЕНИЯ",title:"Соберите пространство целиком",text:"Выберите готовую основу и измените только нужные предметы.",image:"/assets/images/green.jpeg",mobile:"/assets/images/green.jpeg",cta:"Выбрать решение",action:()=>{window.location.href=`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions/`}},
+    {eyebrow:"СЕРВИРОВКА",title:"Предметы для ежедневных ритуалов",text:"Фарфор, стекло и текстиль, которые работают вместе.",image:"/assets/images/time-table.png",mobile:"/assets/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
   ];
   const active=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[active];
   const categories=[
-    {title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {title:"Посуда и сервировка",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {title:"Пледы и подушки",image:"/images/beige-bedroom.png",category:"Пледы и подушки"},
-    {title:"Декор для дома",image:"/images/editorial/caps_led_podyshka.png",category:"Декор для дома"},
-    {title:"Свечи и диффузоры",image:"/images/editorial/caps_luna_serviz.png",category:"Свечи и диффузоры"},
-    {title:"Для ванной",image:"/images/russian-bedroom.png",category:"Для ванной"},
+    {title:"Постельное бельё",image:"/assets/images/blue-bedroom.png",category:"Постельное бельё"},
+    {title:"Посуда и сервировка",image:"/assets/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {title:"Пледы и подушки",image:"/assets/images/beige-bedroom.png",category:"Пледы и подушки"},
+    {title:"Декор для дома",image:"/assets/images/caps_led_podyshka.png",category:"Декор для дома"},
+    {title:"Свечи и диффузоры",image:"/assets/images/caps_luna_serviz.png",category:"Свечи и диффузоры"},
+    {title:"Для ванной",image:"/assets/images/russian-bedroom.png",category:"Для ванной"},
   ];
   const collectionStories=editorials.slice(0,5);
   const readyBase=process.env.NEXT_PUBLIC_BASE_PATH??"";
   const solutions=[
-    {title:"Зеленый салон",space:"СТОЛОВАЯ",image:"/images/constructor/green.jpeg",href:`${readyBase}/ready-solutions/table-1/`},
-    {title:"Красные линии",space:"СТОЛОВАЯ",image:"/images/constructor/redline1.jpeg",href:`${readyBase}/ready-solutions/table-2/`},
-    {title:"Зимняя сказка",space:"СПАЛЬНЯ",image:"/images/editorial/caps_led.png",href:`${readyBase}/ready-solutions/table-7/`},
-    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/images/constructor/bluegold2.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
+    {title:"Зеленый салон",space:"СТОЛОВАЯ",image:"/assets/images/green.jpeg",href:`${readyBase}/ready-solutions/table-1/`},
+    {title:"Красные линии",space:"СТОЛОВАЯ",image:"/assets/images/redline1.jpeg",href:`${readyBase}/ready-solutions/table-2/`},
+    {title:"Зимняя сказка",space:"СПАЛЬНЯ",image:"/assets/images/caps_led.png",href:`${readyBase}/ready-solutions/table-7/`},
+    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/assets/images/bluegold2.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
   ];
   return <main className="home-v81">
     <nav className="home81-nav" aria-label="Категории">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}<button type="button" onClick={()=>go("collections")}>Капсулы</button><a href={`${readyBase}/ready-solutions/`}>Готовые решения</a></nav>
     <section className="home81-hero"><picture><source media="(max-width:700px)" srcSet={assetUrl(hero.mobile)}/><img src={assetUrl(hero.image)} alt={hero.title}/></picture><div><small>{hero.eyebrow}</small><h1>{hero.title}</h1><p>{hero.text}</p><button type="button" onClick={hero.action}>{hero.cta}</button></div><nav>{heroSlides.map((item,index)=><button type="button" aria-label={item.title} className={index===active?"is-active":""} key={item.title} onClick={()=>setSlide(index)}/>)}</nav></section>
     <section className="home81-section home81-categories"><header><small>КАТАЛОГ</small><h2>Для каждой зоны дома</h2><p>Начните с категории или соберите пространство целиком.</p></header><div>{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}><span><img src={assetUrl(item.image)} alt={item.title}/></span><strong>{item.title}</strong><small>Смотреть</small></button>)}</div></section>
-    <section className="home81-collections"><div className="home81-collections-hero"><img src={assetUrl(collectionStories[0]?.images[0]||"/images/editorial/caps_led.png")} alt="Коллекции Культура Дома"/><div><small>КОЛЛЕКЦИИ</small><h2>Истории, которые связывают предметы</h2><p>Цвет, орнамент и материал продолжаются от сервировки до текстиля и декора.</p><button type="button" onClick={()=>go("collections")}>Все коллекции</button></div></div><div className="home81-collection-rail">{collectionStories.map(item=><button type="button" key={item.id} onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[0])} alt={item.name}/><span>{item.name}</span></button>)}</div></section>
+    <section className="home81-collections"><div className="home81-collections-hero"><img src={assetUrl(collectionStories[0]?.images[0]||"/assets/images/caps_led.png")} alt="Коллекции Культура Дома"/><div><small>КОЛЛЕКЦИИ</small><h2>Истории, которые связывают предметы</h2><p>Цвет, орнамент и материал продолжаются от сервировки до текстиля и декора.</p><button type="button" onClick={()=>go("collections")}>Все коллекции</button></div></div><div className="home81-collection-rail">{collectionStories.map(item=><button type="button" key={item.id} onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[0])} alt={item.name}/><span>{item.name}</span></button>)}</div></section>
     <section className="home81-section home81-solutions"><header><small>ГОТОВЫЕ РЕШЕНИЯ</small><h2>Выберите настроение — состав можно изменить</h2><p>Готовая композиция становится отправной точкой: количество, коллекции и предметы настраиваются внутри.</p><a href={`${readyBase}/ready-solutions/`}>Все решения</a></header><div>{solutions.map(item=><a href={item.href} key={item.title}><span><img src={assetUrl(item.image)} alt={item.title}/></span><small>{item.space}</small><strong>{item.title}</strong><em>Настроить</em></a>)}</div></section>
     <HomeBoutiques/>
   </main>;

@@ -7,8 +7,8 @@ const BANNERS = [
     eyebrow: "КУЛЬТУРА ДОМА",
     title: "Традиции в современном доме",
     text: "Текстиль, сервировка и декор, собранные в спокойную цельную композицию.",
-    image: "/images/editorial/caps_luna_postel2.png",
-    mobile: "/images/editorial/caps_luna_postel.png",
+    image: "/assets/images/caps_luna_postel2.png",
+    mobile: "/assets/images/caps_luna_postel.png",
     cta: "Смотреть коллекции",
     action: "collections",
   },
@@ -16,8 +16,8 @@ const BANNERS = [
     eyebrow: "ГОТОВЫЕ РЕШЕНИЯ",
     title: "Дом, который уже собран",
     text: "Выберите настроение и настройте состав, количество и коллекции под своё пространство.",
-    image: "/images/constructor/green.jpeg",
-    mobile: "/images/constructor/green.jpeg",
+    image: "/assets/images/green.jpeg",
+    mobile: "/assets/images/green.jpeg",
     cta: "Выбрать решение",
     action: "solutions",
   },
@@ -25,8 +25,8 @@ const BANNERS = [
     eyebrow: "СЕРВИРОВКА",
     title: "Предметы для ежедневных ритуалов",
     text: "Фарфор, стекло и текстиль работают вместе — как интерьер, а не как отдельные товары.",
-    image: "/images/time-table.png",
-    mobile: "/images/russian-service-blue.png",
+    image: "/assets/images/time-table.png",
+    mobile: "/assets/images/russian-service-blue.png",
     cta: "Смотреть посуду",
     action: "tableware",
   },
@@ -142,7 +142,7 @@ function installBrandStory(home: HTMLElement) {
   const story = document.createElement("section");
   story.className = "home87-brand-story";
   story.innerHTML = `
-    <div class="home87-brand-media"><img src="${asset("/images/russian-bedroom.png")}" alt="Современная интерпретация русских традиций в интерьере" loading="lazy" /></div>
+    <div class="home87-brand-media"><img src="${asset("/assets/images/russian-bedroom.png")}" alt="Современная интерпретация русских традиций в интерьере" loading="lazy" /></div>
     <div class="home87-brand-copy">
       <small>О БРЕНДЕ</small>
       <h2>Традиции познаются в доме</h2>

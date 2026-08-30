@@ -13,10 +13,10 @@ catalog_replacements = {
         'makeProduct(6,"KD-PD-1026","Плед из кружева","хлопок, 200×220 см",12990,[',
     'makeProduct(7,"KD-PD-1027","Стёганое покрывало «Бархатный ритм»","микровелюр, 200×220 / 220×240 см",12990,[':
         'makeProduct(7,"KD-PD-1027","Стёганое покрывало «Бархатный ритм»","микровелюр, 200×220 / 220×240 см",8690,[',
-    'price:14990,image:"/kd/images/products/KD-PD-1027-MOL01.png"':
-        'price:9990,image:"/kd/images/products/KD-PD-1027-MOL01.png"',
-    'price:14990,image:"/kd/images/products/KD-PD-1027-PES01.png"':
-        'price:9990,image:"/kd/images/products/KD-PD-1027-PES01.png"',
+    'price:14990,image:"/kd/assets/images/KD-PD-1027-MOL01.png"':
+        'price:9990,image:"/kd/assets/images/KD-PD-1027-MOL01.png"',
+    'price:14990,image:"/kd/assets/images/KD-PD-1027-PES01.png"':
+        'price:9990,image:"/kd/assets/images/KD-PD-1027-PES01.png"',
     'makeProduct(10,"KD-PD-1030","Чайная пара «Лунная сказка»","фарфор, 250 мл",4490,[':
         'makeProduct(10,"KD-PD-1030","Чайная пара «Лунная сказка»","фарфор, 250 мл",6990,[',
     'makeProduct(4,"KD-PD-1024","Комплект постельного белья «Лунная сказка»","шёлк, 140×220 / 200×220 / 220×240 см",20990,[':

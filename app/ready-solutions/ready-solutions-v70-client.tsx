@@ -98,9 +98,9 @@ function cartItemFromRow(row: CatalogRow, quantity = 1) {
   const id = rowId(row);
   return {
     id, name: row.product_name, note: [row.collection, row.material].filter(Boolean).join(" · "), price,
-    image: images[0] || "/images/image-placeholder.svg", gallery: images.slice(1), selectedColor: color, selectedSize: size,
+    image: images[0] || "/assets/images/image-placeholder.svg", gallery: images.slice(1), selectedColor: color, selectedSize: size,
     selectedSkuId: `ready70-${row.offer_id || id}`, quantity,
-    skus: [{ id: `ready70-${row.offer_id || id}`, article: row.vendor_code || String(row.offer_id), productId: id, color, colorHex: swatchColor(color), size, material: row.material || "", composition: row.material || "", price, image: images[0] || "/images/image-placeholder.svg", gallery: images.slice(1) }],
+    skus: [{ id: `ready70-${row.offer_id || id}`, article: row.vendor_code || String(row.offer_id), productId: id, color, colorHex: swatchColor(color), size, material: row.material || "", composition: row.material || "", price, image: images[0] || "/assets/images/image-placeholder.svg", gallery: images.slice(1) }],
   };
 }
 
@@ -147,10 +147,10 @@ function ProductCard({ option, selected, color, size, quantity, guests, onToggle
   const colors = optionColors(option);
   const sizes = optionSizes(option, color);
   const row = pickOptionVariant(option, color, size);
-  const image = rowImages(row)[0] || "/images/image-placeholder.svg";
+  const image = rowImages(row)[0] || "/assets/images/image-placeholder.svg";
   const collection = displayCollectionName(option.collection || row?.collection || "");
   return <article className={`rs70-product-card ${selected ? "is-selected" : ""}`}>
-    <div className="rs70-card-media"><RemoteImage src={image} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/><label className="rs70-card-check"><input type="checkbox" checked={selected} onChange={onToggle}/><i>✓</i></label></div>
+    <div className="rs70-card-media"><RemoteImage src={image} fallbackSrc="/assets/images/image-placeholder.svg" alt={option.title}/><label className="rs70-card-check"><input type="checkbox" checked={selected} onChange={onToggle}/><i>✓</i></label></div>
     <div className="rs70-card-copy"><div><h3>{option.title}</h3><p>{[collection, row?.material].filter(Boolean).join(" · ")}</p></div><strong>{money(priceOf(row))}</strong></div>
     {colors.length > 1 && <div className="rs70-swatches" aria-label="Цвет"><span>Цвет</span><nav>{colors.map((value) => <button type="button" key={value} className={(color || row?.color) === value ? "is-active" : ""} style={{ background: swatchColor(value) }} onClick={() => onColor(value)} title={value}/>)}</nav></div>}
     {selected && <div className="rs70-card-options">
@@ -214,7 +214,7 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
     <Header/>
     <main className="rs70-shell">
       <nav className="rs70-crumbs"><Link href="/">Главная</Link><span>/</span><Link href="/ready-solutions/">Готовые решения</Link><span>/</span><b>{solution.name}</b></nav>
-      <section className="rs70-hero"><div className="rs70-hero-media"><RemoteImage src={solution.heroImage || rows[0]?.primary_image_url || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></div><div className="rs70-hero-copy"><small>ГОТОВОЕ РЕШЕНИЕ · {solution.space}</small><h1>{solution.name}</h1><p>Возьмите готовую композицию за основу и настройте её под свой дом. Количество персон автоматически меняет персональные предметы.</p><div>{solution.collections.map((value) => <span key={value}>{displayCollectionName(value)}</span>)}</div></div></section>
+      <section className="rs70-hero"><div className="rs70-hero-media"><RemoteImage src={solution.heroImage || rows[0]?.primary_image_url || "/assets/images/image-placeholder.svg"} fallbackSrc="/assets/images/image-placeholder.svg" alt={solution.name}/></div><div className="rs70-hero-copy"><small>ГОТОВОЕ РЕШЕНИЕ · {solution.space}</small><h1>{solution.name}</h1><p>Возьмите готовую композицию за основу и настройте её под свой дом. Количество персон автоматически меняет персональные предметы.</p><div>{solution.collections.map((value) => <span key={value}>{displayCollectionName(value)}</span>)}</div></div></section>
 
       {!review ? <>
         <section className="rs70-persons"><div><small>ШАГ 01</small><h2>Сколько персон?</h2><p>Выберите один раз — тарелки, чашки, салфетки и другие персональные предметы пересчитаются автоматически.</p></div><nav>{guestOptions.map((value) => <button type="button" key={value} className={guests === value ? "is-active" : ""} onClick={() => setGuests(value)}><strong>{value}</strong><span>{value === 1 ? "персона" : value <= 4 ? "персоны" : "персон"}</span></button>)}</nav></section>
@@ -224,7 +224,7 @@ export function ReadySolutionWizard({ scenarioId }: { scenarioId: string }) {
         <div className="rs70-categories">{groups.map((group) => <ProductGroup key={group.id} group={group} selected={selected} colors={colors} sizes={sizes} qty={qty} guests={guests} filter={filters[group.id] || "all"} collectionFilter={collectionFilters[group.id] || "all"} onFilter={(value) => setFilters((current) => ({ ...current, [group.id]: value }))} onCollectionFilter={(value) => setCollectionFilters((current) => ({ ...current, [group.id]: value }))} onSelected={(id, value) => setSelected((current) => ({ ...current, [id]: value }))} onColor={(id, value) => { setColors((current) => ({ ...current, [id]: value })); const option = group.items.find((item) => item.option.id === id)?.option; if (option) setSizes((current) => ({ ...current, [id]: optionSizes(option, value)[0] || "" })); }} onSize={(id, value) => setSizes((current) => ({ ...current, [id]: value }))} onQty={(id, value) => setQty((current) => ({ ...current, [id]: Math.max(1, value) }))}/>)}</div>
 
         <section className="rs70-configure"><div><span>Выбрано {selectedRows.length} позиций для {guests} персон</span><strong>{money(total)}</strong></div><button type="button" onClick={() => setReview(true)} disabled={!selectedRows.length}>НАСТРОИТЬ РЕШЕНИЕ</button></section>
-      </> : <section className="rs70-review"><header><div><small>ГОТОВО К ПОКУПКЕ</small><h2>Ваше решение</h2><p>{guests} персон · {selectedRows.length} позиций</p></div><button type="button" onClick={() => setReview(false)}>← Вернуться к настройке</button></header><div className="rs70-review-grid">{selectedRows.map(({ row, quantity, option }) => <article key={`${option.id}-${row.offer_id}`}><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/><div><h3>{option.title}</h3><p>{[displayCollectionName(row.collection || option.collection || ""), row.color, row.size || row.volume].filter(Boolean).join(" · ")}</p><span>{quantity} × {money(priceOf(row))}</span></div></article>)}</div><footer><div><span>Итого</span><strong>{money(total)}</strong></div><button type="button" onClick={addToCart}>ДОБАВИТЬ РЕШЕНИЕ В КОРЗИНУ</button></footer></section>}
+      </> : <section className="rs70-review"><header><div><small>ГОТОВО К ПОКУПКЕ</small><h2>Ваше решение</h2><p>{guests} персон · {selectedRows.length} позиций</p></div><button type="button" onClick={() => setReview(false)}>← Вернуться к настройке</button></header><div className="rs70-review-grid">{selectedRows.map(({ row, quantity, option }) => <article key={`${option.id}-${row.offer_id}`}><RemoteImage src={rowImages(row)[0] || "/assets/images/image-placeholder.svg"} fallbackSrc="/assets/images/image-placeholder.svg" alt={option.title}/><div><h3>{option.title}</h3><p>{[displayCollectionName(row.collection || option.collection || ""), row.color, row.size || row.volume].filter(Boolean).join(" · ")}</p><span>{quantity} × {money(priceOf(row))}</span></div></article>)}</div><footer><div><span>Итого</span><strong>{money(total)}</strong></div><button type="button" onClick={addToCart}>ДОБАВИТЬ РЕШЕНИЕ В КОРЗИНУ</button></footer></section>}
     </main>
     {!review && <div className="rs70-mobile-dock"><span><small>{selectedRows.length} позиций</small><strong>{money(total)}</strong></span><button type="button" onClick={() => setReview(true)} disabled={!selectedRows.length}>НАСТРОИТЬ</button></div>}
     <Footer/>

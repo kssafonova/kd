@@ -8,7 +8,7 @@ css = css_path.read_text(encoding="utf-8")
 
 # Make sure the Ice Patterns collection exists as its own editorial destination.
 if 'id:"ice"' not in page:
-    ice = r'''  { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле. Белый, ледяной голубой и деликатный орнамент создают ощущение тихого зимнего утра.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/images/editorial/caps_led.png","/images/editorial/caps_led_podyshka.png","/images/editorial/caps_led_podyshka2.png","/images/editorial/caps_led_serviz.png"], productIds:[12,3,6,2] },
+    ice = r'''  { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле. Белый, ледяной голубой и деликатный орнамент создают ощущение тихого зимнего утра.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/assets/images/caps_led.png","/assets/images/caps_led_podyshka.png","/assets/images/caps_led_podyshka2.png","/assets/images/caps_led_serviz.png"], productIds:[12,3,6,2] },
 '''
     marker = 'const editorials:Editorial[] = [\n'
     if marker not in page:
@@ -43,7 +43,7 @@ feature = r'''
 
       <div className="home-collection-duo">
         <button className="home-collection-feature home-collection-feature-luna" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="luna")!)}>
-          <img src={assetUrl("/images/editorial/caps_luna_postel.png")} alt="Коллекция Лунная сказка"/>
+          <img src={assetUrl("/assets/images/caps_luna_postel.png")} alt="Коллекция Лунная сказка"/>
           <span className="home-collection-feature-shade"/>
           <span className="home-collection-feature-copy">
             <small>КОЛЛЕКЦИЯ · СПАЛЬНЯ</small>
@@ -53,7 +53,7 @@ feature = r'''
         </button>
 
         <button className="home-collection-feature home-collection-feature-ice" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}>
-          <img src={assetUrl("/images/editorial/caps_led.png")} alt="Коллекция Ледяные узоры"/>
+          <img src={assetUrl("/assets/images/caps_led.png")} alt="Коллекция Ледяные узоры"/>
           <span className="home-collection-feature-shade"/>
           <span className="home-collection-feature-copy">
             <small>КОЛЛЕКЦИЯ · СПАЛЬНЯ</small>

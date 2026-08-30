@@ -23,16 +23,16 @@ new_routes = '''      {view === "collections" && <CollectionsView mode="collecti
 if old_routes in text:
     text = text.replace(old_routes, new_routes)
 
-old_home_editorial = '''    <section className="editorial"><img src={assetUrl("/images/time-hero.png")} alt="Капсула Нити времени"/><div><p>НОВАЯ КАПСУЛА</p><h2>Нити времени</h2><span>Вдохновлена движением звёзд<br/>и бесконечной красотой ночного неба.</span><button onClick={() => go("collections")}>ОТКРЫТЬ ИСТОРИЮ →</button></div></section>'''
+old_home_editorial = '''    <section className="editorial"><img src={assetUrl("/assets/images/time-hero.png")} alt="Капсула Нити времени"/><div><p>НОВАЯ КАПСУЛА</p><h2>Нити времени</h2><span>Вдохновлена движением звёзд<br/>и бесконечной красотой ночного неба.</span><button onClick={() => go("collections")}>ОТКРЫТЬ ИСТОРИЮ →</button></div></section>'''
 new_home_editorial = '''    <section className="home-story-gateway">
       <div className="home-story-heading"><p>STORIES / LOOKBOOK</p><h2>Дом как журнал</h2><span>Коллекции — для выбора предметов. Капсулы — для настроения, образов и готовых интерьерных историй.</span></div>
       <div className="home-story-grid">
         <article className="home-story-card home-story-primary">
-          <button className="home-story-media" onClick={()=>go("capsules")}><img src={assetUrl("/images/time-hero.png")} alt="Капсулы и editorial"/><span>01 / CAPSULES</span></button>
+          <button className="home-story-media" onClick={()=>go("capsules")}><img src={assetUrl("/assets/images/time-hero.png")} alt="Капсулы и editorial"/><span>01 / CAPSULES</span></button>
           <div><p>EDITORIAL CAPSULES</p><h3>Нити времени</h3><span>Короткие главы, визуальные истории и lookbook без перегрузки основного shopping-flow.</span><button onClick={()=>go("capsules")}>СМОТРЕТЬ КАПСУЛЫ →</button></div>
         </article>
         <article className="home-story-card home-story-secondary">
-          <button className="home-story-media" onClick={()=>go("collections")}><img src={assetUrl("/images/poetry-editorial.png")} alt="Коллекции Культура дома"/><span>02 / COLLECTIONS</span></button>
+          <button className="home-story-media" onClick={()=>go("collections")}><img src={assetUrl("/assets/images/poetry-editorial.png")} alt="Коллекции Культура дома"/><span>02 / COLLECTIONS</span></button>
           <div><p>COLLECTION INDEX</p><h3>Коллекции</h3><span>Отдельные страницы коллекций с товарами, историей и опциональным lookbook.</span><button onClick={()=>go("collections")}>СМОТРЕТЬ КОЛЛЕКЦИИ →</button></div>
         </article>
       </div>

@@ -5,7 +5,7 @@ page_path = Path("app/page.tsx")
 css_path = Path("app/globals.css")
 text = page_path.read_text(encoding="utf-8")
 
-luna_entry = '''  { id:"luna", name:"Лунная сказка", kind:"КАПСУЛА", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю: вышитый текстиль, кружево, кобальтовый фарфор и свет, который делает дом почти театральным.", description:"Интерактивный editorial о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_postel3.png","/images/editorial/caps_luna_serviz.png","/images/editorial/caps_luna_serviz2.png","/images/editorial/caps_luna_serviz3.png"], productIds:[4,10,5,6,3] },\n'''
+luna_entry = '''  { id:"luna", name:"Лунная сказка", kind:"КАПСУЛА", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю: вышитый текстиль, кружево, кобальтовый фарфор и свет, который делает дом почти театральным.", description:"Интерактивный editorial о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/assets/images/caps_luna_postel.png","/assets/images/caps_luna_postel2.png","/assets/images/caps_luna_postel3.png","/assets/images/caps_luna_serviz.png","/assets/images/caps_luna_serviz2.png","/assets/images/caps_luna_serviz3.png"], productIds:[4,10,5,6,3] },\n'''
 editorial_marker = 'const editorials:Editorial[] = [\n'
 if 'id:"luna"' not in text:
     if editorial_marker not in text:
@@ -30,11 +30,11 @@ luna_component = r'''function LunaEditorialView({ editorial, selectProduct, favo
 
   const colorById:Record<number,string>={4:"Ночной синий",10:"Ночной синий",5:"Ночной синий",6:"Синий",3:"Синий"};
   const previewById:Record<number,string>={
-    4:"/images/products/KD-PD-1024-DARK02.png",
-    6:"/images/products/KD-PD-1026-BLUE01.png",
-    3:"/images/products/KD-PD-1023-BLUE02.png",
+    4:"/assets/images/KD-PD-1024-DARK02.png",
+    6:"/assets/images/KD-PD-1026-BLUE01.png",
+    3:"/assets/images/KD-PD-1023-BLUE02.png",
   };
-  const sceneFallbacks=["/images/time-hero.png","/images/blue-bedroom.png","/images/night-editorial.png","/images/time-table.png","/images/time-tea-pair.png","/images/moon-plate.png"];
+  const sceneFallbacks=["/assets/images/time-hero.png","/assets/images/blue-bedroom.png","/assets/images/night-editorial.png","/assets/images/time-table.png","/assets/images/time-tea-pair.png","/assets/images/moon-plate.png"];
 
   const prepareProduct=(product:Product):Product=>{
     const preferredColor=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;

@@ -94,7 +94,7 @@ result_block = '''      {step === 3 && <div className="rs57-stage rs57-result-st
           {selectedRows.length ? <section className="rs60-moodboard" aria-label="Выбранные товары">
             <div className="rs60-moodboard-grid">
               {selectedRows.map(({ row, quantity, option, group }, index) => <article className={`rs60-moodboard-card rs60-mood-${index % 7}`} key={`mood-${option.id}-${row.offer_id}`}>
-                <div className="rs60-moodboard-media"><RemoteImage src={rowImages(row)[0] || "/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={option.title}/></div>
+                <div className="rs60-moodboard-media"><RemoteImage src={rowImages(row)[0] || "/assets/images/image-placeholder.svg"} fallbackSrc="/assets/images/image-placeholder.svg" alt={option.title}/></div>
                 <div className="rs60-moodboard-copy"><small>{group.title}</small><strong>{option.title}</strong><span>{money(priceOf(row))}</span></div>
                 <div className="rs60-moodboard-controls"><div className="rs60-qty"><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: Math.max(1, quantity - 1) }))} aria-label="Уменьшить количество">−</button><b>{quantity}</b><button type="button" onClick={() => setQty((current) => ({ ...current, [option.id]: quantity + 1 }))} aria-label="Увеличить количество">+</button></div><div className="rs60-card-actions"><button type="button" onClick={() => startReplace(option, group)}>Заменить</button><button type="button" onClick={() => removeItem(option.id)}>Удалить</button></div></div>
               </article>)}

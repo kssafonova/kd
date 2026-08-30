@@ -17,8 +17,8 @@ if old_extra in ready:
     ready = ready.replace(old_extra, new_extra, 1)
 
 # Use the same compact editorial identity block on all three steps.
-old_hero = '{step<3&&<section className={`rs71-hero ${step===2?"is-compact":""}`}><div className="rs71-hero-media"><RemoteImage src={solution.heroImage||baseRows[0]?.primary_image_url||"/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></div><div className="rs71-hero-copy"><small>ГОТОВОЕ РЕШЕНИЕ · {solution.space}</small><h1>{solution.name}</h1><p>Готовая композиция, которую можно адаптировать под своё пространство.</p><div>{activeCollections.slice(0,6).map((c)=><span key={c}>{displayCollectionName(c)}</span>)}</div></div></section>}'
-new_hero = '<section className="rs71-hero is-compact rs81-identity"><div className="rs71-hero-media"><RemoteImage src={solution.heroImage||baseRows[0]?.primary_image_url||"/images/image-placeholder.svg"} fallbackSrc="/images/image-placeholder.svg" alt={solution.name}/></div><div className="rs71-hero-copy"><small>ГОТОВОЕ РЕШЕНИЕ · {solution.space}</small><h1>{solution.name}</h1><p>Готовая композиция, которую можно адаптировать под своё пространство.</p><div>{activeCollections.slice(0,6).map((c)=><span key={c}>{displayCollectionName(c)}</span>)}</div></div></section>'
+old_hero = '{step<3&&<section className={`rs71-hero ${step===2?"is-compact":""}`}><div className="rs71-hero-media"><RemoteImage src={solution.heroImage||baseRows[0]?.primary_image_url||"/assets/images/image-placeholder.svg"} fallbackSrc="/assets/images/image-placeholder.svg" alt={solution.name}/></div><div className="rs71-hero-copy"><small>ГОТОВОЕ РЕШЕНИЕ · {solution.space}</small><h1>{solution.name}</h1><p>Готовая композиция, которую можно адаптировать под своё пространство.</p><div>{activeCollections.slice(0,6).map((c)=><span key={c}>{displayCollectionName(c)}</span>)}</div></div></section>}'
+new_hero = '<section className="rs71-hero is-compact rs81-identity"><div className="rs71-hero-media"><RemoteImage src={solution.heroImage||baseRows[0]?.primary_image_url||"/assets/images/image-placeholder.svg"} fallbackSrc="/assets/images/image-placeholder.svg" alt={solution.name}/></div><div className="rs71-hero-copy"><small>ГОТОВОЕ РЕШЕНИЕ · {solution.space}</small><h1>{solution.name}</h1><p>Готовая композиция, которую можно адаптировать под своё пространство.</p><div>{activeCollections.slice(0,6).map((c)=><span key={c}>{displayCollectionName(c)}</span>)}</div></div></section>'
 if old_hero in ready:
     ready = ready.replace(old_hero, new_hero, 1)
 
@@ -68,33 +68,33 @@ if home_start >= 0 and home_end > home_start:
     home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   // HOME_STOREFRONT_V81
   const heroSlides=[
-    {eyebrow:"НОВАЯ ИСТОРИЯ",title:"Дом как единая композиция",text:"Текстиль, сервировка и декор в современном русском прочтении.",image:"/images/editorial/caps_luna_postel2.png",mobile:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекции",action:()=>go("collections")},
-    {eyebrow:"ГОТОВЫЕ РЕШЕНИЯ",title:"Соберите пространство целиком",text:"Выберите готовую основу и измените только нужные предметы.",image:"/images/constructor/green.jpeg",mobile:"/images/constructor/green.jpeg",cta:"Выбрать решение",action:()=>{window.location.href=`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions/`}},
-    {eyebrow:"СЕРВИРОВКА",title:"Предметы для ежедневных ритуалов",text:"Фарфор, стекло и текстиль, которые работают вместе.",image:"/images/time-table.png",mobile:"/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
+    {eyebrow:"НОВАЯ ИСТОРИЯ",title:"Дом как единая композиция",text:"Текстиль, сервировка и декор в современном русском прочтении.",image:"/assets/images/caps_luna_postel2.png",mobile:"/assets/images/caps_luna_postel.png",cta:"Смотреть коллекции",action:()=>go("collections")},
+    {eyebrow:"ГОТОВЫЕ РЕШЕНИЯ",title:"Соберите пространство целиком",text:"Выберите готовую основу и измените только нужные предметы.",image:"/assets/images/green.jpeg",mobile:"/assets/images/green.jpeg",cta:"Выбрать решение",action:()=>{window.location.href=`${process.env.NEXT_PUBLIC_BASE_PATH??""}/ready-solutions/`}},
+    {eyebrow:"СЕРВИРОВКА",title:"Предметы для ежедневных ритуалов",text:"Фарфор, стекло и текстиль, которые работают вместе.",image:"/assets/images/time-table.png",mobile:"/assets/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
   ];
   const active=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[active];
   const categories=[
-    {title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {title:"Посуда и сервировка",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {title:"Пледы и подушки",image:"/images/beige-bedroom.png",category:"Пледы и подушки"},
-    {title:"Декор для дома",image:"/images/editorial/caps_led_podyshka.png",category:"Декор для дома"},
-    {title:"Свечи и диффузоры",image:"/images/editorial/caps_luna_serviz.png",category:"Свечи и диффузоры"},
-    {title:"Для ванной",image:"/images/russian-bedroom.png",category:"Для ванной"},
+    {title:"Постельное бельё",image:"/assets/images/blue-bedroom.png",category:"Постельное бельё"},
+    {title:"Посуда и сервировка",image:"/assets/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {title:"Пледы и подушки",image:"/assets/images/beige-bedroom.png",category:"Пледы и подушки"},
+    {title:"Декор для дома",image:"/assets/images/caps_led_podyshka.png",category:"Декор для дома"},
+    {title:"Свечи и диффузоры",image:"/assets/images/caps_luna_serviz.png",category:"Свечи и диффузоры"},
+    {title:"Для ванной",image:"/assets/images/russian-bedroom.png",category:"Для ванной"},
   ];
   const collectionStories=editorials.slice(0,5);
   const readyBase=process.env.NEXT_PUBLIC_BASE_PATH??"";
   const solutions=[
-    {title:"Зеленый салон",space:"СТОЛОВАЯ",image:"/images/constructor/green.jpeg",href:`${readyBase}/ready-solutions/table-1/`},
-    {title:"Красные линии",space:"СТОЛОВАЯ",image:"/images/constructor/redline1.jpeg",href:`${readyBase}/ready-solutions/table-2/`},
-    {title:"Зимняя сказка",space:"СПАЛЬНЯ",image:"/images/editorial/caps_led.png",href:`${readyBase}/ready-solutions/table-7/`},
-    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/images/constructor/warm-brutalism.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
+    {title:"Зеленый салон",space:"СТОЛОВАЯ",image:"/assets/images/green.jpeg",href:`${readyBase}/ready-solutions/table-1/`},
+    {title:"Красные линии",space:"СТОЛОВАЯ",image:"/assets/images/redline1.jpeg",href:`${readyBase}/ready-solutions/table-2/`},
+    {title:"Зимняя сказка",space:"СПАЛЬНЯ",image:"/assets/images/caps_led.png",href:`${readyBase}/ready-solutions/table-7/`},
+    {title:"Тёплый брутализм",space:"КАБИНЕТ",image:"/assets/images/constructor/warm-brutalism.jpeg",href:`${readyBase}/ready-solutions/table-8/`},
   ];
   return <main className="home-v81">
     <nav className="home81-nav" aria-label="Категории">{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}>{item.title}</button>)}<button type="button" onClick={()=>go("collections")}>Коллекции</button><a href={`${readyBase}/ready-solutions/`}>Готовые решения</a></nav>
     <section className="home81-hero"><picture><source media="(max-width:700px)" srcSet={assetUrl(hero.mobile)}/><img src={assetUrl(hero.image)} alt={hero.title}/></picture><div><small>{hero.eyebrow}</small><h1>{hero.title}</h1><p>{hero.text}</p><button type="button" onClick={hero.action}>{hero.cta}</button></div><nav>{heroSlides.map((item,index)=><button type="button" aria-label={item.title} className={index===active?"is-active":""} key={item.title} onClick={()=>setSlide(index)}/>)}</nav></section>
     <section className="home81-section home81-categories"><header><small>КАТАЛОГ</small><h2>Для каждой зоны дома</h2><p>Начните с категории или соберите пространство целиком.</p></header><div>{categories.map(item=><button type="button" key={item.title} onClick={()=>openCatalog(item.category)}><span><img src={assetUrl(item.image)} alt={item.title}/></span><strong>{item.title}</strong><small>Смотреть</small></button>)}</div></section>
-    <section className="home81-collections"><div className="home81-collections-hero"><img src={assetUrl(collectionStories[0]?.images[0]||"/images/editorial/caps_led.png")} alt="Коллекции Культура Дома"/><div><small>КОЛЛЕКЦИИ</small><h2>Истории, которые связывают предметы</h2><p>Цвет, орнамент и материал продолжаются от сервировки до текстиля и декора.</p><button type="button" onClick={()=>go("collections")}>Все коллекции</button></div></div><div className="home81-collection-rail">{collectionStories.map(item=><button type="button" key={item.id} onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[0])} alt={item.name}/><span>{item.name}</span></button>)}</div></section>
+    <section className="home81-collections"><div className="home81-collections-hero"><img src={assetUrl(collectionStories[0]?.images[0]||"/assets/images/caps_led.png")} alt="Коллекции Культура Дома"/><div><small>КОЛЛЕКЦИИ</small><h2>Истории, которые связывают предметы</h2><p>Цвет, орнамент и материал продолжаются от сервировки до текстиля и декора.</p><button type="button" onClick={()=>go("collections")}>Все коллекции</button></div></div><div className="home81-collection-rail">{collectionStories.map(item=><button type="button" key={item.id} onClick={()=>openEditorial(item)}><img src={assetUrl(item.images[0])} alt={item.name}/><span>{item.name}</span></button>)}</div></section>
     <section className="home81-section home81-solutions"><header><small>ГОТОВЫЕ РЕШЕНИЯ</small><h2>Выберите настроение — состав можно изменить</h2><p>Готовая композиция становится отправной точкой: количество, коллекции и предметы настраиваются внутри.</p><a href={`${readyBase}/ready-solutions/`}>Все решения</a></header><div>{solutions.map(item=><a href={item.href} key={item.title}><span><img src={assetUrl(item.image)} alt={item.title}/></span><small>{item.space}</small><strong>{item.title}</strong><em>Настроить</em></a>)}</div></section>
     <HomeBoutiques/>
   </main>;

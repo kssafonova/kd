@@ -43,41 +43,41 @@ if idx_start >= 0 and idx_end > idx_start:
     index_block = r'''// COLLECTIONS_REDESIGN_V65_INDEX
 const collectionProductIds=(collection:string)=>collectionEditorialProducts.filter(item=>!REMOVED_PRODUCT_IDS.has(item.id)&&item.skus?.some(sku=>sku.collection===collection)).map(item=>item.id);
 const editorials:Editorial[] = [
-  { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/images/editorial/caps_led.png","/images/editorial/caps_led_podyshka.png","/images/editorial/caps_led_serviz.png"], productIds:[2000,2001,2003,2004,2010] },
-  { id:"luna", name:"Лунная сказка", kind:"КОЛЛЕКЦИЯ", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю.", description:"Коллекция о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/images/editorial/caps_luna_postel.png","/images/editorial/caps_luna_postel2.png","/images/editorial/caps_luna_serviz.png"], productIds:[4,10,5,6,3] },
+  { id:"ice", name:"Ледяные узоры", kind:"КОЛЛЕКЦИЯ", lead:"Светлая зимняя палитра, прозрачный голубой и мягкие фактуры для спокойной спальни.", detail:"Истории спальни построены на холодном свете, вышивке и тактильном текстиле.", description:"Коллекция для спальни о свете, воздухе и узорах, напоминающих морозное стекло.", images:["/assets/images/caps_led.png","/assets/images/caps_led_podyshka.png","/assets/images/caps_led_serviz.png"], productIds:[2000,2001,2003,2004,2010] },
+  { id:"luna", name:"Лунная сказка", kind:"КОЛЛЕКЦИЯ", lead:"Ночная палитра, мягкий блеск сатина и фарфор цвета глубокого неба.", detail:"Лунная сказка соединяет спальню и сервировку в одну тихую историю.", description:"Коллекция о ночных домашних ритуалах — от спальни до позднего чаепития.", images:["/assets/images/caps_luna_postel.png","/assets/images/caps_luna_postel2.png","/assets/images/caps_luna_serviz.png"], productIds:[4,10,5,6,3] },
   { id:"echo", name:"Эхо", kind:"КОЛЛЕКЦИЯ", lead:"Светлый фарфор и тонкий рельеф для спокойной современной сервировки.", detail:"Эхо строится на белом костяном фарфоре и мягком повторении формы.", description:"Чистая сервировка, где декоративность проявляется через пропорции, рельеф и свет.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a73285a37b_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a50b12627f2e_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a3a77a9a9ef4_big.jpg"], productIds:collectionProductIds("Эхо") },
-  { id:"niti", name:"Нити", kind:"КОЛЛЕКЦИЯ", lead:"Синий орнамент, сатин и фарфор связывают текстиль и сервировку.", detail:"Нити соединяет предметы стола и мягкий декор через холодную синюю палитру.", description:"Коллекция о повторяющемся орнаменте и тактильных слоях.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/68f21aab5a5cf_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f82bc133aa_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/69e5d18433139_big.jpg"], productIds:collectionProductIds("Нити") },
+  { id:"niti", name:"Нити", kind:"КОЛЛЕКЦИЯ", lead:"Синий орнамент, сатин и фарфор связывают текстиль и сервировку.", detail:"Нити соединяет предметы стола и мягкий декор через холодную синюю палитру.", description:"Коллекция о повторяющемся орнаменте и тактильных слоях.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/68f21aab5a5cf_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f82bc133aa_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/assets/images/69e5d18433139_big__83f18d3de5.jpg"], productIds:collectionProductIds("Нити") },
   { id:"phoenix", name:"Феникс", kind:"КОЛЛЕКЦИЯ", lead:"Тёплые акценты и выразительный орнамент для дома с характером.", detail:"Феникс объединяет сервировку и атмосферный декор в единую историю.", description:"Выразительная коллекция с сильным мотивом и спокойной базой.", images:["https://kultura-doma.ru/public/src/images/gallery/catalog/69b3cde6c50d3_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a2034e6d7d40_big.jpg","https://kultura-doma.ru/public/src/images/gallery/catalog/6a5f7f739b7a1_big.jpg"], productIds:collectionProductIds("Феникс") },
 ];'''
     page = page[:idx_start] + index_block + page[idx_end:]
 
 old_categories = r'''  const categories=[
-    {eyebrow:"СПАЛЬНЯ",title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Посуда и сервировка",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {eyebrow:"ТЕКСТИЛЬ И ДЕКОР",title:"Пледы и подушки",image:"/images/beige-bedroom.png",category:"Пледы и подушки"},
+    {eyebrow:"СПАЛЬНЯ",title:"Постельное бельё",image:"/assets/images/blue-bedroom.png",category:"Постельное бельё"},
+    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Посуда и сервировка",image:"/assets/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {eyebrow:"ТЕКСТИЛЬ И ДЕКОР",title:"Пледы и подушки",image:"/assets/images/beige-bedroom.png",category:"Пледы и подушки"},
   ];'''
 new_categories = r'''  const categories=[
-    {eyebrow:"СПАЛЬНЯ",title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Посуда и сервировка",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {eyebrow:"ГОСТИНАЯ",title:"Пледы и подушки",image:"/images/beige-bedroom.png",category:"Пледы и подушки"},
-    {eyebrow:"СТОЛОВАЯ",title:"Столовый текстиль",image:"/images/editorial-table.png",category:"Столовый текстиль"},
-    {eyebrow:"ИНТЕРЬЕР",title:"Декор для дома",image:"/images/constructor/green.jpeg",category:"Декор для дома"},
-    {eyebrow:"АТМОСФЕРА",title:"Свечи и диффузоры",image:"/images/constructor/redline1.jpeg",category:"Свечи и диффузоры"},
+    {eyebrow:"СПАЛЬНЯ",title:"Постельное бельё",image:"/assets/images/blue-bedroom.png",category:"Постельное бельё"},
+    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Посуда и сервировка",image:"/assets/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {eyebrow:"ГОСТИНАЯ",title:"Пледы и подушки",image:"/assets/images/beige-bedroom.png",category:"Пледы и подушки"},
+    {eyebrow:"СТОЛОВАЯ",title:"Столовый текстиль",image:"/assets/images/editorial-table.png",category:"Столовый текстиль"},
+    {eyebrow:"ИНТЕРЬЕР",title:"Декор для дома",image:"/assets/images/green.jpeg",category:"Декор для дома"},
+    {eyebrow:"АТМОСФЕРА",title:"Свечи и диффузоры",image:"/assets/images/redline1.jpeg",category:"Свечи и диффузоры"},
   ];'''
 if old_categories in page:
     page = page.replace(old_categories, new_categories, 1)
 
 page = page.replace('const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;', 'const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/ready-solutions/`;', 1)
 old_solutions = r'''  const solutions=[
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
-    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/editorial/caps_led.png",href:`${constructorHref}table-7/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/assets/images/green.jpeg",href:`${constructorHref}table-1/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/assets/images/redline1.jpeg",href:`${constructorHref}table-2/`},
+    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/assets/images/caps_led.png",href:`${constructorHref}table-7/`},
   ];'''
 new_solutions = r'''  const solutions=[
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
-    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/editorial/caps_led.png",href:`${constructorHref}table-7/`},
-    {room:"КАБИНЕТ",title:"Тёплый брутализм",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-8/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/assets/images/green.jpeg",href:`${constructorHref}table-1/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/assets/images/redline1.jpeg",href:`${constructorHref}table-2/`},
+    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/assets/images/caps_led.png",href:`${constructorHref}table-7/`},
+    {room:"КАБИНЕТ",title:"Тёплый брутализм",image:"/assets/images/green.jpeg",href:`${constructorHref}table-8/`},
   ];'''
 if old_solutions in page:
     page = page.replace(old_solutions, new_solutions, 1)
@@ -86,7 +86,7 @@ editorial_start = page.find('    <section className="zh44-editorials" aria-label
 category_start = page.find('    <section className="zh44-categories zh44-section">', editorial_start)
 if editorial_start >= 0 and category_start > editorial_start:
     collections_banner = r'''    <section className="zh81-collections-banner" aria-label="Коллекции">
-      <picture><source media="(max-width: 700px)" srcSet={assetUrl("/images/editorial/caps_luna_postel.png")}/><img src={assetUrl("/images/editorial/caps_luna_postel2.png")} alt="Коллекции Культура Дома"/></picture>
+      <picture><source media="(max-width: 700px)" srcSet={assetUrl("/assets/images/caps_luna_postel.png")}/><img src={assetUrl("/assets/images/caps_luna_postel2.png")} alt="Коллекции Культура Дома"/></picture>
       <div className="zh81-collections-copy"><small>КОЛЛЕКЦИИ</small><h2>Истории, собранные для дома</h2><p>Фарфор, текстиль и декор объединены общей палитрой и мотивом. Выберите коллекцию и соберите её целиком или по предметам.</p><button type="button" onClick={()=>go("collections")}>Смотреть коллекции <Icon name="arrow"/></button></div>
     </section>
 

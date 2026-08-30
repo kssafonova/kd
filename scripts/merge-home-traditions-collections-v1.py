@@ -31,9 +31,9 @@ text = re.sub(
 replacement = r'''    <section className="hv4-traditions-collections" aria-label="Традиции, капсулы и коллекции">
       <div className="hv4-traditions-collections-shell">
         <div className="hv4-traditions-media">
-          <img src={assetUrl("/images/russian-bedroom.png")} alt="Современная русская спальня"/>
-          <img src={assetUrl("/images/editorial-table.webp")} alt="Сервировка дома"/>
-          <img src={assetUrl("/images/time-hero.png")} alt="Предметы Культура дома"/>
+          <img src={assetUrl("/assets/images/russian-bedroom.png")} alt="Современная русская спальня"/>
+          <img src={assetUrl("/assets/images/editorial-table.webp")} alt="Сервировка дома"/>
+          <img src={assetUrl("/assets/images/time-hero.png")} alt="Предметы Культура дома"/>
           <div className="hv4-traditions-copy"><div><small>BRAND STORY</small><h2>Традиции в каждом доме</h2></div><span>КУЛЬТУРА ДОМА</span></div>
         </div>
 

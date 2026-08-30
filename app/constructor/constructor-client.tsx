@@ -129,7 +129,7 @@ export function ConstructorLanding() {
         slots,
         guestOptions,
         targetPeople,
-        fallbackImage: catalogRows[0]?.primary_image_url || "/images/image-placeholder.svg",
+        fallbackImage: catalogRows[0]?.primary_image_url || "/assets/images/image-placeholder.svg",
         price,
         productCount,
       };
@@ -155,7 +155,7 @@ export function ConstructorLanding() {
           <a href="#ready-solutions-grid">СМОТРЕТЬ РЕШЕНИЯ <HeaderIcon name="arrow"/></a>
         </div>
         <div className="kd-solutions-hero-media-v33">
-          {heroCard && <RemoteImage src={heroCard.previewFile ? `/images/constructor/${heroCard.previewFile}` : heroCard.fallbackImage} fallbackSrc={heroCard.fallbackImage} alt={heroCard.name} loading="eager"/>}
+          {heroCard && <RemoteImage src={heroCard.previewFile ? `/assets/images/constructor/${heroCard.previewFile}` : heroCard.fallbackImage} fallbackSrc={heroCard.fallbackImage} alt={heroCard.name} loading="eager"/>}
           {heroCard && <span><small>{heroCard.space}</small><b>{heroCard.name}</b></span>}
         </div>
       </section>
@@ -176,7 +176,7 @@ export function ConstructorLanding() {
 
       {visible.length > 0 ? <section className="kd-solutions-grid-v33" aria-label="Готовые решения">
         {visible.map((card, index) => <Link className={`kd-solutions-card-v33 ${index === 0 ? "featured" : ""}`} href={`/constructor/${card.id}/`} key={card.id}>
-          <div className="kd-solutions-card-media-v33"><RemoteImage src={card.previewFile ? `/images/constructor/${card.previewFile}` : card.fallbackImage} fallbackSrc={card.fallbackImage} alt={card.name} loading={index < 4 ? "eager" : "lazy"}/></div>
+          <div className="kd-solutions-card-media-v33"><RemoteImage src={card.previewFile ? `/assets/images/constructor/${card.previewFile}` : card.fallbackImage} fallbackSrc={card.fallbackImage} alt={card.name} loading={index < 4 ? "eager" : "lazy"}/></div>
           <div className="kd-solutions-card-copy-v33">
             <small>{card.space}</small>
             <h3>{card.name}</h3>

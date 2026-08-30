@@ -137,8 +137,8 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
   const active = options.filter(checked).map((option) => ({ option, row: chosenRow(option), quantity: count(option) })).filter((x): x is { option: SolutionProductOption; row: CatalogRow; quantity: number } => Boolean(x.row));
   const units = active.reduce((sum, x) => sum + x.quantity, 0);
   const total = active.reduce((sum, x) => sum + price(x.row.price) * x.quantity, 0);
-  const fallback = rows[0]?.primary_image_url || "/images/image-placeholder.svg";
-  const hero = solution.previewFile ? `/images/constructor/${solution.previewFile}` : fallback;
+  const fallback = rows[0]?.primary_image_url || "/assets/images/image-placeholder.svg";
+  const hero = solution.previewFile ? `/assets/images/constructor/${solution.previewFile}` : fallback;
 
   const toggleCategory = (list: SolutionProductOption[]) => {
     const all = list.every(checked);
@@ -156,7 +156,7 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
     const items: CartItem[] = active.map(({ option, row, quantity }, index) => {
       const numeric = Number(String(row.offer_id).split("-")[0]) || index + 1;
       const productId = CART_OFFSET + numeric;
-      const image = row.primary_image_url || "/images/image-placeholder.svg";
+      const image = row.primary_image_url || "/assets/images/image-placeholder.svg";
       const selectedSize = row.size || row.volume || "Стандартный";
       return {
         id: productId,
@@ -224,7 +224,7 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
                 const q = count(option);
                 return <article className={`kd-ready-product-v29 ${isChecked ? "selected" : ""}`} key={option.id}>
                   <button className="kd-ready-product-check-v29" type="button" aria-pressed={isChecked} onClick={() => setSelected((state) => ({ ...state, [option.id]: !isChecked }))}><span>{isChecked ? "✓" : ""}</span></button>
-                  <div className="kd-ready-product-media-v29"><RemoteImage src={row?.primary_image_url || "/images/image-placeholder.svg"} alt={option.title}/></div>
+                  <div className="kd-ready-product-media-v29"><RemoteImage src={row?.primary_image_url || "/assets/images/image-placeholder.svg"} alt={option.title}/></div>
                   <div className="kd-ready-product-copy-v29"><small>{option.collection || "Культура Дома"}</small><h3>{option.title}</h3><strong>{price(row?.price) ? money(price(row?.price)) : "Цена уточняется"}</strong></div>
                   {isChecked && <div className="kd-ready-product-controls-v29">
                     {colorList.length > 1 && <div className="kd-ready-swatches-v29">{colorList.map((color) => <button type="button" key={color} className={activeColor === color ? "active" : ""} title={color} onClick={() => { setColors((state) => ({ ...state, [option.id]: color })); setSizes((state) => { const next = { ...state }; delete next[option.id]; return next; }); }}><i style={{ background: swatch(color) }}/></button>)}</div>}
@@ -241,7 +241,7 @@ export function TableSolutionDetail({ scenarioId }: { scenarioId: string }) {
           <div className="kd-ready-summary-title-v29"><div><small>Ваше решение</small><h2>{solution.name}</h2></div><a href={categories[0] ? `#solution-category-${categories[0].id}` : "#"}>Изменить</a></div>
           <dl className="kd-ready-summary-meta-v29"><div><dt>Персон</dt><dd>{guests}</dd></div><div><dt>Предметов</dt><dd>{units}</dd></div></dl>
           <h3>Состав решения</h3>
-          <div className="kd-ready-summary-items-v29">{active.slice(0, 7).map(({ option, row, quantity }) => <div className="kd-ready-summary-item-v29" key={option.id}><span className="kd-ready-summary-thumb-v29"><RemoteImage src={row.primary_image_url || "/images/image-placeholder.svg"} alt={option.title}/></span><span className="kd-ready-summary-copy-v29"><b>{option.title}</b><small>{option.collection || "Культура Дома"}</small><em>{quantity} шт.</em></span><strong>{money(price(row.price) * quantity)}</strong></div>)}{active.length > 7 && <p>+ ещё {active.length - 7} товаров</p>}</div>
+          <div className="kd-ready-summary-items-v29">{active.slice(0, 7).map(({ option, row, quantity }) => <div className="kd-ready-summary-item-v29" key={option.id}><span className="kd-ready-summary-thumb-v29"><RemoteImage src={row.primary_image_url || "/assets/images/image-placeholder.svg"} alt={option.title}/></span><span className="kd-ready-summary-copy-v29"><b>{option.title}</b><small>{option.collection || "Культура Дома"}</small><em>{quantity} шт.</em></span><strong>{money(price(row.price) * quantity)}</strong></div>)}{active.length > 7 && <p>+ ещё {active.length - 7} товаров</p>}</div>
           <div className="kd-ready-summary-total-v29"><span><b>Итого</b><small>Включая НДС</small></span><strong>{money(total)}</strong></div>
           <button type="button" className="kd-ready-add-v29" disabled={!active.length || adding} onClick={add}>{adding ? "ДОБАВЛЯЕМ…" : "ДОБАВИТЬ В КОРЗИНУ"}</button>
           <button type="button" className={`kd-ready-save-v29 ${saved ? "saved" : ""}`} onClick={save}>{saved ? "✓ РЕШЕНИЕ СОХРАНЕНО" : "♡ СОХРАНИТЬ РЕШЕНИЕ"}</button>

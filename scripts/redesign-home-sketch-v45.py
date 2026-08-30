@@ -12,9 +12,9 @@ if start < 0 or end < 0:
 home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   // HOME_SKETCH_ZARA_KULTURA_V45
   const heroSlides=[
-    {label:"КАПСУЛА",title:"Лунная сказка",subtitle:"Тихая история для спальни и позднего чаепития",desktopImage:"/images/editorial/caps_luna_postel2.png",mobileImage:"/images/editorial/caps_luna_postel.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[1])},
-    {label:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",subtitle:"Светлая зимняя палитра, вышивка и мягкие фактуры",desktopImage:"/images/editorial/caps_led.png",mobileImage:"/images/editorial/caps_led_podyshka.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[0])},
-    {label:"ПОСУДА И СЕРВИРОВКА",title:"Дом начинается с ритуалов",subtitle:"Фарфор, текстиль и предметы для красивой повседневности",desktopImage:"/images/time-table.png",mobileImage:"/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
+    {label:"КАПСУЛА",title:"Лунная сказка",subtitle:"Тихая история для спальни и позднего чаепития",desktopImage:"/assets/images/caps_luna_postel2.png",mobileImage:"/assets/images/caps_luna_postel.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[1])},
+    {label:"КОЛЛЕКЦИЯ",title:"Ледяные узоры",subtitle:"Светлая зимняя палитра, вышивка и мягкие фактуры",desktopImage:"/assets/images/caps_led.png",mobileImage:"/assets/images/caps_led_podyshka.png",cta:"Смотреть коллекцию",action:()=>openEditorial(editorials[0])},
+    {label:"ПОСУДА И СЕРВИРОВКА",title:"Дом начинается с ритуалов",subtitle:"Фарфор, текстиль и предметы для красивой повседневности",desktopImage:"/assets/images/time-table.png",mobileImage:"/assets/images/russian-service-blue.png",cta:"Смотреть каталог",action:()=>openCatalog("Посуда и сервировка")},
   ];
   const activeIndex=((slide%heroSlides.length)+heroSlides.length)%heroSlides.length;
   const hero=heroSlides[activeIndex];
@@ -28,20 +28,20 @@ home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favo
   const shift=(direction:-1|1)=>setSlide((activeIndex+direction+heroSlides.length)%heroSlides.length);
 
   const categories=[
-    {title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {title:"Пледы",image:"/images/products/KD-PD-2003-BLUE01.png",category:"Пледы и подушки"},
-    {title:"Подушки",image:"/images/products/KD-PD-2000-WHITE01.png",category:"Пледы и подушки"},
-    {title:"Посуда",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {title:"Сервировка",image:"/images/time-table.png",category:"Посуда и сервировка"},
-    {title:"Декор",image:"/images/beige-bedroom.png",category:"Все товары"},
+    {title:"Постельное бельё",image:"/assets/images/blue-bedroom.png",category:"Постельное бельё"},
+    {title:"Пледы",image:"/assets/images/KD-PD-2003-BLUE01.png",category:"Пледы и подушки"},
+    {title:"Подушки",image:"/assets/images/KD-PD-2000-WHITE01.png",category:"Пледы и подушки"},
+    {title:"Посуда",image:"/assets/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {title:"Сервировка",image:"/assets/images/time-table.png",category:"Посуда и сервировка"},
+    {title:"Декор",image:"/assets/images/beige-bedroom.png",category:"Все товары"},
   ];
   const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
   const collection=editorials[1]??editorials[0];
   const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
   const solutions=[
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
-    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/products/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/assets/images/green.jpeg",href:`${constructorHref}table-1/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/assets/images/redline1.jpeg",href:`${constructorHref}table-2/`},
+    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/assets/images/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},
   ];
 
   return <main className="home-sketch-v45">

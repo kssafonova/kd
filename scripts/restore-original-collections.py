@@ -18,7 +18,7 @@ text = text.replace(
 )
 
 home_story_pattern = r'''    <section className="home-story-gateway">.*?</section>\n\n    <section className="section products-section">'''
-home_story_replacement = '''    <section className="editorial"><img src={assetUrl("/images/time-hero.png")} alt="Капсула Нити времени"/><div><p>НОВАЯ КАПСУЛА</p><h2>Нити времени</h2><span>Вдохновлена движением звёзд<br/>и бесконечной красотой ночного неба.</span><button onClick={() => go("collections")}>ОТКРЫТЬ ИСТОРИЮ →</button></div></section>\n\n    <section className="section products-section">'''
+home_story_replacement = '''    <section className="editorial"><img src={assetUrl("/assets/images/time-hero.png")} alt="Капсула Нити времени"/><div><p>НОВАЯ КАПСУЛА</p><h2>Нити времени</h2><span>Вдохновлена движением звёзд<br/>и бесконечной красотой ночного неба.</span><button onClick={() => go("collections")}>ОТКРЫТЬ ИСТОРИЮ →</button></div></section>\n\n    <section className="section products-section">'''
 text = re.sub(home_story_pattern, home_story_replacement, text, count=1, flags=re.S)
 
 text = text.replace(

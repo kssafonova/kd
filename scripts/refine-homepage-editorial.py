@@ -8,7 +8,7 @@ css = css_path.read_text(encoding="utf-8")
 
 # Match the supplied homepage reference more closely: quieter headings, no descriptive
 # copy in section headers, and a strict editorial rhythm.
-page = page.replace('["Спальня","/images/classic-bedroom.png"]', '["Ванная","/images/classic-bedroom.png"]', 1)
+page = page.replace('["Спальня","/assets/images/classic-bedroom.png"]', '["Ванная","/assets/images/classic-bedroom.png"]', 1)
 
 page = re.sub(
     r'<header className="home-bedroom-collections-head">[\s\S]*?</header>',

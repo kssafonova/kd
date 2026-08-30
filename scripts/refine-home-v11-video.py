@@ -28,8 +28,8 @@ if helper not in text:
         raise SystemExit("Home rail helper anchor not found")
     text = text.replace(helper_anchor, helper + helper_anchor, 1)
 
-images_pattern = re.compile(r'''          <img src=\{assetUrl\("/images/russian-bedroom\.png"\)\} alt="Современная русская спальня"/>\n          <img src=\{assetUrl\("/images/editorial-table\.webp"\)\} alt="Сервировка дома"/>\n          <img src=\{assetUrl\("/images/time-hero\.png"\)\} alt="Предметы Культура дома"/>''')
-video_markup = '''          <video ref={traditionsVideoRef} className="hv4-traditions-video" autoPlay loop muted playsInline preload="metadata" poster={assetUrl("/images/russian-bedroom.png")}
+images_pattern = re.compile(r'''          <img src=\{assetUrl\("/assets/images/russian-bedroom\.png"\)\} alt="Современная русская спальня"/>\n          <img src=\{assetUrl\("/assets/images/editorial-table\.webp"\)\} alt="Сервировка дома"/>\n          <img src=\{assetUrl\("/assets/images/time-hero\.png"\)\} alt="Предметы Культура дома"/>''')
+video_markup = '''          <video ref={traditionsVideoRef} className="hv4-traditions-video" autoPlay loop muted playsInline preload="metadata" poster={assetUrl("/assets/images/russian-bedroom.png")}
             onPlay={()=>setTraditionsPlaying(true)} onPause={()=>setTraditionsPlaying(false)}
             onLoadedMetadata={event=>setTraditionsDuration(event.currentTarget.duration||12.7)}
             onTimeUpdate={event=>{const video=event.currentTarget;setTraditionsProgress(video.duration?video.currentTime/video.duration:0)}}>

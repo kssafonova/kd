@@ -339,7 +339,7 @@ def main() -> None:
                 row[field] = ""
                 continue
             referenced.add(filename)
-            row[field] = f"/images/imported-products/{filename}"
+            row[field] = f"/assets/images/{filename}"
 
     source_index = build_source_index()
     copied: list[str] = []
@@ -411,7 +411,7 @@ def main() -> None:
         f"{MARKER}: {len(rows)} SKU rows, {len(referenced)} unique table image filenames, "
         f"{len(copied)} copied by exact filename, {len(downloaded)} restored from table source URLs, "
         f"{len(same_product_local)} restored from same-product local media, "
-        f"{len(same_product_web)} restored from current same-product pages -> /images/imported-products/"
+        f"{len(same_product_web)} restored from current same-product pages -> /assets/images/"
     )
 
 

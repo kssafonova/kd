@@ -18,7 +18,7 @@ const localMirrorForRemote = (path: string) => {
     if (url.hostname !== "kultura-doma.ru" && url.hostname !== "www.kultura-doma.ru") return "";
     const fileName = decodeURIComponent(url.pathname.split("/").filter(Boolean).pop() ?? "");
     if (!fileName) return "";
-    return `/images/imported-products/${fileName}`;
+    return `/assets/images/${fileName}`;
   } catch {
     return "";
   }
@@ -32,7 +32,7 @@ const resolveInitialImage = (src: string): { url: string; stage: ImageStage } =>
 
 export function RemoteImage({
   src,
-  fallbackSrc = "/images/image-placeholder.svg",
+  fallbackSrc = "/assets/images/image-placeholder.svg",
   onError,
   ...props
 }: RemoteImageProps) {

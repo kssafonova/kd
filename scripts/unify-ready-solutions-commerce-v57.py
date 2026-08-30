@@ -57,8 +57,8 @@ if 'const requestedCollection=params.get("collection")' not in page:
 
 if 'title:"Тёплый брутализм"' not in page:
     page = page.replace(
-        '    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/products/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},',
-        '    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/products/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},\n    {room:"КАБИНЕТ",title:"Тёплый брутализм",image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a4375b9224e0_big.jpg",href:`${constructorHref}table-8/`},',
+        '    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/assets/images/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},',
+        '    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/assets/images/KD-PD-2000-WHITE01.png",href:`${constructorHref}table-7/`},\n    {room:"КАБИНЕТ",title:"Тёплый брутализм",image:"https://kultura-doma.ru/public/src/images/gallery/catalog/6a4375b9224e0_big.jpg",href:`${constructorHref}table-8/`},',
     )
 
 page_path.write_text(page, encoding="utf-8")

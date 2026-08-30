@@ -7,9 +7,9 @@ text = PAGE.read_text(encoding="utf-8")
 # Commercial hero copy: every slide has an explicit destination-oriented CTA.
 hero_pattern = r'''  const heroSlides=\[\n[\s\S]*?\n  \];\n  const activeIndex='''
 hero_replacement = '''  const heroSlides=[
-    {label:"НОВИНКИ",title:"Новинки",cta:"Смотреть новинки",desktopImage:"/images/time-hero.png",mobileImage:"/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
-    {label:"СПАЛЬНЯ",title:"Спальня",cta:"Перейти в спальню",desktopImage:"/images/blue-bedroom.png",mobileImage:"/images/editorial/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
-    {label:"ДЕКОР ДЛЯ ДОМА",title:"Декор для дома",cta:"Смотреть декор",desktopImage:"/images/beige-bedroom.png",mobileImage:"/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
+    {label:"НОВИНКИ",title:"Новинки",cta:"Смотреть новинки",desktopImage:"/assets/images/time-hero.png",mobileImage:"/assets/images/blue-bedding-vertical.png",action:()=>openCatalog("Все товары")},
+    {label:"СПАЛЬНЯ",title:"Спальня",cta:"Перейти в спальню",desktopImage:"/assets/images/blue-bedroom.png",mobileImage:"/assets/images/caps_luna_postel.png",action:()=>openCatalog("Постельное бельё")},
+    {label:"ДЕКОР ДЛЯ ДОМА",title:"Декор для дома",cta:"Смотреть декор",desktopImage:"/assets/images/beige-bedroom.png",mobileImage:"/assets/images/russian-bedroom.png",action:()=>openCatalog("Пледы и подушки")},
   ];
   const activeIndex='''
 if re.search(hero_pattern, text):

@@ -8,8 +8,8 @@ page = PAGE.read_text(encoding="utf-8")
 catalog = CATALOG.read_text(encoding="utf-8")
 
 catalog_replacement = '''makeProduct(2010,"KD-PD-2010","Салатник «Ледяные узоры»","костяной фарфор, 24 см",9990,[
-    {color:"Белый",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2010-WHITE01.png",gallery:[]},
-    {color:"Ночной синий",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Деколь с орнаментом «Ледяные узоры»",collection:"Ледяные узоры",image:"/images/products/KD-PD-2010-DARK01.png",gallery:[]},
+    {color:"Белый",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Рельефный орнамент «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2010-WHITE01.png",gallery:[]},
+    {color:"Ночной синий",size:"24 см",diameter:"24 см",packageInfo:"Салатник 1 шт",material:"Фарфор",composition:"100% костяной фарфор",details:"Деколь с орнаментом «Ледяные узоры»",collection:"Ледяные узоры",image:"/assets/images/KD-PD-2010-DARK01.png",gallery:[]},
   ])'''
 
 catalog, count = re.subn(
@@ -22,9 +22,9 @@ catalog, count = re.subn(
 if count != 1:
     raise SystemExit("KD-PD-2010 catalog entry not found")
 
-page_replacement = '''{ id:2010, name:"Салатник «Ледяные узоры»", note:"костяной фарфор, 24 см", price:9990, image:"/images/products/KD-PD-2010-WHITE01.png", colorVariants:[
-    {name:"Белый",hex:"#f7f7f4",image:"/images/products/KD-PD-2010-WHITE01.png"},
-    {name:"Ночной синий",hex:"#10233e",image:"/images/products/KD-PD-2010-DARK01.png"},
+page_replacement = '''{ id:2010, name:"Салатник «Ледяные узоры»", note:"костяной фарфор, 24 см", price:9990, image:"/assets/images/KD-PD-2010-WHITE01.png", colorVariants:[
+    {name:"Белый",hex:"#f7f7f4",image:"/assets/images/KD-PD-2010-WHITE01.png"},
+    {name:"Ночной синий",hex:"#10233e",image:"/assets/images/KD-PD-2010-DARK01.png"},
   ]}'''
 
 page, count = re.subn(

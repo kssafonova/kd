@@ -16,8 +16,8 @@ home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favo
       label:"КАПСУЛА",
       title:"Лунная сказка",
       text:"Ночная палитра, сатин и глубокий синий — спокойная история для спальни и позднего чаепития.",
-      desktopImage:"/images/editorial/caps_luna_postel2.png",
-      mobileImage:"/images/editorial/caps_luna_postel.png",
+      desktopImage:"/assets/images/caps_luna_postel2.png",
+      mobileImage:"/assets/images/caps_luna_postel.png",
       cta:"Смотреть историю",
       action:()=>openEditorial(editorials[1]),
     },
@@ -25,8 +25,8 @@ home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favo
       label:"КОЛЛЕКЦИЯ",
       title:"Ледяные узоры",
       text:"Морозный свет, белый и ледяной голубой. Текстиль и предметы, собранные в одну тихую зимнюю композицию.",
-      desktopImage:"/images/editorial/caps_led.png",
-      mobileImage:"/images/editorial/caps_led_podyshka.png",
+      desktopImage:"/assets/images/caps_led.png",
+      mobileImage:"/assets/images/caps_led_podyshka.png",
       cta:"Открыть коллекцию",
       action:()=>openEditorial(editorials[0]),
     },
@@ -34,8 +34,8 @@ home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favo
       label:"КУХНЯ И СТОЛОВАЯ",
       title:"Сервировка как часть интерьера",
       text:"Фарфор, текстиль и детали для стола — не отдельные предметы, а единая домашняя сцена.",
-      desktopImage:"/images/time-table.png",
-      mobileImage:"/images/russian-service-blue.png",
+      desktopImage:"/assets/images/time-table.png",
+      mobileImage:"/assets/images/russian-service-blue.png",
       cta:"Смотреть посуду",
       action:()=>openCatalog("Посуда и сервировка"),
     },
@@ -64,15 +64,15 @@ home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favo
   const newProducts=[2000,2004,2010,2003,4,10,5,6].map(id=>products.find(product=>product.id===id)).filter((product):product is Product=>Boolean(product));
   const stories:Editorial[]=[editorials[1],editorials[0]].filter((item):item is Editorial=>Boolean(item));
   const categories=[
-    {eyebrow:"СПАЛЬНЯ",title:"Постельное бельё",image:"/images/blue-bedroom.png",category:"Постельное бельё"},
-    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Посуда и сервировка",image:"/images/russian-service-blue.png",category:"Посуда и сервировка"},
-    {eyebrow:"ТЕКСТИЛЬ И ДЕКОР",title:"Пледы и подушки",image:"/images/beige-bedroom.png",category:"Пледы и подушки"},
+    {eyebrow:"СПАЛЬНЯ",title:"Постельное бельё",image:"/assets/images/blue-bedroom.png",category:"Постельное бельё"},
+    {eyebrow:"КУХНЯ И СТОЛОВАЯ",title:"Посуда и сервировка",image:"/assets/images/russian-service-blue.png",category:"Посуда и сервировка"},
+    {eyebrow:"ТЕКСТИЛЬ И ДЕКОР",title:"Пледы и подушки",image:"/assets/images/beige-bedroom.png",category:"Пледы и подушки"},
   ];
   const constructorHref=`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`;
   const solutions=[
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/images/constructor/green.jpeg",href:`${constructorHref}table-1/`},
-    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/images/constructor/redline1.jpeg",href:`${constructorHref}table-2/`},
-    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/images/editorial/caps_led.png",href:`${constructorHref}table-7/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Зеленый салон",image:"/assets/images/green.jpeg",href:`${constructorHref}table-1/`},
+    {room:"КУХНЯ И СТОЛОВАЯ",title:"Красные линии",image:"/assets/images/redline1.jpeg",href:`${constructorHref}table-2/`},
+    {room:"СПАЛЬНЯ И ГОСТИНАЯ",title:"Зимняя сказка",image:"/assets/images/caps_led.png",href:`${constructorHref}table-7/`},
   ];
 
   return <main className="home-zara-v44">
@@ -131,7 +131,7 @@ home = r'''function HomeView({ go, openCatalog, slide, setSlide, onProduct, favo
     </section>
 
     <section className="zh44-film" aria-label="История бренда">
-      <video ref={brandVideoRef} autoPlay loop muted playsInline preload="metadata" poster={assetUrl("/images/russian-bedroom.png")} onPlay={()=>setBrandPlaying(true)} onPause={()=>setBrandPlaying(false)}>
+      <video ref={brandVideoRef} autoPlay loop muted playsInline preload="metadata" poster={assetUrl("/assets/images/russian-bedroom.png")} onPlay={()=>setBrandPlaying(true)} onPause={()=>setBrandPlaying(false)}>
         <source media="(max-width: 700px)" src={assetUrl("/videos/home-mobile.mp4")} type="video/mp4"/>
         <source src={assetUrl("/videos/home-desktop.mp4")} type="video/mp4"/>
       </video>

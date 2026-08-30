@@ -6,19 +6,19 @@ text = path.read_text(encoding="utf-8")
 
 replacement = r'''function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   const homeSlides=[
-    {kicker:"КОЛЛЕКЦИЯ · СПАЛЬНЯ",title:"Ледяные узоры",description:"Холодный свет, белый текстиль и прозрачный голубой — история тихого зимнего утра.",image:"/images/editorial/caps_led.png",label:"ЛЕДЯНЫЕ УЗОРЫ",editorialId:"ice"},
-    {kicker:"КАПСУЛА · НОЧНЫЕ РИТУАЛЫ",title:"Лунная сказка",description:"Глубокий синий, сатин и фарфор для спальни и позднего чаепития.",image:"/images/editorial/caps_luna_postel.png",label:"ЛУННАЯ СКАЗКА",editorialId:"luna"},
-    {kicker:"ДОМ · СЕРВИРОВКА",title:"Стол как история",description:"Посуда, текстиль и детали, которые собирают домашний ритуал в единый образ.",image:"/images/buyan-editorial.png",label:"СЕРВИРОВКА",editorialId:null},
-    {kicker:"ДОМ · ТЕКСТИЛЬ",title:"Тихая спальня",description:"Спокойные фактуры и мягкая палитра для ежедневного пространства отдыха.",image:"/images/beige-bedroom.png",label:"СПАЛЬНЯ",editorialId:null},
+    {kicker:"КОЛЛЕКЦИЯ · СПАЛЬНЯ",title:"Ледяные узоры",description:"Холодный свет, белый текстиль и прозрачный голубой — история тихого зимнего утра.",image:"/assets/images/caps_led.png",label:"ЛЕДЯНЫЕ УЗОРЫ",editorialId:"ice"},
+    {kicker:"КАПСУЛА · НОЧНЫЕ РИТУАЛЫ",title:"Лунная сказка",description:"Глубокий синий, сатин и фарфор для спальни и позднего чаепития.",image:"/assets/images/caps_luna_postel.png",label:"ЛУННАЯ СКАЗКА",editorialId:"luna"},
+    {kicker:"ДОМ · СЕРВИРОВКА",title:"Стол как история",description:"Посуда, текстиль и детали, которые собирают домашний ритуал в единый образ.",image:"/assets/images/buyan-editorial.png",label:"СЕРВИРОВКА",editorialId:null},
+    {kicker:"ДОМ · ТЕКСТИЛЬ",title:"Тихая спальня",description:"Спокойные фактуры и мягкая палитра для ежедневного пространства отдыха.",image:"/assets/images/beige-bedroom.png",label:"СПАЛЬНЯ",editorialId:null},
   ];
   const activeIndex=((slide%homeSlides.length)+homeSlides.length)%homeSlides.length;
   const current=homeSlides[activeIndex];
   const featuredProducts=[2000,2004,2,7].map(id=>products.find(product=>product.id===id)!).filter(Boolean);
   const categoryCards=[
-    {title:"Спальня",meta:"ПОСТЕЛЬНОЕ БЕЛЬЁ · ТЕКСТИЛЬ",image:"/images/blue-bedroom.png"},
-    {title:"Сервировка",meta:"ПОСУДА · СТОЛОВЫЙ ТЕКСТИЛЬ",image:"/images/moon-plate.png"},
-    {title:"Ванная",meta:"ТЕКСТИЛЬ ДЛЯ ДОМА",image:"/images/classic-bedroom.png"},
-    {title:"Декор",meta:"АКЦЕНТЫ ДЛЯ ИНТЕРЬЕРА",image:"/images/beige-bedroom.png"},
+    {title:"Спальня",meta:"ПОСТЕЛЬНОЕ БЕЛЬЁ · ТЕКСТИЛЬ",image:"/assets/images/blue-bedroom.png"},
+    {title:"Сервировка",meta:"ПОСУДА · СТОЛОВЫЙ ТЕКСТИЛЬ",image:"/assets/images/moon-plate.png"},
+    {title:"Ванная",meta:"ТЕКСТИЛЬ ДЛЯ ДОМА",image:"/assets/images/classic-bedroom.png"},
+    {title:"Декор",meta:"АКЦЕНТЫ ДЛЯ ИНТЕРЬЕРА",image:"/assets/images/beige-bedroom.png"},
   ];
   const openHero=()=>{
     if(current.editorialId){
@@ -49,8 +49,8 @@ replacement = r'''function HomeView({ go, slide, setSlide, onProduct, favorite, 
     </section>
 
     <section className="home-magazine-lead">
-      <button className="home-magazine-lead-main" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/images/editorial/caps_led_podyshka.png")} alt="Ледяные узоры — интерьер"/></button>
-      <button className="home-magazine-lead-detail" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/images/editorial/caps_led_podyshka2.png")} alt="Ледяные узоры — детали"/></button>
+      <button className="home-magazine-lead-main" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/assets/images/caps_led_podyshka.png")} alt="Ледяные узоры — интерьер"/></button>
+      <button className="home-magazine-lead-detail" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/assets/images/caps_led_podyshka2.png")} alt="Ледяные узоры — детали"/></button>
       <div className="home-magazine-lead-copy"><small>02 / EDITORIAL · КОЛЛЕКЦИЯ</small><h3>Ледяные узоры</h3><p>История о холодном свете, воздухе и предметах, которые собирают спокойную спальню в единый образ.</p><button className="home-magazine-text-link" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}>СМОТРЕТЬ ИСТОРИЮ <Icon name="arrow"/></button></div>
     </section>
 
@@ -62,8 +62,8 @@ replacement = r'''function HomeView({ go, slide, setSlide, onProduct, favorite, 
     <section className="home-magazine-stories">
       <header className="home-magazine-section-head"><div><small>04 / КАПСУЛЫ И КОЛЛЕКЦИИ</small><h2>Истории для дома</h2></div><button type="button" onClick={()=>go("collections")}>СМОТРЕТЬ ВСЕ →</button></header>
       <div className="home-magazine-story-grid">
-        <button className="home-magazine-story-card" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="luna")!)}><img src={assetUrl("/images/editorial/caps_luna_postel2.png")} alt="Лунная сказка"/><span className="home-magazine-story-copy"><small>КАПСУЛА</small><strong>Лунная сказка</strong><em>СМОТРЕТЬ ИСТОРИЮ →</em></span></button>
-        <button className="home-magazine-story-card" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/images/editorial/caps_led_serviz.png")} alt="Ледяные узоры"/><span className="home-magazine-story-copy"><small>КОЛЛЕКЦИЯ</small><strong>Ледяные узоры</strong><em>СМОТРЕТЬ ИСТОРИЮ →</em></span></button>
+        <button className="home-magazine-story-card" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="luna")!)}><img src={assetUrl("/assets/images/caps_luna_postel2.png")} alt="Лунная сказка"/><span className="home-magazine-story-copy"><small>КАПСУЛА</small><strong>Лунная сказка</strong><em>СМОТРЕТЬ ИСТОРИЮ →</em></span></button>
+        <button className="home-magazine-story-card" type="button" onClick={()=>openEditorial(editorials.find(item=>item.id==="ice")!)}><img src={assetUrl("/assets/images/caps_led_serviz.png")} alt="Ледяные узоры"/><span className="home-magazine-story-copy"><small>КОЛЛЕКЦИЯ</small><strong>Ледяные узоры</strong><em>СМОТРЕТЬ ИСТОРИЮ →</em></span></button>
       </div>
     </section>
 
@@ -74,7 +74,7 @@ replacement = r'''function HomeView({ go, slide, setSlide, onProduct, favorite, 
 
     <section className="home-magazine-constructor">
       <div className="home-magazine-constructor-copy"><small>06 / ГОТОВОЕ РЕШЕНИЕ</small><h2>Соберите дом по сценарию</h2><p>Выберите готовую атмосферу, замените отдельные предметы на альтернативы, настройте размеры и соберите весь образ одной логикой.</p><a href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/constructor/`}>ОТКРЫТЬ КОНСТРУКТОР →</a></div>
-      <div className="home-magazine-constructor-media"><img src={assetUrl("/images/editorial/caps_luna_serviz3.png")} alt="Конструктор готовых решений"/></div>
+      <div className="home-magazine-constructor-media"><img src={assetUrl("/assets/images/caps_luna_serviz3.png")} alt="Конструктор готовых решений"/></div>
     </section>
 
     <section className="home-magazine-closing"><small>КУЛЬТУРА ДОМА</small><h2>Предметы, с которыми остаётся вечное.</h2><p>Современный дом, русская культурная память и вещи, которые хочется соединять в собственные семейные истории.</p><button type="button" onClick={()=>go("collections")}>ОТКРЫТЬ EDITORIAL →</button></section>

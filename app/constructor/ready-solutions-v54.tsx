@@ -154,8 +154,8 @@ function useConstructorData() {
 function solutionImage(solution: TableSolution, rows: CatalogRow[]) {
   return (
     solution.heroImage ||
-    (solution.previewFile ? `/images/constructor/${solution.previewFile}` : rows[0]?.primary_image_url) ||
-    "/images/image-placeholder.svg"
+    (solution.previewFile ? `/assets/images/constructor/${solution.previewFile}` : rows[0]?.primary_image_url) ||
+    "/assets/images/image-placeholder.svg"
   );
 }
 
@@ -186,7 +186,7 @@ function cartItemFromRow(row: CatalogRow, quantity = 1) {
     name: row.product_name,
     note: [row.collection, row.material].filter(Boolean).join(" · "),
     price,
-    image: images[0] || "/images/image-placeholder.svg",
+    image: images[0] || "/assets/images/image-placeholder.svg",
     gallery: images.slice(1),
     selectedColor: color,
     selectedSize: size,
@@ -203,7 +203,7 @@ function cartItemFromRow(row: CatalogRow, quantity = 1) {
         material: row.material || "",
         composition: row.material || "",
         price,
-        image: images[0] || "/images/image-placeholder.svg",
+        image: images[0] || "/assets/images/image-placeholder.svg",
         gallery: images.slice(1),
       },
     ],
@@ -361,13 +361,13 @@ function ReadyProductCardV54({
   const colors = optionColors(option);
   const sizes = optionSizes(option, color);
   const row = pickOptionVariant(option, color, size);
-  const image = rowImages(row)[0] || "/images/image-placeholder.svg";
+  const image = rowImages(row)[0] || "/assets/images/image-placeholder.svg";
 
   return (
     <article className={`v54-product-card ${selected ? "is-selected" : ""}`}>
       <div className="v54-product-media">
         <button type="button" className="v54-product-image" onClick={onToggle}>
-          <RemoteImage src={image} fallbackSrc="/images/image-placeholder.svg" alt={option.title} />
+          <RemoteImage src={image} fallbackSrc="/assets/images/image-placeholder.svg" alt={option.title} />
         </button>
         <button
           type="button"
@@ -577,7 +577,7 @@ function ReadySolutionPageV54({
           <div className="v54-hero-media">
             <RemoteImage
               src={hero}
-              fallbackSrc={rows[0]?.primary_image_url || "/images/image-placeholder.svg"}
+              fallbackSrc={rows[0]?.primary_image_url || "/assets/images/image-placeholder.svg"}
               alt={solution.name}
             />
           </div>

@@ -8,6 +8,6 @@ Format:
 - 198 SKU rows
 - 136 unique articles
 - one product card per `Артикул`; rows with the same article are SKU variants
-- product photos reference only files under `/images/imported-products/`
+- product photos reference only files under `/assets/images/`
 
 Legacy grouped/XLSX product catalog exports were removed and must not be reintroduced.

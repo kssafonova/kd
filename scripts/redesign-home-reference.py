@@ -8,19 +8,19 @@ css = css_path.read_text(encoding="utf-8")
 
 new_home = r'''function HomeView({ go, slide, setSlide, onProduct, favorite, favorites, onAdd }: { go:(v:View)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void }) {
   const homeSlides=[
-    {category:"СПАЛЬНЯ",image:"/images/blue-bedroom.png",destination:"catalog" as View},
-    {category:"РАСПРОДАЖА",image:"/images/russian-bedroom.png",destination:"catalog" as View},
-    {category:"КУХНЯ И СТОЛОВАЯ",image:"/images/buyan-editorial.png",destination:"catalog" as View},
-    {category:"ДЕКОР ДЛЯ ДОМА",image:"/images/beige-bedroom.png",destination:"catalog" as View},
+    {category:"СПАЛЬНЯ",image:"/assets/images/blue-bedroom.png",destination:"catalog" as View},
+    {category:"РАСПРОДАЖА",image:"/assets/images/russian-bedroom.png",destination:"catalog" as View},
+    {category:"КУХНЯ И СТОЛОВАЯ",image:"/assets/images/buyan-editorial.png",destination:"catalog" as View},
+    {category:"ДЕКОР ДЛЯ ДОМА",image:"/assets/images/beige-bedroom.png",destination:"catalog" as View},
   ];
   const activeIndex=((slide%homeSlides.length)+homeSlides.length)%homeSlides.length;
   const current=homeSlides[activeIndex];
   const homeCategories=[
-    ["Кухня и столовая","/images/moon-plate.png"],
-    ["Домашний текстиль","/images/russian-bedroom.png"],
-    ["Спальня","/images/classic-bedroom.png"],
-    ["Декор для дома","/images/zip-product-bed.png"],
-    ["Аутлет","/images/beige-bedroom.png"],
+    ["Кухня и столовая","/assets/images/moon-plate.png"],
+    ["Домашний текстиль","/assets/images/russian-bedroom.png"],
+    ["Спальня","/assets/images/classic-bedroom.png"],
+    ["Декор для дома","/assets/images/zip-product-bed.png"],
+    ["Аутлет","/assets/images/beige-bedroom.png"],
   ] as const;
   const bestsellers=[1,2,7,12].map(id=>products.find(product=>product.id===id)!).filter(Boolean);
 

@@ -88,8 +88,8 @@ if "const findDefault = <T,>" not in client:
 
 # 3) Use the exact white embroidered Ice Patterns pillow from the GitHub storefront
 # as the Winter Fairy Tale hero, while keeping existing preview logic for other scenarios.
-old_hero = '  const hero = solution.previewFile ? `/images/constructor/${solution.previewFile}` : fallback;'
-new_hero = '  const hero = solution.heroImage || (solution.previewFile ? `/images/constructor/${solution.previewFile}` : fallback);'
+old_hero = '  const hero = solution.previewFile ? `/assets/images/constructor/${solution.previewFile}` : fallback;'
+new_hero = '  const hero = solution.heroImage || (solution.previewFile ? `/assets/images/constructor/${solution.previewFile}` : fallback);'
 if old_hero in client:
     client = client.replace(old_hero, new_hero, 1)
 elif new_hero not in client:

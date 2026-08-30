@@ -117,7 +117,7 @@ const truthImage = (value?: string) => {
   if (/^https?:\/\//i.test(source)) return source;
   if (source.startsWith("/kd/")) return source.slice(3);
   if (source.startsWith("/")) return source;
-  return `/images/imported-products/${source}`;
+  return `/assets/images/${source}`;
 };
 
 const xlsxProductType = (row: Record<string, string>) => {
@@ -254,7 +254,7 @@ async function loadTruthCatalog(): Promise<CatalogRow[]> {
         material: variant.material,
         volume: variant.volume,
         availability_status: "available",
-        primary_image_url: photos[0] || "/images/image-placeholder.svg",
+        primary_image_url: photos[0] || "/assets/images/image-placeholder.svg",
         all_image_urls: photos.join("|"),
       } satisfies CatalogRow;
     }),

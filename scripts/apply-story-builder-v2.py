@@ -45,7 +45,7 @@ replacement = r'''function LunaEditorialView({ editorial, selectProduct, favorit
   },[story,mode,added]);
 
   const colorById:Record<number,string>={4:"Ночной синий",10:"Ночной синий",5:"Ночной синий",6:"Синий",3:"Синий"};
-  const previewById:Record<number,string>={4:"/images/products/KD-PD-1024-DARK02.png",6:"/images/products/KD-PD-1026-BLUE01.png",3:"/images/products/KD-PD-1023-BLUE02.png"};
+  const previewById:Record<number,string>={4:"/assets/images/KD-PD-1024-DARK02.png",6:"/assets/images/KD-PD-1026-BLUE01.png",3:"/assets/images/KD-PD-1023-BLUE02.png"};
   const prepare=(product:Product):Product=>{
     const color=colorById[product.id]??product.selectedColor??product.colorVariants?.[0]?.name;
     const regularPrice=product.oldPrice??product.price;
@@ -67,10 +67,10 @@ replacement = r'''function LunaEditorialView({ editorial, selectProduct, favorit
     id,name,price,image,note,article,selectedColor:color,selectedSize:size,selectedSkuId:article,quantity:1,
     colorVariants:[{name:color,hex:color.includes("син")?"#1b2c49":"#e7ded0",image}],gallery:[image]
   });
-  const napkin=virtualProduct(110,"Льняная салфетка с вышивкой",1490,"/images/products/KD-PD-1027-MOL01.png","лён, вышивка","Молочный","45×45 см","KD-STORY-NAPKIN");
-  const dessert=virtualProduct(111,"Тарелка десертная «Лунная сказка»",2990,"/images/moon-plate.png","фарфор","Ночной синий","18 см","KD-STORY-PLATE");
-  const vase=virtualProduct(112,"Ваза «Ледяные узоры»",5990,"/images/editorial/caps_led_serviz.png","стекло","Ледяной","Стандарт","KD-STORY-VASE");
-  const gift=virtualProduct(113,"Подарочная упаковка",490,"/images/editorial/caps_luna_serviz2.png","премиальная упаковка","Молочный","Стандарт","KD-STORY-GIFT");
+  const napkin=virtualProduct(110,"Льняная салфетка с вышивкой",1490,"/assets/images/KD-PD-1027-MOL01.png","лён, вышивка","Молочный","45×45 см","KD-STORY-NAPKIN");
+  const dessert=virtualProduct(111,"Тарелка десертная «Лунная сказка»",2990,"/assets/images/moon-plate.png","фарфор","Ночной синий","18 см","KD-STORY-PLATE");
+  const vase=virtualProduct(112,"Ваза «Ледяные узоры»",5990,"/assets/images/caps_led_serviz.png","стекло","Ледяной","Стандарт","KD-STORY-VASE");
+  const gift=virtualProduct(113,"Подарочная упаковка",490,"/assets/images/caps_luna_serviz2.png","премиальная упаковка","Молочный","Стандарт","KD-STORY-GIFT");
 
   const bedSizes=[
     {label:"Полуторный 140×220",price:29990,available:true},
