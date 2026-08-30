@@ -2405,3 +2405,10 @@ footer{background:#202a2b}
   .home-reference-products .product-card{flex-basis:76vw!important}
 }
 /* END_HOME_EDITORIAL_REFERENCE_V4 */
+
+
+/* PDP_SIZE_QUANTITY_V110 */
+.single-size-quantity{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 12px;margin-top:8px;border-top:1px solid #ddd;border-bottom:1px solid #ddd;font-size:10px;letter-spacing:.06em}
+.product-page .single-size-quantity{padding:0 10px}
+.plp-modal-info .single-size-quantity{min-height:61px;padding:0 14px;margin-top:8px}
+@media(max-width:900px){.single-size-quantity{min-height:46px;padding:0 8px}.plp-modal-info .single-size-quantity{min-height:46px;padding:0 10px}}
