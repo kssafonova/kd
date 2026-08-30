@@ -25,6 +25,19 @@ def safe_name(path: Path) -> str:
     parts = [re.sub(r"[^A-Za-z0-9._-]+", "-", p) for p in path.parts]
     return "__".join(parts)
 
+
+def priority(path: Path):
+    rel = path.relative_to(ROOT).parts
+    if rel[:3] == ("public", "images", "imported-products"):
+        return (0, path.as_posix())
+    if rel[:2] == ("public", "images"):
+        return (1, path.as_posix())
+    if rel and rel[0] == "public":
+        return (2, path.as_posix())
+    if rel and rel[0] == "images":
+        return (3, path.as_posix())
+    return (4, path.as_posix())
+
 existing_by_hash = {}
 existing_names = {}
 for path in CANONICAL.glob("*"):
@@ -47,7 +60,7 @@ for path in ROOT.rglob("*"):
 mapping = {}
 moved = 0
 deduped = 0
-for src in sorted(candidates):
+for src in sorted(candidates, key=priority):
     rel = src.relative_to(ROOT)
     value = digest(src)
     if value in existing_by_hash:
@@ -69,11 +82,9 @@ for src in sorted(candidates):
     new_url = f"/assets/images/{dest.name}"
     rel_posix = rel.as_posix()
     mapping[f"/{rel_posix}"] = new_url
-    mapping[rel_posix] = new_url.lstrip("/")
     if rel.parts and rel.parts[0] == "public":
         public_rel = Path(*rel.parts[1:]).as_posix()
         mapping[f"/{public_rel}"] = new_url
-        mapping[public_rel] = new_url.lstrip("/")
     src.unlink()
 
 for stale_dir in [ROOT / "public" / "images", ROOT / "images", ROOT / "public" / "assets" / "images"]:
@@ -91,6 +102,10 @@ for path in ROOT.iterdir():
     if path.is_file() and path.suffix.lower() in TEXT_EXTS:
         text_files.append(path)
 
+exact_pattern = None
+if mapping:
+    exact_pattern = re.compile("|".join(re.escape(key) for key in sorted(mapping, key=len, reverse=True)))
+
 changed_files = 0
 for path in sorted(set(text_files)):
     try:
@@ -98,13 +113,12 @@ for path in sorted(set(text_files)):
     except UnicodeDecodeError:
         continue
     original = text
-    for old, new in sorted(mapping.items(), key=lambda item: len(item[0]), reverse=True):
-        text = text.replace(old, new)
-    text = text.replace("/public/images/", "/assets/images/")
-    text = text.replace("public/images/", "assets/images/")
-    text = text.replace("/images/imported-products/", "/assets/images/")
-    text = text.replace("images/imported-products/", "assets/images/")
-    text = re.sub(r"(?<![A-Za-z0-9:])\/images\/", "/assets/images/", text)
+    if exact_pattern:
+        text = exact_pattern.sub(lambda match: mapping[match.group(0)], text)
+    text = re.sub(r'(^|["\'`(=:\s])\/public\/images\/', r'\1/assets/images/', text, flags=re.M)
+    text = re.sub(r'(^|["\'`(=:\s])\/images\/imported-products\/', r'\1/assets/images/', text, flags=re.M)
+    text = re.sub(r'(^|["\'`(=:\s])images\/imported-products\/', r'\1assets/images/', text, flags=re.M)
+    text = re.sub(r'(^|["\'`(=:\s])\/images\/', r'\1/assets/images/', text, flags=re.M)
     if text != original:
         path.write_text(text, encoding="utf-8")
         changed_files += 1
@@ -115,6 +129,12 @@ for src in CANONICAL.glob("*"):
         shutil.copy2(src, PUBLIC_MIRROR / src.name)
 
 legacy_refs = []
+legacy_patterns = [
+    re.compile(r'(^|["\'`(=:\s])\/public\/images\/', re.M),
+    re.compile(r'(^|["\'`(=:\s])\/images\/imported-products\/', re.M),
+    re.compile(r'(^|["\'`(=:\s])images\/imported-products\/', re.M),
+    re.compile(r'(^|["\'`(=:\s])\/images\/', re.M),
+]
 for path in sorted(set(text_files)):
     if not path.exists():
         continue
@@ -122,10 +142,10 @@ for path in sorted(set(text_files)):
         text = path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         continue
-    if "public/images/" in text or "images/imported-products/" in text or re.search(r"(?<![A-Za-z0-9:])\/images\/", text):
+    if any(pattern.search(text) for pattern in legacy_patterns):
         legacy_refs.append(str(path.relative_to(ROOT)))
 if legacy_refs:
-    raise SystemExit("IMAGE_ASSETS_V111: stale image references remain:\n" + "\n".join(legacy_refs[:100]))
+    raise SystemExit("IMAGE_ASSETS_V111: stale local image references remain:\n" + "\n".join(legacy_refs[:100]))
 
 canonical_count = sum(1 for p in CANONICAL.iterdir() if p.is_file() and p.suffix.lower() in IMAGE_EXTS)
 print(
