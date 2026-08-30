@@ -517,7 +517,7 @@ function HomeBoutiques(){
 // EDITORIAL_COMMERCE_V81
 function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favorites, onAdd, openEditorial }: { go:(v:View)=>void; openCatalog:(category?:string)=>void; slide:number; setSlide:(n:number)=>void; onProduct:(product:Product)=>void; favorite:(n:number)=>void; favorites:number[]; onAdd:(product:Product)=>void; openEditorial:(editorial:Editorial)=>void }) {
   // HOME_REDESIGN_V113 — supplied homepage ZIP, 47 source photographs represented.
-  void onProduct; void favorite; void favorites; void onAdd; void openEditorial;
+  void openEditorial;
   const readyBase=process.env.NEXT_PUBLIC_BASE_PATH??"";
   const heroSlides=[
     {eyebrow:"НОВИНКИ",title:"Новые истории дома",text:"Предметы, которые собирают пространство в цельный образ — от спальни до сервировки.",cta:"Смотреть новинки",desktop:"/assets/images/1_new_desktop.png",mobile:"/assets/images/1_new_mobile.png",action:()=>openCatalog()},
@@ -540,12 +540,13 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
     {title:"Ванная",note:"Для ежедневных ритуалов",image:"/assets/images/6van.png",action:()=>openCatalog()},
     {title:"Outlet",note:"Особые предложения",image:"/assets/images/7outlet.png",action:()=>openCatalog()},
   ];
+  const newProducts=products.slice(0,12);
   const capsules=[
-    {title:"Нити",meta:"КАПСУЛА · ТЕКСТИЛЬ",copy:"Спокойная графика, прохладные оттенки и выразительная фактура.",indices:[7,8]},
-    {title:"Феникс",meta:"КАПСУЛА · ДЕКОР",copy:"Тёплая палитра, огонь и золотистые детали для камерного интерьера.",indices:[9,10,11]},
-    {title:"Лунная сказка",meta:"КАПСУЛА · СПАЛЬНЯ И СЕРВИРОВКА",copy:"Ночной синий, молочные оттенки и тонкие акценты объединяют дом в одну историю.",indices:[12,13,14,15,16,17]},
-    {title:"Ледяные узоры",meta:"КАПСУЛА · ЗИМНЯЯ ИСТОРИЯ",copy:"Свет, хрустальная чистота и морозная графика в текстиле и фарфоре.",indices:[18,19,20,21]},
-    {title:"Тайна",meta:"КАПСУЛА · ТЁМНАЯ ЭСТЕТИКА",copy:"Глубокие оттенки и тактильные материалы для выразительной, спокойной атмосферы.",indices:[22,23,24]},
+    {title:"Нити",meta:"КАПСУЛА · ТЕКСТИЛЬ",imageIndex:7},
+    {title:"Тайна",meta:"КАПСУЛА · ТЁМНАЯ ЭСТЕТИКА",imageIndex:22},
+    {title:"Ледяные узоры",meta:"КАПСУЛА · ЗИМНЯЯ ИСТОРИЯ",imageIndex:18},
+    {title:"Лунная сказка",meta:"КАПСУЛА · СПАЛЬНЯ И СЕРВИРОВКА",imageIndex:12},
+    {title:"Феникс",meta:"КАПСУЛА · ДЕКОР",imageIndex:9},
   ];
   const solutions=[
     {title:"Зелёный салон",meta:"ГОТОВОЕ РЕШЕНИЕ · СТОЛОВАЯ",copy:"Свежая сервировка с зелёными акцентами и светлым текстилем.",indices:[25,26],href:`${readyBase}/ready-solutions/green-salon/`},
@@ -583,11 +584,17 @@ function HomeView({ go, openCatalog, slide, setSlide, onProduct, favorite, favor
       <div className="home113-category-rail">{categories.map(item=><button type="button" key={item.title} className="home113-category-card" onClick={item.action}><span className="home113-atlas-card home113-category-image" role="img" aria-label={item.title} style={{backgroundImage:`url("${assetUrl(item.image)}")`,backgroundSize:"cover",backgroundPosition:"center center",backgroundRepeat:"no-repeat"}}/><strong>{item.title}</strong><small>{item.note}</small></button>)}</div>
     </section>
 
-    <section className="home113-capsules">
-      <header className="home113-editorial-head"><small>КАПСУЛЫ</small><h2>Истории в деталях</h2><p>Каждая капсула соединяет текстиль, сервировку и декор через цвет, материал и настроение.</p><button type="button" onClick={()=>go("collections")}>Смотреть все капсулы</button></header>
-      <div className="home113-story-list">{capsules.map((item,storyIndex)=><article className="home113-story" key={item.title}>
-        <div className="home113-story-copy"><small>{item.meta}</small><h3>{item.title}</h3><p>{item.copy}</p><button type="button" onClick={()=>go("collections")}>Открыть капсулу <span aria-hidden="true">↗</span></button></div>
-        <div className="home113-photo-rail" aria-label={`Фотографии капсулы ${item.title}`}>{item.indices.map((atlasIndex,imageIndex)=><button type="button" key={atlasIndex} className="home113-photo-card" onClick={()=>go("collections")} aria-label={`${item.title}, фото ${imageIndex+1}`}><span role="img" aria-label={`${item.title}, фото ${imageIndex+1}`} style={atlasStyle(atlasIndex)}/></button>)}</div>
+    {/* HOME_NEW_PRODUCTS_CAPSULES_V117 */}
+    <section className="home117-new-products" aria-labelledby="home117-new-products-title">
+      <header className="home117-section-head"><div><small>КАТАЛОГ</small><h2 id="home117-new-products-title">Новинки</h2></div><button type="button" onClick={()=>openCatalog()}>Смотреть все</button></header>
+      <div className="home117-product-rail" aria-label="Новинки товаров">{newProducts.map(product=><div className="home117-product-item" key={`home-new-${product.id}`}><ProductCard product={product} onClick={onProduct} onQuick={onAdd} favorite={favorite} liked={favorites.includes(product.id)}/></div>)}</div>
+    </section>
+
+    <section className="home113-capsules home117-capsules" aria-labelledby="home117-capsules-title">
+      <header className="home117-section-head home117-capsules-head"><div><small>КАПСУЛЫ</small><h2 id="home117-capsules-title">Капсулы</h2></div><button type="button" onClick={()=>go("collections")}>Смотреть все</button></header>
+      <div className="home117-capsule-rail" aria-label="Капсулы Культура дома">{capsules.map(item=><article className="home117-capsule-card" key={item.title}>
+        <button type="button" className="home117-capsule-media" onClick={()=>go("collections")} aria-label={`Открыть капсулу ${item.title}`}><span role="img" aria-label={item.title} style={atlasStyle(item.imageIndex)}/></button>
+        <div className="home117-capsule-copy"><small>{item.meta}</small><button type="button" onClick={()=>go("collections")}><h3>{item.title}</h3></button><button type="button" className="home117-capsule-link" onClick={()=>go("collections")}>Смотреть капсулу</button></div>
       </article>)}</div>
     </section>
 
