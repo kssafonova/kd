@@ -204,6 +204,8 @@ let catalogMasterLoaded = false;
 const CATALOG_MASTER_FILES:string[] = ["catalog_master.csv"]; // CATALOG_MASTER_V107
 const parseEntityCsv=(source:string):CatalogMasterRow[]=>{
   const text=source.replace(/^\uFEFF/,"");
+  const headerLine=text.split(/\r?\n/,1)[0]??"";
+  const delimiter=headerLine.includes(";")?";":",";
   const rows:string[][]=[]; let row:string[]=[]; let cell=""; let quoted=false;
   for(let index=0;index<text.length;index+=1){
     const char=text[index];
