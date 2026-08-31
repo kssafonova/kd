@@ -3,19 +3,9 @@
 @media(prefers-reduced-motion:reduce){.home-fast *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 
-/* NAV_PERF_V144_SHARED_PRODUCT_CARDS */
+/* KULTURA_HOME_PLP_CARD_V147 — PLP card internals come from globals.css. */
 .home-fast-new .home-fast-product-rail{align-items:stretch}
-.home-fast-new .home-fast-product{display:block;flex:0 0 clamp(220px,23vw,330px);color:inherit;text-decoration:none}
-.home-fast-new .home-fast-product-media{display:block;width:100%;background:#f3f1ed}
-.home-fast-new .home-fast-product-media img{width:100%;aspect-ratio:1/1.08;object-fit:cover}
-.home-fast-new .home-fast-product-copy{width:calc(100% - 40px);padding:12px 0;display:flex;flex-direction:column;align-items:flex-start}
-.home-fast-new .home-fast-product-copy .product-link{color:inherit;text-decoration:none;display:flex;flex-direction:column;text-align:left}
-.home-fast-new .home-fast-product-copy strong{font:400 16px/1.25 var(--serif)}
-.home-fast-new .home-fast-product-copy small{font-size:11px;color:#888;margin-top:4px}
-.home-fast-new .home-fast-product-copy .price{font-size:14px;margin-top:8px}
-.home-fast-new .home-fast-quick{right:1px;bottom:10px;display:grid;place-items:center;color:inherit}
-.home-fast-new .home-fast-quick svg{width:27px;height:27px}
-.home-fast-new .home-fast-swatches{display:flex;gap:7px;margin-top:9px;min-height:20px}
-.home-fast-new .home-fast-swatches i{display:block;width:17px;height:17px;border-radius:50%;border:1px solid #d7d7d3;box-shadow:inset 0 0 0 2px #fff}
-.home-fast-new .home-fast-swatches i.active{outline:1px solid #222;outline-offset:1px}
-@media(max-width:700px){.home-fast-new .home-fast-product{flex-basis:64vw}.home-fast-new .home-fast-product-copy strong{font-size:13px}.home-fast-new .home-fast-product-copy .price{font-size:12px}}
+.home-fast-new .home-fast-product{display:block;flex:0 0 clamp(220px,23vw,330px);color:inherit}
+.home-fast-new .home-fast-product .product-image{width:100%}
+.home-fast-new .home-fast-product .product-copy{width:calc(100% - 42px)}
+@media(max-width:700px){.home-fast-new .home-fast-product{flex-basis:64vw;max-width:280px}}

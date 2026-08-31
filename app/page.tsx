@@ -1,3 +1,4 @@
+import "./menu-zara-premium.css";
 import "./home-standalone.css";
 import HomeStandalone from "./home-standalone";
 

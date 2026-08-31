@@ -412,3 +412,27 @@
     font-size: 16px;
   }
 }
+
+
+/* KULTURA_MENU_UNIFIED_V147 */
+.premium-menu .premium-menu-editorial-lower{
+  margin:22px 0 0;
+  padding:20px 0 0;
+  border-top:1px solid #dededb;
+}
+.premium-menu .premium-menu-editorial-lower>small{margin-bottom:10px;color:#9a8a7c}
+.premium-menu .premium-menu-editorial-lower>button,
+.premium-menu .premium-menu-editorial-lower>a{
+  min-height:41px;
+  padding:6px 0!important;
+  color:#6f6257!important;
+  font-size:14px;
+  letter-spacing:.055em;
+}
+.premium-menu .premium-menu-editorial-lower>button+button,
+.premium-menu .premium-menu-editorial-lower>a+a{margin-top:0}
+@media(max-width:700px){
+  .premium-menu .premium-menu-editorial-lower{margin-top:20px;padding-top:18px}
+  .premium-menu .premium-menu-editorial-lower>button,
+  .premium-menu .premium-menu-editorial-lower>a{font-size:13px;min-height:40px}
+}
