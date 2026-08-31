@@ -128,7 +128,7 @@ export default function HomeStandalone(){
   return <main className="view-home home-fast">
     <div className="promo">БЕСПЛАТНАЯ ДОСТАВКА ОТ 15 000 ₽ <button onClick={()=>navigate("/catalog/")}>ПОДРОБНЕЕ</button></div>
     <header className="header">
-      <div className="header-left"><button className="icon-btn hamburger" aria-label="Открыть меню" onClick={()=>setMenu(true)}><i/><i/><i/></button><button className="boutiques" onClick={()=>document.getElementById("home-boutiques")?.scrollIntoView({behavior:"smooth"})}><Icon name="pin"/> Бутики</button></div>
+      <div className="header-left"><button className="icon-btn hamburger" aria-label="Открыть меню" onClick={()=>navigate("/catalog/?open=menu")}><i/><i/><i/></button><button className="boutiques" onClick={()=>navigate("/catalog/?open=boutiques")}><Icon name="pin"/> Бутики</button></div>
       <button className="logo" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>КУЛЬТУРА ДОМА</button>
       <div className="header-actions">
         <button onClick={()=>navigate("/catalog/?open=search")} aria-label="Поиск"><Icon name="search"/></button>
@@ -137,8 +137,6 @@ export default function HomeStandalone(){
         <button className="bag" onClick={()=>navigate("/catalog/?open=cart")} aria-label="Корзина"><Icon name="bag"/>{cartCount>0&&<b>{cartCount}</b>}</button>
       </div>
     </header>
-
-    {menu&&<div className="home-fast-menu" role="dialog" aria-modal="true" aria-label="Меню"><button className="home-fast-menu-close" onClick={()=>setMenu(false)} aria-label="Закрыть">×</button><nav>{CATEGORIES.slice(0,6).map(item=><a key={item.name} href={url(`/catalog/?category=${encodeURIComponent(item.category)}`)}>{item.name}</a>)}<a href={url("/capsules/")}>Капсулы</a><a href={url("/collections/")}>Коллекции</a><a href={url("/ready-solutions/")}>Готовые решения</a><a href={url("/constructor/")}>Конструктор</a></nav></div>}
 
     <section className="home-fast-hero" aria-label="Главные истории">
       <div className="home-fast-hero-track" ref={heroRef} onScroll={event=>{const el=event.currentTarget;const next=Math.round(el.scrollLeft/Math.max(1,el.clientWidth));if(next!==hero)setHero(next)}}>
@@ -158,7 +156,7 @@ export default function HomeStandalone(){
 
     <section className="home-fast-section home-fast-new" aria-labelledby="home-new-title">
       <header className="home-fast-head"><h2 id="home-new-title">Новинки</h2><a href={url("/catalog/")}>Смотреть все</a></header>
-      <div className="home-fast-product-rail">{NEW_PRODUCTS.map(product=>{const productHref=url(`/catalog/?product=${encodeURIComponent(product.article??String(product.id))}`);return <article className="product-card home-fast-product" key={product.id}><a className="product-image home-fast-product-media" href={productHref}><img src={url(product.image)} alt={product.name} loading="lazy" decoding="async"/></a><div className="product-copy home-fast-product-copy"><a className="product-link" href={productHref}><strong>{product.name}</strong><small>{product.note}</small></a>{product.colorVariants&&product.colorVariants.length>1&&<div className="plp-swatches home-fast-swatches" aria-label={`Варианты ${product.name}`}>{product.colorVariants.slice(0,5).map((variant,index)=><i key={variant.name} className={index===0?"active":""} style={{background:variant.hex}} title={variant.name}/>)}</div>}<span className="price">{money(product.price)}</span></div><a className="quick home-fast-quick" href={productHref} aria-label={`Выбрать ${product.name}`}><Icon name="bag"/></a></article>})}</div>
+      <div className="home-fast-product-rail">{NEW_PRODUCTS.map(product=>{const article=encodeURIComponent(product.article??String(product.id));const productHref=url(`/catalog/?product=${article}`);const quickHref=url(`/catalog/?quick=${article}`);return <article className="product-card home-fast-product" key={product.id}><a className="product-image home-fast-product-media" href={productHref}><img src={url(product.image)} alt={product.name} loading="lazy" decoding="async"/></a><div className="product-copy home-fast-product-copy"><a className="product-link" href={productHref}><strong>{product.name}</strong><small>{product.note}</small></a>{product.colorVariants&&product.colorVariants.length>1&&<div className="plp-swatches home-fast-swatches" aria-label={`Варианты ${product.name}`}>{product.colorVariants.slice(0,5).map((variant,index)=><i key={variant.name} className={index===0?"active":""} style={{background:variant.hex}} title={variant.name}/>)}</div>}<span className="price">{money(product.price)}</span></div><a className="quick home-fast-quick" href={quickHref} aria-label={`Выбрать ${product.name}`}><Icon name="bag"/></a></article>})}</div>
     </section>
 
     <section className="home-fast-section home-fast-film" aria-labelledby="home-film-title">
