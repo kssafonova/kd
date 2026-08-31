@@ -46,9 +46,23 @@ import "../catalog-mobile-human-eye-v131.css";
 import "../catalog-togas-v132.css";
 import "../cart-checkout-human-eye-v136.css";
 import "../catalog-ux-v141.css";
+import { ProductCardGalleryEnhancer } from "../product-card-gallery";
+import { CollectionPurchaseEnhancer } from "../collection-purchase-enhancer";
+import { ProfileAddressBookEnhancer } from "../profile-address-book";
+import { TruthCommerceEnhancer } from "../truth-commerce-enhancer";
+import { CatalogLoadingStateV127 } from "../catalog-loading-state-v127";
+import { CatalogTogasV132Enhancer } from "../catalog-togas-v132-enhancer";
+import { CartCheckoutHumanEyeV136Enhancer } from "../cart-checkout-human-eye-v136-enhancer";
 
 export default function CatalogLayout({children}:{children:React.ReactNode}){
   return <>
+    <ProductCardGalleryEnhancer />
+    <CollectionPurchaseEnhancer />
+    <ProfileAddressBookEnhancer />
+    <TruthCommerceEnhancer />
+    <CatalogLoadingStateV127 />
+    <CatalogTogasV132Enhancer />
+    <CartCheckoutHumanEyeV136Enhancer />
     {children}
   </>;
 }

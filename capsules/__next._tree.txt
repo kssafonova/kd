@@ -1,4 +1,4 @@
-:HL["/kd/_next/static/chunks/0e_7ill2_42jz.css","style"]
+:HL["/kd/_next/static/chunks/07-~nknfnoa.6.css","style"]
 :HL["/kd/_next/static/chunks/0x-n6~w2yt95_.css","style"]
 :HL["https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap","style"]
 :HL["/kd/assets/images/caps_luna_postel.png","image"]
@@ -6,4 +6,4 @@
 :HL["/kd/assets/images/caps_led.png","image"]
 :HL["/kd/assets/images/niti0.jpg","image"]
 :HL["/kd/assets/images/tayna0.jpg","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"capsules","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"hGSgfgno9LAgYFZS2jpXa"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"capsules","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"zmxdLLZfzBPV3cby4CKS9"}

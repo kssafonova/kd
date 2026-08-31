@@ -2570,6 +2570,14 @@ footer{background:#202a2b}
 }
 /* END_HOME_HERO_DIRECT_IMAGES_V115 */
 
+
+/* KULTURA_PERFORMANCE_V145 — paint/layout optimization only; no visual changes. */
+@supports (content-visibility:auto){
+  .view-catalog .product-card{content-visibility:auto;contain-intrinsic-size:auto 520px}
+  .view-home .home-fast-section{content-visibility:auto;contain-intrinsic-size:auto 720px}
+  .view-product .rich-content>*,.pdp-rich-content>*{content-visibility:auto;contain-intrinsic-size:auto 720px}
+}
+
 /* HOME_NEW_PRODUCTS_CAPSULES_V117 */
 .home117-new-products{padding:clamp(58px,7vw,104px) 0 clamp(72px,8vw,120px);background:#f7f5ef;color:#171815}
 .home117-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 clamp(20px,4.2vw,64px) 30px}
@@ -2607,10 +2615,3 @@ footer{background:#202a2b}
   .home117-capsule-copy h3{font-size:29px}
 }
 /* END_HOME_NEW_PRODUCTS_CAPSULES_V117 */
-
-/* KULTURA_PERFORMANCE_V145 — paint/layout optimization only; no visual changes. */
-@supports (content-visibility:auto){
-  .view-catalog .product-card{content-visibility:auto;contain-intrinsic-size:auto 520px}
-  .view-home .home-fast-section{content-visibility:auto;contain-intrinsic-size:auto 720px}
-  .view-product .rich-content>*,.pdp-rich-content>*{content-visibility:auto;contain-intrinsic-size:auto 720px}
-}
