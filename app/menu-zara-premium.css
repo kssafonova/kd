@@ -286,8 +286,8 @@
 
   .premium-menu .menu-top {
     height: 75px;
-    padding: 0 30px;
-    gap: 28px;
+    padding: 0 24px;
+    gap: 22px;
   }
 
   .premium-menu .menu-body {
@@ -296,7 +296,7 @@
 
   .premium-menu .premium-menu-root,
   .premium-menu .premium-menu-level-two {
-    padding: 27px 30px 40px;
+    padding: 25px 26px 34px;
   }
 
   .premium-menu .premium-menu-catalog > button {
@@ -315,14 +315,14 @@
 
 @media (max-width: 390px) {
   .premium-menu .menu-top {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .premium-menu .premium-menu-root,
   .premium-menu .premium-menu-level-two {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 22px;
+    padding-right: 22px;
   }
 
   .premium-menu .premium-menu-catalog > button {
