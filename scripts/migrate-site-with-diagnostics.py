@@ -44,6 +44,7 @@ scripts = [
     root / "scripts" / "apply-kultura-navigation-v146.py",
     root / "scripts" / "apply-unified-kultura-menu-v147.py",
     root / "scripts" / "refine-home-plp-card-v148.py",
+    root / "scripts" / "fix-mobile-header-actions-v149.py",
 ]
 
 logs = []
