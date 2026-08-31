@@ -1,5 +1,6 @@
-:HL["/kd/_next/static/chunks/1342xircz.cq5.css","style"]
+:HL["/kd/_next/static/chunks/0e_7ill2_42jz.css","style"]
 :HL["/kd/_next/static/chunks/0x-n6~w2yt95_.css","style"]
+:HL["https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap","style"]
 :HL["/kd/assets/images/KD-PD-00474.png","image"]
 :HL["/kd/assets/images/KD-PD-1027МОЛОЧНЫЙ.png","image"]
 :HL["/kd/assets/images/time-tea-pair.png","image"]
@@ -21,4 +22,4 @@
 :HL["/kd/assets/images/6a47b3e9acf68_big.jpg","image"]
 :HL["/kd/assets/images/KD-PD-10375-02.png","image"]
 :HL["/kd/assets/images/6a85ae136bac7_big.jpg","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"collections","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"Lkb_rrVoiGWbh60mOxxS7"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"collections","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"hGSgfgno9LAgYFZS2jpXa"}

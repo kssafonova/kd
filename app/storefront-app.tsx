@@ -180,7 +180,7 @@ function DeferredProductCardMedia({product,alt,position}:{product:Product;alt:st
   const images=getProductImages(product);
   const sources=images.length?images:[product.image];
   return <div className={`product-media-scroll horizontal-media ${sources.length>1?"is-scrollable":""}`} role="group" aria-label={`${alt}: ${sources.length} фото`} tabIndex={sources.length>1?0:-1}>
-    {sources.map((src,index)=><RemoteImage key={`${src}-${index}`} src={src} alt={index===0?alt:`${alt}, фото ${index+1}`} loading="lazy" decoding="async" draggable={false} style={{objectPosition:position||product.position||"center"}}/>)}
+    {sources.map((src,index)=><RemoteImage key={`${src}-${index}`} src={src} alt={index===0?alt:`${alt}, фото ${index+1}`} loading="lazy" decoding="async" fetchPriority={index===0?"auto":"low"} draggable={false} style={{objectPosition:position||product.position||"center"}}/>)}
   </div>;
 }
 
@@ -362,7 +362,7 @@ const collectionEditorialProducts:Product[] = [];
 // COLLECTIONS_REDESIGN_V65
 const normalizeRetiredCatalogName=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/[‐‑‒–—]/g,"-").replace(/\s+/g," ");
 const isRetiredCatalogProduct=(name:string)=>{const value=normalizeRetiredCatalogName(name);return value.includes("мокоши")||value.includes("овация")||/жар(?:-| )?птица/.test(value)};
-if(!CATALOG_PRODUCTS_GENERATED.length){if(!CATALOG_PRODUCTS_GENERATED.length){for(let index=products.length-1;index>=0;index-=1){if(isRetiredCatalogProduct(products[index].name))products.splice(index,1)}}}
+if(!CATALOG_PRODUCTS_GENERATED.length){if(!CATALOG_PRODUCTS_GENERATED.length){if(!CATALOG_PRODUCTS_GENERATED.length){for(let index=products.length-1;index>=0;index-=1){if(isRetiredCatalogProduct(products[index].name))products.splice(index,1)}}}}
 // READY_SOLUTIONS_MERCH_V75
 type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦИЯ"; lead:string; detail:string; description:string; images:string[]; productIds:number[] };
 // COLLECTIONS_REDESIGN_V65_INDEX

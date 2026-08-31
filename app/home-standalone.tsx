@@ -90,10 +90,16 @@ export default function HomeStandalone(){
 
 
   useEffect(()=>{
-    router.prefetch("/catalog/");
-    router.prefetch("/capsules/");
-    router.prefetch("/collections/");
-    router.prefetch("/ready-solutions/");
+    const prefetched=new Set<string>();
+    const prefetchIntent=(event:Event)=>{
+      const anchor=(event.target as Element|null)?.closest<HTMLAnchorElement>("a[href]");
+      if(!anchor)return;
+      const raw=anchor.getAttribute("href")||"";
+      const relative=BASE&&raw.startsWith(BASE)?(raw.slice(BASE.length)||"/"):raw;
+      if(!relative.startsWith("/")||prefetched.has(relative))return;
+      prefetched.add(relative);
+      router.prefetch(relative);
+    };
     const root=document.querySelector<HTMLElement>(".home-fast");
     const route=(event:MouseEvent)=>{
       if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
@@ -108,18 +114,10 @@ export default function HomeStandalone(){
       router.push(relative);
     };
     root?.addEventListener("click",route);
-    return()=>root?.removeEventListener("click",route);
+    root?.addEventListener("pointerover",prefetchIntent,{passive:true});
+    root?.addEventListener("touchstart",prefetchIntent,{passive:true});
+    return()=>{root?.removeEventListener("click",route);root?.removeEventListener("pointerover",prefetchIntent);root?.removeEventListener("touchstart",prefetchIntent)};
   },[router]);
-
-  useEffect(()=>{
-    const video=brandVideoRef.current;if(!video)return;
-    const observer=new IntersectionObserver(entries=>{
-      const near=entries.some(entry=>entry.isIntersecting);
-      if(near)void video.play().catch(()=>{});else video.pause();
-    },{rootMargin:"300px 0px"});
-    observer.observe(video);
-    return()=>observer.disconnect();
-  },[]);
 
   const navigate=(path:string)=>router.push(path);
   const scrollHero=(index:number)=>{
@@ -166,8 +164,8 @@ export default function HomeStandalone(){
     <section className="home-fast-section home-fast-film" aria-labelledby="home-film-title">
       <header className="home-fast-head home-fast-film-head"><div><small>О БРЕНДЕ</small><h2 id="home-film-title">Традиции в каждом доме</h2></div></header>
       <video ref={brandVideoRef} muted loop playsInline preload="none" poster={url("/assets/images/green.jpeg")}>
-        <source media="(max-width:700px)" src={url("/assets/video/kultura-brand-mobile.mp4")} type="video/mp4"/>
-        <source src={url("/assets/video/kultura-brand-desktop.mp4")} type="video/mp4"/>
+        
+        
       </video>
     </section>
 
