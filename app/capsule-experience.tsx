@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CATALOG_PRODUCTS_GENERATED } from "./catalog-products.generated";
 import { SharedKulturaMenu } from "./shared-kultura-menu";
 
@@ -15,7 +15,6 @@ type CapsuleProduct={
   skus?:CapsuleSku[];
 };
 type CapsuleName="Лунная сказка"|"Ледяные узоры"|"Тайна"|"Нити"|"Феникс";
-
 type IconName="menu"|"search"|"user"|"heart"|"bag"|"close"|"arrow"|"check";
 
 const PRODUCTS=CATALOG_PRODUCTS_GENERATED as unknown as CapsuleProduct[];
@@ -60,9 +59,9 @@ function Icon({name}:{name:IconName}){
 
 function Header({onMenu}:{onMenu:()=>void}){
   return <>
-    <div className="promo capsule-v151-promo">БЕСПЛАТНАЯ ДОСТАВКА ОТ 15 000 ₽ <Link href="/catalog/">ПОДРОБНЕЕ</Link></div>
-    <header className="header capsule-v151-header">
-      <div className="header-left"><button className="capsule-v151-menu" onClick={onMenu} aria-label="Открыть меню"><Icon name="menu"/></button></div>
+    <div className="promo capsule-v160-promo">БЕСПЛАТНАЯ ДОСТАВКА ОТ 15 000 ₽ <Link href="/catalog/">ПОДРОБНЕЕ</Link></div>
+    <header className="header capsule-v160-header">
+      <div className="header-left"><button className="capsule-v160-menu" onClick={onMenu} aria-label="Открыть меню"><Icon name="menu"/></button></div>
       <Link className="logo" href="/">КУЛЬТУРА ДОМА</Link>
       <div className="header-actions">
         <Link href="/catalog/?open=search" aria-label="Поиск"><Icon name="search"/></Link>
@@ -98,28 +97,58 @@ function productBasePrice(product:CapsuleProduct){
 function CapsuleDialog({name,onClose}:{name:CapsuleName;onClose:()=>void}){
   const items=useMemo(()=>PRODUCTS.filter(product=>norm(product.capsule)===norm(name)),[name]);
   const [selection,setSelection]=useState<Record<number,string>>({});
+  const [included,setIncluded]=useState<Record<number,boolean>>({});
+  const dialogRef=useRef<HTMLElement|null>(null);
 
   useEffect(()=>{
-    const initial:Record<number,string>={};
-    items.forEach(product=>{initial[product.id]=defaultSkuId(product)});
-    setSelection(initial);
+    const initialSelection:Record<number,string>={};
+    const initialIncluded:Record<number,boolean>={};
+    items.forEach(product=>{
+      initialSelection[product.id]=defaultSkuId(product);
+      initialIncluded[product.id]=true;
+    });
+    setSelection(initialSelection);
+    setIncluded(initialIncluded);
   },[items]);
 
   useEffect(()=>{
-    const previous=document.body.style.overflow;
+    const previousOverflow=document.body.style.overflow;
+    const previousActive=document.activeElement instanceof HTMLElement?document.activeElement:null;
     document.body.style.overflow="hidden";
-    const key=(event:KeyboardEvent)=>{if(event.key==="Escape")onClose()};
+    const root=dialogRef.current;
+    root?.querySelector<HTMLElement>("[data-capsule-close]")?.focus();
+
+    const key=(event:KeyboardEvent)=>{
+      if(event.key==="Escape"){
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if(event.key!=="Tab"||!root)return;
+      const focusable=Array.from(root.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),select:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(element=>element.offsetParent!==null);
+      if(!focusable.length)return;
+      const first=focusable[0];
+      const last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+    };
     window.addEventListener("keydown",key);
-    return()=>{document.body.style.overflow=previous;window.removeEventListener("keydown",key)};
+    return()=>{
+      document.body.style.overflow=previousOverflow;
+      window.removeEventListener("keydown",key);
+      previousActive?.focus();
+    };
   },[onClose]);
 
   const selectedSku=(product:CapsuleProduct)=>availableSkus(product).find(sku=>sku.id===selection[product.id]);
-  const missing=items.filter(product=>requiresExplicitSelection(product)&&!selectedSku(product));
-  const total=items.reduce((sum,product)=>sum+(selectedSku(product)?.price??productBasePrice(product)),0);
+  const chosenItems=items.filter(product=>included[product.id]!==false);
+  const missing=chosenItems.filter(product=>requiresExplicitSelection(product)&&!selectedSku(product));
+  const total=chosenItems.reduce((sum,product)=>sum+(selectedSku(product)?.price??productBasePrice(product)),0);
+  const toggleIncluded=(productId:number)=>setIncluded(current=>({...current,[productId]:current[productId]===false}));
 
   const buyAll=()=>{
-    if(missing.length)return;
-    const bundle=items.map(product=>{
+    if(missing.length||!chosenItems.length)return;
+    const bundle=chosenItems.map(product=>{
       const sku=selectedSku(product)??availableSkus(product)[0];
       const gallery=sku?.gallery?.length?sku.gallery:product.gallery;
       return {
@@ -144,44 +173,73 @@ function CapsuleDialog({name,onClose}:{name:CapsuleName;onClose:()=>void}){
   };
 
   const gallery=CAPSULE_GALLERIES[name];
-  return <div className="capsule-overlay-v151" role="presentation">
-    <button className="capsule-backdrop-v151" onClick={onClose} aria-label="Закрыть капсулу"/>
-    <section className="capsule-dialog-v151" role="dialog" aria-modal="true" aria-labelledby="capsule-v151-title">
-      <header className="capsule-dialog-head-v151">
-        <div><small>КАПСУЛА · {items.length} ТОВАРОВ</small><h2 id="capsule-v151-title">{name}</h2></div>
-        <button onClick={onClose} aria-label="Закрыть"><Icon name="close"/></button>
-      </header>
+  const ctaLabel=!chosenItems.length?"ВЫБЕРИТЕ ТОВАРЫ":missing.length?`ВЫБЕРИТЕ ВАРИАНТЫ · ${missing.length}`:`ДОБАВИТЬ КОМПЛЕКТ · ${chosenItems.length}`;
 
-      <div className="capsule-dialog-body-v151">
-        <div className="capsule-gallery-v151" aria-label={`Фотографии капсулы ${name}`}>
-          {gallery.map((image,index)=><figure key={image}><img src={asset(image)} alt={`${name}, образ ${index+1}`} loading={index<2?"eager":"lazy"} decoding="async"/></figure>)}
+  return <div className="capsule-overlay-v160" role="presentation">
+    <section ref={dialogRef} className="capsule-dialog-v160" role="dialog" aria-modal="true" aria-labelledby="capsule-v160-title" tabIndex={-1}>
+      <button data-capsule-close className="capsule-close-v160" onClick={onClose} aria-label="Закрыть капсулу"><Icon name="close"/></button>
+
+      <div className="capsule-story-v160">
+        <div className="capsule-story-meta-v160"><span>КАПСУЛА · {name}</span><span>{gallery.length} ОБРАЗОВ</span></div>
+        <div className="capsule-gallery-v160" aria-label={`Фотографии капсулы ${name}`}>
+          {gallery.map((image,index)=><figure key={image}>
+            <img src={asset(image)} alt={`${name}, образ ${index+1}`} loading={index<2?"eager":"lazy"} decoding="async"/>
+            <figcaption>{String(index+1).padStart(2,"0")} / {String(gallery.length).padStart(2,"0")}</figcaption>
+          </figure>)}
         </div>
-
-        <aside className="capsule-commerce-v151">
-          <div className="capsule-commerce-intro-v151"><p>{CAPSULE_COPY[name]}</p><span>Все предметы входят в комплект по одной штуке. Для товаров с несколькими размерами сначала выберите нужный вариант.</span></div>
-          <div className="capsule-products-v151">
-            {items.map(product=>{
-              const skus=availableSkus(product);
-              const current=selectedSku(product);
-              const needs=requiresExplicitSelection(product)&&!current;
-              const image=current?.image??product.image;
-              return <article key={product.id} className={needs?"needs-selection":""}>
-                <Link className="capsule-product-image-v151" href={`/catalog/?product=${encodeURIComponent(product.article??String(product.id))}`}><img src={asset(image)} alt={product.name} loading="lazy" decoding="async"/></Link>
-                <div className="capsule-product-copy-v151">
-                  <div className="capsule-product-title-v151"><span><Icon name="check"/></span><div><Link href={`/catalog/?product=${encodeURIComponent(product.article??String(product.id))}`}>{product.name}</Link><small>{product.note}</small></div></div>
-                  {skus.length>1?<label><span>{needs?"ВЫБЕРИТЕ ВАРИАНТ":"ВАРИАНТ"}</span><select value={selection[product.id]??""} onChange={event=>setSelection(currentSelection=>({...currentSelection,[product.id]:event.target.value}))} aria-label={`Вариант товара ${product.name}`}><option value="" disabled>Выберите вариант / размер</option>{skus.map(sku=><option key={sku.id} value={sku.id}>{skuLabel(sku)} · {money(sku.price)}</option>)}</select></label>:<div className="capsule-fixed-option-v151"><span>{skuLabel(skus[0]??{})}</span></div>}
-                  <strong>{current?money(current.price):<>от {money(productBasePrice(product))}</>}</strong>
-                </div>
-              </article>;
-            })}
-          </div>
-        </aside>
       </div>
 
-      <footer className="capsule-dialog-footer-v151">
-        <div><span>{missing.length?`Осталось выбрать: ${missing.length}`:`Вся капсула · ${items.length} товаров`}</span><strong>{missing.length?<>от {money(total)}</>:money(total)}</strong></div>
-        <button disabled={Boolean(missing.length)||!items.length} onClick={buyAll}>{missing.length?"ВЫБЕРИТЕ ВАРИАНТЫ":"ВЫКУПИТЬ ВСЮ КАПСУЛУ"}<Icon name="arrow"/></button>
-      </footer>
+      <aside className="capsule-shop-v160">
+        <header className="capsule-shop-head-v160">
+          <small>СОБЕРИТЕ ОБРАЗ</small>
+          <h2 id="capsule-v160-title">{name}</h2>
+          <p>{CAPSULE_COPY[name]}</p>
+          <div className="capsule-shop-hint-v160"><span>Все предметы выбраны по умолчанию.</span><span>Снимите ненужные и настройте варианты.</span></div>
+        </header>
+
+        <div className="capsule-products-v160" aria-label={`Товары капсулы ${name}`}>
+          {items.map(product=>{
+            const skus=availableSkus(product);
+            const current=selectedSku(product);
+            const isIncluded=included[product.id]!==false;
+            const needs=isIncluded&&requiresExplicitSelection(product)&&!current;
+            const image=current?.image??product.image;
+            return <article key={product.id} className={`capsule-product-v160 ${isIncluded?"is-included":"is-excluded"} ${needs?"needs-selection":""}`}>
+              <div className="capsule-product-media-v160">
+                <Link href={`/catalog/?product=${encodeURIComponent(product.article??String(product.id))}`} aria-label={`Открыть ${product.name}`}><img src={asset(image)} alt={product.name} loading="lazy" decoding="async"/></Link>
+                <button type="button" className="capsule-inclusion-v160" aria-pressed={isIncluded} aria-label={isIncluded?`Убрать ${product.name} из комплекта`:`Добавить ${product.name} в комплект`} onClick={()=>toggleIncluded(product.id)}>
+                  <span>{isIncluded&&<Icon name="check"/>}</span>{isIncluded?"В КОМПЛЕКТЕ":"ДОБАВИТЬ"}
+                </button>
+              </div>
+
+              <div className="capsule-product-copy-v160">
+                <div className="capsule-product-name-v160">
+                  <Link href={`/catalog/?product=${encodeURIComponent(product.article??String(product.id))}`}>{product.name}</Link>
+                  {product.note&&<small>{product.note}</small>}
+                </div>
+
+                {skus.length>1?<label className="capsule-option-v160">
+                  <span>{needs?"ВЫБЕРИТЕ ВАРИАНТ":"ВАРИАНТ"}</span>
+                  <select disabled={!isIncluded} value={selection[product.id]??""} onChange={event=>setSelection(currentSelection=>({...currentSelection,[product.id]:event.target.value}))} aria-label={`Вариант товара ${product.name}`}>
+                    <option value="" disabled>Выберите вариант / размер</option>
+                    {skus.map(sku=><option key={sku.id} value={sku.id}>{skuLabel(sku)} · {money(sku.price)}</option>)}
+                  </select>
+                </label>:<div className="capsule-fixed-option-v160">{skuLabel(skus[0]??{})}</div>}
+
+                <strong className="capsule-product-price-v160">{current?money(current.price):<>от {money(productBasePrice(product))}</>}</strong>
+              </div>
+            </article>;
+          })}
+        </div>
+
+        <footer className="capsule-buybar-v160">
+          <div className="capsule-buybar-summary-v160">
+            <span>{missing.length?`Нужно выбрать варианты: ${missing.length}`:`Выбрано ${chosenItems.length} из ${items.length}`}</span>
+            <strong>{money(total)}</strong>
+          </div>
+          <button type="button" disabled={Boolean(missing.length)||!chosenItems.length} onClick={buyAll}>{ctaLabel}<Icon name="arrow"/></button>
+        </footer>
+      </aside>
     </section>
   </div>;
 }
@@ -192,18 +250,27 @@ export default function CapsuleExperience(){
   const capsules=useMemo(()=>CAPSULE_ORDER.map(name=>({name,items:PRODUCTS.filter(product=>norm(product.capsule)===norm(name))})).filter(item=>item.items.length),[]);
   const navigate=(path:string)=>{window.location.href=`${BASE}${path}`};
 
-  return <main className="capsules-v151-page">
+  return <main className="capsules-v160-page">
     <Header onMenu={()=>setMenu(true)}/>
     {menu&&<SharedKulturaMenu onClose={()=>setMenu(false)} onCatalog={(category="Все товары")=>navigate(`/catalog/?category=${encodeURIComponent(category)}`)} onNavigate={navigate}/>}
 
-    <div className="capsules-v151-shell">
+    <div className="capsules-v160-shell">
       <nav className="crumbs"><Link href="/">Главная</Link> / <span>Капсулы</span></nav>
-      <header className="capsules-v151-intro"><small>КУЛЬТУРА ДОМА · EDITORIAL</small><h1>Капсулы</h1><p>Цельные истории для дома. Откройте капсулу, рассмотрите образы, настройте варианты товаров и при желании добавьте весь комплект в корзину.</p></header>
+      <header className="capsules-v160-intro">
+        <small>КУЛЬТУРА ДОМА · EDITORIAL</small>
+        <h1>Капсулы</h1>
+        <div><p>Цельные истории для дома, в которых предметы уже собраны по настроению, фактуре и цвету.</p><p>Откройте образ, оставьте нужные предметы и добавьте готовый комплект в корзину.</p></div>
+      </header>
 
-      <section className="capsules-grid-v151" aria-label="Все капсулы">
-        {capsules.map(({name,items},index)=><button key={name} className={`capsule-card-v151 capsule-card-${index}`} onClick={()=>setActive(name)} aria-haspopup="dialog">
-          <span className="capsule-card-media-v151"><img src={asset(CAPSULE_GALLERIES[name][0])} alt="" loading={index<2?"eager":"lazy"} decoding="async"/></span>
-          <span className="capsule-card-copy-v151"><small>КАПСУЛА · {items.length} ТОВАРОВ</small><strong>{name}</strong><em>Открыть <Icon name="arrow"/></em></span>
+      <section className="capsules-grid-v160" aria-label="Все капсулы">
+        {capsules.map(({name,items},index)=><button key={name} className={`capsule-card-v160 capsule-card-${index}`} onClick={()=>setActive(name)} aria-haspopup="dialog">
+          <span className="capsule-card-media-v160"><img src={asset(CAPSULE_GALLERIES[name][0])} alt="" loading={index<2?"eager":"lazy"} decoding="async"/></span>
+          <span className="capsule-card-copy-v160">
+            <small>КАПСУЛА · {items.length} ТОВАРОВ</small>
+            <strong>{name}</strong>
+            <span>{CAPSULE_COPY[name]}</span>
+            <em>СМОТРЕТЬ И СОБРАТЬ <Icon name="arrow"/></em>
+          </span>
         </button>)}
       </section>
     </div>
