@@ -30,20 +30,25 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
     timings.push([label,Date.now()-start]);
   }
 
-  // Homepage menu and route coverage.
+  // Homepage is intentionally lightweight. Menu action must route to the
+  // canonical Kultura storefront and open the same premium Menu overlay used by catalog.
   await home();
+  const menuStart=Date.now();
   await page.getByRole('button',{name:'Открыть меню'}).click();
-  await page.waitForSelector('.home-fast-menu',{state:'visible',timeout:4000});
-  assert(await page.locator('.home-fast-menu a[href*="/capsules/"]').count()>0,'Homepage menu: capsules link missing');
-  assert(await page.locator('.home-fast-menu a[href*="/collections/"]').count()>0,'Homepage menu: collections link missing');
-  await page.getByRole('button',{name:'Закрыть'}).click();
+  await page.waitForURL(url=>url.pathname.includes('/kd/catalog'),{timeout:12000});
+  await page.waitForSelector('.navigation-overlay .menu-panel',{state:'visible',timeout:12000});
+  timings.push(['home->menu',Date.now()-menuStart]);
+  assert(await page.getByRole('button',{name:/КАПСУЛЫ/i}).count()>0,'Canonical Kultura menu: capsules action missing');
+  assert(await page.locator('.navigation-overlay .premium-menu').count()===1,'Canonical Kultura premium menu missing');
+  await page.getByRole('button',{name:'Закрыть меню'}).click();
 
   await homeAction('Поиск','home->search');
   await homeAction('Профиль','home->profile');
   await homeAction(/Избранное/,'home->favorites');
   await homeAction('Корзина','home->cart');
 
-  // Homepage "Новинки" must use catalog product-card anatomy and open the real product flow.
+  // Homepage "Новинки" reuse catalog product-card anatomy. Media/title open
+  // the canonical Kultura PDP, while the quick icon is bridged to PLPSizeFlow.
   await home();
   assert(await page.locator('.home-fast-new .product-card').count()>=4,'Homepage New Products do not use catalog cards');
   const firstHomeProduct=page.locator('.home-fast-new .product-card .product-image').first();
@@ -53,7 +58,14 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await page.waitForURL(url=>url.pathname.includes('/kd/catalog'),{timeout:12000});
   await page.waitForSelector('.product-page',{state:'visible',timeout:12000});
   timings.push(['home->product',Date.now()-productStart]);
-  assert(await page.locator('.product-page .purchase-cta').count()>0,'Homepage product did not open the catalog PDP form');
+  assert(await page.locator('.product-page .primary').count()>0,'Homepage product did not open the Kultura PDP purchase form');
+
+  await home();
+  const quick=page.locator('.home-fast-new .product-card .quick').first();
+  await quick.scrollIntoViewIfNeeded();
+  await quick.click();
+  await page.waitForURL(url=>url.pathname.includes('/kd/catalog'),{timeout:12000});
+  await page.waitForSelector('.plp-size-overlay,.plp-size-flow,.overlay',{state:'visible',timeout:12000});
 
   // Catalog initial render, category slider, filter and sort.
   await catalog();
@@ -73,10 +85,9 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   // Catalog menu and all global header actions.
   await catalog();
   await page.getByRole('button',{name:'Открыть меню'}).click();
-  await page.waitForSelector('.navigation-overlay',{state:'visible',timeout:4000});
-  assert(await page.locator('.navigation-overlay a[href*="/capsules/"]').count()>0,'Catalog menu capsules route missing');
-  assert(await page.locator('.navigation-overlay a[href*="/collections/"]').count()>0,'Catalog menu collections route missing');
-  await page.locator('.navigation-overlay .menu-top button').first().click();
+  await page.waitForSelector('.navigation-overlay .menu-panel',{state:'visible',timeout:4000});
+  assert(await page.getByRole('button',{name:/КАПСУЛЫ/i}).count()>0,'Catalog canonical menu capsules action missing');
+  await page.getByRole('button',{name:'Закрыть меню'}).click();
 
   for(const [name,label] of [['Поиск','catalog-search'],['Профиль','catalog-profile'],['Корзина','catalog-cart']]){
     await catalog();
@@ -97,7 +108,7 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await catalog();
   await page.locator('.product-grid .product-card .product-image').first().click();
   await page.waitForSelector('.product-page',{state:'visible',timeout:5000});
-  assert(await page.locator('.product-page .purchase-cta').count()>0,'Catalog product PDP missing purchase form');
+  assert(await page.locator('.product-page .primary').count()>0,'Catalog product PDP missing purchase form');
   await page.locator('.header .logo').click();
   await page.waitForURL(url=>url.pathname==='/'||url.pathname==='/kd/'||url.pathname==='/kd',{timeout:12000});
 
