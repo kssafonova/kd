@@ -41,6 +41,7 @@ scripts = [
     root / "scripts" / "embed-catalog-products-v142.py",
     root / "scripts" / "finalize-catalog-plp-v143.py",
     root / "scripts" / "apply-kultura-performance-v145.py",
+    root / "scripts" / "apply-kultura-navigation-v146.py",
 ]
 
 logs = []
