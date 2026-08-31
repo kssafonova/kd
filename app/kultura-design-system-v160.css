@@ -1,6 +1,6 @@
 /* Kultura Doma UI system v160
    Shared interaction, typography, control and responsive rules.
-   Intentionally conservative on mobile control heights: existing field sizing is preserved. */
+   Intentionally conservative on mobile controls: existing field dimensions and type sizing are preserved. */
 
 :root{
   --kd-ink:#1d1f1d;
@@ -93,7 +93,7 @@ img{max-width:100%}
 }
 .section-head h1,.section-head h2,.title-line h1,.title-line h2{color:var(--kd-ink)}
 
-/* Controls. Desktop sizing is normalized; mobile keeps existing project field heights. */
+/* Controls. Desktop sizing is normalized; mobile dimensions are deliberately untouched. */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
 select,
 textarea{
@@ -206,10 +206,6 @@ button>svg:only-child,a[aria-label]>svg:only-child{pointer-events:none}
   .header-actions>a,.header-actions>button,.header-left>button{min-width:36px}
   .header-actions svg,.header-left svg{max-width:22px;max-height:22px}
   .crumbs{font-size:9px}
-
-  /* Do not globally resize mobile text inputs here: individual flows keep their proven tap/field dimensions. */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),select,textarea{font-size:max(16px,1em)}
-
   [role="dialog"]{max-width:100vw}
 }
 
