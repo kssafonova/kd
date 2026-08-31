@@ -2666,6 +2666,73 @@ footer{background:#202a2b}
   }
 }
 
+
+/* KULTURA_MOBILE_HEADER_ACTIONS_V149
+   Search, profile, favourites and bag remain equally available on mobile.
+   Compact spacing keeps the existing Kultura header balanced at 390px. */
+@media(max-width:900px){
+  .header-actions{gap:5px;min-width:0}
+  .header-actions button{display:grid!important;place-items:center;width:27px;height:38px;padding:2px;line-height:1}
+  .header-actions button:nth-child(3){display:grid!important}
+  .header-actions svg{width:23px;height:23px}
+  .header-actions .bag svg{width:24px;height:24px}
+  .header-actions .bag b,.header-actions .favorite-header b{right:-2px;top:0}
+}
+@media(max-width:520px){
+  .header{padding-left:10px;padding-right:10px}
+  .header-actions{gap:3px}
+  .header-actions button{width:26px;height:38px}
+  .header-actions svg{width:22px;height:22px}
+  .header-actions .bag svg{width:23px;height:23px}
+  .logo{font-size:16px}
+}
+
+/* KULTURA_MOBILE_HEADER_ACTIONS_V150
+   Final, high-specificity mobile header contract. All four commerce actions
+   remain visible on home/catalog while preserving the compact Kultura layout. */
+@media(max-width:900px){
+  .view-home .header .header-actions .favorite-header,
+  .view-catalog .header .header-actions .favorite-header{
+    display:grid!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+}
+@media(max-width:520px){
+  .view-home .header .header-actions,
+  .view-catalog .header .header-actions{
+    gap:3px!important;
+    min-width:0!important;
+  }
+  .view-home .header .header-actions button,
+  .view-catalog .header .header-actions button{
+    display:grid!important;
+    place-items:center!important;
+    width:25px!important;
+    height:36px!important;
+    padding:1px!important;
+  }
+  .view-home .header .header-actions .favorite-header,
+  .view-catalog .header .header-actions .favorite-header{
+    display:grid!important;
+  }
+  .view-home .header .header-actions svg,
+  .view-catalog .header .header-actions svg{
+    width:20px!important;
+    height:20px!important;
+  }
+  .view-home .header .header-actions .bag svg,
+  .view-catalog .header .header-actions .bag svg{
+    width:21px!important;
+    height:21px!important;
+  }
+  .view-home .header .logo,
+  .view-catalog .header .logo{
+    font-size:16px!important;
+  }
+}
+
 /* HOME_NEW_PRODUCTS_CAPSULES_V117 */
 .home117-new-products{padding:clamp(58px,7vw,104px) 0 clamp(72px,8vw,120px);background:#f7f5ef;color:#171815}
 .home117-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 clamp(20px,4.2vw,64px) 30px}
