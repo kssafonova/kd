@@ -30,16 +30,17 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
     timings.push([label,Date.now()-start]);
   }
 
-  // Homepage is intentionally lightweight. Menu action must route to the
-  // canonical Kultura storefront and open the same premium Menu overlay used by catalog.
+  // Homepage stays lightweight and opens the exact same shared premium menu
+  // locally, without a wasteful route transition through catalog.
   await home();
   const menuStart=Date.now();
   await page.getByRole('button',{name:'Открыть меню'}).click();
-  await page.waitForURL(url=>url.pathname.includes('/kd/catalog'),{timeout:12000});
-  await page.waitForSelector('.navigation-overlay .menu-panel',{state:'visible',timeout:12000});
+  await page.waitForSelector('.navigation-overlay .menu-panel',{state:'visible',timeout:4000});
   timings.push(['home->menu',Date.now()-menuStart]);
-  assert(await page.getByRole('button',{name:/КАПСУЛЫ/i}).count()>0,'Canonical Kultura menu: capsules action missing');
-  assert(await page.locator('.navigation-overlay .premium-menu').count()===1,'Canonical Kultura premium menu missing');
+  assert(!page.url().includes('/catalog'),'Homepage menu should open in place');
+  assert(await page.getByRole('button',{name:/КАПСУЛЫ И КОЛЛЕКЦИИ/i}).count()>0,'Unified Kultura menu: capsules and collections action missing');
+  assert(await page.getByRole('button',{name:/ГОТОВЫЕ РЕШЕНИЯ/i}).count()>0,'Unified Kultura menu: ready solutions action missing');
+  assert(await page.locator('.navigation-overlay .premium-menu').count()===1,'Unified Kultura premium menu missing');
   await page.getByRole('button',{name:'Закрыть меню'}).click();
 
   await homeAction('Поиск','home->search');
@@ -47,10 +48,12 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await homeAction(/Избранное/,'home->favorites');
   await homeAction('Корзина','home->cart');
 
-  // Homepage "Новинки" reuse catalog product-card anatomy. Media/title open
-  // the canonical Kultura PDP, while the quick icon is bridged to PLPSizeFlow.
+  // Homepage New Products use catalog ProductCard anatomy and icons. Media/title
+  // open canonical PDP; quick icon opens the canonical Kultura quick-add flow.
   await home();
   assert(await page.locator('.home-fast-new .product-card').count()>=4,'Homepage New Products do not use catalog cards');
+  assert(await page.locator('.home-fast-new .product-card .heart').count()>=4,'Homepage New Products hearts missing');
+  assert(await page.locator('.home-fast-new .product-card .quick .cart-add-icon').count()>=4,'Homepage New Products cart-add icons missing');
   const firstHomeProduct=page.locator('.home-fast-new .product-card .product-image').first();
   await firstHomeProduct.scrollIntoViewIfNeeded();
   const productStart=Date.now();
@@ -82,11 +85,12 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await page.locator('.catalog-sort-v123 select').selectOption('price_asc');
   assert(await page.locator('.catalog-sort-v123 select').inputValue()==='price_asc','Sort did not switch');
 
-  // Catalog menu and all global header actions.
+  // Catalog uses the same shared premium menu as home.
   await catalog();
   await page.getByRole('button',{name:'Открыть меню'}).click();
   await page.waitForSelector('.navigation-overlay .menu-panel',{state:'visible',timeout:4000});
-  assert(await page.getByRole('button',{name:/КАПСУЛЫ/i}).count()>0,'Catalog canonical menu capsules action missing');
+  assert(await page.getByRole('button',{name:/КАПСУЛЫ И КОЛЛЕКЦИИ/i}).count()>0,'Catalog unified menu story action missing');
+  assert(await page.getByRole('button',{name:/ГОТОВЫЕ РЕШЕНИЯ/i}).count()>0,'Catalog unified menu ready solutions action missing');
   await page.getByRole('button',{name:'Закрыть меню'}).click();
 
   for(const [name,label] of [['Поиск','catalog-search'],['Профиль','catalog-profile'],['Корзина','catalog-cart']]){
@@ -112,13 +116,16 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await page.locator('.header .logo').click();
   await page.waitForURL(url=>url.pathname==='/'||url.pathname==='/kd/'||url.pathname==='/kd',{timeout:12000});
 
-  // Static routing pages should be available without a heavy client bootstrap.
-  await goto('/capsules/','.story-index-grid');
-  assert(await page.locator('.story-index-grid article').count()>=3,'Capsules routing page is empty');
-  assert(await page.locator('.story-index-grid a[href*="capsule="]').count()>=3,'Capsule cards are not linked to catalog');
-  await goto('/collections/','.story-index-grid');
-  assert(await page.locator('.story-index-grid article').count()>=3,'Collections routing page is empty');
-  assert(await page.locator('.story-index-grid a[href*="collection="]').count()>=3,'Collection cards are not linked');
+  // Capsules and collections are one lightweight server-rendered landing. Both
+  // legacy URLs remain valid and expose both groups for backwards compatibility.
+  for(const path of ['/collections/','/capsules/']){
+    await goto(path,'.story-index-page');
+    assert((await page.locator('.section-head h1').innerText()).includes('Капсулы и коллекции'),`${path}: combined title missing`);
+    assert(await page.locator('#capsules').count()===1,`${path}: capsules section missing`);
+    assert(await page.locator('#collections').count()===1,`${path}: collections section missing`);
+    assert(await page.locator('#capsules a[href*="capsule="]').count()>=3,`${path}: capsule cards are not linked`);
+    assert(await page.locator('#collections a[href*="collection="]').count()>=3,`${path}: collection cards are not linked`);
+  }
 
   // Direct query bridges from external links/bookmarks.
   await goto('/catalog/?open=account','.overlay');
@@ -134,6 +141,6 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   });
   console.log('NAV_PERF',JSON.stringify(perf));
   if(diagnostics.length)console.log('BROWSER_DIAGNOSTICS\n'+diagnostics.join('\n'));
-  console.log('NAVIGATION_SMOKE_V144_OK');
+  console.log('NAVIGATION_SMOKE_V148_OK');
   await browser.close();
 })().catch(error=>{console.error(error);process.exit(1)});
