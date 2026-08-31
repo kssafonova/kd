@@ -30,12 +30,29 @@ const resolveInitialImage = (src: string): { url: string; stage: ImageStage } =>
   return { url: assetUrl(src), stage: "direct" };
 };
 
-export function RemoteImage({
-  src,
-  fallbackSrc = "/assets/images/image-placeholder.svg",
-  onError,
-  ...props
-}: RemoteImageProps) {
+function LocalAssetImage({ src, fallbackSrc = "/assets/images/image-placeholder.svg", onError, ...props }: RemoteImageProps) {
+  const handleError = (event: SyntheticEvent<HTMLImageElement, Event>) => {
+    const image = event.currentTarget;
+    if (image.dataset.imageStage !== "fallback") {
+      image.dataset.imageStage = "fallback";
+      image.src = assetUrl(fallbackSrc);
+      return;
+    }
+    onError?.(event);
+  };
+
+  return (
+    <img
+      {...props}
+      src={assetUrl(src)}
+      onError={handleError}
+      data-image-source={src}
+      data-image-stage="direct"
+    />
+  );
+}
+
+function RemoteFallbackImage({ src, fallbackSrc = "/assets/images/image-placeholder.svg", onError, ...props }: RemoteImageProps) {
   const initial = resolveInitialImage(src);
   const [resolvedSrc, setResolvedSrc] = useState(initial.url);
   const [stage, setStage] = useState<ImageStage>(initial.stage);
@@ -70,18 +87,11 @@ export function RemoteImage({
         referrerPolicy: "no-referrer",
       });
 
-      if (!response.ok) {
-        throw new Error(`Image request failed with ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`Image request failed with ${response.status}`);
       const contentType = response.headers.get("content-type") ?? "";
-      if (contentType && !contentType.toLowerCase().startsWith("image/")) {
-        throw new Error(`URL did not return an image: ${contentType}`);
-      }
-
+      if (contentType && !contentType.toLowerCase().startsWith("image/")) throw new Error(`URL did not return an image: ${contentType}`);
       const blob = await response.blob();
       if (!blob.size) throw new Error("Image response is empty");
-
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
       const objectUrl = URL.createObjectURL(blob);
       objectUrlRef.current = objectUrl;
@@ -98,19 +108,16 @@ export function RemoteImage({
       setResolvedSrc(assetUrl(src));
       return;
     }
-
-    if (stage === "direct" && isRemoteAsset(src)) {
+    if (stage === "direct") {
       setStage("fetch");
       void requestImageByUrl();
       return;
     }
-
     if (stage !== "fallback") {
       setStage("fallback");
       setResolvedSrc(assetUrl(fallbackSrc));
       return;
     }
-
     onError?.(event);
   };
 
@@ -123,4 +130,9 @@ export function RemoteImage({
       data-image-stage={stage}
     />
   );
+}
+
+export function RemoteImage(props: RemoteImageProps) {
+  if (!isRemoteAsset(props.src)) return <LocalAssetImage {...props} />;
+  return <RemoteFallbackImage {...props} />;
 }
