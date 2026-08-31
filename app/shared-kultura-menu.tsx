@@ -10,7 +10,7 @@ type MenuProps={
 
 type MenuIconName="close"|"pin"|"arrow"|"chevron";
 
-const CATALOG_SECTIONS=["Спальня","Кухня и столовая","Декор","Ванная","Одежда для дома"];
+const CATALOG_SECTIONS=["Спальня","Кухня и столовая","Декор","Ванная","Одежда для дома","Идеи подарков","Аутлет"];
 const SUBS:Record<string,string[]>={
   "РАСПРОДАЖА":["Смотреть все","Летнее предложение","До −35% на текстиль","До −30% на сервировку"],
   "Спальня":["Смотреть все","Комплекты постельного белья","Одеяла и подушки","Пледы и покрывала","Наволочки","Пододеяльники","Простыни","Наматрасники"],
@@ -80,26 +80,16 @@ export function SharedKulturaMenu({onClose,onCatalog,onNavigate}:MenuProps){
       </div>
       <div className="menu-body">
         {!current?<div className="menu-first level-one premium-menu-root">
-          <button className="premium-menu-new" onClick={()=>openCatalog("Все товары")}><span>НОВИНКИ</span><MenuIcon name="arrow"/></button>
-
           <nav className="premium-menu-catalog" aria-label="Основные категории">
+            <button className="premium-menu-new" onClick={()=>openCatalog("Все товары")}><span>НОВИНКИ</span><MenuIcon name="chevron"/></button>
             {CATALOG_SECTIONS.map(section=><button key={section} onClick={()=>setCurrent(section)}><span>{section}</span><MenuIcon name="chevron"/></button>)}
           </nav>
 
           <section className="premium-menu-editorial premium-menu-editorial-lower" aria-label="Капсулы, коллекции и готовые решения">
             <small>ВДОХНОВЕНИЕ</small>
-            <button onClick={()=>openRoute("/collections/")}><span>КАПСУЛЫ И КОЛЛЕКЦИИ</span><MenuIcon name="arrow"/></button>
-            <button onClick={()=>openRoute("/ready-solutions/")}><span>ГОТОВЫЕ РЕШЕНИЯ</span><MenuIcon name="arrow"/></button>
+            <button onClick={()=>openRoute("/collections/")}><span>КАПСУЛЫ И КОЛЛЕКЦИИ</span></button>
+            <button onClick={()=>openRoute("/ready-solutions/")}><span>ГОТОВЫЕ РЕШЕНИЯ</span></button>
           </section>
-
-          <div className="premium-menu-service">
-            <button onClick={()=>setCurrent("Идеи подарков")}><span>ИДЕИ ПОДАРКОВ</span><MenuIcon name="chevron"/></button>
-          </div>
-
-          <div className="premium-menu-commercial">
-            <button className="sale" onClick={()=>setCurrent("РАСПРОДАЖА")}><span>РАСПРОДАЖА</span><MenuIcon name="chevron"/></button>
-            <button onClick={()=>setCurrent("Аутлет")}><span>АУТЛЕТ</span><MenuIcon name="chevron"/></button>
-          </div>
         </div>:<div className="menu-second level-two premium-menu-level-two" key={current}>
           <button className="menu-back" onClick={()=>setCurrent("")}><MenuIcon name="chevron"/><span>{current}</span></button>
           {list.map((item,index)=><button key={item} className={index===0?"view-all":""} onClick={()=>openCatalog(index===0?(CATALOG_MAP[current]??"Все товары"):(SUBCATEGORY_MAP[item]??CATALOG_MAP[current]??"Все товары"))}><span>{item}</span>{index===0&&<MenuIcon name="arrow"/>}</button>)}
