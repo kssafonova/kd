@@ -42,6 +42,7 @@ scripts = [
     root / "scripts" / "finalize-catalog-plp-v143.py",
     root / "scripts" / "apply-kultura-performance-v145.py",
     root / "scripts" / "apply-kultura-navigation-v146.py",
+    root / "scripts" / "apply-unified-kultura-menu-v147.py",
 ]
 
 logs = []
