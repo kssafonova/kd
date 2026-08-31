@@ -2,10 +2,57 @@
 @media(max-width:700px){.home-fast-section{padding:26px 0 30px}.home-fast-head{margin:0 12px 12px}.home-fast-head h2,.home-fast-head div h2{font-size:26px}.home-fast-head>a{font-size:8px}.home-fast-hero{height:calc(100svh - 96px);min-height:500px}.home-fast-hero-copy{left:14px;bottom:48px}.home-fast-hero-copy small{font-size:7px}.home-fast-hero-copy h1{max-width:90vw;margin-bottom:10px;font-size:34px}.home-fast-hero-copy a{font-size:8px}.home-fast-hero-dots{left:14px;bottom:13px}.home-fast-hero-dots button{width:32px}.home-fast-category-rail,.home-fast-product-rail{gap:8px;padding:0 12px 4px;scroll-padding-inline:12px}.home-fast-category{flex-basis:43vw;max-width:180px}.home-fast-category strong{margin-top:7px;font-size:11px}.home-fast-product{flex-basis:61vw;max-width:255px}.home-fast-product-copy strong{font-size:11px}.home-fast-product-copy small{font-size:8px}.home-fast-product-copy b{font-size:11px}.home-fast-film{padding-top:22px}.home-fast-film video{width:calc(100% - 24px);aspect-ratio:9/16}.home-fast-capsule-grid{gap:6px;padding:0 12px}.home-fast-capsule img{aspect-ratio:1/1}.home-fast-capsule strong{margin-top:6px;font-size:11px}.home-fast-tabs{gap:22px;margin:0 12px 14px}.home-fast-tabs button{font-size:9px}.home-fast-ready-grid{display:flex;gap:8px;padding:0 12px 4px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.home-fast-ready-grid::-webkit-scrollbar{display:none}.home-fast-ready-card{flex:0 0 72vw;max-width:310px;scroll-snap-align:start}.home-fast-ready-card strong{font-size:16px}.home-fast-ready-card small{font-size:8px}.home-fast-ready-card em{font-size:7px}.home-fast-constructor,.home-fast-boutiques{display:block;width:calc(100% - 24px);margin:3px 12px 30px}.home-fast-constructor-media,.home-fast-boutiques-media{min-height:0;aspect-ratio:16/10}.home-fast-constructor-copy,.home-fast-boutiques-copy{padding:22px 3px 25px}.home-fast-constructor-copy small,.home-fast-boutiques-copy small{font-size:7px}.home-fast-constructor-copy h2,.home-fast-boutiques-copy h2{font-size:27px}.home-fast-constructor-copy p,.home-fast-boutiques-copy p{font-size:9px;line-height:1.55}.home-fast-constructor-copy a,.home-fast-boutiques-copy a{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.home-fast *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
-
-/* KULTURA_HOME_PLP_CARD_V147 — PLP card internals come from globals.css. */
+/* KULTURA_HOME_PLP_CARD_V148 — exact final PLP card system on home New Products. */
 .home-fast-new .home-fast-product-rail{align-items:stretch}
-.home-fast-new .home-fast-product{display:block;flex:0 0 clamp(220px,23vw,330px);color:inherit}
-.home-fast-new .home-fast-product .product-image{width:100%}
-.home-fast-new .home-fast-product .product-copy{width:calc(100% - 42px)}
-@media(max-width:700px){.home-fast-new .home-fast-product{flex-basis:64vw;max-width:280px}}
+.home-fast-new .home-fast-product{flex:0 0 clamp(220px,23vw,330px);color:inherit;scroll-snap-align:start}
+.home-fast-new .product-card{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 40px;
+  grid-template-areas:"media media" "copy action";
+  column-gap:8px;
+  row-gap:0;
+  min-width:0;
+}
+.home-fast-new .product-image{grid-area:media;width:100%;padding:0;display:block;position:relative;overflow:hidden;background:#f3f1ed}
+.home-fast-new .product-image img{width:100%;aspect-ratio:1/1.08;object-fit:cover}
+.home-fast-new .product-copy{grid-area:copy;width:auto;padding:13px 0 0;display:flex;flex-direction:column;text-align:left;min-width:0}
+.home-fast-new .product-link{display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;padding:0}
+.home-fast-new .product-copy strong{font:400 18px/1.25 var(--serif)}
+.home-fast-new .product-copy small{color:#999;font-size:11px;line-height:1.45;margin-top:4px}
+.home-fast-new .price{font-size:17px;line-height:1.2;margin-top:8px}
+.home-fast-new .price del{font-size:12px;color:#999;margin-left:7px}
+.home-fast-new .price mark{margin-left:6px;background:transparent;color:#9b523c;font-size:10px}
+.home-fast-new .quick{grid-area:action;position:static;align-self:start;justify-self:end;margin:10px 0 0;width:40px;height:40px;padding:0;display:grid;place-items:center}
+.home-fast-new .quick>svg{width:31px;height:31px}
+.home-fast-new .heart{position:absolute;right:10px;top:10px;z-index:2;color:#fff;filter:drop-shadow(0 1px 2px #0008);padding:0}
+.home-fast-new .heart svg{width:31px;height:31px;stroke-width:1.2}
+.home-fast-new .heart.liked{color:#9d654b}
+.home-fast-new .plp-swatches{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;min-height:20px}
+.home-fast-new .plp-swatches button{width:17px;height:17px;padding:0;border:1px solid #d7d7d3;border-radius:50%;box-shadow:inset 0 0 0 2px #fff}
+.home-fast-new .plp-swatches button.active{outline:1px solid #222;outline-offset:1px}
+.home-fast-new .plp-aroma-options{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.home-fast-new .plp-aroma-options button{padding:5px 7px;border:1px solid #ddd;background:#fff;font-size:9px;line-height:1}
+.home-fast-new .plp-aroma-options button.active{border-color:#1d1d1d}
+
+@media(max-width:760px){
+  .home-fast-new .home-fast-product{flex-basis:64vw;max-width:280px}
+  .home-fast-new .product-card{grid-template-columns:minmax(0,1fr) 42px;column-gap:6px}
+  .home-fast-new .product-copy{padding-top:10px}
+  .home-fast-new .product-copy strong{font-size:14px;line-height:1.28}
+  .home-fast-new .product-copy small{font-size:10px;line-height:1.35}
+  .home-fast-new .price{font-size:14px;margin-top:6px}
+  .home-fast-new .quick{width:42px;height:42px;margin-top:5px}
+  .home-fast-new .quick>svg{width:29px;height:29px}
+  .home-fast-new .heart{right:7px;top:7px}
+  .home-fast-new .heart svg{width:29px;height:29px}
+}
+
+@media(max-width:520px){
+  .home-fast-new .product-card{grid-template-columns:minmax(0,1fr) 34px;column-gap:5px}
+  .home-fast-new .product-copy{padding-top:8px}
+  .home-fast-new .product-copy strong{font-size:13px}
+  .home-fast-new .product-copy small{font-size:9px}
+  .home-fast-new .price{font-size:13px}
+  .home-fast-new .quick{width:34px;height:36px;margin-top:5px}
+  .home-fast-new .quick>svg{width:26px;height:26px}
+}
