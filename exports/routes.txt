@@ -1,6 +1,8 @@
 /
 /_not-found/
+/capsules/
 /catalog/
+/collections/
 /constructor/
 /ready-solutions/
 /constructor/blue-velvet-night/
