@@ -1,5 +1,4 @@
-/* Clean premium side navigation.
-   Hierarchy is created with typography, whitespace and hairlines — no promo cards. */
+/* Kultura Doma navigation — typography and spacing matched to the supplied mobile reference. */
 
 .navigation-overlay .overlay-bg {
   background: rgba(0, 0, 0, .28);
@@ -16,40 +15,43 @@
 
 /* Header */
 .premium-menu .menu-top {
-  height: 72px;
-  padding: 0 28px;
+  height: 75px;
+  padding: 0 30px;
   display: flex;
   align-items: center;
-  gap: 24px;
-  border-bottom: 1px solid #e8e8e5;
+  gap: 28px;
+  border-bottom: 1px solid #e4e3df;
   background: #fff;
 }
 
 .premium-menu .menu-top > button {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   padding: 0;
-  flex: 0 0 26px;
+  flex: 0 0 22px;
+  color: #1d1d1b;
 }
 
 .premium-menu .menu-top > button svg {
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   stroke-width: 1.35;
 }
 
 .premium-menu .menu-top > span {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 10px;
+  color: #1d1d1b;
+  font-size: 14px;
   line-height: 1;
-  letter-spacing: .01em;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .premium-menu .menu-top > span svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   stroke-width: 1.35;
 }
 
@@ -59,7 +61,7 @@
 
 .premium-menu .menu-body {
   display: block;
-  height: calc(100dvh - 72px);
+  height: calc(100dvh - 75px);
   overflow: hidden;
 }
 
@@ -67,7 +69,7 @@
 .premium-menu .premium-menu-level-two {
   width: 100%;
   height: 100%;
-  padding: 28px 30px 36px;
+  padding: 27px 30px 40px;
   border: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -82,98 +84,33 @@
 .premium-menu .premium-menu-root button,
 .premium-menu .premium-menu-root a,
 .premium-menu .premium-menu-level-two button {
-  color: #1b1c1b;
+  color: #1d1d1b;
   text-decoration: none;
+  font-family: inherit;
   font-weight: 400;
   font-style: normal;
   background: transparent;
 }
 
-/* 01. New arrivals */
-.premium-menu .premium-menu-new {
-  width: 100%;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin: 0;
-  padding: 0 0 18px !important;
-  border-bottom: 1px solid #dededb !important;
-  font-size: 17px !important;
-  line-height: 1.15;
-  letter-spacing: .035em;
-  text-align: left;
-}
-
-.premium-menu .premium-menu-new svg {
-  width: 15px !important;
-  height: 15px !important;
-  stroke-width: 1.25;
-}
-
-/* 02. Editorial destinations — intentionally prominent, without a card background. */
-.premium-menu .premium-menu-editorial {
-  margin: 0;
-  padding: 25px 0 27px;
-  background: transparent;
-  border: 0;
-}
-
-.premium-menu .premium-menu-editorial > small {
-  display: block;
-  margin: 0 0 13px;
-  color: #8b8c88;
-  font-size: 7px;
-  line-height: 1;
-  letter-spacing: .22em;
-}
-
-.premium-menu .premium-menu-editorial > button,
-.premium-menu .premium-menu-editorial > a {
-  width: 100%;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 7px 0 !important;
-  border: 0 !important;
-  font-size: 18px;
-  line-height: 1.18;
-  letter-spacing: .015em;
-  text-align: left;
-}
-
-.premium-menu .premium-menu-editorial > button + a {
-  margin-top: 2px;
-}
-
-.premium-menu .premium-menu-editorial svg {
-  width: 15px !important;
-  height: 15px !important;
-  flex: 0 0 15px;
-  stroke-width: 1.2;
-}
-
-/* 03. Main catalogue */
+/* Catalogue */
 .premium-menu .premium-menu-catalog {
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 25px 0 0;
-  border-top: 1px solid #dededb;
+  padding: 0;
+  border: 0;
 }
 
 .premium-menu .premium-menu-catalog::before {
   content: "КАТАЛОГ";
   display: block;
-  margin: 0 0 12px;
-  color: #8b8c88;
-  font-size: 7px;
+  margin: 0 0 13px;
+  color: #91918e;
+  font-size: 8px;
   line-height: 1;
-  letter-spacing: .22em;
+  letter-spacing: .27em;
+  text-transform: uppercase;
 }
 
 .premium-menu .premium-menu-catalog > button {
@@ -183,88 +120,79 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 7px 0 !important;
-  font-size: 15px !important;
+  padding: 0 !important;
+  border: 0;
+  color: #1d1d1b;
+  font-size: 17px !important;
   line-height: 1.15;
-  letter-spacing: .02em;
+  letter-spacing: .035em;
   text-align: left;
+  text-transform: uppercase;
 }
 
-.premium-menu .premium-menu-catalog svg {
+.premium-menu .premium-menu-catalog > button svg {
   width: 14px !important;
   height: 14px !important;
+  flex: 0 0 14px;
   stroke-width: 1.25;
 }
 
-/* 04. Service links */
-.premium-menu .premium-menu-service {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 20px;
-  padding-top: 18px;
+.premium-menu .premium-menu-new {
+  min-height: 43px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-bottom: 1px solid #dededb !important;
+}
+
+/* Inspiration */
+.premium-menu .premium-menu-editorial,
+.premium-menu .premium-menu-editorial-lower {
+  margin: 20px 0 0;
+  padding: 20px 0 0;
+  background: transparent;
+  border: 0;
   border-top: 1px solid #dededb;
 }
 
-.premium-menu .premium-menu-service > button {
+.premium-menu .premium-menu-editorial > small,
+.premium-menu .premium-menu-editorial-lower > small {
+  display: block;
+  margin: 0 0 16px;
+  color: #9d8c80;
+  font-size: 8px;
+  line-height: 1;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.premium-menu .premium-menu-editorial > button,
+.premium-menu .premium-menu-editorial > a,
+.premium-menu .premium-menu-editorial-lower > button,
+.premium-menu .premium-menu-editorial-lower > a {
   width: 100%;
   min-height: 40px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 6px 0 !important;
-  font-size: 14px !important;
+  justify-content: flex-start;
+  gap: 0;
+  padding: 0 !important;
+  border: 0 !important;
+  color: #b47749 !important;
+  font-size: 15px;
   line-height: 1.15;
-  letter-spacing: .025em;
+  letter-spacing: .055em;
   text-align: left;
+  text-transform: uppercase;
 }
 
-.premium-menu .premium-menu-service svg {
-  width: 14px !important;
-  height: 14px !important;
-  stroke-width: 1.25;
+.premium-menu .premium-menu-editorial > button + button,
+.premium-menu .premium-menu-editorial > a + a,
+.premium-menu .premium-menu-editorial-lower > button + button,
+.premium-menu .premium-menu-editorial-lower > a + a {
+  margin-top: 0;
 }
 
-.premium-menu .premium-menu-certificate {
-  justify-content: flex-start !important;
-}
-
-/* 05. Commercial destinations — secondary, sale is the only colour accent. */
-.premium-menu .premium-menu-commercial {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid #dededb;
-}
-
-.premium-menu .premium-menu-commercial > button {
-  width: 100%;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 6px 0 !important;
-  font-size: 14px !important;
-  line-height: 1.15;
-  letter-spacing: .025em;
-  text-align: left;
-}
-
-.premium-menu .premium-menu-commercial svg {
-  width: 14px !important;
-  height: 14px !important;
-  stroke-width: 1.25;
-}
-
-.premium-menu .premium-menu-commercial .sale {
-  color: #c62d2b !important;
-}
-
-/* Hover/focus: quiet, no shifting blocks. */
+/* Quiet interaction states. */
 .premium-menu .premium-menu-root button,
 .premium-menu .premium-menu-root a,
 .premium-menu .premium-menu-level-two button {
@@ -303,6 +231,7 @@
   line-height: 1.15;
   letter-spacing: .015em;
   text-align: left;
+  text-transform: uppercase;
 }
 
 .premium-menu .premium-menu-level-two .menu-back svg {
@@ -356,83 +285,54 @@
   }
 
   .premium-menu .menu-top {
-    height: 70px;
-    padding: 0 24px;
-    gap: 22px;
+    height: 75px;
+    padding: 0 30px;
+    gap: 28px;
   }
 
   .premium-menu .menu-body {
-    height: calc(100dvh - 70px);
+    height: calc(100dvh - 75px);
   }
 
   .premium-menu .premium-menu-root,
   .premium-menu .premium-menu-level-two {
-    padding: 25px 26px 34px;
-  }
-
-  .premium-menu .premium-menu-new {
-    font-size: 16px !important;
-  }
-
-  .premium-menu .premium-menu-editorial {
-    padding: 23px 0 25px;
-  }
-
-  .premium-menu .premium-menu-editorial > button,
-  .premium-menu .premium-menu-editorial > a {
-    min-height: 43px;
-    font-size: 17px;
+    padding: 27px 30px 40px;
   }
 
   .premium-menu .premium-menu-catalog > button {
-    min-height: 43px;
-    font-size: 15px !important;
+    min-height: 42px;
+    font-size: 17px !important;
   }
 
-  .premium-menu .premium-menu-service > button,
-  .premium-menu .premium-menu-commercial > button {
-    min-height: 41px;
-    font-size: 14px !important;
+  .premium-menu .premium-menu-editorial > button,
+  .premium-menu .premium-menu-editorial > a,
+  .premium-menu .premium-menu-editorial-lower > button,
+  .premium-menu .premium-menu-editorial-lower > a {
+    min-height: 40px;
+    font-size: 15px;
   }
 }
 
 @media (max-width: 390px) {
   .premium-menu .menu-top {
-    padding: 0 20px;
+    padding-left: 30px;
+    padding-right: 30px;
   }
 
   .premium-menu .premium-menu-root,
   .premium-menu .premium-menu-level-two {
-    padding-left: 22px;
-    padding-right: 22px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .premium-menu .premium-menu-catalog > button {
+    font-size: 16px !important;
   }
 
   .premium-menu .premium-menu-editorial > button,
-  .premium-menu .premium-menu-editorial > a {
-    font-size: 16px;
+  .premium-menu .premium-menu-editorial > a,
+  .premium-menu .premium-menu-editorial-lower > button,
+  .premium-menu .premium-menu-editorial-lower > a {
+    font-size: 14.5px;
   }
-}
-
-
-/* KULTURA_MENU_UNIFIED_V147 */
-.premium-menu .premium-menu-editorial-lower{
-  margin:22px 0 0;
-  padding:20px 0 0;
-  border-top:1px solid #dededb;
-}
-.premium-menu .premium-menu-editorial-lower>small{margin-bottom:10px;color:#9a8a7c}
-.premium-menu .premium-menu-editorial-lower>button,
-.premium-menu .premium-menu-editorial-lower>a{
-  min-height:41px;
-  padding:6px 0!important;
-  color:#6f6257!important;
-  font-size:14px;
-  letter-spacing:.055em;
-}
-.premium-menu .premium-menu-editorial-lower>button+button,
-.premium-menu .premium-menu-editorial-lower>a+a{margin-top:0}
-@media(max-width:700px){
-  .premium-menu .premium-menu-editorial-lower{margin-top:20px;padding-top:18px}
-  .premium-menu .premium-menu-editorial-lower>button,
-  .premium-menu .premium-menu-editorial-lower>a{font-size:13px;min-height:40px}
 }
