@@ -9,6 +9,8 @@ HOME_CSS=ROOT/"app"/"home-standalone.css"
 
 # Homepage: keep the current Kultura doma design, but use the same generated
 # product source as catalog and switch all internal navigation to Next router.
+# This script is deliberately idempotent because the Pages workflow commits the
+# finalized source back to main and later builds run the migration chain again.
 home=HOME.read_text(encoding="utf-8")
 if 'from "next/navigation"' not in home:
     home=home.replace(
@@ -28,11 +30,19 @@ const CAPSULES=[
   {name:"Ледяные узоры",image:"/assets/images/caps_led.png",href:"/catalog/?capsule=Ледяные%20узоры"},
   {name:"Феникс",image:"/assets/images/feniks0.jpg",href:"/catalog/?capsule=Феникс"},
 ];'''
-home,count=re.subn(r'const NEW_PRODUCTS=\[.*?\n\];\n\nconst CAPSULES=\[.*?\n\];',new_products,home,count=1,flags=re.S)
-if count!=1:
-    raise SystemExit("NAV_PERF_V144: homepage product/capsule block not found")
+if 'const HOME_CATALOG_PRODUCTS=CATALOG_PRODUCTS_GENERATED' not in home:
+    home,count=re.subn(r'const NEW_PRODUCTS=\[.*?\n\];\n\nconst CAPSULES=\[.*?\n\];',new_products,home,count=1,flags=re.S)
+    if count!=1:
+        raise SystemExit("NAV_PERF_V144: homepage product/capsule block not found")
 
-home=home.replace('export default function HomeStandalone(){\n  const heroRef=useRef<HTMLDivElement|null>(null);', 'export default function HomeStandalone(){\n  const router=useRouter();\n  const heroRef=useRef<HTMLDivElement|null>(null);\n  const brandVideoRef=useRef<HTMLVideoElement|null>(null);',1)
+if 'const router=useRouter();' not in home:
+    old='export default function HomeStandalone(){\n  const heroRef=useRef<HTMLDivElement|null>(null);'
+    new='export default function HomeStandalone(){\n  const router=useRouter();\n  const heroRef=useRef<HTMLDivElement|null>(null);\n  const brandVideoRef=useRef<HTMLVideoElement|null>(null);'
+    if old not in home:
+        raise SystemExit("NAV_PERF_V144: homepage component anchor not found")
+    home=home.replace(old,new,1)
+elif 'const brandVideoRef=useRef<HTMLVideoElement|null>(null);' not in home:
+    home=home.replace('  const heroRef=useRef<HTMLDivElement|null>(null);','  const heroRef=useRef<HTMLDivElement|null>(null);\n  const brandVideoRef=useRef<HTMLVideoElement|null>(null);',1)
 
 marker='''  useEffect(()=>{
     try{
@@ -77,18 +87,23 @@ extra='''
     return()=>observer.disconnect();
   },[]);
 '''
-if extra.strip() not in home:
-    if marker not in home: raise SystemExit("NAV_PERF_V144: homepage storage effect not found")
+if 'router.prefetch("/catalog/")' not in home:
+    if marker not in home:
+        raise SystemExit("NAV_PERF_V144: homepage storage effect not found")
     home=home.replace(marker,marker+extra,1)
 
 home=home.replace('const navigate=(path:string)=>{window.location.href=url(path)};','const navigate=(path:string)=>router.push(path);',1)
-home=home.replace('<a href={url("/ready-solutions/")}>Готовые решения</a><a href={url("/constructor/")}>Конструктор</a>', '<a href={url("/capsules/")}>Капсулы</a><a href={url("/collections/")}>Коллекции</a><a href={url("/ready-solutions/")}>Готовые решения</a><a href={url("/constructor/")}>Конструктор</a>',1)
-home=home.replace('fetchPriority={index===0?"high":"auto"}/>', 'fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"} decoding="async"/>',1)
+if '<a href={url("/capsules/")}>Капсулы</a>' not in home:
+    home=home.replace('<a href={url("/ready-solutions/")}>Готовые решения</a><a href={url("/constructor/")}>Конструктор</a>', '<a href={url("/capsules/")}>Капсулы</a><a href={url("/collections/")}>Коллекции</a><a href={url("/ready-solutions/")}>Готовые решения</a><a href={url("/constructor/")}>Конструктор</a>',1)
+if 'loading={index===0?"eager":"lazy"}' not in home:
+    home=home.replace('fetchPriority={index===0?"high":"auto"}/>', 'fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"} decoding="async"/>',1)
 
 old_rail='''<div className="home-fast-product-rail">{NEW_PRODUCTS.map(product=><a className="home-fast-product" key={product.name} href={url(`/catalog/?category=${encodeURIComponent(product.category)}`)}><span className="home-fast-product-media"><img src={url(product.image)} alt={product.name} loading="lazy" decoding="async"/></span><span className="home-fast-product-copy"><strong>{product.name}</strong><small>{product.note}</small><b>{money(product.price)}</b></span></a>)}</div>'''
 new_rail='''<div className="home-fast-product-rail">{NEW_PRODUCTS.map(product=>{const productHref=url(`/catalog/?product=${encodeURIComponent(product.article??String(product.id))}`);return <article className="product-card home-fast-product" key={product.id}><a className="product-image home-fast-product-media" href={productHref}><img src={url(product.image)} alt={product.name} loading="lazy" decoding="async"/></a><div className="product-copy home-fast-product-copy"><a className="product-link" href={productHref}><strong>{product.name}</strong><small>{product.note}</small></a>{product.colorVariants&&product.colorVariants.length>1&&<div className="plp-swatches home-fast-swatches" aria-label={`Варианты ${product.name}`}>{product.colorVariants.slice(0,5).map((variant,index)=><i key={variant.name} className={index===0?"active":""} style={{background:variant.hex}} title={variant.name}/>)}</div>}<span className="price">{money(product.price)}</span></div><a className="quick home-fast-quick" href={productHref} aria-label={`Выбрать ${product.name}`}><Icon name="bag"/></a></article>})}</div>'''
-if old_rail not in home: raise SystemExit("NAV_PERF_V144: homepage new product rail not found")
-home=home.replace(old_rail,new_rail,1)
+if 'className="product-card home-fast-product"' not in home:
+    if old_rail not in home:
+        raise SystemExit("NAV_PERF_V144: homepage new product rail not found")
+    home=home.replace(old_rail,new_rail,1)
 home=home.replace('<header className="home-fast-head"><h2 id="home-capsules-title">Капсулы</h2><a href={url("/catalog/")}>Все капсулы</a></header>', '<header className="home-fast-head"><h2 id="home-capsules-title">Капсулы</h2><a href={url("/capsules/")}>Все капсулы</a></header>',1)
 home=home.replace('<video autoPlay muted loop playsInline preload="metadata" poster={url("/assets/images/green.jpeg")}>', '<video ref={brandVideoRef} muted loop playsInline preload="none" poster={url("/assets/images/green.jpeg")}>',1)
 HOME.write_text(home,encoding="utf-8")
@@ -96,7 +111,11 @@ HOME.write_text(home,encoding="utf-8")
 # Make the shared catalog app understand a product deep-link so the exact same
 # PDP / size selector / cart flow opens from homepage product cards.
 store=STORE.read_text(encoding="utf-8")
-store=store.replace('const requestedCollection=params.get("collection");','const requestedCollection=params.get("collection");\n    const requestedProduct=params.get("product");',1)
+if 'const requestedProduct=params.get("product");' not in store:
+    anchor='const requestedCollection=params.get("collection");'
+    if anchor not in store:
+        raise SystemExit("NAV_PERF_V144: storefront collection bridge anchor not found")
+    store=store.replace(anchor,anchor+'\n    const requestedProduct=params.get("product");',1)
 product_bridge='''    if(requestedProduct){
       const key=String(requestedProduct).trim().toLocaleLowerCase("ru-RU");
       const matched=products.find(item=>String(item.id)===requestedProduct||String(item.article||"").trim().toLocaleLowerCase("ru-RU")===key);
@@ -104,12 +123,14 @@ product_bridge='''    if(requestedProduct){
     }
 '''
 needle='''    if(open==="cart")setCartOpen(true);'''
-if product_bridge.strip() not in store:
-    if needle not in store: raise SystemExit("NAV_PERF_V144: storefront open bridge not found")
+if 'if(requestedProduct){' not in store:
+    if needle not in store:
+        raise SystemExit("NAV_PERF_V144: storefront open bridge not found")
     store=store.replace(needle,product_bridge+needle,1)
 store=store.replace('if(section||open||requestedCollection)window.history.replaceState({},"",window.location.pathname);','if(section||open||requestedCollection||requestedProduct)window.history.replaceState({},"",window.location.pathname);',1)
 store=store.replace('<button className="logo" onClick={() => go("home")}>КУЛЬТУРА ДОМА</button>','<button className="logo" onClick={()=>{window.location.href=`${runtimeStorefrontBase()}/`}}>КУЛЬТУРА ДОМА</button>',1)
-store=store.replace('<button type="button" onClick={()=>go("collections")}><span>КАПСУЛЫ</span><Icon name="arrow"/></button>','<a href={`${runtimeStorefrontBase()}/capsules/`} onClick={close}><span>КАПСУЛЫ</span><Icon name="arrow"/></a>\n      <a href={`${runtimeStorefrontBase()}/collections/`} onClick={close}><span>КОЛЛЕКЦИИ</span><Icon name="arrow"/></a>',1)
+if 'href={`${runtimeStorefrontBase()}/capsules/`}' not in store:
+    store=store.replace('<button type="button" onClick={()=>go("collections")}><span>КАПСУЛЫ</span><Icon name="arrow"/></button>','<a href={`${runtimeStorefrontBase()}/capsules/`} onClick={close}><span>КАПСУЛЫ</span><Icon name="arrow"/></a>\n      <a href={`${runtimeStorefrontBase()}/collections/`} onClick={close}><span>КОЛЛЕКЦИИ</span><Icon name="arrow"/></a>',1)
 store=store.replace('<button onClick={()=>go("collections")}>Коллекции</button>','<button onClick={()=>{window.location.href=`${runtimeStorefrontBase()}/collections/`}}>Коллекции</button>',1)
 STORE.write_text(store,encoding="utf-8")
 
@@ -145,4 +166,4 @@ if marker_css not in css:
 '''
 HOME_CSS.write_text(css,encoding="utf-8")
 
-print("NAV_PERF_V144: client navigation + route prefetch + generated homepage products + product deep links + lazy brand film + lean catalog layout applied")
+print("NAV_PERF_V144: client navigation + route prefetch + generated homepage products + product deep links + lazy brand film + lean catalog layout applied; idempotent=true")
