@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { CATALOG_PRODUCTS_GENERATED } from "./catalog-products.generated";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const url = (path:string) => path.startsWith("/") ? `${BASE}${path}` : path;
@@ -25,19 +27,18 @@ const CATEGORIES=[
   {name:"Outlet",image:"/assets/images/7outlet.png",category:"Все товары"},
 ];
 
-const NEW_PRODUCTS=[
-  {name:"Комплект постельного белья «Лунная сказка»",note:"Шёлк",price:15990,image:"/assets/images/KD-PD-1024-DARK01.png",category:"Постельное белье"},
-  {name:"Тарелка «Лунная сказка»",note:"Фарфор",price:5990,image:"/assets/images/moon-plate.png",category:"Посуда и сервировка"},
-  {name:"Натяжная простыня из сатина",note:"Шёлк",price:4990,image:"/assets/images/KD-PD-1028-WHITE01.png",category:"Постельное белье"},
-  {name:"Наволочка из сатина",note:"Шёлк",price:4990,image:"/assets/images/KD-PD-1128-WHITE01.png",category:"Постельное белье"},
-  {name:"Свеча Феникс",note:"Декор для дома",price:4990,image:"/assets/images/KD-PD-2519.png",category:"Декор для дома"},
-  {name:"Тарелка обеденная Овация",note:"Фарфор",price:1794,image:"/assets/images/69cfd1dbd8788_big.jpg",category:"Посуда и сервировка"},
-];
+type HomeCatalogProduct={
+  id:number;article?:string;name:string;note?:string;price:number;image:string;category?:string;
+  colorVariants?:{name:string;hex:string;image:string;gallery?:string[]}[];
+};
+const HOME_CATALOG_PRODUCTS=CATALOG_PRODUCTS_GENERATED as unknown as HomeCatalogProduct[];
+const NEW_ARTICLES=["KD-PD-1024","KD-PD-1023","KD-PD-1026","KD-PD-1028","KD-PD-1128","KD-PD-2519"];
+const NEW_PRODUCTS=NEW_ARTICLES.map(article=>HOME_CATALOG_PRODUCTS.find(product=>product.article===article)).filter((product):product is HomeCatalogProduct=>Boolean(product));
 
 const CAPSULES=[
-  {name:"Лунная сказка",image:"/assets/images/caps_luna_postel.png",href:"/catalog/?category=Все%20товары"},
-  {name:"Ледяные узоры",image:"/assets/images/caps_led.png",href:"/catalog/?category=Все%20товары"},
-  {name:"Феникс",image:"/assets/images/feniks0.jpg",href:"/catalog/?category=Декор%20для%20дома"},
+  {name:"Лунная сказка",image:"/assets/images/caps_luna_postel.png",href:"/catalog/?capsule=Лунная%20сказка"},
+  {name:"Ледяные узоры",image:"/assets/images/caps_led.png",href:"/catalog/?capsule=Ледяные%20узоры"},
+  {name:"Феникс",image:"/assets/images/feniks0.jpg",href:"/catalog/?capsule=Феникс"},
 ];
 
 const READY:ReadyGroup[]=[
@@ -68,7 +69,9 @@ function Icon({name}:{name:"pin"|"search"|"user"|"heart"|"bag"}){
 }
 
 export default function HomeStandalone(){
+  const router=useRouter();
   const heroRef=useRef<HTMLDivElement|null>(null);
+  const brandVideoRef=useRef<HTMLVideoElement|null>(null);
   const [hero,setHero]=useState(0);
   const [readyId,setReadyId]=useState(READY[0].id);
   const [menu,setMenu]=useState(false);
@@ -85,7 +88,40 @@ export default function HomeStandalone(){
     }catch{}
   },[]);
 
-  const navigate=(path:string)=>{window.location.href=url(path)};
+
+  useEffect(()=>{
+    router.prefetch("/catalog/");
+    router.prefetch("/capsules/");
+    router.prefetch("/collections/");
+    router.prefetch("/ready-solutions/");
+    const root=document.querySelector<HTMLElement>(".home-fast");
+    const route=(event:MouseEvent)=>{
+      if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+      const anchor=(event.target as Element|null)?.closest<HTMLAnchorElement>("a[href]");
+      if(!anchor||anchor.target==="_blank"||anchor.hasAttribute("download"))return;
+      const raw=anchor.getAttribute("href")||"";
+      if(!raw||raw.startsWith("#")||raw.startsWith("mailto:")||raw.startsWith("tel:")||raw.startsWith("http"))return;
+      const relative=BASE&&raw.startsWith(BASE)?(raw.slice(BASE.length)||"/"):raw;
+      if(!relative.startsWith("/"))return;
+      event.preventDefault();
+      setMenu(false);
+      router.push(relative);
+    };
+    root?.addEventListener("click",route);
+    return()=>root?.removeEventListener("click",route);
+  },[router]);
+
+  useEffect(()=>{
+    const video=brandVideoRef.current;if(!video)return;
+    const observer=new IntersectionObserver(entries=>{
+      const near=entries.some(entry=>entry.isIntersecting);
+      if(near)void video.play().catch(()=>{});else video.pause();
+    },{rootMargin:"300px 0px"});
+    observer.observe(video);
+    return()=>observer.disconnect();
+  },[]);
+
+  const navigate=(path:string)=>router.push(path);
   const scrollHero=(index:number)=>{
     const track=heroRef.current;if(!track)return;
     track.scrollTo({left:index*track.clientWidth,behavior:"smooth"});setHero(index);
@@ -104,12 +140,12 @@ export default function HomeStandalone(){
       </div>
     </header>
 
-    {menu&&<div className="home-fast-menu" role="dialog" aria-modal="true" aria-label="Меню"><button className="home-fast-menu-close" onClick={()=>setMenu(false)} aria-label="Закрыть">×</button><nav>{CATEGORIES.slice(0,6).map(item=><a key={item.name} href={url(`/catalog/?category=${encodeURIComponent(item.category)}`)}>{item.name}</a>)}<a href={url("/ready-solutions/")}>Готовые решения</a><a href={url("/constructor/")}>Конструктор</a></nav></div>}
+    {menu&&<div className="home-fast-menu" role="dialog" aria-modal="true" aria-label="Меню"><button className="home-fast-menu-close" onClick={()=>setMenu(false)} aria-label="Закрыть">×</button><nav>{CATEGORIES.slice(0,6).map(item=><a key={item.name} href={url(`/catalog/?category=${encodeURIComponent(item.category)}`)}>{item.name}</a>)}<a href={url("/capsules/")}>Капсулы</a><a href={url("/collections/")}>Коллекции</a><a href={url("/ready-solutions/")}>Готовые решения</a><a href={url("/constructor/")}>Конструктор</a></nav></div>}
 
     <section className="home-fast-hero" aria-label="Главные истории">
       <div className="home-fast-hero-track" ref={heroRef} onScroll={event=>{const el=event.currentTarget;const next=Math.round(el.scrollLeft/Math.max(1,el.clientWidth));if(next!==hero)setHero(next)}}>
         {HERO.map((item,index)=><article className="home-fast-hero-slide" key={item.label}>
-          <picture><source media="(max-width:700px)" srcSet={url(item.mobile)}/><img src={url(item.desktop)} alt="" fetchPriority={index===0?"high":"auto"}/></picture>
+          <picture><source media="(max-width:700px)" srcSet={url(item.mobile)}/><img src={url(item.desktop)} alt="" fetchPriority={index===0?"high":"auto"} loading={index===0?"eager":"lazy"} decoding="async"/></picture>
           <div className="home-fast-hero-shade"/>
           <div className="home-fast-hero-copy"><small>{item.label}</small><h1>{item.title}</h1><a href={url(item.href)}>Смотреть <span aria-hidden="true">→</span></a></div>
         </article>)}
@@ -124,19 +160,19 @@ export default function HomeStandalone(){
 
     <section className="home-fast-section home-fast-new" aria-labelledby="home-new-title">
       <header className="home-fast-head"><h2 id="home-new-title">Новинки</h2><a href={url("/catalog/")}>Смотреть все</a></header>
-      <div className="home-fast-product-rail">{NEW_PRODUCTS.map(product=><a className="home-fast-product" key={product.name} href={url(`/catalog/?category=${encodeURIComponent(product.category)}`)}><span className="home-fast-product-media"><img src={url(product.image)} alt={product.name} loading="lazy" decoding="async"/></span><span className="home-fast-product-copy"><strong>{product.name}</strong><small>{product.note}</small><b>{money(product.price)}</b></span></a>)}</div>
+      <div className="home-fast-product-rail">{NEW_PRODUCTS.map(product=>{const productHref=url(`/catalog/?product=${encodeURIComponent(product.article??String(product.id))}`);return <article className="product-card home-fast-product" key={product.id}><a className="product-image home-fast-product-media" href={productHref}><img src={url(product.image)} alt={product.name} loading="lazy" decoding="async"/></a><div className="product-copy home-fast-product-copy"><a className="product-link" href={productHref}><strong>{product.name}</strong><small>{product.note}</small></a>{product.colorVariants&&product.colorVariants.length>1&&<div className="plp-swatches home-fast-swatches" aria-label={`Варианты ${product.name}`}>{product.colorVariants.slice(0,5).map((variant,index)=><i key={variant.name} className={index===0?"active":""} style={{background:variant.hex}} title={variant.name}/>)}</div>}<span className="price">{money(product.price)}</span></div><a className="quick home-fast-quick" href={productHref} aria-label={`Выбрать ${product.name}`}><Icon name="bag"/></a></article>})}</div>
     </section>
 
     <section className="home-fast-section home-fast-film" aria-labelledby="home-film-title">
       <header className="home-fast-head home-fast-film-head"><div><small>О БРЕНДЕ</small><h2 id="home-film-title">Традиции в каждом доме</h2></div></header>
-      <video autoPlay muted loop playsInline preload="metadata" poster={url("/assets/images/green.jpeg")}>
+      <video ref={brandVideoRef} muted loop playsInline preload="none" poster={url("/assets/images/green.jpeg")}>
         <source media="(max-width:700px)" src={url("/assets/video/kultura-brand-mobile.mp4")} type="video/mp4"/>
         <source src={url("/assets/video/kultura-brand-desktop.mp4")} type="video/mp4"/>
       </video>
     </section>
 
     <section className="home-fast-section home-fast-capsules" aria-labelledby="home-capsules-title">
-      <header className="home-fast-head"><h2 id="home-capsules-title">Капсулы</h2><a href={url("/catalog/")}>Все капсулы</a></header>
+      <header className="home-fast-head"><h2 id="home-capsules-title">Капсулы</h2><a href={url("/capsules/")}>Все капсулы</a></header>
       <div className="home-fast-capsule-grid">{CAPSULES.map(item=><a key={item.name} href={url(item.href)} className="home-fast-capsule"><img src={url(item.image)} alt="" loading="lazy" decoding="async"/><strong>{item.name}</strong></a>)}</div>
     </section>
 

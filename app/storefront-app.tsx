@@ -362,7 +362,7 @@ const collectionEditorialProducts:Product[] = [];
 // COLLECTIONS_REDESIGN_V65
 const normalizeRetiredCatalogName=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/[‐‑‒–—]/g,"-").replace(/\s+/g," ");
 const isRetiredCatalogProduct=(name:string)=>{const value=normalizeRetiredCatalogName(name);return value.includes("мокоши")||value.includes("овация")||/жар(?:-| )?птица/.test(value)};
-if(!CATALOG_PRODUCTS_GENERATED.length){for(let index=products.length-1;index>=0;index-=1){if(isRetiredCatalogProduct(products[index].name))products.splice(index,1)}}
+if(!CATALOG_PRODUCTS_GENERATED.length){if(!CATALOG_PRODUCTS_GENERATED.length){for(let index=products.length-1;index>=0;index-=1){if(isRetiredCatalogProduct(products[index].name))products.splice(index,1)}}}
 // READY_SOLUTIONS_MERCH_V75
 type Editorial = { id:string; name:string; kind:"КАПСУЛА"|"КОЛЛЕКЦИЯ"; lead:string; detail:string; description:string; images:string[]; productIds:number[] };
 // COLLECTIONS_REDESIGN_V65_INDEX
@@ -409,6 +409,7 @@ export default function Home({initialView="home",initialCatalogCategory="Все 
     const section=params.get("section");
     const open=params.get("open");
     const requestedCollection=params.get("collection");
+    const requestedProduct=params.get("product");
     if(section==="collections")setView("collections");
     if(requestedCollection){
       const key=(value:string)=>String(value||"").trim().toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
@@ -417,13 +418,18 @@ export default function Home({initialView="home",initialCatalogCategory="Все 
       const matched=editorials.find(item=>key(item.name)===key(requested));
       if(matched){setEditorial(matched);setView("editorial")}
     }
+    if(requestedProduct){
+      const key=String(requestedProduct).trim().toLocaleLowerCase("ru-RU");
+      const matched=products.find(item=>String(item.id)===requestedProduct||String(item.article||"").trim().toLocaleLowerCase("ru-RU")===key);
+      if(matched){setSelected(matched);setView("product")}
+    }
     if(open==="cart")setCartOpen(true);
     if(open==="search")setSearch(true);
     if(open==="account")setAccount(true);
     if(open==="favorites")setFavoritesOpen(true);
     if(open==="menu"){setMenuSection("");setMenu(true)}
     if(open==="boutiques")setBoutiquesOpen(true);
-    if(section||open||requestedCollection)window.history.replaceState({},"",window.location.pathname);
+    if(section||open||requestedCollection||requestedProduct)window.history.replaceState({},"",window.location.pathname);
   },[]);
   const [toast, setToast] = useState("");
 
@@ -512,7 +518,7 @@ function CatalogBootStateV141({error,retry}:{error:boolean;retry:()=>void}){
 function Header({ onMenu, onSearch, onAccount, onFavorites, onCart, onBoutiques, count, favoriteCount, go }: { onMenu:()=>void; onSearch:()=>void; onAccount:()=>void; onFavorites:()=>void; onCart:()=>void; onBoutiques:()=>void; count:number; favoriteCount:number; go:(v:View)=>void }) {
   return <header className="header">
     <div className="header-left"><button className="icon-btn hamburger" aria-label="Открыть меню" onClick={onMenu}><i/><i/><i/></button><button className="boutiques" onClick={onBoutiques}><Icon name="pin"/> Бутики</button></div>
-    <button className="logo" onClick={() => go("home")}>КУЛЬТУРА ДОМА</button>
+    <button className="logo" onClick={()=>{window.location.href=`${runtimeStorefrontBase()}/`}}>КУЛЬТУРА ДОМА</button>
     <div className="header-actions"><button onClick={onSearch} aria-label="Поиск"><Icon name="search"/></button><button onClick={onAccount} aria-label="Профиль"><Icon name="user"/></button><button className="favorite-header" onClick={onFavorites} aria-label={`Избранное: ${favoriteCount}`}><Icon name="heart" filled={favoriteCount>0}/>{favoriteCount>0&&<b>{favoriteCount}</b>}</button><button className="bag" onClick={onCart} aria-label="Корзина"><Icon name="bag"/>{count > 0 && <b>{count}</b>}</button></div>
   </header>;
 }
@@ -1318,7 +1324,8 @@ function Menu({ current, setCurrent, close, go, openCatalog }: { current:string;
 
     <section className="premium-menu-editorial" aria-label="Editorial и готовые решения">
       <small>EDITORIAL</small>
-      <button type="button" onClick={()=>go("collections")}><span>КАПСУЛЫ</span><Icon name="arrow"/></button>
+      <a href={`${runtimeStorefrontBase()}/capsules/`} onClick={close}><span>КАПСУЛЫ</span><Icon name="arrow"/></a>
+      <a href={`${runtimeStorefrontBase()}/collections/`} onClick={close}><span>КОЛЛЕКЦИИ</span><Icon name="arrow"/></a>
       <a href={constructorHref} onClick={close}><span>ГОТОВЫЕ РЕШЕНИЯ</span><Icon name="arrow"/></a>
     </section>
 
@@ -1680,4 +1687,4 @@ function CheckoutMap({points,selected,choose,mode}:{points:string[];selected:str
   return <div className="checkout-map"><div className="map-canvas" aria-label="Карта выбора адреса">{points.map((point,index)=><button type="button" key={point} className={`map-pin pin-${index} ${selected===point?"active":""}`} onClick={()=>choose(point)} aria-label={`Выбрать ${point}`}><Icon name="pin"/><span>{index+1}</span></button>)}<i className="river"/><span className="map-label moscow">МОСКВА</span><span className="map-label center">САДОВОЕ КОЛЬЦО</span></div><div className="map-points"><p>{mode==="pickup"?"ВЫБЕРИТЕ БУТИК":"УТОЧНИТЕ ТОЧКУ НА КАРТЕ"}</p>{points.map((point,index)=><button type="button" key={point} className={selected===point?"active":""} onClick={()=>choose(point)}><b>{index+1}</b><span>{point}<small>{mode==="pickup"?"Сегодня до 22:00":"Курьерская доставка"}</small></span></button>)}</div></div>;
 }
 
-function Footer({ go, notice }: { go:(v:View)=>void; notice:(s:string)=>void }) { return <footer><div className="footer-brand"><div className="logo">КУЛЬТУРА ДОМА</div><p>Подпишитесь на письма о новых коллекциях</p><div><input placeholder="Ваш email"/><button onClick={()=>notice("Спасибо за подписку")}>→</button></div></div><div><p>ПОКУПАТЕЛЯМ</p><button onClick={()=>go("catalog")}>Каталог</button><button onClick={()=>alert(`Доставка по России от ${SITE_DB_POLICIES.delivery_min_days??"1"} дня`)}>Доставка и оплата</button><button onClick={()=>alert(`Возврат в течение ${SITE_DB_POLICIES.return_period_days??"14"} дней`)}>Возврат</button></div><div><p>О БРЕНДЕ</p><button onClick={()=>go("collections")}>Коллекции</button><button onClick={()=>alert("Русский бренд предметов для дома")}>Наша история</button><button onClick={()=>alert(Array.from(new Set(SITE_DB_STORES.map(store=>store.city))).join(" · ")||"Москва · Санкт-Петербург · Казань")}>Бутики</button></div><div><p>СВЯЗАТЬСЯ</p><a href={`tel:${SITE_DB_CONTACTS.support_phone??"+78005553535"}`}>8 800 555-35-35</a><a href={`mailto:${SITE_DB_CONTACTS.support_email??"hello@kultura-doma.ru"}`}>{SITE_DB_CONTACTS.support_email??"hello@kultura-doma.ru"}</a></div><small>© 2026 Культура дома &nbsp; · &nbsp; Политика конфиденциальности</small></footer> }
+function Footer({ go, notice }: { go:(v:View)=>void; notice:(s:string)=>void }) { return <footer><div className="footer-brand"><div className="logo">КУЛЬТУРА ДОМА</div><p>Подпишитесь на письма о новых коллекциях</p><div><input placeholder="Ваш email"/><button onClick={()=>notice("Спасибо за подписку")}>→</button></div></div><div><p>ПОКУПАТЕЛЯМ</p><button onClick={()=>go("catalog")}>Каталог</button><button onClick={()=>alert(`Доставка по России от ${SITE_DB_POLICIES.delivery_min_days??"1"} дня`)}>Доставка и оплата</button><button onClick={()=>alert(`Возврат в течение ${SITE_DB_POLICIES.return_period_days??"14"} дней`)}>Возврат</button></div><div><p>О БРЕНДЕ</p><button onClick={()=>{window.location.href=`${runtimeStorefrontBase()}/collections/`}}>Коллекции</button><button onClick={()=>alert("Русский бренд предметов для дома")}>Наша история</button><button onClick={()=>alert(Array.from(new Set(SITE_DB_STORES.map(store=>store.city))).join(" · ")||"Москва · Санкт-Петербург · Казань")}>Бутики</button></div><div><p>СВЯЗАТЬСЯ</p><a href={`tel:${SITE_DB_CONTACTS.support_phone??"+78005553535"}`}>8 800 555-35-35</a><a href={`mailto:${SITE_DB_CONTACTS.support_email??"hello@kultura-doma.ru"}`}>{SITE_DB_CONTACTS.support_email??"hello@kultura-doma.ru"}</a></div><small>© 2026 Культура дома &nbsp; · &nbsp; Политика конфиденциальности</small></footer> }
