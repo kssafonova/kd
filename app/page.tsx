@@ -1,6 +1,3 @@
-import "./home-standalone.css";
-import HomeStandalone from "./home-standalone";
+import {FastHome} from "./fast-commerce";
 
-export default function HomePage(){
-  return <HomeStandalone />;
-}
+export default function HomePage(){return <FastHome/>}

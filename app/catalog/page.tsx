@@ -1,5 +1,3 @@
-import CatalogClient from "./catalog-client";
+import {FastCatalog} from "../fast-commerce";
 
-export default function CatalogPage(){
-  return <CatalogClient />;
-}
+export default function CatalogPage(){return <FastCatalog/>}
