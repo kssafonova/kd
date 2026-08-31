@@ -1,0 +1,31 @@
+name: Navigation smoke v144
+
+on:
+  workflow_run:
+    workflows: ["Build storefront for GitHub Pages"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+      - name: Wait for Pages
+        run: sleep 30
+      - name: Run navigation and commerce smoke
+        run: node scripts/navigation-smoke-v144.cjs
