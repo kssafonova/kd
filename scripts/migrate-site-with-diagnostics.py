@@ -46,6 +46,7 @@ scripts = [
     root / "scripts" / "refine-home-plp-card-v148.py",
     root / "scripts" / "fix-mobile-header-actions-v149.py",
     root / "scripts" / "ensure-mobile-header-actions-v150.py",
+    root / "scripts" / "apply-capsule-experience-v151.py",
 ]
 
 logs = []
