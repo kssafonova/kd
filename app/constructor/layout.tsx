@@ -11,6 +11,7 @@ import "./ready-solutions-v52.css";
 import "./ready-solutions-v54.css";
 import "./ready-solutions-v54-grid-fix.css";
 import "./ready-solution-mockup-v70.css";
+import "../kultura-design-system-v160.css";
 import { ReadySolutionMockupV70 } from "./ready-solution-mockup-v70";
 
 export default function ConstructorLayout({ children }: { children: ReactNode }) {
