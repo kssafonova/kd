@@ -200,7 +200,7 @@ export default function HomeStandalone(){
     </section>
 
     <section className="home-fast-section home-fast-capsules" aria-labelledby="home-capsules-title">
-      <header className="home-fast-head"><h2 id="home-capsules-title">Капсулы</h2><a href={url("/collections/#capsules")}>Все капсулы и коллекции</a></header>
+      <header className="home-fast-head"><h2 id="home-capsules-title">Капсулы</h2><a href={url("/capsules/")}>Все капсулы</a></header>
       <div className="home-fast-capsule-grid">{CAPSULES.map(item=><a key={item.name} href={url(item.href)} className="home-fast-capsule"><img src={url(item.image)} alt="" loading="lazy" decoding="async"/><strong>{item.name}</strong></a>)}</div>
     </section>
 

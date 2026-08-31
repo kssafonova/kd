@@ -1,6 +1,6 @@
-:HL["/kd/_next/static/chunks/08ii_ikkb1~66.css","style"]
+:HL["/kd/_next/static/chunks/01~f9_js3r.a2.css","style"]
 :HL["/kd/_next/static/chunks/0ckltluz-jlxn.css","style"]
 :HL["/kd/_next/static/chunks/17v8l~aiv9ed0.css","style"]
 :HL["/kd/_next/static/chunks/0xzi~wb.bbsuw.css","style"]
 :HL["https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"ready-solutions","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"iOUN-1x_h4sR9GmTvW8uN"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"ready-solutions","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"Z54QM9a4lxXiN3VJrTnKg"}

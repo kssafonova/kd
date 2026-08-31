@@ -38,7 +38,7 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await page.waitForSelector('.navigation-overlay .menu-panel',{state:'visible',timeout:4000});
   timings.push(['home->menu',Date.now()-menuStart]);
   assert(!page.url().includes('/catalog'),'Homepage menu should open in place');
-  assert(await page.getByRole('button',{name:/КАПСУЛЫ И КОЛЛЕКЦИИ/i}).count()>0,'Unified Kultura menu: capsules and collections action missing');
+  assert(await page.getByRole('button',{name:/КАПСУЛЫ/i}).count()>0,'Unified Kultura menu: capsules action missing');
   assert(await page.getByRole('button',{name:/ГОТОВЫЕ РЕШЕНИЯ/i}).count()>0,'Unified Kultura menu: ready solutions action missing');
   assert(await page.locator('.navigation-overlay .premium-menu').count()===1,'Unified Kultura premium menu missing');
   await page.getByRole('button',{name:'Закрыть меню'}).click();
@@ -89,7 +89,7 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await catalog();
   await page.getByRole('button',{name:'Открыть меню'}).click();
   await page.waitForSelector('.navigation-overlay .menu-panel',{state:'visible',timeout:4000});
-  assert(await page.getByRole('button',{name:/КАПСУЛЫ И КОЛЛЕКЦИИ/i}).count()>0,'Catalog unified menu story action missing');
+  assert(await page.getByRole('button',{name:/КАПСУЛЫ/i}).count()>0,'Catalog unified menu capsule action missing');
   assert(await page.getByRole('button',{name:/ГОТОВЫЕ РЕШЕНИЯ/i}).count()>0,'Catalog unified menu ready solutions action missing');
   await page.getByRole('button',{name:'Закрыть меню'}).click();
 
@@ -116,15 +116,19 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   await page.locator('.header .logo').click();
   await page.waitForURL(url=>url.pathname==='/'||url.pathname==='/kd/'||url.pathname==='/kd',{timeout:12000});
 
-  // Capsules and collections are one lightweight server-rendered landing. Both
-  // legacy URLs remain valid and expose both groups for backwards compatibility.
-  for(const path of ['/collections/','/capsules/']){
-    await goto(path,'.story-index-page');
-    assert((await page.locator('.section-head h1').innerText()).includes('Капсулы и коллекции'),`${path}: combined title missing`);
-    assert(await page.locator('#capsules').count()===1,`${path}: capsules section missing`);
-    assert(await page.locator('#collections').count()===1,`${path}: collections section missing`);
-    assert(await page.locator('#capsules a[href*="capsule="]').count()>=3,`${path}: capsule cards are not linked`);
-    assert(await page.locator('#collections a[href*="collection="]').count()>=3,`${path}: collection cards are not linked`);
+  // Capsule routing is now a focused landing. /collections remains a backwards-compatible
+  // alias but must not render a collections index. Clicking a capsule opens the shopping dialog.
+  for(const path of ['/capsules/','/collections/']){
+    await goto(path,'.capsules-v151-page');
+    assert((await page.locator('.capsules-v151-intro h1').innerText()).trim()==='Капсулы',`${path}: capsule-only title missing`);
+    assert(await page.locator('#collections').count()===0,`${path}: collections leaked back into capsule landing`);
+    assert(await page.locator('.capsule-card-v151').count()>=3,`${path}: capsule cards missing`);
+    await page.locator('.capsule-card-v151').first().click();
+    await page.waitForSelector('.capsule-dialog-v151',{state:'visible',timeout:5000});
+    assert(await page.locator('.capsule-gallery-v151 img').count()>=2,`${path}: capsule gallery missing`);
+    assert(await page.locator('.capsule-products-v151 article').count()>=1,`${path}: capsule products missing`);
+    assert(await page.getByRole('button',{name:/ВЫКУПИТЬ ВСЮ КАПСУЛУ|ВЫБЕРИТЕ ВАРИАНТЫ/i}).count()===1,`${path}: capsule purchase CTA missing`);
+    await page.getByRole('button',{name:'Закрыть'}).click();
   }
 
   // Direct query bridges from external links/bookmarks.
@@ -141,6 +145,6 @@ const assert=(value,message)=>{if(!value)throw new Error(message)};
   });
   console.log('NAV_PERF',JSON.stringify(perf));
   if(diagnostics.length)console.log('BROWSER_DIAGNOSTICS\n'+diagnostics.join('\n'));
-  console.log('NAVIGATION_SMOKE_V148_OK');
+  console.log('NAVIGATION_SMOKE_V151_OK');
   await browser.close();
 })().catch(error=>{console.error(error);process.exit(1)});

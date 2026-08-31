@@ -84,7 +84,7 @@ function defaultSkuId(product:CapsuleProduct){
   if(!skus.length)return "";
   return requiresExplicitSelection(product)?"":skus[0].id;
 }
-function skuLabel(sku:CapsuleSku){
+function skuLabel(sku:Partial<CapsuleSku>){
   const color=String(sku.sourceColor??sku.color??"").trim();
   const size=String(sku.size??"").trim();
   const cleanColor=norm(color)==="единый вариант"?"":color;

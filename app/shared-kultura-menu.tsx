@@ -85,9 +85,9 @@ export function SharedKulturaMenu({onClose,onCatalog,onNavigate}:MenuProps){
             {CATALOG_SECTIONS.map(section=><button key={section} onClick={()=>setCurrent(section)}><span>{section}</span><MenuIcon name="chevron"/></button>)}
           </nav>
 
-          <section className="premium-menu-editorial premium-menu-editorial-lower" aria-label="Капсулы, коллекции и готовые решения">
+          <section className="premium-menu-editorial premium-menu-editorial-lower" aria-label="Капсулы и готовые решения">
             <small>ВДОХНОВЕНИЕ</small>
-            <button onClick={()=>openRoute("/collections/")}><span>КАПСУЛЫ И КОЛЛЕКЦИИ</span></button>
+            <button onClick={()=>openRoute("/capsules/")}><span>КАПСУЛЫ</span></button>
             <button onClick={()=>openRoute("/ready-solutions/")}><span>ГОТОВЫЕ РЕШЕНИЯ</span></button>
           </section>
         </div>:<div className="menu-second level-two premium-menu-level-two" key={current}>
