@@ -40,7 +40,6 @@ scripts = [
     root / "scripts" / "fix-catalog-runtime-v141.py",
     root / "scripts" / "embed-catalog-products-v142.py",
     root / "scripts" / "finalize-catalog-plp-v143.py",
-    root / "scripts" / "apply-fast-commerce-v143.py",
 ]
 
 logs = []
