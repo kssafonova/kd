@@ -1,0 +1,8 @@
+@media(max-width:760px){
+  .fast-actions .fast-icon-btn:nth-child(2){display:grid!important}
+  .fast-actions{gap:0}
+  .fast-header{grid-template-columns:40px minmax(0,1fr) auto;padding-left:8px;padding-right:6px}
+  .fast-header .fast-logo{justify-self:center;font-size:13px}
+  .fast-actions .fast-icon-btn{width:34px;height:36px}
+  .fast-actions .fast-icon-btn svg{width:18px;height:18px}
+}
