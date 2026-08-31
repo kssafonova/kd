@@ -1,2 +1,5 @@
-import StoryIndex from "../story-index";
-export default function CollectionsPage(){return <StoryIndex/>}
+import StorefrontApp from "../storefront-app";
+
+export default function CollectionsPage(){
+  return <StorefrontApp initialView="collections"/>;
+}
