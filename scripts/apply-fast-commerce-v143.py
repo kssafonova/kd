@@ -18,9 +18,8 @@ collections=app/"collections"
 collections.mkdir(exist_ok=True)
 (collections/"page.tsx").write_text('''import {FastCollections} from "../fast-commerce";\n\nexport default function CollectionsPage(){return <FastCollections/>}\n''',encoding="utf-8")
 
-(app/"layout.tsx").write_text('''import type {Metadata} from "next";\nimport "./globals.css";\nimport "./fast-commerce.css";\n\nexport const metadata:Metadata={title:"Культура дома — премиальные товары для дома",description:"Текстиль, посуда и предметы для дома с русским характером."};\nexport default function RootLayout({children}:{children:React.ReactNode}){return <html lang="ru"><body>{children}</body></html>}\n''',encoding="utf-8")
+(app/"layout.tsx").write_text('''import type {Metadata} from "next";\nimport "./globals.css";\nimport "./fast-commerce.css";\nimport "./fast-commerce-fixes.css";\n\nexport const metadata:Metadata={title:"Культура дома — премиальные товары для дома",description:"Текстиль, посуда и предметы для дома с русским характером."};\nexport default function RootLayout({children}:{children:React.ReactNode}){return <html lang="ru"><body>{children}</body></html>}\n''',encoding="utf-8")
 
-# Remove the obsolete client entry if the route-split migration recreated it.
 legacy_client=catalog/"catalog-client.tsx"
 if legacy_client.exists():
     legacy_client.unlink()
